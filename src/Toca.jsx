@@ -2300,7 +2300,7 @@ function RelogioWeasley({ clientes, fases, onAbrir }) {
         </svg>
 
         <div className="flex-1 w-full">
-          <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
+          <div className="space-y-1.5 max-h-64 overflow-y-auto pr-2">
             {clientes.map((c, idx) => {
               const fase = fases[c.id] || "prospeccao";
               const info = FASES_RELOGIO.find((f) => f.chave === fase);
@@ -2310,23 +2310,16 @@ function RelogioWeasley({ clientes, fases, onAbrir }) {
                 <button
                   key={c.id}
                   onClick={() => onAbrir(c.id)}
-                  className="w-full text-left flex items-center gap-3 py-2.5 px-3 rounded-lg border-l-4 transition-all hover:shadow-md hover:scale-105"
-                  style={{
-                    borderColor: cor,
-                    background: "rgba(255,255,255,0.7)",
-                    borderRadius: "8px"
-                  }}
+                  className="w-full text-left flex items-center gap-2.5 py-2 px-2.5 rounded transition-colors hover:bg-white/80"
+                  style={{ borderLeft: `3px solid ${cor}` }}
                 >
-                  <span className="w-4 h-4 rounded-full shrink-0 shadow-sm" style={{ background: cor, boxShadow: `0 0 8px ${cor}55` }} />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-serif text-sm font-semibold truncate" style={{ color: CORES.fogo }}>{c.negocio}</div>
-                    <div className="text-xs truncate" style={{ color: CORES.marrom }}>{c.segmento || "—"}</div>
-                  </div>
+                  <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: cor }} />
+                  <span className="font-serif text-sm truncate flex-1" style={{ color: CORES.fogo }}>{c.negocio}</span>
                   <span
-                    className="text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0"
+                    className="text-xs font-semibold px-1.5 py-0.5 rounded whitespace-nowrap flex-shrink-0"
                     style={ehPerigo ? { background: "#F0DCD2", color: "#8A3A2E" } : { background: "#F5EDD9", color: "#8B3A3A" }}
                   >
-                    {info ? info.rotulo : fase}
+                    {info ? info.rotulo : "—"}
                   </span>
                 </button>
               );
