@@ -2242,7 +2242,7 @@ function RelogioWeasley({ clientes, fases, onAbrir }) {
     <div className="mb-10">
       <div className="font-serif text-lg mb-1" style={{ color: CORES.fogo }}>O Relógio</div>
       <div className="text-xs mb-3" style={{ color: "#A89878" }}>Onde cada cliente está — de relance, como a Molly.</div>
-      <div className="rounded-lg p-5 flex flex-col sm:flex-row items-center gap-6" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-5 flex flex-col sm:flex-row items-center gap-6" className="card">
         <svg width={T} height={T} viewBox={`0 0 ${T} ${T}`} className="shrink-0">
           <defs>
             <radialGradient id="fundoRelogio" cx="50%" cy="42%" r="65%">
@@ -2352,7 +2352,7 @@ function FormCliente({ inicial, onSalvar, onCancelar, onExcluir }) {
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-8 rounded-lg shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+    <div className="max-w-xl mx-auto mt-10 p-8 rounded-lg shadow-sm" className="card">
       <h2 className="font-serif text-xl mb-6" style={{ color: CORES.fogo }}>
         {inicial ? "Editar cliente" : "Novo cliente"}
       </h2>
@@ -2471,7 +2471,7 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
               key={c.id}
               onClick={() => onAbrir(c.id)}
               className="objeto text-left p-5 rounded-lg shadow-sm cursor-pointer relative"
-              style={{ background: CORES.papel, border: "2px solid #E97F3855" }}
+              className="card"
             >
               <span className="absolute top-3 right-3" onClick={(e) => e.stopPropagation()}>
                 <ConfirmarAcao
@@ -2601,7 +2601,7 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
     <button
       onClick={() => onModulo(chave)}
       className={`objeto text-left rounded-lg shadow-sm ${compacto ? "p-4" : "p-6"}`}
-      style={{ background: CORES.papel, border: "2px solid #E97F3855" }}
+      className="card"
     >
       <div className={`font-serif mb-1 ${compacto ? "text-base" : "text-lg"}`} style={{ color: CORES.fogo }}>
         {TITULOS[chave]}
@@ -2636,7 +2636,7 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
       {(servicosCliente.treinamentos || servicosCliente.mentoria) && (
         <div className="grid sm:grid-cols-2 gap-3 mb-4">
           {servicosCliente.treinamentos && (
-            <button onClick={() => onModulo("treinamentos")} className="objeto text-left p-4 rounded-lg shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+            <button onClick={() => onModulo("treinamentos")} className="objeto text-left p-4 rounded-lg shadow-sm" className="card">
               <div className="font-serif" style={{ color: CORES.fogo }}>Treinamentos</div>
               <div className="text-xs mt-0.5" style={{ color: "#8A7A5C" }}>
                 {totalTreinamentos > 0 ? `${totalTreinamentosRealizados}/${totalTreinamentos} realizados` : "A Sala Precisa aguarda a primeira turma"}
@@ -2644,7 +2644,7 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
             </button>
           )}
           {servicosCliente.mentoria && (
-            <button onClick={() => onModulo("mentoria")} className="objeto text-left p-4 rounded-lg shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+            <button onClick={() => onModulo("mentoria")} className="objeto text-left p-4 rounded-lg shadow-sm" className="card">
               <div className="font-serif" style={{ color: CORES.fogo }}>Mentoria</div>
               <div className="text-xs mt-0.5" style={{ color: "#8A7A5C" }}>
                 {totalEncontros > 0 ? `${totalEncontrosRealizados}/${totalEncontros} encontros realizados` : "Jornada ainda não desenhada"}
@@ -2766,7 +2766,7 @@ function ModuloTabela({ cliente, tabela, gerando, erro, onGerar, onMudarTabela, 
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Tabela Disciplinar</h2>
           <div className="flex gap-2">
@@ -2949,7 +2949,7 @@ function ListaCargos({ cliente, cargos, onAbrirCargo, onNovoCargo, onVoltar }) {
               key={cg.id}
               onClick={() => onAbrirCargo(cg.id)}
               className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between"
-              style={{ background: CORES.papel, border: "2px solid #E97F3855" }}
+              className="card"
             >
               <span className="font-serif" style={{ color: CORES.fogo }}>{cg.nome || "(sem nome)"}</span>
               <span className="text-xs" style={{ color: "#8A7A5C" }}>
@@ -2970,7 +2970,7 @@ function EditorCargo({ cliente, cargo, gerando, erro, onMudar, onGerar, onImprim
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← Descrições de Cargo · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>
             {cargo.nome || "Novo cargo"}
@@ -3264,7 +3264,7 @@ function ModuloGestao({ cliente, gestao, atas, gerando, erro, onMudar, onGerarPl
         ← {cliente.negocio}
       </button>
 
-      <div className="rounded-lg p-6 shadow-sm mb-6" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm mb-6" className="card">
         <h2 className="font-serif text-lg mb-1" style={{ color: CORES.fogo }}>Briefing</h2>
         <p className="text-xs mb-3" style={{ color: "#8A7A5C" }}>
           Anote aqui o que saiu da reunião — necessidades, dores, o que existe e o que falta em cada área. A IA transforma isso em frentes e plano de ação. Se o contratante já estiver no Chapéu Seletor, o plano se molda ao temperamento dele — sem nunca mencioná-lo.
@@ -3429,7 +3429,7 @@ function ModuloEstrutura({ cliente, posicoes, cargos, gerando, erro, onMudar, on
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Estrutura de Governança</h2>
           <div className="flex gap-2 flex-wrap">
@@ -3545,7 +3545,7 @@ function ModuloManual({ cliente, secoes, gerando, erro, onMudar, onGerar, onImpr
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Manual do Colaborador</h2>
           <div className="flex gap-2">
@@ -3658,7 +3658,7 @@ function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, onVoltar 
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <h2 className="font-serif text-lg mb-1" style={{ color: CORES.fogo }}>CCT & Conformidade</h2>
         <p className="text-xs mb-4" style={{ color: "#8A7A5C" }}>
           As leis do Ministério: suba o PDF da convenção coletiva do setor — e depois os termos aditivos, um a um. A cada documento, a IA atualiza a análise: remove o que foi superado, ajusta o que mudou e soma o que é novo. Todas as gerações deste cliente respeitam o resultado. Os arquivos não ficam armazenados; só a análise.
@@ -3701,7 +3701,7 @@ function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, onVoltar 
         {!gerando && pontos.length > 0 && (
           <div className="mt-4">
             <div className="flex items-baseline justify-between mb-2 flex-wrap gap-2">
-              <div className="text-xs uppercase tracking-widest font-semibold" style={{ color: CORES.dourado }}>
+              <div className="label" style={{ color: CORES.dourado }}>
                 Pontos obrigatórios extraídos
               </div>
               <div className="text-xs font-semibold" style={{ color: pontos.every((p) => p.statusConf === "resolvido") ? "#4F6B3A" : "#9A6A2F" }}>
@@ -3927,7 +3927,7 @@ function ListaPops({ cliente, pops, onAbrirPop, onNovoPop, onVoltar }) {
               key={p.id}
               onClick={() => onAbrirPop(p.id)}
               className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between"
-              style={{ background: CORES.papel, border: "2px solid #E97F3855" }}
+              className="card"
             >
               <span className="font-serif" style={{ color: CORES.fogo }}>{p.nome || "(sem nome)"}</span>
               <span className="text-xs" style={{ color: "#8A7A5C" }}>
@@ -3948,7 +3948,7 @@ function EditorPop({ cliente, pop, gerando, erro, onMudar, onGerar, onImprimir, 
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← POPs · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>
             {pop.nome || "Novo POP"}
@@ -4090,7 +4090,7 @@ function ListaDocs({ cliente, tipo, docs, onAbrir, onNovo, onVoltar }) {
               key={d.id}
               onClick={() => onAbrir(d.id)}
               className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between"
-              style={{ background: CORES.papel, border: "2px solid #E97F3855" }}
+              className="card"
             >
               <span className="font-serif" style={{ color: CORES.fogo }}>{d.nome || "(sem nome)"}</span>
               <span className="text-xs" style={{ color: "#8A7A5C" }}>{cfg.subtituloLista(d)}</span>
@@ -4111,7 +4111,7 @@ function EditorDoc({ cliente, tipo, doc, rotuloVoltar, gerando, erro, onMudar, o
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {rotuloVoltar}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>
             {doc.nome || `Nov${cfg.singular === "checklist" ? "o" : "a"} ${cfg.singular}`}
@@ -4338,7 +4338,7 @@ function ListaPessoas({ cliente, pessoas, onAbrir, onNova, onVoltar }) {
               key={p.id}
               onClick={() => onAbrir(p.id)}
               className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-center justify-between gap-2 flex-wrap"
-              style={{ background: CORES.papel, border: "2px solid #E97F3855" }}
+              className="card"
             >
               <span>
                 <span className="font-serif" style={{ color: CORES.fogo }}>{p.nome || "(sem nome)"}</span>
@@ -4396,7 +4396,7 @@ function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar, onImpr
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← Temperamentos · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg flex items-center gap-2" style={{ color: CORES.fogo }}>
             {pessoa.nome || "Nova pessoa"} <SeloTemperamento chave={pessoa.dominante} pequeno />
@@ -4429,7 +4429,7 @@ function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar, onImpr
 
             <div className="mb-4 rounded-lg p-4" style={{ background: "white", border: "1px dashed #E97F3855" }}>
               <div className="flex items-baseline justify-between mb-1">
-                <div className="text-xs uppercase tracking-widest font-semibold" style={{ color: CORES.dourado }}>
+                <div className="label" style={{ color: CORES.dourado }}>
                   Formulário de observação (opcional)
                 </div>
                 {Object.keys(pessoa.respostas || {}).length > 0 && (
@@ -4690,7 +4690,7 @@ function ListaDiagnosticos({ cliente, diagnosticos, titulo, subtitulo, framework
                 key={d.id}
                 onClick={() => onAbrir(d.id)}
                 className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between"
-                style={{ background: CORES.papel, border: "2px solid #E97F3855" }}
+                className="card"
               >
                 <span className="font-serif" style={{ color: CORES.fogo }}>
                   {d.rotulo || `Diagnóstico de ${d.data}`}
@@ -4732,7 +4732,7 @@ function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerando, erro
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← Diagnósticos · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>
             {diag.rotulo || `Diagnóstico de ${diag.data}`}
@@ -4764,7 +4764,7 @@ function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerando, erro
               return (
                 <div key={a.area} className="mb-5">
                   <div className="flex items-baseline justify-between mb-1">
-                    <div className="text-xs uppercase tracking-widest font-semibold" style={{ color: CORES.dourado }}>
+                    <div className="label" style={{ color: CORES.dourado }}>
                       {a.area}
                     </div>
                     <div className="text-xs font-bold" style={{ color: pct !== null && pct < 50 ? "#8A3A2E" : CORES.fogo }}>
@@ -4982,7 +4982,7 @@ function ListaPropostas({ cliente, propostas, onAbrir, onNova, onVoltar }) {
               key={p.id}
               onClick={() => onAbrir(p.id)}
               className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between"
-              style={{ background: CORES.papel, border: "2px solid #E97F3855" }}
+              className="card"
             >
               <span className="font-serif" style={{ color: CORES.fogo }}>
                 {p.rotulo || `Proposta de ${p.data}`}
@@ -5033,7 +5033,7 @@ function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, 
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← Propostas · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>
             {prop.rotulo || `Proposta de ${prop.data}`}
@@ -5133,7 +5133,7 @@ function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, 
               {(
                 <div className="mb-4 p-3 rounded-lg" style={{ background: "#F5EDD9", border: "2px solid #D4AF37AA" }}>
                   <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
-                    <div className="text-xs uppercase tracking-widest font-semibold" style={{ color: "#9A6A2F" }}>
+                    <div className="label" style={{ color: "#9A6A2F" }}>
                       {ehPessoaProp ? "Metas do mentorado (fase Acordo)" : "Metas do engajamento (fase Acordo)"}
                     </div>
                     <button onClick={onGerarMetas} className="text-xs underline" style={{ color: CORES.dourado }} disabled={gerando}>
@@ -5336,7 +5336,7 @@ function ModuloCronograma({ cliente, gestao, gerando, erro, onMudar, onDistribui
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Cronograma</h2>
           <div className="flex gap-2 flex-wrap">
@@ -5560,7 +5560,7 @@ function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAcordo, g
                 key={r.id}
                 onClick={() => onAbrir(r.id)}
                 className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between"
-                style={{ background: CORES.papel, border: "2px solid #E97F3855" }}
+                className="card"
               >
                 <span className="font-serif" style={{ color: CORES.fogo }}>Relatório de {r.data}</span>
                 <span className="text-xs" style={{ color: "#8A7A5C" }}>{r.retrospectiva ? "" : "rascunho vazio"}</span>
@@ -5581,7 +5581,7 @@ function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAcordo, g
       <button onClick={() => onAbrir(null)} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← Relatórios · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Relatório de {relAberto.data}</h2>
           <div className="flex gap-2">
@@ -5594,7 +5594,7 @@ function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAcordo, g
 
         <div className="mb-4 p-3 rounded-lg" style={{ background: "#F5EDD9", border: "2px solid #D4AF37AA" }}>
           <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
-            <div className="text-xs uppercase tracking-widest font-semibold" style={{ color: "#9A6A2F" }}>
+            <div className="label" style={{ color: "#9A6A2F" }}>
               Verificação das metas pactuadas (fase Prova)
             </div>
             {(metasAcordo || []).length > 0 && (relAberto.metasVerificadas || []).length === 0 && (
@@ -5816,7 +5816,7 @@ function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar, onVolt
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <h2 className="font-serif text-lg mb-1" style={{ color: CORES.fogo }}>Financeiro do Engajamento</h2>
         <p className="text-xs mb-4" style={{ color: "#8A7A5C" }}>
           O cofre de Gringotes: parcelas, vencimentos e o que já entrou. Uso interno — nada disso aparece em documentos do cliente.
@@ -6001,7 +6001,7 @@ function ListaFluxos({ cliente, fluxos, onAbrir, onNovo, onVoltar }) {
               key={f.id}
               onClick={() => onAbrir(f.id)}
               className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between"
-              style={{ background: CORES.papel, border: "2px solid #E97F3855" }}
+              className="card"
             >
               <span className="font-serif" style={{ color: CORES.fogo }}>{f.nome || "(sem nome)"}</span>
               <span className="text-xs" style={{ color: "#8A7A5C" }}>
@@ -6035,7 +6035,7 @@ function EditorFluxo({ cliente, fluxo, gerando, erro, onMudar, onGerar, onImprim
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← Desenho de Processos · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>{fluxo.nome || "Novo processo"}</h2>
           <div className="flex gap-2">
@@ -6201,7 +6201,7 @@ function ModuloAlcadas({ cliente, alcadas, gerando, erro, onMudar, onGerar, onIm
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Alçadas de Decisão</h2>
           <div className="flex gap-2">
@@ -6360,7 +6360,7 @@ function ModuloIndicadores({ cliente, painel, gerando, erro, onMudar, onGerar, o
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Indicadores</h2>
           <div className="flex gap-2">
@@ -6529,7 +6529,7 @@ function ModuloRitos({ cliente, ritos, gerando, erro, onMudar, onGerar, onImprim
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Ritos de Gestão</h2>
           <div className="flex gap-2">
@@ -6709,7 +6709,7 @@ function ListaCampo({ cliente, registros, onAbrir, onNovo, onVoltar }) {
               key={r.id}
               onClick={() => onAbrir(r.id)}
               className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between gap-2 flex-wrap"
-              style={{ background: CORES.papel, border: "2px solid #E97F3855" }}
+              className="card"
             >
               <span className="font-serif" style={{ color: CORES.fogo }}>
                 <span className="text-xs uppercase tracking-widest mr-2" style={{ color: CORES.dourado }}>{TIPOS_CAMPO[r.tipo].curto}</span>
@@ -6736,7 +6736,7 @@ function EditorCampo({ cliente, reg, pessoas, gerando, erro, onMudar, onGerarRot
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← Trabalho de Campo · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>{TIPOS_CAMPO[reg.tipo].rotulo}</h2>
           {(reg.tipo === "visita" || reg.tipo === "entrevista") && (
@@ -6910,7 +6910,7 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
             {treinamentos.map((x) => {
               const frente = frentes.find((f) => f.id === x.frenteId);
               return (
-                <button key={x.id} onClick={() => onAbrir(x.id)} className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between gap-2 flex-wrap" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+                <button key={x.id} onClick={() => onAbrir(x.id)} className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between gap-2 flex-wrap" className="card">
                   <span className="font-serif" style={{ color: CORES.fogo }}>{x.tema || "(sem tema)"}</span>
                   <span className="text-xs flex items-center gap-2" style={{ color: "#8A7A5C" }}>
                     {x.data || "sem data"}
@@ -6934,7 +6934,7 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
       <button onClick={() => onAbrir(null)} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← Treinamentos · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>{t.tema || "Novo treinamento"}</h2>
           <div className="flex gap-2 items-center">
@@ -6987,7 +6987,7 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
             <CampoTexto rotulo="Avaliação de eficácia" area linhas={2} valor={t.avaliacao} onChange={set("avaliacao")} />
             <div className="mb-4 p-3 rounded-lg" style={{ background: "white", border: "1px solid #EFE8D6" }}>
               <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
-                <div className="text-xs uppercase tracking-widest font-semibold" style={{ color: CORES.dourado }}>
+                <div className="label" style={{ color: CORES.dourado }}>
                   Participantes · {(t.participantesLista || []).filter((p) => p.presente).length}/{(t.participantesLista || []).length} presentes
                 </div>
                 <div className="flex gap-2">
@@ -7242,7 +7242,7 @@ function SecaoMoldagem({ mentoria, mentorado, gerando, onMudar, onGerarFicha }) 
   return (
     <div className="mb-4 p-4 rounded-lg" style={{ background: "#FBF7EC", border: "2px solid #D4AF3777" }}>
       <div className="flex items-center justify-between flex-wrap gap-2 mb-1">
-        <div className="text-xs uppercase tracking-widest font-semibold" style={{ color: "#9A6A2F" }}>
+        <div className="label" style={{ color: "#9A6A2F" }}>
           Moldagem pelo temperamento
         </div>
         <div className="flex gap-3 items-center">
@@ -7281,7 +7281,7 @@ function SecaoMoldagem({ mentoria, mentorado, gerando, onMudar, onGerarFicha }) 
         <div className="mt-2">
           {m.virtudeCentral && m.virtudeCentral.nome && (
             <div className="mb-2 p-3 rounded-lg" style={{ background: "#EFE6F2", border: "2px solid #6B4A7A55" }}>
-              <div className="text-xs uppercase tracking-widest font-semibold" style={{ color: "#6B4A7A" }}>
+              <div className="label" style={{ color: "#6B4A7A" }}>
                 Virtude central da jornada: {m.virtudeCentral.nome}
               </div>
               {m.virtudeCentral.manifestacao && (
@@ -7374,7 +7374,7 @@ function SecaoMoldagem({ mentoria, mentorado, gerando, onMudar, onGerarFicha }) 
 
       <div className="mt-4 pt-3 border-t" style={{ borderColor: "#E8D5A8" }}>
         <div className="flex items-center justify-between flex-wrap gap-2 mb-1">
-          <div className="text-xs uppercase tracking-widest font-semibold" style={{ color: "#6B4A7A" }}>
+          <div className="label" style={{ color: "#6B4A7A" }}>
             Diário da virtude · registros subjetivos
           </div>
           <button
@@ -7420,7 +7420,7 @@ function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAcordo, te
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Mentoria</h2>
           <BotaoPrimario onClick={onGerarJornada} disabled={gerando}>
@@ -7434,7 +7434,7 @@ function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAcordo, te
         <ReguaMetodoMentoria mentoria={mentoria} temRaioX={temRaioX} statusAcordo={statusAcordo} temProva={temProva} />
 
         <div className="mb-3 flex items-center gap-2 flex-wrap">
-          <span className="text-xs uppercase tracking-widest font-semibold" style={{ color: CORES.dourado }}>Foco da mentoria:</span>
+          <span className="label" style={{ color: CORES.dourado }}>Foco da mentoria:</span>
           {[["lideranca", "Liderança"], ["autoconhecimento", "Autoconhecimento"]].map(([ch, rot]) => (
             <button
               key={ch}
@@ -7632,7 +7632,7 @@ function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, framework: f
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Relatório de Evolução</h2>
           <div className="flex gap-2">
@@ -7655,7 +7655,7 @@ function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, framework: f
         {!gerando && (
           <div className="mb-4 p-3 rounded-lg" style={{ background: "#F5EDD9", border: "2px solid #D4AF37AA" }}>
             <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
-              <div className="text-xs uppercase tracking-widest font-semibold" style={{ color: "#9A6A2F" }}>
+              <div className="label" style={{ color: "#9A6A2F" }}>
                 Verificação das metas do mentorado (fase Prova)
               </div>
               {(metasAcordo || []).length > 0 && (rel.metasVerificadas || []).length === 0 && (
@@ -7817,7 +7817,7 @@ function ModuloAnomalias({ cliente, anomalias, frentes, gerando, erro, onMudar, 
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Tratamento de Anomalias</h2>
           <div className="flex items-center gap-3">
@@ -7915,7 +7915,7 @@ function ModuloPainel({ cliente, dados, painel, onMudar, onVoltar }) {
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" style={{ background: CORES.papel, border: "2px solid #E97F3855" }}>
+      <div className="rounded-lg p-6 shadow-sm" className="card">
         <h2 className="font-serif text-lg mb-1" style={{ color: CORES.fogo }}>Painel do Engajamento</h2>
         <p className="text-xs mb-4" style={{ color: "#8A7A5C" }}>
           Mede o engajamento pelo método (o cômodo Indicadores mede o negócio do cliente). Quando a verificação cai, o controle cai semanas depois.
