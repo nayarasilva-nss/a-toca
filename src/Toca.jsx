@@ -2094,7 +2094,7 @@ function Cabecalho({ onHome }) {
         boxShadow: "0 12px 32px rgba(0,0,0,0.3)",
       }}
     >
-      <button onClick={onHome} className="text-left">
+      <button onClick={onHome} className="text-left" style={{ background: "transparent", border: "none", cursor: "pointer", padding: 0 }}>
         <div
           className="font-serif"
           style={{
