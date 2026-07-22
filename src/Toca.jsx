@@ -2299,30 +2299,39 @@ function RelogioWeasley({ clientes, fases, onAbrir }) {
           <circle cx={cx} cy={cy} r="8" fill={CORES.fogoEscuro} stroke="url(#ouroRelogio)" strokeWidth="2.5" />
         </svg>
 
-        <div className="flex-1 w-full pl-4">
-          {clientes.map((c, idx) => {
-            const fase = fases[c.id] || "prospeccao";
-            const info = FASES_RELOGIO.find((f) => f.chave === fase);
-            const cor = CORES_PONTEIROS[idx % CORES_PONTEIROS.length];
-            const ehPerigo = fase === "perigo";
-            return (
-              <button
-                key={c.id}
-                onClick={() => onAbrir(c.id)}
-                className="w-full text-left flex items-center gap-3 py-3 px-3 border-l-4 mb-1 rounded transition-all hover:bg-white"
-                style={{ borderColor: cor, color: CORES.madeira }}
-              >
-                <span className="w-3 h-3 rounded-full shrink-0" style={{ background: cor }} />
-                <span className="font-serif text-sm flex-1" style={{ color: CORES.fogo }}>{c.negocio}</span>
-                <span
-                  className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                  style={ehPerigo ? { background: "#F0DCD2", color: "#8A3A2E" } : { background: "#F5EDD9", color: "#9A6A2F" }}
+        <div className="flex-1 w-full">
+          <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
+            {clientes.map((c, idx) => {
+              const fase = fases[c.id] || "prospeccao";
+              const info = FASES_RELOGIO.find((f) => f.chave === fase);
+              const cor = CORES_PONTEIROS[idx % CORES_PONTEIROS.length];
+              const ehPerigo = fase === "perigo";
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => onAbrir(c.id)}
+                  className="w-full text-left flex items-center gap-3 py-2.5 px-3 rounded-lg border-l-4 transition-all hover:shadow-md hover:scale-105"
+                  style={{
+                    borderColor: cor,
+                    background: "rgba(255,255,255,0.7)",
+                    borderRadius: "8px"
+                  }}
                 >
-                  {info ? info.rotulo : fase}
-                </span>
-              </button>
-            );
-          })}
+                  <span className="w-4 h-4 rounded-full shrink-0 shadow-sm" style={{ background: cor, boxShadow: `0 0 8px ${cor}55` }} />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-serif text-sm font-semibold truncate" style={{ color: CORES.fogo }}>{c.negocio}</div>
+                    <div className="text-xs truncate" style={{ color: CORES.marrom }}>{c.segmento || "—"}</div>
+                  </div>
+                  <span
+                    className="text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0"
+                    style={ehPerigo ? { background: "#F0DCD2", color: "#8A3A2E" } : { background: "#F5EDD9", color: "#8B3A3A" }}
+                  >
+                    {info ? info.rotulo : fase}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
