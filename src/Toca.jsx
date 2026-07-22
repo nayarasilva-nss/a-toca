@@ -2240,9 +2240,9 @@ function RelogioWeasley({ clientes, fases, onAbrir }) {
 
   return (
     <div className="mb-10">
-      <div className="font-serif text-lg mb-1" style={{ color: CORES.fogo }}>O Relógio</div>
-      <div className="text-xs mb-3" style={{ color: "#A89878" }}>Onde cada cliente está — de relance, como a Molly.</div>
-      <div className="rounded-lg p-5 flex flex-col sm:flex-row items-center gap-6" className="card">
+      <div className="font-serif text-2xl mb-2 font-bold" style={{ color: CORES.fogo }}>O Relógio</div>
+      <div className="text-sm mb-6" style={{ color: "#9A8B75" }}>Onde cada cliente está — de relance, como a Molly.</div>
+      <div className="card flex flex-col sm:flex-row items-center justify-center gap-8 py-8 px-8" style={{ background: "linear-gradient(135deg, #FFF8F0 0%, #FFFBF0 100%)" }}>
         <svg width={T} height={T} viewBox={`0 0 ${T} ${T}`} className="shrink-0">
           <defs>
             <radialGradient id="fundoRelogio" cx="50%" cy="42%" r="65%">
@@ -2299,7 +2299,7 @@ function RelogioWeasley({ clientes, fases, onAbrir }) {
           <circle cx={cx} cy={cy} r="8" fill={CORES.fogoEscuro} stroke="url(#ouroRelogio)" strokeWidth="2.5" />
         </svg>
 
-        <div className="flex-1 w-full">
+        <div className="flex-1 w-full pl-4">
           {clientes.map((c, idx) => {
             const fase = fases[c.id] || "prospeccao";
             const info = FASES_RELOGIO.find((f) => f.chave === fase);
@@ -2309,8 +2309,8 @@ function RelogioWeasley({ clientes, fases, onAbrir }) {
               <button
                 key={c.id}
                 onClick={() => onAbrir(c.id)}
-                className="w-full text-left flex items-center gap-2 py-2 border-b"
-                style={{ borderColor: "#EFE8D6" }}
+                className="w-full text-left flex items-center gap-3 py-3 px-3 border-l-4 mb-1 rounded transition-all hover:bg-white"
+                style={{ borderColor: cor, color: CORES.madeira }}
               >
                 <span className="w-3 h-3 rounded-full shrink-0" style={{ background: cor }} />
                 <span className="font-serif text-sm flex-1" style={{ color: CORES.fogo }}>{c.negocio}</span>
