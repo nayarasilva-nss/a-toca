@@ -2455,16 +2455,17 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
       )}
       {clientes.length > 0 && <RelogioWeasley clientes={clientes} fases={fases} onAbrir={onAbrir} />}
       <div className="flex items-baseline justify-between mb-6">
-        <div>
-          <h1 className="font-serif text-2xl" style={{ color: CORES.fogo }}>Meus Clientes</h1>
-          <div className="text-xs italic" style={{ color: "#A0826D" }}>cada um com sua toca particular</div>
+        <div className="flex-1">
+          <h1 className="font-serif text-3xl font-bold" style={{ color: CORES.fogo, marginBottom: "0.5rem" }}>Meus Clientes</h1>
+          <p className="text-sm" style={{ color: "#A0826D" }}>cada um com sua toca particular</p>
         </div>
-        <BotaoPrimario onClick={onNovo}>+ Novo cliente</BotaoPrimario>
+        <BotaoPrimario onClick={onNovo} style={{ whiteSpace: "nowrap" }}>+ Novo cliente</BotaoPrimario>
       </div>
       {clientes.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #D9914F" }}>
-          <p className="font-serif italic mb-2" style={{ color: CORES.dourado }}>A Toca está vazia — nem um gnomo no jardim.</p>
-          <p className="text-sm" style={{ color: "#8A7A5C" }}>Cadastre o primeiro cliente para começar a gerar documentos.</p>
+        <div className="text-center py-16 rounded-lg" style={{ background: "#FFFBF0", border: `2px dashed ${CORES.dourado}` }}>
+          <p className="text-lg font-serif mb-3" style={{ color: CORES.fogo }}>📭 A Toca está vazia</p>
+          <p className="text-sm" style={{ color: "#A0826D" }}>nem um gnomo no jardim</p>
+          <p className="text-xs mt-4" style={{ color: "#8A7A5C" }}>Cadastre o primeiro cliente para começar a gerar documentos.</p>
         </div>
       ) : (
         <div className="grid gap-3">
@@ -2483,11 +2484,11 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
                   classe="text-xs px-1.5 py-0.5 rounded"
                 />
               </span>
-              <div className="font-serif text-lg pr-8" style={{ color: CORES.fogo }}>
+              <h3 className="font-serif text-xl font-bold pr-8 mb-1" style={{ color: CORES.fogo }}>
                 {c.negocio}
-                {c.tipo === "pessoa" && <span className="text-xs ml-2 px-1.5 py-0.5 rounded align-middle font-semibold" style={{ background: "#F5EDD9", color: CORES.dourado, fontFamily: "sans-serif" }}>mentorado</span>}
-              </div>
-              <div className="text-sm" style={{ color: "#8A7A5C" }}>{c.segmento}</div>
+              </h3>
+              {c.tipo === "pessoa" && <span className="text-xs px-2 py-1 rounded inline-block mb-2 font-semibold" style={{ background: `rgba(200, 86, 86, 0.1)`, color: CORES.fogo, fontFamily: "sans-serif" }}>📌 Mentorado</span>}
+              <p className="text-sm" style={{ color: "#A0826D" }}>{c.segmento}</p>
               <BadgesFrentes gestao={gestaoPorCliente[c.id]} />
             </div>
           ))}
