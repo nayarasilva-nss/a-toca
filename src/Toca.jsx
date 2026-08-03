@@ -2454,12 +2454,12 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
         </div>
       )}
       {clientes.length > 0 && <RelogioWeasley clientes={clientes} fases={fases} onAbrir={onAbrir} />}
-      <div className="flex items-baseline justify-between mb-6">
+      <div className="flex items-end justify-between mb-8 pb-6 border-b" style={{ borderColor: `rgba(139, 58, 58, 0.1)` }}>
         <div className="flex-1">
-          <h1 className="font-serif text-3xl font-bold" style={{ color: CORES.fogo, marginBottom: "0.5rem" }}>Meus Clientes</h1>
-          <p className="text-sm" style={{ color: "#A0826D" }}>cada um com sua toca particular</p>
+          <h1 className="font-serif text-4xl font-bold" style={{ color: CORES.fogo, marginBottom: "0.5rem" }}>Meus Clientes</h1>
+          <p className="text-base" style={{ color: "#A0826D" }}>📍 cada um com sua toca particular</p>
         </div>
-        <BotaoPrimario onClick={onNovo} style={{ whiteSpace: "nowrap" }}>+ Novo cliente</BotaoPrimario>
+        <BotaoPrimario onClick={onNovo} style={{ whiteSpace: "nowrap", fontSize: "1rem", padding: "0.75rem 1.5rem" }}>✨ Novo cliente</BotaoPrimario>
       </div>
       {clientes.length === 0 ? (
         <div className="text-center py-16 rounded-lg" style={{ background: "#FFFBF0", border: `2px dashed ${CORES.dourado}` }}>
@@ -2468,28 +2468,43 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
           <p className="text-xs mt-4" style={{ color: "#8A7A5C" }}>Cadastre o primeiro cliente para começar a gerar documentos.</p>
         </div>
       ) : (
-        <div className="grid gap-4">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {clientes.map((c) => (
             <div
               key={c.id}
               onClick={() => onAbrir(c.id)}
-              className="text-left p-6 rounded-lg cursor-pointer relative"
-              style={{ background: "#FFFBF0", border: `2px solid ${CORES.dourado}`, boxShadow: `0 2px 8px rgba(139, 58, 58, 0.1)`, transition: "all 0.2s", hoverTransform: "translateY(-2px)", hoverBoxShadow: `0 8px 16px rgba(139, 58, 58, 0.15)` }}
+              className="text-left p-6 rounded-lg cursor-pointer relative group"
+              style={{ background: "#FFFBF0", border: `2px solid ${CORES.dourado}`, boxShadow: `0 2px 8px rgba(139, 58, 58, 0.1)`, transition: "all 0.3s ease" }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = `0 8px 16px rgba(139, 58, 58, 0.2)`;
+                e.currentTarget.style.transform = "translateY(-4px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = `0 2px 8px rgba(139, 58, 58, 0.1)`;
+                e.currentTarget.style.transform = "translateY(0)";
+              }}
             >
-              <span className="absolute top-3 right-3" onClick={(e) => e.stopPropagation()}>
+              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
                 <ConfirmarAcao
                   rotulo="✕"
                   aviso={`apaga ${c.negocio} e TODOS os seus dados`}
                   onConfirmar={() => onExcluir(c.id)}
-                  classe="text-xs px-1.5 py-0.5 rounded"
+                  classe="text-sm px-2 py-1 rounded font-semibold"
+                  style={{ color: CORES.fogo, background: "rgba(139, 58, 58, 0.1)" }}
                 />
-              </span>
-              <h3 className="font-serif text-xl font-bold pr-8 mb-1" style={{ color: CORES.fogo }}>
-                {c.negocio}
-              </h3>
-              {c.tipo === "pessoa" && <span className="text-xs px-2 py-1 rounded inline-block mb-2 font-semibold" style={{ background: `rgba(200, 86, 86, 0.1)`, color: CORES.fogo, fontFamily: "sans-serif" }}>📌 Mentorado</span>}
-              <p className="text-sm" style={{ color: "#A0826D" }}>{c.segmento}</p>
-              <BadgesFrentes gestao={gestaoPorCliente[c.id]} />
+              </div>
+              <div className="pr-10">
+                <h3 className="font-serif text-2xl font-bold mb-2" style={{ color: CORES.fogo }}>
+                  {c.negocio}
+                </h3>
+                {c.tipo === "pessoa" && <span className="text-xs px-3 py-1 rounded inline-block mb-3 font-semibold" style={{ background: `rgba(139, 58, 58, 0.15)`, color: CORES.fogo }}>📌 Mentorado</span>}
+                <p className="text-sm mb-4 leading-relaxed" style={{ color: "#A0826D" }}>
+                  {c.segmento}
+                </p>
+              </div>
+              <div className="mt-4 pt-4 border-t" style={{ borderColor: "rgba(139, 58, 58, 0.1)" }}>
+                <BadgesFrentes gestao={gestaoPorCliente[c.id]} />
+              </div>
             </div>
           ))}
         </div>
