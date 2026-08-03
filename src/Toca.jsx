@@ -2635,17 +2635,17 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
     </button>
   );
   return (
-    <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+    <div className="max-w-3xl mx-auto mt-8 px-8 pb-20">
+      <button onClick={onVoltar} className="text-xs mb-6 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← Todos os clientes
       </button>
-      <div className="flex items-baseline justify-between mb-1">
-        <h1 className="font-serif text-2xl" style={{ color: CORES.fogo }}>{cliente.negocio}</h1>
+      <div className="flex items-baseline justify-between mb-2">
+        <h1 className="font-serif text-3xl font-bold" style={{ color: CORES.fogo }}>{cliente.negocio}</h1>
         <button onClick={onEditarCliente} className="text-xs underline" style={{ color: CORES.dourado }}>
           Editar dados
         </button>
       </div>
-      <div className="text-sm mb-6" style={{ color: "#8A7A5C" }}>{cliente.segmento}</div>
+      <div className="text-sm mb-8" style={{ color: "#8A7A5C" }}>{cliente.segmento}</div>
 
       {(metasAceitas || []).filter((m) => m.objetivo).length > 0 && (
         <div className="mb-4 px-4 py-3 rounded-lg" style={{ background: "#F5EDD9", border: "1px solid #D4AF37AA" }}>
@@ -2659,7 +2659,7 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
       )}
 
       {(servicosCliente.treinamentos || servicosCliente.mentoria) && (
-        <div className="grid sm:grid-cols-2 gap-3 mb-4">
+        <div className="grid sm:grid-cols-2 gap-4 mb-8">
           {servicosCliente.treinamentos && (
             <button onClick={() => onModulo("treinamentos")} className="objeto text-left p-4 rounded-lg shadow-sm" className="card">
               <div className="font-serif" style={{ color: CORES.fogo }}>Treinamentos</div>
@@ -2703,10 +2703,10 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
       </button>
 
       {(servicosCliente.consultoria || ehPessoa) && (
-      <div className="mb-8">
-        <div className="font-serif text-lg mb-1" style={{ color: CORES.fogo }}>{ehPessoa ? "Ala do Mentorado" : "Ala do Contratante"}</div>
+      <div className="mb-10">
+        <div className="font-serif text-lg font-bold mb-2" style={{ color: CORES.fogo }}>{ehPessoa ? "Ala do Mentorado" : "Ala do Contratante"}</div>
         <div className="text-xs mb-3" style={{ color: "#A89878" }}>{ehPessoa ? "A pessoa, o combinado e o entorno — mapeie também quem ela lidera" : "A pessoa e a relação — de quem contrata ao que foi combinado"}</div>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           {alaContratante.map((chave) => (
             <Cartao key={chave} chave={chave} />
           ))}
@@ -2715,15 +2715,15 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
       )}
 
       {servicosCliente.consultoria && (
-      <div>
-        <div className="font-serif text-lg mb-1" style={{ color: CORES.fogo }}>Ala do Negócio</div>
-        <div className="text-xs mb-3" style={{ color: "#A89878" }}>A empresa, organizada por frentes de trabalho</div>
+      <div className="mb-10">
+        <div className="font-serif text-lg font-bold mb-2" style={{ color: CORES.fogo }}>Ala do Negócio</div>
+        <div className="text-xs mb-6" style={{ color: "#A89878" }}>A empresa, organizada por frentes de trabalho</div>
         {alaNegocio.map((grupo) => (
-          <div key={grupo.frente} className="mb-4">
+          <div key={grupo.frente} className="mb-6">
             <div className="text-xs uppercase tracking-widest font-semibold mb-2" style={{ color: CORES.dourado }}>
               {grupo.frente}
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               {grupo.chaves.map((chave) => (
                 <Cartao key={chave} chave={chave} compacto />
               ))}
