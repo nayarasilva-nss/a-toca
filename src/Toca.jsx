@@ -2454,19 +2454,19 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
         </div>
       )}
       {clientes.length > 0 && (
-        <div className="mb-20 pb-16 border-b" style={{ borderColor: `rgba(139, 58, 58, 0.1)` }}>
+        <div className="mb-32 pb-24 border-b-4" style={{ borderColor: `rgba(139, 58, 58, 0.25)` }}>
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-xs uppercase tracking-widest font-semibold mb-6" style={{ color: "#A0826D" }}>📍 Engajamento</h2>
+            <h2 className="text-sm uppercase tracking-widest font-bold mb-8" style={{ color: "#8B3A3A" }}>📍 Engajamento</h2>
             <RelogioWeasley clientes={clientes} fases={fases} onAbrir={onAbrir} />
           </div>
         </div>
       )}
-      <div className="mt-0 pt-12 mb-12 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+      <div className="mt-0 pt-20 mb-16 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-12">
         <div className="flex-1">
-          <h1 className="font-serif text-4xl font-bold mb-2" style={{ color: CORES.fogo }}>Meus Clientes</h1>
-          <p className="text-sm" style={{ color: "#A0826D" }}>📍 cada um com sua toca particular</p>
+          <h1 className="font-serif text-5xl font-bold mb-3" style={{ color: CORES.fogo }}>Meus Clientes</h1>
+          <p className="text-base" style={{ color: "#A0826D" }}>📍 cada um com sua toca particular</p>
         </div>
-        <BotaoPrimario onClick={onNovo} style={{ whiteSpace: "nowrap", fontSize: "0.95rem", padding: "0.75rem 1.5rem" }}>✨ Novo cliente</BotaoPrimario>
+        <BotaoPrimario onClick={onNovo} style={{ whiteSpace: "nowrap", fontSize: "1rem", padding: "0.85rem 2rem" }}>✨ Novo cliente</BotaoPrimario>
       </div>
       {clientes.length === 0 ? (
         <div className="text-center py-16 rounded-lg" style={{ background: "#FFFBF0", border: `2px dashed ${CORES.dourado}` }}>
@@ -2475,13 +2475,13 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
           <p className="text-xs mt-4" style={{ color: "#8A7A5C" }}>Cadastre o primeiro cliente para começar a gerar documentos.</p>
         </div>
       ) : (
-        <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl">
+        <div className="mt-16 grid gap-12 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl">
           {clientes.map((c) => (
             <div
               key={c.id}
               onClick={() => onAbrir(c.id)}
-              className="text-left p-8 rounded-lg cursor-pointer relative group hover:shadow-lg"
-              style={{ background: "#FFFBF0", border: `2px solid ${CORES.dourado}`, boxShadow: `0 4px 12px rgba(139, 58, 58, 0.12)`, transition: "all 0.3s ease" }}
+              className="text-left p-10 rounded-lg cursor-pointer relative group hover:shadow-lg"
+              style={{ background: "#FFFBF0", border: `3px solid ${CORES.dourado}`, boxShadow: `0 6px 16px rgba(139, 58, 58, 0.15)`, transition: "all 0.3s ease" }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = `0 8px 16px rgba(139, 58, 58, 0.2)`;
                 e.currentTarget.style.transform = "translateY(-4px)";
@@ -2501,22 +2501,22 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
                 />
               </div>
               <div className="pr-10">
-                <h3 className="font-serif text-2xl font-bold mb-3" style={{ color: CORES.fogo }}>
+                <h3 className="font-serif text-3xl font-bold mb-4" style={{ color: CORES.fogo }}>
                   {c.negocio}
                 </h3>
-                {c.tipo === "pessoa" && <span className="text-xs px-3 py-1 rounded inline-block mb-4 font-semibold" style={{ background: `rgba(139, 58, 58, 0.15)`, color: CORES.fogo }}>📌 Mentorado</span>}
-                <p className="text-sm mb-6 leading-relaxed" style={{ color: "#A0826D" }}>
+                {c.tipo === "pessoa" && <span className="text-sm px-4 py-2 rounded inline-block mb-5 font-semibold" style={{ background: `rgba(139, 58, 58, 0.15)`, color: CORES.fogo }}>📌 Mentorado</span>}
+                <p className="text-base mb-8 leading-relaxed" style={{ color: "#A0826D" }}>
                   {c.segmento}
                 </p>
               </div>
-              <div className="mt-6 pt-6 border-t" style={{ borderColor: "rgba(139, 58, 58, 0.1)" }}>
+              <div className="mt-8 pt-8 border-t-2" style={{ borderColor: "rgba(139, 58, 58, 0.2)" }}>
                 <BadgesFrentes gestao={gestaoPorCliente[c.id]} />
               </div>
             </div>
           ))}
         </div>
       )}
-      <div className="mt-16 pt-8 border-t flex items-center gap-4 text-xs" style={{ borderColor: "#E8DFC9", color: "#A89878" }}>
+      <div className="mt-24 pt-12 border-t-4 flex items-center gap-6 text-sm" style={{ borderColor: "#D4AF37", color: "#8B3A3A" }}>
         <span>O Vira-Tempo da Toca — seus dados vivem neste app:</span>
         <button onClick={onExportarBackup} className="underline" style={{ color: CORES.dourado }}>
           Exportar backup (.json)
@@ -2635,17 +2635,17 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
     </button>
   );
   return (
-    <div className="max-w-3xl mx-auto mt-8 px-8 pb-20">
-      <button onClick={onVoltar} className="text-xs mb-6 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+    <div className="max-w-3xl mx-auto mt-8 px-10 pb-32">
+      <button onClick={onVoltar} className="text-sm mb-10 uppercase font-bold" style={{ color: "#8B3A3A", letterSpacing: 2 }}>
         ← Todos os clientes
       </button>
-      <div className="flex items-baseline justify-between mb-2">
-        <h1 className="font-serif text-3xl font-bold" style={{ color: CORES.fogo }}>{cliente.negocio}</h1>
-        <button onClick={onEditarCliente} className="text-xs underline" style={{ color: CORES.dourado }}>
+      <div className="flex items-baseline justify-between mb-4">
+        <h1 className="font-serif text-4xl font-bold" style={{ color: CORES.fogo }}>{cliente.negocio}</h1>
+        <button onClick={onEditarCliente} className="text-sm underline" style={{ color: CORES.dourado }}>
           Editar dados
         </button>
       </div>
-      <div className="text-sm mb-8" style={{ color: "#8A7A5C" }}>{cliente.segmento}</div>
+      <div className="text-base mb-12" style={{ color: "#8A7A5C" }}>{cliente.segmento}</div>
 
       {(metasAceitas || []).filter((m) => m.objetivo).length > 0 && (
         <div className="mb-4 px-4 py-3 rounded-lg" style={{ background: "#F5EDD9", border: "1px solid #D4AF37AA" }}>
@@ -2659,7 +2659,7 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
       )}
 
       {(servicosCliente.treinamentos || servicosCliente.mentoria) && (
-        <div className="grid sm:grid-cols-2 gap-4 mb-8">
+        <div className="grid sm:grid-cols-2 gap-6 mb-12">
           {servicosCliente.treinamentos && (
             <button onClick={() => onModulo("treinamentos")} className="objeto text-left p-4 rounded-lg shadow-sm" className="card">
               <div className="font-serif" style={{ color: CORES.fogo }}>Treinamentos</div>
