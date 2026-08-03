@@ -2453,13 +2453,20 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
           <button onClick={onCancelarBackup} className="text-xs underline" style={{ color: "#8A7A5C" }}>Cancelar</button>
         </div>
       )}
-      {clientes.length > 0 && <RelogioWeasley clientes={clientes} fases={fases} onAbrir={onAbrir} />}
-      <div className="flex items-end justify-between mb-8 pb-6 border-b" style={{ borderColor: `rgba(139, 58, 58, 0.1)` }}>
-        <div className="flex-1">
-          <h1 className="font-serif text-4xl font-bold" style={{ color: CORES.fogo, marginBottom: "0.5rem" }}>Meus Clientes</h1>
-          <p className="text-base" style={{ color: "#A0826D" }}>📍 cada um com sua toca particular</p>
+      {clientes.length > 0 && (
+        <div className="mb-20 pb-16 border-b" style={{ borderColor: `rgba(139, 58, 58, 0.1)` }}>
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-xs uppercase tracking-widest font-semibold mb-6" style={{ color: "#A0826D" }}>📍 Engajamento</h2>
+            <RelogioWeasley clientes={clientes} fases={fases} onAbrir={onAbrir} />
+          </div>
         </div>
-        <BotaoPrimario onClick={onNovo} style={{ whiteSpace: "nowrap", fontSize: "1rem", padding: "0.75rem 1.5rem" }}>✨ Novo cliente</BotaoPrimario>
+      )}
+      <div className="mt-0 pt-12 mb-12 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+        <div className="flex-1">
+          <h1 className="font-serif text-4xl font-bold mb-2" style={{ color: CORES.fogo }}>Meus Clientes</h1>
+          <p className="text-sm" style={{ color: "#A0826D" }}>📍 cada um com sua toca particular</p>
+        </div>
+        <BotaoPrimario onClick={onNovo} style={{ whiteSpace: "nowrap", fontSize: "0.95rem", padding: "0.75rem 1.5rem" }}>✨ Novo cliente</BotaoPrimario>
       </div>
       {clientes.length === 0 ? (
         <div className="text-center py-16 rounded-lg" style={{ background: "#FFFBF0", border: `2px dashed ${CORES.dourado}` }}>
