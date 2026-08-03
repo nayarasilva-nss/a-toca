@@ -2443,7 +2443,7 @@ function BadgesFrentes({ gestao }) {
 
 function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAplicarBackup, onCancelarBackup, onAbrir, onNovo, onExcluir, onExportarBackup, onImportarBackup }) {
   return (
-    <div className="max-w-3xl mx-auto mt-10 px-6">
+    <div className="max-w-6xl mx-auto mt-12 px-8 pb-16">
       {backupPendente && (
         <div className="mb-6 p-4 rounded-lg flex items-center gap-3 flex-wrap" style={{ background: "#F5EDD9", border: "2px solid #D4AF37AA" }}>
           <span className="text-sm" style={{ color: CORES.fogoEscuro }}>
