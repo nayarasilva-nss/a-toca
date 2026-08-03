@@ -2468,13 +2468,13 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
           <p className="text-xs mt-4" style={{ color: "#8A7A5C" }}>Cadastre o primeiro cliente para começar a gerar documentos.</p>
         </div>
       ) : (
-        <div className="grid gap-3">
+        <div className="grid gap-4">
           {clientes.map((c) => (
             <div
               key={c.id}
               onClick={() => onAbrir(c.id)}
-              className="objeto text-left p-5 rounded-lg shadow-sm cursor-pointer relative"
-              className="card"
+              className="text-left p-6 rounded-lg cursor-pointer relative"
+              style={{ background: "#FFFBF0", border: `2px solid ${CORES.dourado}`, boxShadow: `0 2px 8px rgba(139, 58, 58, 0.1)`, transition: "all 0.2s", hoverTransform: "translateY(-2px)", hoverBoxShadow: `0 8px 16px rgba(139, 58, 58, 0.15)` }}
             >
               <span className="absolute top-3 right-3" onClick={(e) => e.stopPropagation()}>
                 <ConfirmarAcao
