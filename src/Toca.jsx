@@ -2475,13 +2475,13 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
           <p className="text-xs mt-4" style={{ color: "#8A7A5C" }}>Cadastre o primeiro cliente para começar a gerar documentos.</p>
         </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl">
           {clientes.map((c) => (
             <div
               key={c.id}
               onClick={() => onAbrir(c.id)}
-              className="text-left p-6 rounded-lg cursor-pointer relative group"
-              style={{ background: "#FFFBF0", border: `2px solid ${CORES.dourado}`, boxShadow: `0 2px 8px rgba(139, 58, 58, 0.1)`, transition: "all 0.3s ease" }}
+              className="text-left p-8 rounded-lg cursor-pointer relative group hover:shadow-lg"
+              style={{ background: "#FFFBF0", border: `2px solid ${CORES.dourado}`, boxShadow: `0 4px 12px rgba(139, 58, 58, 0.12)`, transition: "all 0.3s ease" }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = `0 8px 16px rgba(139, 58, 58, 0.2)`;
                 e.currentTarget.style.transform = "translateY(-4px)";
@@ -2501,22 +2501,22 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
                 />
               </div>
               <div className="pr-10">
-                <h3 className="font-serif text-2xl font-bold mb-2" style={{ color: CORES.fogo }}>
+                <h3 className="font-serif text-2xl font-bold mb-3" style={{ color: CORES.fogo }}>
                   {c.negocio}
                 </h3>
-                {c.tipo === "pessoa" && <span className="text-xs px-3 py-1 rounded inline-block mb-3 font-semibold" style={{ background: `rgba(139, 58, 58, 0.15)`, color: CORES.fogo }}>📌 Mentorado</span>}
-                <p className="text-sm mb-4 leading-relaxed" style={{ color: "#A0826D" }}>
+                {c.tipo === "pessoa" && <span className="text-xs px-3 py-1 rounded inline-block mb-4 font-semibold" style={{ background: `rgba(139, 58, 58, 0.15)`, color: CORES.fogo }}>📌 Mentorado</span>}
+                <p className="text-sm mb-6 leading-relaxed" style={{ color: "#A0826D" }}>
                   {c.segmento}
                 </p>
               </div>
-              <div className="mt-4 pt-4 border-t" style={{ borderColor: "rgba(139, 58, 58, 0.1)" }}>
+              <div className="mt-6 pt-6 border-t" style={{ borderColor: "rgba(139, 58, 58, 0.1)" }}>
                 <BadgesFrentes gestao={gestaoPorCliente[c.id]} />
               </div>
             </div>
           ))}
         </div>
       )}
-      <div className="mt-10 pt-4 border-t flex items-center gap-4 text-xs" style={{ borderColor: "#E8DFC9", color: "#A89878" }}>
+      <div className="mt-16 pt-8 border-t flex items-center gap-4 text-xs" style={{ borderColor: "#E8DFC9", color: "#A89878" }}>
         <span>O Vira-Tempo da Toca — seus dados vivem neste app:</span>
         <button onClick={onExportarBackup} className="underline" style={{ color: CORES.dourado }}>
           Exportar backup (.json)
