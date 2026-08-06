@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Lora:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "Lora", serif;
+  background: #FFFBF0;
+  color: #3C181E;
+  line-height: 1.6;
+}
+.dv-turn { padding: 40px 44px 32px; border-bottom: 1px solid rgba(60, 24, 30, 0.1); scroll-margin-top: 16px; }
+.dv-thd { display: flex; align-items: baseline; gap: 10px; margin: 0 0 20px; }
+.dv-tid { font: 600 10px ui-monospace; padding: 3px 7px; background: #1a1a1a; color: #fff; border-radius: 4px; text-decoration: none; }
+.dv-tname { font: 600 13px/1.2 "Lora"; color: #1a1a1a; }
+.dv-opts { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+.dv-opt { flex: none; display: flex; flex-direction: column; gap: 9px; scroll-margin-top: 16px; }
+.dv-oid { font: 600 10.5px ui-monospace; padding: 3px 7px; background: rgba(60, 24, 30, 0.1); color: #1a1a1a; border-radius: 5px; text-decoration: none; }
+.dv-card { background: #fff; border: 1px solid rgba(60, 24, 30, 0.08); border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden; }
+.dv-opt:target .dv-oid { background: #5C1A2B; color: #fff; }
+.dv-next { margin: 22px 0 0; font: 12px/1.5 "Lora"; color: rgba(60, 24, 30, 0.6); }
+a.dv-oid { cursor: pointer; }
+</style>
+</helmet>
+
+<!-- TURN 1: ONBOARDING + DASHBOARD -->
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Onboarding: Novo Cliente</span></div>
+<div class="dv-opts">
+
+<!-- 1a: Tela de Login -->
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a> Tela de Entrada</div>
+<div class="dv-card" style="width: 420px;">
+<div style="padding: 48px 32px; text-align: center; background: linear-gradient(180deg, rgba(60, 24, 30, 0.02) 0%, rgba(217, 145, 79, 0.05) 100%);">
+  <div style="font-family: 'Crimson Text'; font-size: 48px; font-weight: 800; letter-spacing: 4px; background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;">A TOCA</div>
+  <div style="font-size: 12px; letter-spacing: 2px; color: #8B6F47; text-transform: uppercase; margin-bottom: 48px;">Central de Governança</div>
+  
+  <div style="text-align: left; display: flex; flex-direction: column; gap: 16px;">
+    <div>
+      <label style="display: block; font-size: 11px; letter-spacing: 1px; color: #D4AF37; text-transform: uppercase; margin-bottom: 6px; font-weight: 600;">E-mail</label>
+      <input type="email" placeholder="nayara@" style="width: 100%; padding: 10px 12px; border: 1px solid #D9914F; border-radius: 4px; font-family: 'Lora'; font-size: 13px; background: #FFFBF0; color: #3C181E; outline: none;">
+    </div>
+    <div>
+      <label style="display: block; font-size: 11px; letter-spacing: 1px; color: #D4AF37; text-transform: uppercase; margin-bottom: 6px; font-weight: 600;">Senha</label>
+      <input type="password" placeholder="••••••••" style="width: 100%; padding: 10px 12px; border: 1px solid #D9914F; border-radius: 4px; font-family: 'Lora'; font-size: 13px; background: #FFFBF0; color: #3C181E; outline: none;">
+    </div>
+    <button style="margin-top: 12px; padding: 12px; background: #5C1A2B; color: #fff; border: none; border-radius: 4px; font-family: 'Lora'; font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: 1px;">ENTRAR</button>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- 1b: Novo Cliente - Dados Básicos -->
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a> Dados do Cliente</div>
+<div class="dv-card" style="width: 440px;">
+<div style="padding: 32px; border-bottom: 1px solid rgba(60, 24, 30, 0.08); background: linear-gradient(180deg, rgba(217, 145, 79, 0.08) 0%, rgba(245, 237, 217, 0.4) 100%);">
+  <div style="font-size: 18px; font-weight: 600; color: #5C1A2B; margin-bottom: 4px;">Novo Engajamento</div>
+  <div style="font-size: 12px; color: #8B6F47;">Preencha os dados básicos do cliente</div>
+</div>
+<div style="padding: 28px;">
+  <div style="margin-bottom: 18px;">
+    <label style="display: block; font-size: 11px; letter-spacing: 1px; color: #D4AF37; text-transform: uppercase; margin-bottom: 6px; font-weight: 600;">Nome do Negócio</label>
+    <input type="text" placeholder="Ex.: Restaurante da Dona Maria" style="width: 100%; padding: 10px 12px; border: 1px solid #D9914F; border-radius: 4px; font-family: 'Lora'; font-size: 13px; background: #FFFBF0; color: #3C181E;">
+  </div>
+  <div style="margin-bottom: 18px;">
+    <label style="display: block; font-size: 11px; letter-spacing: 1px; color: #D4AF37; text-transform: uppercase; margin-bottom: 6px; font-weight: 600;">Segmento</label>
+    <input type="text" placeholder="Ex.: Food Service / Restaurante" style="width: 100%; padding: 10px 12px; border: 1px solid #D9914F; border-radius: 4px; font-family: 'Lora'; font-size: 13px; background: #FFFBF0; color: #3C181E;">
+  </div>
+  <div style="margin-bottom: 18px;">
+    <label style="display: block; font-size: 11px; letter-spacing: 1px; color: #D4AF37; text-transform: uppercase; margin-bottom: 6px; font-weight: 600;">Setores/Áreas</label>
+    <input type="text" placeholder="Ex.: Cozinha, Salão, Administrativo" style="width: 100%; padding: 10px 12px; border: 1px solid #D9914F; border-radius: 4px; font-family: 'Lora'; font-size: 13px; background: #FFFBF0; color: #3C181E;">
+  </div>
+  <div style="margin-bottom: 18px;">
+    <label style="display: block; font-size: 11px; letter-spacing: 1px; color: #D4AF37; text-transform: uppercase; margin-bottom: 6px; font-weight: 600;">Contexto e Dores (resumo)</label>
+    <textarea placeholder="O que o dono relatou na primeira conversa? Qual é a maior dor agora?" style="width: 100%; padding: 10px 12px; border: 1px solid #D9914F; border-radius: 4px; font-family: 'Lora'; font-size: 13px; background: #FFFBF0; color: #3C181E; rows: 3; min-height: 80px; resize: vertical;"></textarea>
+  </div>
+  <button style="width: 100%; padding: 12px; background: #5C1A2B; color: #fff; border: none; border-radius: 4px; font-family: 'Lora'; font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: 1px;">CONTINUAR</button>
+</div>
+</div>
+</div>
+
+<!-- 1c: Briefing e Frentes -->
+<div class="dv-opt" id="1c">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a> Briefing + Frentes</div>
+<div class="dv-card" style="width: 480px;">
+<div style="padding: 28px; border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+  <div style="font-size: 16px; font-weight: 600; color: #5C1A2B; margin-bottom: 4px;">Briefing da Consultoria</div>
+  <div style="font-size: 12px; color: #8B6F47;">Anotações da reunião inicial com o dono</div>
+</div>
+<div style="padding: 28px;">
+  <textarea placeholder="O que o dono quer? Quais são as prioridades? Qual é a disposição para mudança?" style="width: 100%; padding: 12px; border: 1px solid #D9914F; border-radius: 4px; font-family: 'Lora'; font-size: 13px; background: #FFFBF0; color: #3C181E; min-height: 120px; resize: vertical;"></textarea>
+  
+  <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(60, 24, 30, 0.08);">
+    <div style="font-size: 13px; font-weight: 600; color: #5C1A2B; margin-bottom: 12px;">Frentes Abertas (selecione)</div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;">
+        <input type="checkbox" checked style="accent-color: #5C1A2B; cursor: pointer;">
+        <span>Pessoas (descrições de cargo, estrutura, seleção)</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;">
+        <input type="checkbox" checked style="accent-color: #5C1A2B; cursor: pointer;">
+        <span>Processos Operacionais (POPs, fluxos, checklists)</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;">
+        <input type="checkbox" style="accent-color: #5C1A2B; cursor: pointer;">
+        <span>Governança e Papéis (alçadas, ritos, organograma)</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;">
+        <input type="checkbox" style="accent-color: #5C1A2B; cursor: pointer;">
+        <span>Disciplina e Cultura (manual, tabela disciplinar)</span>
+      </label>
+    </div>
+  </div>
+  
+  <button style="width: 100%; padding: 12px; margin-top: 24px; background: #5C1A2B; color: #fff; border: none; border-radius: 4px; font-family: 'Lora'; font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: 1px;">CRIAR ENGAJAMENTO</button>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Próximos passos: "mostrar dashboard com plano de ação" · "mostrar campos de trabalho" · "mostrar diagnóstico de maturidade"</p>
+</section>
+
+<!-- TURN 2: DASHBOARD + PLANO DE AÇÃO -->
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Dashboard Principal</span></div>
+<div class="dv-opts">
+
+<!-- 2a: Dashboard Overview -->
+<div class="dv-opt" id="2a">
+<div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a> Visão Geral</div>
+<div class="dv-card" style="width: 900px;">
+<div style="padding: 24px 32px; background: linear-gradient(180deg, rgba(60, 24, 30, 0.96) 0%, rgba(75, 36, 40, 0.92) 100%); border-bottom: 4px solid #B8860B; display: flex; justify-content: space-between; align-items: center;">
+  <div>
+    <div style="font-family: 'Crimson Text'; font-size: 32px; font-weight: 800; letter-spacing: 3px; background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px;">A TOCA</div>
+    <div style="font-size: 11px; letter-spacing: 2px; color: #A0826D; text-transform: uppercase;">Restaurante da Dona Maria · Food Service</div>
+  </div>
+  <div style="text-align: right; display: flex; align-items: center; gap: 20px;">
+    <div>
+      <div style="font-size: 11px; color: #A0826D; text-transform: uppercase; letter-spacing: 1px;">Semana 4 de 12</div>
+      <div style="font-size: 24px; font-weight: 600; color: #D4AF37; margin-top: 4px;">33%</div>
+    </div>
+    <svg width="80" height="80" viewBox="0 0 80 80" style="flex-shrink: 0;">
+      <!-- Relógio dos Weasley -->
+      <circle cx="40" cy="40" r="38" fill="#FFFBF0" stroke="#8B6F47" stroke-width="2"/>
+      <circle cx="40" cy="40" r="35" fill="none" stroke="#D4AF37" stroke-width="1" opacity="0.5"/>
+      
+      <!-- Centro -->
+      <circle cx="40" cy="40" r="4" fill="#8B6F47"/>
+      
+      <!-- Ponteiros -->
+      <line x1="40" y1="40" x2="40" y2="18" stroke="#5C1A2B" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="40" y1="40" x2="52" y2="40" stroke="#8B6F47" stroke-width="2" stroke-linecap="round"/>
+      
+      <!-- Números (símbolos de status) -->
+      <g style="font-family: 'Lora'; font-size: 10px; fill: #5C1A2B; font-weight: 600; text-anchor: middle;">
+        <text x="40" y="15">P</text>
+        <text x="65" y="45">A</text>
+        <text x="40" y="67">G</text>
+        <text x="15" y="45">D</text>
+      </g>
+      <g style="font-family: 'Lora'; font-size: 8px; fill: #8B6F47; text-anchor: middle;">
+        <text x="56" y="22">Pessoas</text>
+        <text x="68" y="38">Ação</text>
+        <text x="57" y="60">Geral</text>
+        <text x="12" y="38">Docs</text>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<div style="padding: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+  <!-- Frentes -->
+  <div>
+    <div style="font-size: 13px; font-weight: 600; color: #5C1A2B; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">Frentes Abertas</div>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div style="padding: 12px; background: #F5EDD9; border-left: 4px solid #9A6A2F; border-radius: 2px;">
+        <div style="font-size: 12px; font-weight: 600; color: #3C181E;">Pessoas</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Em andamento · 6 ações</div>
+      </div>
+      <div style="padding: 12px; background: #F2E3CB; border-left: 4px solid #9A6A2F; border-radius: 2px;">
+        <div style="font-size: 12px; font-weight: 600; color: #3C181E;">Processos Operacionais</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Não iniciada · 8 ações</div>
+      </div>
+      <div style="padding: 12px; background: #E3EBD8; border-left: 4px solid #4F6B3A; border-radius: 2px;">
+        <div style="font-size: 12px; font-weight: 600; color: #3C181E;">Disciplina e Cultura</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Formalizada · 5 ações</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Próximas Ações -->
+  <div>
+    <div style="font-size: 13px; font-weight: 600; color: #5C1A2B; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">Próximas Ações (Esta Semana)</div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div style="padding: 10px 12px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+        <div style="font-size: 12px; color: #3C181E;"><strong>Gerar Descrições de Cargo</strong> — Pessoas</div>
+        <div style="font-size: 11px; color: #8B6F47; margin-top: 2px;">Prazo: sexta-feira</div>
+      </div>
+      <div style="padding: 10px 12px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+        <div style="font-size: 12px; color: #3C181E;"><strong>Visita Técnica ao Salão</strong> — Campo</div>
+        <div style="font-size: 11px; color: #8B6F47; margin-top: 2px;">Prazo: quarta-feira</div>
+      </div>
+      <div style="padding: 10px 12px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+        <div style="font-size: 12px; color: #3C181E;"><strong>Entrevistar Gerente</strong> — Campo</div>
+        <div style="font-size: 11px; color: #8B6F47; margin-top: 2px;">Prazo: próxima semana</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="padding: 0 32px 24px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+  <button style="padding: 12px; background: #5C1A2B; color: #fff; border: none; border-radius: 4px; font-family: 'Lora'; font-size: 12px; font-weight: 600; cursor: pointer; letter-spacing: 0.5px;">+ NOVO REGISTRO DE CAMPO</button>
+  <button style="padding: 12px; background: transparent; color: #5C1A2B; border: 1px solid #5C1A2B; border-radius: 4px; font-family: 'Lora'; font-size: 12px; font-weight: 600; cursor: pointer;">VER CRONOGRAMA</button>
+  <button style="padding: 12px; background: transparent; color: #5C1A2B; border: 1px solid #5C1A2B; border-radius: 4px; font-family: 'Lora'; font-size: 12px; font-weight: 600; cursor: pointer;">GERAR PROPOSTA</button>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- TURN 3: MÓDULOS DE TRABALHO -->
+<section class="dv-turn" id="t3">
+<div class="dv-thd"><a class="dv-tid" href="#t3">3</a><span class="dv-tname">Módulos: Plano de Ação, Campo, Mentoria</span></div>
+<div class="dv-opts">
+
+<!-- 3a: Plano de Ação (Frentes) -->
+<div class="dv-opt" id="3a">
+<div class="dv-olabel"><a class="dv-oid" href="#3a">3a</a> Plano de Ação</div>
+<div class="dv-card" style="width: 500px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Plano de Ação</div>
+</div>
+<div style="padding: 20px 24px;">
+  <div style="margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Pessoas</div>
+      <div style="font-size: 11px; color: #fff; background: #9A6A2F; padding: 2px 8px; border-radius: 12px;">Em andamento</div>
+    </div>
+    <div style="font-size: 12px; color: #6B5D4F; margin-bottom: 12px;">Mapear funções reais, descrever cargos, estruturar organograma.</div>
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+        <input type="checkbox" checked style="accent-color: #5C1A2B;">
+        <span style="font-size: 11px; color: #3C181E;">Entrevistas com líderes e operação</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+        <input type="checkbox" checked style="accent-color: #5C1A2B;">
+        <span style="font-size: 11px; color: #3C181E;">Gerar descrições de cargo (IA)</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0;">
+        <input type="checkbox" style="accent-color: #5C1A2B;">
+        <span style="font-size: 11px; color: #3C181E;">Desenhar organograma final</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Processos Operacionais</div>
+      <div style="font-size: 11px; color: #fff; background: #8A7A5C; padding: 2px 8px; border-radius: 12px;">Não iniciada</div>
+    </div>
+    <div style="font-size: 12px; color: #6B5D4F; margin-bottom: 12px;">Mapear processos-chave, criar POPs e checklists.</div>
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+        <input type="checkbox" style="accent-color: #5C1A2B;">
+        <span style="font-size: 11px; color: #3C181E;">Visitas técnicas e acompanhamento de turnos</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0;">
+        <input type="checkbox" style="accent-color: #5C1A2B;">
+        <span style="font-size: 11px; color: #3C181E;">Desenhar fluxos e descrever POPs</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Disciplina e Cultura</div>
+      <div style="font-size: 11px; color: #fff; background: #4F6B3A; padding: 2px 8px; border-radius: 12px;">Formalizada</div>
+    </div>
+    <div style="font-size: 12px; color: #6B5D4F; margin-bottom: 12px;">Manual do colaborador, tabela disciplinar, políticas.</div>
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+        <input type="checkbox" checked style="accent-color: #5C1A2B;">
+        <span style="font-size: 11px; color: #3C181E;">Gerar tabela disciplinar adaptada (IA)</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0;">
+        <input type="checkbox" checked style="accent-color: #5C1A2B;">
+        <span style="font-size: 11px; color: #3C181E;">Redigir manual do colaborador</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- 3b: Campos de Trabalho -->
+<div class="dv-opt" id="3b">
+<div class="dv-olabel"><a class="dv-oid" href="#3b">3b</a> Registro de Campo</div>
+<div class="dv-card" style="width: 520px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Novo Registro — Visita Técnica</div>
+</div>
+<div style="padding: 24px;">
+  <div style="margin-bottom: 18px;">
+    <label style="display: block; font-size: 11px; letter-spacing: 1px; color: #D4AF37; text-transform: uppercase; margin-bottom: 6px; font-weight: 600;">Data</label>
+    <input type="date" style="width: 100%; padding: 10px 12px; border: 1px solid #D9914F; border-radius: 4px; font-family: 'Lora'; font-size: 13px; background: #FFFBF0; color: #3C181E;">
+  </div>
+
+  <div style="margin-bottom: 18px;">
+    <label style="display: block; font-size: 11px; letter-spacing: 1px; color: #D4AF37; text-transform: uppercase; margin-bottom: 6px; font-weight: 600;">Título da Visita</label>
+    <input type="text" placeholder="Ex.: Visita ao salão — rotina matutina" style="width: 100%; padding: 10px 12px; border: 1px solid #D9914F; border-radius: 4px; font-family: 'Lora'; font-size: 13px; background: #FFFBF0; color: #3C181E;">
+  </div>
+
+  <div style="margin-bottom: 18px;">
+    <label style="display: block; font-size: 11px; letter-spacing: 1px; color: #D4AF37; text-transform: uppercase; margin-bottom: 6px; font-weight: 600;">O Que Observou</label>
+    <textarea placeholder="Descreva o que viu na prática. Exemplo: chegada dos garçons, abertura das mesas, alinhamento..." style="width: 100%; padding: 10px 12px; border: 1px solid #D9914F; border-radius: 4px; font-family: 'Lora'; font-size: 13px; background: #FFFBF0; color: #3C181E; min-height: 80px;"></textarea>
+  </div>
+
+  <div style="margin-bottom: 18px;">
+    <label style="display: block; font-size: 11px; letter-spacing: 1px; color: #D4AF37; text-transform: uppercase; margin-bottom: 6px; font-weight: 600;">Informalidades Vistas</label>
+    <textarea placeholder="Que combinados verbais ou processos não documentados você viu?" style="width: 100%; padding: 10px 12px; border: 1px solid #D9914F; border-radius: 4px; font-family: 'Lora'; font-size: 13px; background: #FFFBF0; color: #3C181E; min-height: 60px;"></textarea>
+  </div>
+
+  <div style="margin-bottom: 18px;">
+    <label style="display: block; font-size: 11px; letter-spacing: 1px; color: #D4AF37; text-transform: uppercase; margin-bottom: 6px; font-weight: 600;">Riscos Observados</label>
+    <textarea placeholder="Segurança, saúde, conformidade, falta de padrão..." style="width: 100%; padding: 10px 12px; border: 1px solid #D9914F; border-radius: 4px; font-family: 'Lora'; font-size: 13px; background: #FFFBF0; color: #3C181E; min-height: 60px;"></textarea>
+  </div>
+
+  <button style="width: 100%; padding: 12px; background: #5C1A2B; color: #fff; border: none; border-radius: 4px; font-family: 'Lora'; font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: 1px;">SALVAR VISITA</button>
+</div>
+</div>
+</div>
+
+<!-- 3c: Diagnóstico de Maturidade -->
+<div class="dv-opt" id="3c">
+<div class="dv-olabel"><a class="dv-oid" href="#3c">3c</a> Diagnóstico de Maturidade</div>
+<div class="dv-card" style="width: 500px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Avaliação de Maturidade</div>
+</div>
+<div style="padding: 24px;">
+  <div style="margin-bottom: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Pessoas</div>
+      <div style="font-size: 12px; color: #fff; background: #9A6A2F; padding: 4px 12px; border-radius: 4px;">25%</div>
+    </div>
+    <div style="display: flex; gap: 8px; font-size: 11px;">
+      <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="radio" name="pessoas" style="accent-color: #5C1A2B; cursor: pointer;">
+        <span>Inexistente</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="radio" name="pessoas" checked style="accent-color: #5C1A2B; cursor: pointer;">
+        <span>Inicial</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="radio" name="pessoas" style="accent-color: #5C1A2B; cursor: pointer;">
+        <span>Definido</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="radio" name="pessoas" style="accent-color: #5C1A2B; cursor: pointer;">
+        <span>Consolidado</span>
+      </label>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Processos</div>
+      <div style="font-size: 12px; color: #fff; background: #9A6A2F; padding: 4px 12px; border-radius: 4px;">10%</div>
+    </div>
+    <div style="display: flex; gap: 8px; font-size: 11px;">
+      <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="radio" name="processos" checked style="accent-color: #5C1A2B; cursor: pointer;">
+        <span>Inexistente</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="radio" name="processos" style="accent-color: #5C1A2B; cursor: pointer;">
+        <span>Inicial</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="radio" name="processos" style="accent-color: #5C1A2B; cursor: pointer;">
+        <span>Definido</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="radio" name="processos" style="accent-color: #5C1A2B; cursor: pointer;">
+        <span>Consolidado</span>
+      </label>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Governança</div>
+      <div style="font-size: 12px; color: #fff; background: #9A6A2F; padding: 4px 12px; border-radius: 4px;">15%</div>
+    </div>
+    <div style="display: flex; gap: 8px; font-size: 11px;">
+      <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="radio" name="governanca" checked style="accent-color: #5C1A2B; cursor: pointer;">
+        <span>Inexistente</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="radio" name="governanca" style="accent-color: #5C1A2B; cursor: pointer;">
+        <span>Inicial</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="radio" name="governanca" style="accent-color: #5C1A2B; cursor: pointer;">
+        <span>Definido</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="radio" name="governanca" style="accent-color: #5C1A2B; cursor: pointer;">
+        <span>Consolidado</span>
+      </label>
+    </div>
+  </div>
+
+  <button style="width: 100%; padding: 12px; background: #5C1A2B; color: #fff; border: none; border-radius: 4px; font-family: 'Lora'; font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: 1px;">SALVAR AVALIAÇÃO</button>
+</div>
+</div>
+</div>
+
+<!-- 3d: Mentoria - Jornada -->
+<div class="dv-opt" id="3d">
+<div class="dv-olabel"><a class="dv-oid" href="#3d">3d</a> Mentoria — Jornada</div>
+<div class="dv-card" style="width: 500px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Jornada de Mentoria</div>
+  <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Mentorado: Gerente da Dona Maria</div>
+</div>
+<div style="padding: 24px;">
+  <div style="display: flex; flex-direction: column; gap: 12px;">
+    <div style="padding: 14px; background: #F5E6C8; border-left: 4px solid #9A6A2F; border-radius: 2px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+          <div style="font-size: 12px; font-weight: 600; color: #3C181E;">Encontro 1: Quem você é?</div>
+          <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Mapeamento de temperamento e padrões</div>
+        </div>
+        <div style="font-size: 10px; padding: 2px 6px; background: #fff; color: #9A6A2F; border-radius: 12px; font-weight: 600;">Realizado</div>
+      </div>
+    </div>
+
+    <div style="padding: 14px; background: #F2E3CB; border-left: 4px solid #9A6A2F; border-radius: 2px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+          <div style="font-size: 12px; font-weight: 600; color: #3C181E;">Encontro 2: O que você quer?</div>
+          <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Visão, valores, direção</div>
+        </div>
+        <div style="font-size: 10px; padding: 2px 6px; background: #fff; color: #9A6A2F; border-radius: 12px; font-weight: 600;">Próxima semana</div>
+      </div>
+    </div>
+
+    <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 2px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+          <div style="font-size: 12px; font-weight: 600; color: #3C181E;">Encontro 3: Prática + Feedback</div>
+          <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Aplicar no dia a dia, cobrar moldagem</div>
+        </div>
+        <div style="font-size: 10px; padding: 2px 6px; background: #F5E6C8; color: #9A6A2F; border-radius: 12px;">Planejado</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(60, 24, 30, 0.08);">
+    <div style="font-size: 11px; letter-spacing: 1px; color: #D4AF37; text-transform: uppercase; margin-bottom: 10px; font-weight: 600;">Práticas Moldadoras Ativas</div>
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <input type="checkbox" checked style="accent-color: #5C1A2B;">
+        <span style="font-size: 11px; color: #3C181E;">Bloco diário de 50 min em silêncio, sem celular</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <input type="checkbox" checked style="accent-color: #5C1A2B;">
+        <span style="font-size: 11px; color: #3C181E;">Registrar 1 decisão dura tomada por semana</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Próximos: "cronograma detalhado" · "tabela disciplinar com infrações" · "descrições de cargo listadas" · "relatórios gerados"</p>
+</section>
+
+<!-- TURN 4: TABELA DISCIPLINAR -->
+<section class="dv-turn" id="t4">
+<div class="dv-thd"><a class="dv-tid" href="#t4">4</a><span class="dv-tname">Tabela Disciplinar</span></div>
+<div class="dv-opts">
+
+<!-- 4a: Listagem de Infrações -->
+<div class="dv-opt" id="4a">
+<div class="dv-olabel"><a class="dv-oid" href="#4a">4a</a> Listagem Completa</div>
+<div class="dv-card" style="width: 800px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08); display: flex; justify-content: space-between; align-items: center;">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Tabela Disciplinar</div>
+  <button style="padding: 6px 12px; background: #5C1A2B; color: #fff; border: none; border-radius: 4px; font-family: 'Lora'; font-size: 11px; font-weight: 600; cursor: pointer;">+ ADICIONAR</button>
+</div>
+<div style="overflow-x: auto;">
+  <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+    <thead>
+      <tr style="background: #F5EDD9; border-bottom: 2px solid #D9914F;">
+        <th style="padding: 12px; text-align: left; font-weight: 600; color: #5C1A2B;">Setor</th>
+        <th style="padding: 12px; text-align: left; font-weight: 600; color: #5C1A2B;">Infração</th>
+        <th style="padding: 12px; text-align: center; font-weight: 600; color: #5C1A2B;">Gravidade</th>
+        <th style="padding: 12px; text-align: center; font-weight: 600; color: #5C1A2B;">Medida</th>
+        <th style="padding: 12px; text-align: center; font-weight: 600; color: #5C1A2B;">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+        <td style="padding: 12px;">Assiduidade</td>
+        <td style="padding: 12px;">Atraso sem justificativa</td>
+        <td style="padding: 12px; text-align: center;"><span style="padding: 3px 8px; background: #F5EDD9; color: #B8860B; border-radius: 12px; font-size: 11px; font-weight: 600;">Leve</span></td>
+        <td style="padding: 12px; text-align: center; font-size: 11px; color: #6B5D4F;">Feedback registrado</td>
+        <td style="padding: 12px; text-align: center;"><button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Editar</button></td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+        <td style="padding: 12px;">Assiduidade</td>
+        <td style="padding: 12px;">Falta sem aviso prévio</td>
+        <td style="padding: 12px; text-align: center;"><span style="padding: 3px 8px; background: #F2E3CB; color: #9A6A2F; border-radius: 12px; font-size: 11px; font-weight: 600;">Média</span></td>
+        <td style="padding: 12px; text-align: center; font-size: 11px; color: #6B5D4F;">Advertência escrita</td>
+        <td style="padding: 12px; text-align: center;"><button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Editar</button></td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+        <td style="padding: 12px;">Conduta e Convivência</td>
+        <td style="padding: 12px;">Tratamento inadequado a cliente</td>
+        <td style="padding: 12px; text-align: center;"><span style="padding: 3px 8px; background: #F0DCD2; color: #8A3A2E; border-radius: 12px; font-size: 11px; font-weight: 600;">Grave</span></td>
+        <td style="padding: 12px; text-align: center; font-size: 11px; color: #6B5D4F;">Suspensão</td>
+        <td style="padding: 12px; text-align: center;"><button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Editar</button></td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+        <td style="padding: 12px;">Conduta e Convivência</td>
+        <td style="padding: 12px;">Assédio moral ou sexual</td>
+        <td style="padding: 12px; text-align: center;"><span style="padding: 3px 8px; background: #EBD5D8; color: #5C1A2B; border-radius: 12px; font-size: 11px; font-weight: 600;">Gravíssima</span></td>
+        <td style="padding: 12px; text-align: center; font-size: 11px; color: #6B5D4F;">Desligamento por justa causa</td>
+        <td style="padding: 12px; text-align: center;"><button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Editar</button></td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+        <td style="padding: 12px;">Patrimônio</td>
+        <td style="padding: 12px;">Furto ou apropriação de bens</td>
+        <td style="padding: 12px; text-align: center;"><span style="padding: 3px 8px; background: #EBD5D8; color: #5C1A2B; border-radius: 12px; font-size: 11px; font-weight: 600;">Gravíssima</span></td>
+        <td style="padding: 12px; text-align: center; font-size: 11px; color: #6B5D4F;">Desligamento por justa causa</td>
+        <td style="padding: 12px; text-align: center;"><button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Editar</button></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div style="padding: 16px 24px; background: #F5EDD9; border-top: 1px solid rgba(60, 24, 30, 0.08); font-size: 11px; color: #6B5D4F;">
+  Total: 32 infrações · Adaptadas ao cliente · Última revisão: 12/07/2026
+</div>
+</div>
+</div>
+
+<!-- 4b: Nova Infração -->
+<div class="dv-opt" id="4b">
+<div class="dv-olabel"><a class="dv-oid" href="#4b">4b</a> Adicionar Infração</div>
+<div class="dv-card" style="width: 480px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Nova Infração</div>
+</div>
+<div style="padding: 24px;">
+  <div style="margin-bottom: 18px;">
+    <label style="display: block; font-size: 11px; letter-spacing: 1px; color: #D4AF37; text-transform: uppercase; margin-bottom: 6px; font-weight: 600;">Setor</label>
+    <select style="width: 100%; padding: 10px 12px; border: 1px solid #D9914F; border-radius: 4px; font-family: 'Lora'; font-size: 13px; background: #FFFBF0; color: #3C181E;">
+      <option>Assiduidade e Ponto</option>
+      <option>Uniforme e Higiene</option>
+      <option>Conduta e Convivência</option>
+      <option>Operação e Padrão</option>
+      <option>Patrimônio e Insumos</option>
+      <option>Segurança</option>
+    </select>
+  </div>
+
+  <div style="margin-bottom: 18px;">
+    <label style="display: block; font-size: 11px; letter-spacing: 1px; color: #D4AF37; text-transform: uppercase; margin-bottom: 6px; font-weight: 600;">Descrição da Infração</label>
+    <textarea placeholder="Ex.: Usar celular durante o turno sem autorização" style="width: 100%; padding: 10px 12px; border: 1px solid #D9914F; border-radius: 4px; font-family: 'Lora'; font-size: 13px; background: #FFFBF0; color: #3C181E; min-height: 80px;"></textarea>
+  </div>
+
+  <div style="margin-bottom: 18px;">
+    <label style="display: block; font-size: 11px; letter-spacing: 1px; color: #D4AF37; text-transform: uppercase; margin-bottom: 6px; font-weight: 600;">Gravidade</label>
+    <div style="display: flex; gap: 8px;">
+      <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="radio" name="gravidade" style="accent-color: #5C1A2B; cursor: pointer;">
+        <span style="font-size: 12px;">Leve</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="radio" name="gravidade" style="accent-color: #5C1A2B; cursor: pointer;">
+        <span style="font-size: 12px;">Média</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="radio" name="gravidade" style="accent-color: #5C1A2B; cursor: pointer;">
+        <span style="font-size: 12px;">Grave</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+        <input type="radio" name="gravidade" style="accent-color: #5C1A2B; cursor: pointer;">
+        <span style="font-size: 12px;">Gravíssima</span>
+      </label>
+    </div>
+  </div>
+
+  <button style="width: 100%; padding: 12px; background: #5C1A2B; color: #fff; border: none; border-radius: 4px; font-family: 'Lora'; font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: 1px;">SALVAR INFRAÇÃO</button>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Próximos: "descrições de cargo" · "cronograma" · "relatórios"</p>
+</section>
+
+<!-- TURN 5: DESCRIÇÕES DE CARGO -->
+<section class="dv-turn" id="t5">
+<div class="dv-thd"><a class="dv-tid" href="#t5">5</a><span class="dv-tname">Descrições de Cargo</span></div>
+<div class="dv-opts">
+
+<!-- 5a: Listagem de Cargos -->
+<div class="dv-opt" id="5a">
+<div class="dv-olabel"><a class="dv-oid" href="#5a">5a</a> Listagem</div>
+<div class="dv-card" style="width: 700px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08); display: flex; justify-content: space-between; align-items: center;">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Descrições de Cargo</div>
+  <button style="padding: 6px 12px; background: #5C1A2B; color: #fff; border: none; border-radius: 4px; font-family: 'Lora'; font-size: 11px; font-weight: 600; cursor: pointer;">+ NOVO CARGO</button>
+</div>
+<div style="padding: 20px 24px; display: flex; flex-direction: column; gap: 12px;">
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Gerente de Operações</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Salão · Resp. por vendas, atendimento, time</div>
+        <div style="font-size: 11px; color: #8B6F47; margin-top: 6px;">Atividades: 8 · Requisitos: Experiência, liderança · Status: Completo</div>
+      </div>
+      <button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Ver</button>
+    </div>
+  </div>
+
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Chefe de Cozinha</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Cozinha · Produção, qualidade, receitas</div>
+        <div style="font-size: 11px; color: #8B6F47; margin-top: 6px;">Atividades: 9 · Requisitos: Técnica culinária · Status: Completo</div>
+      </div>
+      <button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Ver</button>
+    </div>
+  </div>
+
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Garçom</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Salão · Atendimento, limpeza, caixa</div>
+        <div style="font-size: 11px; color: #8B6F47; margin-top: 6px;">Atividades: 6 · Requisitos: Fluência verbal · Status: Em rascunho</div>
+      </div>
+      <button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Editar</button>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- 5b: Visualizar Cargo -->
+<div class="dv-opt" id="5b">
+<div class="dv-olabel"><a class="dv-oid" href="#5b">5b</a> Detalhes do Cargo</div>
+<div class="dv-card" style="width: 520px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Gerente de Operações</div>
+  <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Salão | Resp. direto: Dona Maria</div>
+</div>
+<div style="padding: 24px;">
+  <div style="margin-bottom: 20px;">
+    <div style="font-size: 12px; font-weight: 600; color: #5C1A2B; margin-bottom: 8px;">Sumária</div>
+    <div style="font-size: 12px; color: #3C181E; line-height: 1.5;">Responsável pela operação diária do salão, gestão do time de atendentes, vendas e satisfação do cliente. Intermediário entre cozinha e clientes.</div>
+  </div>
+
+  <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+    <div style="font-size: 12px; font-weight: 600; color: #5C1A2B; margin-bottom: 8px;">Atividades Principais</div>
+    <ul style="font-size: 11px; color: #3C181E; line-height: 1.6; margin-left: 18px;">
+      <li>Abrir o salão, conferir mesas e equipamentos</li>
+      <li>Coordenar o time de garçons na rotina</li>
+      <li>Supervisionar atendimento e resolver reclamações</li>
+      <li>Controlar fluxo de caixa do turno</li>
+      <li>Comunicar à cozinha prioridades do serviço</li>
+      <li>Registrar ocorrências e anomalias</li>
+      <li>Fechar o salão e prestar contas</li>
+      <li>Treinar novos garçons no padrão</li>
+    </ul>
+  </div>
+
+  <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+    <div style="font-size: 12px; font-weight: 600; color: #5C1A2B; margin-bottom: 8px;">Requisitos</div>
+    <div style="font-size: 11px; color: #3C181E; line-height: 1.6;">Ensino médio completo; 3+ anos de experiência em salão de restaurante; conhecimento de atendimento ao cliente; liderança de equipe; experiência com caixa e controle de vendas.</div>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <div style="font-size: 12px; font-weight: 600; color: #5C1A2B; margin-bottom: 8px;">Condições de Trabalho</div>
+    <div style="font-size: 11px; color: #3C181E; line-height: 1.6;">Jornada de 6h diárias (segunda a sábado); pé o tempo todo; ambiente com ruído e movimento; uniforme fornecido pela casa; intervalo conforme CCT.</div>
+  </div>
+
+  <button style="width: 100%; padding: 12px; background: #5C1A2B; color: #fff; border: none; border-radius: 4px; font-family: 'Lora'; font-size: 13px; font-weight: 600; cursor: pointer;">EDITAR CARGO</button>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Próximos: "cronograma visual" · "listagem de relatórios" · "temperamentos"</p>
+</section>
+
+<!-- TURN 6: CRONOGRAMA -->
+<section class="dv-turn" id="t6">
+<div class="dv-thd"><a class="dv-tid" href="#t6">6</a><span class="dv-tname">Cronograma do Engajamento</span></div>
+<div class="dv-opts">
+
+<!-- 6a: Visão de Semanas -->
+<div class="dv-opt" id="6a">
+<div class="dv-olabel"><a class="dv-oid" href="#6a">6a</a> Cronograma por Semana</div>
+<div class="dv-card" style="width: 900px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Cronograma — 12 Semanas (Restaurante Dona Maria)</div>
+</div>
+<div style="padding: 24px; overflow-x: auto;">
+  <table style="width: 100%; border-collapse: collapse; font-size: 11px; min-width: 800px;">
+    <thead>
+      <tr style="background: #F5EDD9; border-bottom: 2px solid #D9914F;">
+        <th style="padding: 10px; text-align: left; font-weight: 600; color: #5C1A2B; width: 120px;">Semana</th>
+        <th style="padding: 10px; text-align: left; font-weight: 600; color: #5C1A2B;">Ações Planejadas</th>
+        <th style="padding: 10px; text-align: center; font-weight: 600; color: #5C1A2B; width: 80px;">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom: 1px solid rgba(60, 24, 30, 0.05); background: #FFFBF0;">
+        <td style="padding: 10px; font-weight: 600; color: #5C1A2B;">S1 (18–24/07)</td>
+        <td style="padding: 10px;">
+          <div style="font-size: 10px; color: #3C181E;"><strong>Pessoas:</strong> Entrevistas com líderes</div>
+          <div style="font-size: 10px; color: #3C181E;"><strong>Campo:</strong> Visita técnica ao salão</div>
+        </td>
+        <td style="padding: 10px; text-align: center;"><span style="padding: 2px 6px; background: #4F6B3A; color: #fff; border-radius: 12px; font-size: 10px;">Concluída</span></td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(60, 24, 30, 0.05); background: #FFFBF0;">
+        <td style="padding: 10px; font-weight: 600; color: #5C1A2B;">S2 (25–31/07)</td>
+        <td style="padding: 10px;">
+          <div style="font-size: 10px; color: #3C181E;"><strong>Pessoas:</strong> Gerar descrições de cargo (IA)</div>
+          <div style="font-size: 10px; color: #3C181E;"><strong>Disciplina:</strong> Gerar tabela disciplinar adaptada</div>
+        </td>
+        <td style="padding: 10px; text-align: center;"><span style="padding: 2px 6px; background: #9A6A2F; color: #fff; border-radius: 12px; font-size: 10px;">Em andamento</span></td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(60, 24, 30, 0.05); background: #FFFBF0;">
+        <td style="padding: 10px; font-weight: 600; color: #5C1A2B;">S3 (01–07/08)</td>
+        <td style="padding: 10px;">
+          <div style="font-size: 10px; color: #3C181E;"><strong>Campo:</strong> Acompanhamento de turno (cozinha)</div>
+          <div style="font-size: 10px; color: #3C181E;"><strong>Processos:</strong> Esboço de fluxos principais</div>
+        </td>
+        <td style="padding: 10px; text-align: center;"><span style="padding: 2px 6px; background: #8A7A5C; color: #fff; border-radius: 12px; font-size: 10px;">Programada</span></td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+        <td style="padding: 10px; font-weight: 600; color: #5C1A2B;">S4 (08–14/08)</td>
+        <td style="padding: 10px;">
+          <div style="font-size: 10px; color: #6B5D4F;"><strong>Pessoas:</strong> Desenhar organograma final</div>
+          <div style="font-size: 10px; color: #6B5D4F;"><strong>Processos:</strong> Descrever POPs de abertura e fechamento</div>
+        </td>
+        <td style="padding: 10px; text-align: center;"><span style="padding: 2px 6px; background: #8A7A5C; color: #fff; border-radius: 12px; font-size: 10px;">Planejada</span></td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+        <td style="padding: 10px; font-weight: 600; color: #5C1A2B;">S5 (15–21/08)</td>
+        <td style="padding: 10px;">
+          <div style="font-size: 10px; color: #6B5D4F;"><strong>Disciplina:</strong> Redigir manual do colaborador</div>
+          <div style="font-size: 10px; color: #6B5D4F;"><strong>Campos:</strong> Revisão em campo das mudanças</div>
+        </td>
+        <td style="padding: 10px; text-align: center;"><span style="padding: 2px 6px; background: #8A7A5C; color: #fff; border-radius: 12px; font-size: 10px;">Planejada</span></td>
+      </tr>
+      <tr>
+        <td style="padding: 10px; color: #8B6F47;" colspan="3">...</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div style="padding: 16px 24px; background: #F5EDD9; border-top: 1px solid rgba(60, 24, 30, 0.08); font-size: 11px; color: #6B5D4F;">
+  Progresso geral: 33% (S1–S4 em andamento) · Próximos marcos: Rascunho de documentos (S2), POPs em campo (S4), Manual finalizado (S5)
+</div>
+</div>
+</div>
+
+<!-- 6b: Gantt visual (simplificado) -->
+<div class="dv-opt" id="6b">
+<div class="dv-olabel"><a class="dv-oid" href="#6b">6b</a> Visão por Frente</div>
+<div class="dv-card" style="width: 700px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Progresso por Frente</div>
+</div>
+<div style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+  <div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <div style="font-size: 12px; font-weight: 600; color: #3C181E;">Pessoas</div>
+      <div style="font-size: 11px; color: #6B5D4F;">6 de 8 ações concluídas (75%)</div>
+    </div>
+    <div style="height: 20px; background: #EFE8D6; border-radius: 10px; overflow: hidden;">
+      <div style="height: 100%; width: 75%; background: #4F6B3A; border-radius: 10px;"></div>
+    </div>
+  </div>
+
+  <div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <div style="font-size: 12px; font-weight: 600; color: #3C181E;">Processos Operacionais</div>
+      <div style="font-size: 11px; color: #6B5D4F;">3 de 8 ações concluídas (37%)</div>
+    </div>
+    <div style="height: 20px; background: #EFE8D6; border-radius: 10px; overflow: hidden;">
+      <div style="height: 100%; width: 37%; background: #9A6A2F; border-radius: 10px;"></div>
+    </div>
+  </div>
+
+  <div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <div style="font-size: 12px; font-weight: 600; color: #3C181E;">Disciplina e Cultura</div>
+      <div style="font-size: 11px; color: #6B5D4F;">5 de 5 ações concluídas (100%)</div>
+    </div>
+    <div style="height: 20px; background: #EFE8D6; border-radius: 10px; overflow: hidden;">
+      <div style="height: 100%; width: 100%; background: #4F6B3A; border-radius: 10px;"></div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Próximos: "políticas e checklists" · "relatórios finais" · "mentoria e temperamentos" · "listagem geral"</p>
+</section>
+
+<!-- TURN 7: POLÍTICAS E CHECKLISTS -->
+<section class="dv-turn" id="t7">
+<div class="dv-thd"><a class="dv-tid" href="#t7">7</a><span class="dv-tname">Políticas e Checklists</span></div>
+<div class="dv-opts">
+
+<!-- 7a: Listagem de Políticas -->
+<div class="dv-opt" id="7a">
+<div class="dv-olabel"><a class="dv-oid" href="#7a">7a</a> Políticas</div>
+<div class="dv-card" style="width: 650px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08); display: flex; justify-content: space-between; align-items: center;">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Políticas Internas</div>
+  <button style="padding: 6px 12px; background: #5C1A2B; color: #fff; border: none; border-radius: 4px; font-family: 'Lora'; font-size: 11px; font-weight: 600; cursor: pointer;">+ NOVA</button>
+</div>
+<div style="padding: 20px 24px; display: flex; flex-direction: column; gap: 12px;">
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Política de Uso de Celular</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Regras de quando, onde e como usar equipamento pessoal</div>
+        <div style="font-size: 10px; color: #8B6F47; margin-top: 6px;">Publicada em 10/07/2026</div>
+      </div>
+      <button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Ver</button>
+    </div>
+  </div>
+
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Política de Uniforme e Apresentação</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Padrão de vestuário, higiene e apresentação por setor</div>
+        <div style="font-size: 10px; color: #8B6F47; margin-top: 6px;">Publicada em 10/07/2026</div>
+      </div>
+      <button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Ver</button>
+    </div>
+  </div>
+
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Política de Comunicação Interna</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Como informar dúvidas, reclamações e sugestões</div>
+        <div style="font-size: 10px; color: #8B6F47; margin-top: 6px;">Em rascunho</div>
+      </div>
+      <button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Editar</button>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- 7b: Checklists -->
+<div class="dv-opt" id="7b">
+<div class="dv-olabel"><a class="dv-oid" href="#7b">7b</a> Checklists</div>
+<div class="dv-card" style="width: 650px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08); display: flex; justify-content: space-between; align-items: center;">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Checklists</div>
+  <button style="padding: 6px 12px; background: #5C1A2B; color: #fff; border: none; border-radius: 4px; font-family: 'Lora'; font-size: 11px; font-weight: 600; cursor: pointer;">+ NOVO</button>
+</div>
+<div style="padding: 20px 24px; display: flex; flex-direction: column; gap: 12px;">
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Abertura do Salão</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Salão · Diária, antes da abertura</div>
+        <div style="font-size: 10px; color: #8B6F47; margin-top: 6px;">12 itens · Completo</div>
+      </div>
+      <button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Ver</button>
+    </div>
+  </div>
+
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Fechamento da Cozinha</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Cozinha · Diária, ao final do turno</div>
+        <div style="font-size: 10px; color: #8B6F47; margin-top: 6px;">8 itens · Completo</div>
+      </div>
+      <button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Ver</button>
+    </div>
+  </div>
+
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Higiene da Cozinha</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Cozinha · A cada turno</div>
+        <div style="font-size: 10px; color: #8B6F47; margin-top: 6px;">10 itens · Em rascunho</div>
+      </div>
+      <button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Editar</button>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- 7c: Ver Checklist -->
+<div class="dv-opt" id="7c">
+<div class="dv-olabel"><a class="dv-oid" href="#7c">7c</a> Detalhe do Checklist</div>
+<div class="dv-card" style="width: 520px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Abertura do Salão</div>
+  <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Salão | Diária, antes da abertura</div>
+</div>
+<div style="padding: 24px;">
+  <div style="display: flex; flex-direction: column; gap: 8px;">
+    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+      <input type="checkbox" style="accent-color: #5C1A2B;">
+      <span style="font-size: 12px; color: #3C181E;">Ligar ar-condicionado e ventiladores</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+      <input type="checkbox" style="accent-color: #5C1A2B;">
+      <span style="font-size: 12px; color: #3C181E;">Abrir as cortinas e janelas</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+      <input type="checkbox" style="accent-color: #5C1A2B;">
+      <span style="font-size: 12px; color: #3C181E;">Conferir iluminação geral (todas as luminárias acesas)</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+      <input type="checkbox" style="accent-color: #5C1A2B;">
+      <span style="font-size: 12px; color: #3C181E;">Posicionar as cadeiras nas mesas</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+      <input type="checkbox" style="accent-color: #5C1A2B;">
+      <span style="font-size: 12px; color: #3C181E;">Colocar guardanapos e talheres nas mesas</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+      <input type="checkbox" style="accent-color: #5C1A2B;">
+      <span style="font-size: 12px; color: #3C181E;">Verificar limpeza geral (piso, mesas, espelhos)</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+      <input type="checkbox" style="accent-color: #5C1A2B;">
+      <span style="font-size: 12px; color: #3C181E;">Conferir cardápios limpos e atualizados</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+      <input type="checkbox" style="accent-color: #5C1A2B;">
+      <span style="font-size: 12px; color: #3C181E;">Testar som e música ambiente</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+      <input type="checkbox" style="accent-color: #5C1A2B;">
+      <span style="font-size: 12px; color: #3C181E;">Revisar estado do caixa (computador, impressora, dinheiro)</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+      <input type="checkbox" style="accent-color: #5C1A2B;">
+      <span style="font-size: 12px; color: #3C181E;">Briefing com o time: agenda do dia, VIP, eventos</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 0;">
+      <input type="checkbox" style="accent-color: #5C1A2B;">
+      <span style="font-size: 12px; color: #3C181E;">Registrar hora de abertura e assinatura (gerente)</span>
+    </div>
+  </div>
+  <button style="width: 100%; padding: 12px; margin-top: 20px; background: #5C1A2B; color: #fff; border: none; border-radius: 4px; font-family: 'Lora'; font-size: 13px; font-weight: 600; cursor: pointer;">MARCAR COMO COMPLETO</button>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Próximos: "relatórios finais" · "mentoria e temperamentos" · "fluxos e POPs" · "listagem geral"</p>
+</section>
+
+<!-- TURN 8: RELATÓRIOS -->
+<section class="dv-turn" id="t8">
+<div class="dv-thd"><a class="dv-tid" href="#t8">8</a><span class="dv-tname">Relatórios e Diagnósticos</span></div>
+<div class="dv-opts">
+
+<!-- 8a: Listagem de Relatórios -->
+<div class="dv-opt" id="8a">
+<div class="dv-olabel"><a class="dv-oid" href="#8a">8a</a> Relatórios Disponíveis</div>
+<div class="dv-card" style="width: 700px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Relatórios Gerados</div>
+</div>
+<div style="padding: 20px 24px; display: flex; flex-direction: column; gap: 12px;">
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Diagnóstico de Maturidade</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Avaliação inicial: Pessoas 25%, Processos 10%, Governança 15%, Disciplina 100%</div>
+        <div style="font-size: 10px; color: #8B6F47; margin-top: 6px;">Gerado em 12/07/2026 · 8 páginas</div>
+      </div>
+      <button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Baixar PDF</button>
+    </div>
+  </div>
+
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Proposta de Consultoria</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Investimento, fases, duração 12 semanas, metodologia</div>
+        <div style="font-size: 10px; color: #8B6F47; margin-top: 6px;">Gerado em 12/07/2026 · 5 páginas · Pronto para envio</div>
+      </div>
+      <button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Visualizar</button>
+    </div>
+  </div>
+
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Manual do Colaborador</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Boas-vindas, jornada, uniforme, conduta, medidas disciplinares</div>
+        <div style="font-size: 10px; color: #8B6F47; margin-top: 6px;">Gerado em 18/07/2026 · 12 páginas · Pronto para imprimir</div>
+      </div>
+      <button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Visualizar</button>
+    </div>
+  </div>
+
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Relatório de Encerramento</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Retrospectiva, resultados alcançados, recomendações de continuidade</div>
+        <div style="font-size: 10px; color: #8B6F47; margin-top: 6px;">Ainda não disponível (pré-visualizar em <a class="dv-oid" href="#8b">8b</a>)</div>
+      </div>
+      <button style="font-size: 11px; color: #8B6F47; background: none; border: none; cursor: pointer; text-decoration: underline;">-</button>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- 8b: Visualizar Relatório Final -->
+<div class="dv-opt" id="8b">
+<div class="dv-olabel"><a class="dv-oid" href="#8b">8b</a> Relatório Final (Preview)</div>
+<div class="dv-card" style="width: 540px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Relatório de Encerramento</div>
+  <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Restaurante da Dona Maria · Semana 12</div>
+</div>
+<div style="padding: 24px;">
+  <div style="margin-bottom: 20px;">
+    <div style="font-size: 13px; font-weight: 600; color: #5C1A2B; margin-bottom: 8px;">Retrospectiva</div>
+    <div style="font-size: 11px; color: #3C181E; line-height: 1.6;">O engajamento de 12 semanas centrou-se em estruturação de pessoas, formalização de processos e consolidação da disciplina. Partimos de um negócio operado a voz de comando e informalidades, com estrutura de cargos inexistente e nenhum documento controlador. Hoje, o restaurante tem cargos descritos, manual do colaborador publicado, tabela disciplinar em uso, checklists na operação, e primeiros POPs documentados. O dono delegou tarefas que antes fazia pessoalmente; o time sabe as regras da casa.</div>
+  </div>
+
+  <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+    <div style="font-size: 13px; font-weight: 600; color: #5C1A2B; margin-bottom: 8px;">Resultados Alcançados</div>
+    <ul style="font-size: 11px; color: #3C181E; line-height: 1.6; margin-left: 18px;">
+      <li>6 cargos descritos e em uso (era 0)</li>
+      <li>32 infrações mapeadas em tabela adaptada (era combinado verbal)</li>
+      <li>Manual do colaborador publicado (12 páginas)</li>
+      <li>4 POPs de operação críticos documentados</li>
+      <li>Organograma desenhado (antes: caótico)</li>
+      <li>Dono delegando; equipe de liderança estruturada</li>
+    </ul>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <div style="font-size: 13px; font-weight: 600; color: #5C1A2B; margin-bottom: 8px;">Recomendações de Continuidade</div>
+    <ul style="font-size: 11px; color: #3C181E; line-height: 1.6; margin-left: 18px;">
+      <li><strong>Prioridade 1:</strong> Consolidar o uso da tabela disciplinar — treinar líderes em aplicação consistente</li>
+      <li><strong>Prioridade 2:</strong> Expandir POPs para todos os processos-chave (hoje são 4 de ~15)</li>
+      <li><strong>Prioridade 3:</strong> Ritos de gestão: reunião semanal de líderes com pauta fixa</li>
+      <li><strong>Próximo passo:</strong> Mentoria do dono em liderança virtuosa (12 encontros, foco em delegação e confiança)</li>
+    </ul>
+  </div>
+
+  <button style="width: 100%; padding: 12px; background: #5C1A2B; color: #fff; border: none; border-radius: 4px; font-family: 'Lora'; font-size: 13px; font-weight: 600; cursor: pointer;">GERAR PDF</button>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Próximos: "mentoria e temperamentos" · "fluxos de processos" · "atas de reunião" · "dashboard de clientes"</p>
+</section>
+
+<!-- TURN 9: MENTORIA E TEMPERAMENTOS -->
+<section class="dv-turn" id="t9">
+<div class="dv-thd"><a class="dv-tid" href="#t9">9</a><span class="dv-tname">Mentoria e Temperamentos</span></div>
+<div class="dv-opts">
+
+<!-- 9a: Mapeamento de Temperamento -->
+<div class="dv-opt" id="9a">
+<div class="dv-olabel"><a class="dv-oid" href="#9a">9a</a> Temperamento Mapeado</div>
+<div class="dv-card" style="width: 620px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Análise de Temperamento</div>
+  <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Dona Maria (Dono/Contratante)</div>
+</div>
+<div style="padding: 24px;">
+  <div style="margin-bottom: 20px; padding: 14px; background: #F5E6C8; border-left: 4px solid #9A6A2F; border-radius: 2px;">
+    <div style="font-size: 12px; font-weight: 600; color: #5C1A2B; margin-bottom: 4px;">Temperamento Dominante</div>
+    <div style="font-size: 24px; font-weight: 800; color: #9A6A2F;">Colérico</div>
+    <div style="font-size: 11px; color: #6B5D4F; margin-top: 6px;">Reage rápido, sustenta decisão longamente, impaciente com lentidão, move-se por resultado.</div>
+  </div>
+
+  <div style="margin-bottom: 20px; padding: 14px; background: #DCE8F0; border-left: 4px solid #4A5A7A; border-radius: 2px;">
+    <div style="font-size: 12px; font-weight: 600; color: #5C1A2B; margin-bottom: 4px;">Temperamento Secundário</div>
+    <div style="font-size: 18px; font-weight: 600; color: #4A5A7A;">Melancólico</div>
+    <div style="font-size: 11px; color: #6B5D4F; margin-top: 6px;">Pensadora, quer entender a lógica, atenta aos detalhes.</div>
+  </div>
+
+  <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+    <div style="font-size: 12px; font-weight: 600; color: #5C1A2B; margin-bottom: 8px;">Forças no Papel de Dono</div>
+    <ul style="font-size: 11px; color: #3C181E; line-height: 1.6; margin-left: 18px;">
+      <li>Decisão rápida — não adia problemas, enfrenta direto</li>
+      <li>Visão estratégica — pensa em resultado de médio prazo</li>
+      <li>Padrão alto — não aceita mediocridade, cobra excelência</li>
+      <li>Liderança forte — o time sabe quem manda</li>
+    </ul>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <div style="font-size: 12px; font-weight: 600; color: #5C1A2B; margin-bottom: 8px;">Riscos a Mitigar</div>
+    <ul style="font-size: 11px; color: #3C181E; line-height: 1.6; margin-left: 18px;">
+      <li>Atropelo — decide sozinho, ouve pouco</li>
+      <li>Clima tenso — cobra no grito, equipe encolhe</li>
+      <li>Microgestão — não delega completamente, retoma no meio</li>
+      <li>Deslealdade com quem "falha" — pouca paciência com processo de aprendizado</li>
+    </ul>
+  </div>
+
+  <div style="padding: 14px; background: #EBD5D8; border-left: 4px solid #5C1A2B; border-radius: 2px;">
+    <div style="font-size: 11px; font-weight: 600; color: #5C1A2B; margin-bottom: 6px;">MOLDAGEM RECOMENDADA</div>
+    <div style="font-size: 11px; color: #3C181E; line-height: 1.5;">Foco em escuta e paciência. Prática: ser a última a dar opinião em reunião (escute primeiro). Virtude central: mansidão (força sem dureza). Prazos curtos entre encontros. Cobrar com dados, não sermão.</div>
+  </div>
+</div>
+</div>
+
+<!-- 9b: Jornada de Mentoria -->
+<div class="dv-opt" id="9b">
+<div class="dv-olabel"><a class="dv-oid" href="#9b">9b</a> Jornada Estruturada</div>
+<div class="dv-card" style="width: 520px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Mentoria do Dono — 12 Encontros</div>
+</div>
+<div style="padding: 24px; display: flex; flex-direction: column; gap: 10px; max-height: 500px; overflow-y: auto;">
+  <div style="padding: 10px; background: #F5E6C8; border-left: 4px solid #9A6A2F; border-radius: 2px;">
+    <div style="font-size: 11px; font-weight: 600; color: #5C1A2B;">1. Quem você é? (Temperamento)</div>
+    <div style="font-size: 10px; color: #6B5D4F;">Realizado · Mapeamento colérico/melancólico</div>
+  </div>
+  <div style="padding: 10px; background: #F5E6C8; border-left: 4px solid #9A6A2F; border-radius: 2px;">
+    <div style="font-size: 11px; font-weight: 600; color: #5C1A2B;">2. O que você quer? (Visão)</div>
+    <div style="font-size: 10px; color: #6B5D4F;">Realizado · Dono clara: "deixar legado estruturado, não cansado"</div>
+  </div>
+  <div style="padding: 10px; background: #F2E3CB; border-left: 4px solid #9A6A2F; border-radius: 2px;">
+    <div style="font-size: 11px; font-weight: 600; color: #5C1A2B;">3. Escuta e Paciência</div>
+    <div style="font-size: 10px; color: #6B5D4F;">Próxima semana · Prática: ser última em opinião</div>
+  </div>
+  <div style="padding: 10px; background: #F2E3CB; border-left: 4px solid #9A6A2F; border-radius: 2px;">
+    <div style="font-size: 11px; font-weight: 600; color: #5C1A2B;">4. Delegação Real</div>
+    <div style="font-size: 10px; color: #6B5D4F;">Planejada · Delegar 1 decisão inteira por semana</div>
+  </div>
+  <div style="padding: 10px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 2px;">
+    <div style="font-size: 11px; font-weight: 600; color: #5C1A2B;">5-12. Prática + Feedback</div>
+    <div style="font-size: 10px; color: #6B5D4F;">Consolidação de hábitos, evolução, autonomia</div>
+  </div>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Próximos: "fluxos de processos" · "atas de reunião" · "dashboard e listagem geral de clientes"</p>
+</section>
+
+<!-- TURN 10: FLUXOS E PROCESSOS -->
+<section class="dv-turn" id="t10">
+<div class="dv-thd"><a class="dv-tid" href="#t10">10</a><span class="dv-tname">Fluxos e POPs</span></div>
+<div class="dv-opts">
+
+<!-- 10a: Listagem de Fluxos -->
+<div class="dv-opt" id="10a">
+<div class="dv-olabel"><a class="dv-oid" href="#10a">10a</a> Fluxos de Processo</div>
+<div class="dv-card" style="width: 700px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08); display: flex; justify-content: space-between; align-items: center;">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Fluxos Mapeados</div>
+  <button style="padding: 6px 12px; background: #5C1A2B; color: #fff; border: none; border-radius: 4px; font-family: 'Lora'; font-size: 11px; font-weight: 600; cursor: pointer;">+ NOVO FLUXO</button>
+</div>
+<div style="padding: 20px 24px; display: flex; flex-direction: column; gap: 12px;">
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Pedido do Cliente</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Salão · Do atendimento até entrega na cozinha</div>
+        <div style="font-size: 10px; color: #8B6F47; margin-top: 6px;">7 etapas · 2 decisões · Completo</div>
+      </div>
+      <button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Ver</button>
+    </div>
+  </div>
+
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Recebimento de Mercadoria</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Cozinha · Conferência, armazenamento, registro</div>
+        <div style="font-size: 10px; color: #8B6F47; margin-top: 6px;">5 etapas · 1 decisão · Completo</div>
+      </div>
+      <button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Ver</button>
+    </div>
+  </div>
+
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Devolução de Produto</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">Salão/Cozinha · Cliente insatisfeito, comunicação, refeição</div>
+        <div style="font-size: 10px; color: #8B6F47; margin-top: 6px;">6 etapas · 2 decisões · Em rascunho</div>
+      </div>
+      <button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Editar</button>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- 10b: Visualizar Fluxo -->
+<div class="dv-opt" id="10b">
+<div class="dv-olabel"><a class="dv-oid" href="#10b">10b</a> Detalhe do Fluxo</div>
+<div class="dv-card" style="width: 540px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Pedido do Cliente</div>
+</div>
+<div style="padding: 24px; display: flex; flex-direction: column; gap: 12px;">
+  <div style="padding: 12px; background: #F5EDD9; border-left: 4px solid #8B6F47; border-radius: 2px;">
+    <div style="font-size: 12px; font-weight: 600; color: #3C181E;">1. Garçom aproxima-se da mesa</div>
+    <div style="font-size: 10px; color: #6B5D4F; margin-top: 2px;">Resp: Garçom</div>
+  </div>
+
+  <div style="text-align: center; color: #8B6F47; font-size: 16px; margin: -4px 0;">↓</div>
+
+  <div style="padding: 12px; background: #F5EDD9; border-left: 4px solid #8B6F47; border-radius: 2px;">
+    <div style="font-size: 12px; font-weight: 600; color: #3C181E;">2. Cliente faz pedido (bebida + prato)</div>
+    <div style="font-size: 10px; color: #6B5D4F; margin-top: 2px;">Resp: Garçom / Tempo: ~2 min</div>
+  </div>
+
+  <div style="text-align: center; color: #8B6F47; font-size: 16px; margin: -4px 0;">↓</div>
+
+  <div style="padding: 12px; background: #F2E3CB; border-left: 4px solid #9A6A2F; border-radius: 2px; border-radius: 2px;">
+    <div style="font-size: 12px; font-weight: 600; color: #3C181E;">❓ DECISÃO: Pedido especial ou alergia?</div>
+    <div style="font-size: 10px; color: #6B5D4F; margin-top: 4px;"><strong>SIM:</strong> Avisa cozinha por chamado prioritário</div>
+    <div style="font-size: 10px; color: #6B5D4F;"><strong>NÃO:</strong> Continua fluxo normal</div>
+  </div>
+
+  <div style="text-align: center; color: #8B6F47; font-size: 16px; margin: -4px 0;">↓</div>
+
+  <div style="padding: 12px; background: #F5EDD9; border-left: 4px solid #8B6F47; border-radius: 2px;">
+    <div style="font-size: 12px; font-weight: 600; color: #3C181E;">3. Garçom entrega nota à cozinha</div>
+    <div style="font-size: 10px; color: #6B5D4F; margin-top: 2px;">Resp: Garçom / Confirmação: Chefe assina</div>
+  </div>
+
+  <div style="text-align: center; color: #8B6F47; font-size: 16px; margin: -4px 0;">↓</div>
+
+  <div style="padding: 12px; background: #F5EDD9; border-left: 4px solid #8B6F47; border-radius: 2px;">
+    <div style="font-size: 12px; font-weight: 600; color: #3C181E;">4. Cozinha prepara</div>
+    <div style="font-size: 10px; color: #6B5D4F; margin-top: 2px;">Resp: Cozinheiro · Tempo: ~15–20 min</div>
+  </div>
+
+  <div style="text-align: center; color: #8B6F47; font-size: 16px; margin: -4px 0;">↓</div>
+
+  <div style="padding: 12px; background: #F5EDD9; border-left: 4px solid #8B6F47; border-radius: 2px;">
+    <div style="font-size: 12px; font-weight: 600; color: #3C181E;">5. Chefe inspeciona prato</div>
+    <div style="font-size: 10px; color: #6B5D4F; margin-top: 2px;">Resp: Chefe / OK ou refazer?</div>
+  </div>
+
+  <div style="text-align: center; color: #8B6F47; font-size: 16px; margin: -4px 0;">↓</div>
+
+  <div style="padding: 12px; background: #F5EDD9; border-left: 4px solid #8B6F47; border-radius: 2px;">
+    <div style="font-size: 12px; font-weight: 600; color: #3C181E;">6. Garçom busca e serve na mesa</div>
+    <div style="font-size: 10px; color: #6B5D4F; margin-top: 2px;">Resp: Garçom · Confirmação: "Bom apetite"</div>
+  </div>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Próximos: "atas de reunião" · "dashboard de clientes" · "pesquisa de campo" · "finalizar"</p>
+</section>
+
+<!-- TURN 11: ATAS E GESTÃO -->
+<section class="dv-turn" id="t11">
+<div class="dv-thd"><a class="dv-tid" href="#t11">11</a><span class="dv-tname">Atas e Gestão de Reuniões</span></div>
+<div class="dv-opts">
+
+<!-- 11a: Listagem de Atas -->
+<div class="dv-opt" id="11a">
+<div class="dv-olabel"><a class="dv-oid" href="#11a">11a</a> Atas de Alinhamento</div>
+<div class="dv-card" style="width: 700px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08); display: flex; justify-content: space-between; align-items: center;">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Atas de Reunião</div>
+  <button style="padding: 6px 12px; background: #5C1A2B; color: #fff; border: none; border-radius: 4px; font-family: 'Lora'; font-size: 11px; font-weight: 600; cursor: pointer;">+ NOVA ATA</button>
+</div>
+<div style="padding: 20px 24px; display: flex; flex-direction: column; gap: 12px;">
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Alinhamento S4 — Consultora + Dono</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">08/08/2026 · 3 decisões · 5 ações acordadas</div>
+        <div style="font-size: 10px; color: #8B6F47; margin-top: 6px;">Status: Documentada</div>
+      </div>
+      <button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Ver</button>
+    </div>
+  </div>
+
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Reunião de Líderes S3</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">03/08/2026 · Gerente + Chefe cozinha · Operação</div>
+        <div style="font-size: 10px; color: #8B6F47; margin-top: 6px;">Status: Documentada</div>
+      </div>
+      <button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Ver</button>
+    </div>
+  </div>
+
+  <div style="padding: 14px; background: #FFFBF0; border: 1px solid #D9914F; border-radius: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 600; color: #3C181E;">Kickoff da Consultoria</div>
+        <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">18/07/2026 · Briefing inicial com cliente</div>
+        <div style="font-size: 10px; color: #8B6F47; margin-top: 6px;">Status: Documentada</div>
+      </div>
+      <button style="font-size: 11px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Ver</button>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- 11b: Visualizar Ata -->
+<div class="dv-opt" id="11b">
+<div class="dv-olabel"><a class="dv-oid" href="#11b">11b</a> Detalhe da Ata</div>
+<div class="dv-card" style="width: 540px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Alinhamento S4</div>
+  <div style="font-size: 11px; color: #6B5D4F; margin-top: 2px;">08/08/2026 · Consultora Nayara + Dona Maria</div>
+</div>
+<div style="padding: 24px;">
+  <div style="margin-bottom: 18px;">
+    <div style="font-size: 12px; font-weight: 600; color: #5C1A2B; margin-bottom: 8px;">Resumo</div>
+    <div style="font-size: 11px; color: #3C181E; line-height: 1.6;">Revisão de progresso (S1–S4: pessoas 75%, processos 37%, disciplina 100%). Descrições de cargo aprovadas. Manual já em uso. Dono delegou tarefas e relatou clima melhor. Decidido: expandir POPs para cozinha (prioridade), iniciar ritos de liderança, mentoria intensiva no dono (começar S5).</div>
+  </div>
+
+  <div style="margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+    <div style="font-size: 12px; font-weight: 600; color: #5C1A2B; margin-bottom: 8px;">Decisões Tomadas</div>
+    <ul style="font-size: 11px; color: #3C181E; line-height: 1.6; margin-left: 18px;">
+      <li>Aprovar descrições de cargo e publicar para o time</li>
+      <li>Iniciar mentoria do dono com sessões semanais (S5+)</li>
+      <li>Mapeamento de fluxos: foco cozinha + recebimento</li>
+    </ul>
+  </div>
+
+  <div style="margin-bottom: 18px;">
+    <div style="font-size: 12px; font-weight: 600; color: #5C1A2B; margin-bottom: 8px;">Ações Acordadas</div>
+    <ul style="font-size: 11px; color: #3C181E; line-height: 1.6; margin-left: 18px;">
+      <li>Consultora: Descrever 3 POPs de cozinha até S4 (Nayara) — prazo 31/08</li>
+      <li>Dono: Divulgar descrições de cargo ao time (Dona Maria) — prazo 25/08</li>
+      <li>Gerente: Reunião com equipe apresentando as mudanças (Gerente) — prazo 26/08</li>
+      <li>Chefe: Teste de POP de recebimento em campo (Chefe) — prazo 28/08</li>
+      <li>Consultora: Primeira sessão de mentoria com dono (Nayara) — prazo 22/08</li>
+    </ul>
+  </div>
+
+  <button style="width: 100%; padding: 12px; background: #5C1A2B; color: #fff; border: none; border-radius: 4px; font-family: 'Lora'; font-size: 13px; font-weight: 600; cursor: pointer;">EXPORTAR ATA</button>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Próximos: "dashboard de clientes" · "pesquisa de campo expandida" · "finalizar"</p>
+</section>
+
+<!-- TURN 12: DASHBOARD DE CLIENTES -->
+<section class="dv-turn" id="t12">
+<div class="dv-thd"><a class="dv-tid" href="#t12">12</a><span class="dv-tname">Dashboard de Clientes</span></div>
+<div class="dv-opts">
+
+<!-- 12a: Listagem de Engajamentos -->
+<div class="dv-opt" id="12a">
+<div class="dv-olabel"><a class="dv-oid" href="#12a">12a</a> Meus Engajamentos</div>
+<div class="dv-card" style="width: 900px;">
+<div style="padding: 20px 24px; background: linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%); border-bottom: 1px solid rgba(60, 24, 30, 0.08);">
+  <div style="font-size: 14px; font-weight: 600; color: #5C1A2B;">Engajamentos Ativos</div>
+</div>
+<div style="overflow-x: auto;">
+  <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+    <thead>
+      <tr style="background: #F5EDD9; border-bottom: 2px solid #D9914F;">
+        <th style="padding: 12px; text-align: left; font-weight: 600; color: #5C1A2B;">Cliente</th>
+        <th style="padding: 12px; text-align: left; font-weight: 600; color: #5C1A2B;">Segmento</th>
+        <th style="padding: 12px; text-align: center; font-weight: 600; color: #5C1A2B;">Status</th>
+        <th style="padding: 12px; text-align: center; font-weight: 600; color: #5C1A2B;">Progresso</th>
+        <th style="padding: 12px; text-align: center; font-weight: 600; color: #5C1A2B;">Semana</th>
+        <th style="padding: 12px; text-align: center; font-weight: 600; color: #5C1A2B;">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+        <td style="padding: 12px;"><strong>Restaurante Dona Maria</strong></td>
+        <td style="padding: 12px;">Food Service</td>
+        <td style="padding: 12px; text-align: center;"><span style="padding: 2px 6px; background: #9A6A2F; color: #fff; border-radius: 12px; font-size: 10px;">Em andamento</span></td>
+        <td style="padding: 12px; text-align: center;">33%</td>
+        <td style="padding: 12px; text-align: center;">S4/12</td>
+        <td style="padding: 12px; text-align: center;"><button style="font-size: 10px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Abrir</button></td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+        <td style="padding: 12px;"><strong>Padaria Central</strong></td>
+        <td style="padding: 12px;">Padaria/Confeitaria</td>
+        <td style="padding: 12px; text-align: center;"><span style="padding: 2px 6px; background: #4F6B3A; color: #fff; border-radius: 12px; font-size: 10px;">Finalizado</span></td>
+        <td style="padding: 12px; text-align: center;">100%</td>
+        <td style="padding: 12px; text-align: center;">12/8</td>
+        <td style="padding: 12px; text-align: center;"><button style="font-size: 10px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Ver relatório</button></td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(60, 24, 30, 0.05);">
+        <td style="padding: 12px;"><strong>Oficina do João</strong></td>
+        <td style="padding: 12px;">Serviços/Oficina Mecânica</td>
+        <td style="padding: 12px; text-align: center;"><span style="padding: 2px 6px; background: #8A7A5C; color: #fff; border-radius: 12px; font-size: 10px;">Proposta enviada</span></td>
+        <td style="padding: 12px; text-align: center;">—</td>
+        <td style="padding: 12px; text-align: center;">—</td>
+        <td style="padding: 12px; text-align: center;"><button style="font-size: 10px; color: #5C1A2B; background: none; border: none; cursor: pointer; text-decoration: underline;">Aguardando</button></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div style="padding: 16px 24px; background: #F5EDD9; border-top: 1px solid rgba(60, 24, 30, 0.08); font-size: 11px; color: #6B5D4F;">
+  1 em andamento · 1 finalizado · 1 aguardando resposta · Total: R$ 47.500 (receita)
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Mockups completos! Turnos 1–12 com: onboarding, dashboard, plano de ação, campos de trabalho, diagnóstico, mentoria, tabela disciplinar, cargos, cronograma, políticas, checklists, relatórios, fluxos, atas e gestão de clientes.</p>
+</section>
+
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+
+</script>
+</body>
+</html>
