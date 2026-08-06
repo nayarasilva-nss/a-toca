@@ -3499,49 +3499,67 @@ function CartaoFrente({ frente, onMudar, onRemover }) {
 function ModuloGestao({ cliente, gestao, atas, gerando, erro, onMudar, onGerarPlano, onAtualizarPlano, onAbrirAta, onNovaAta, onVoltar }) {
   const frentes = gestao.frentes || [];
   return (
-    <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+    <div style={{ maxWidth: "1000px", margin: "0 auto", paddingTop: "16px", paddingLeft: "32px", paddingRight: "32px", paddingBottom: "64px" }}>
+      <button onClick={onVoltar} style={{ fontSize: "11px", marginBottom: "32px", textTransform: "uppercase", fontWeight: "600", background: "none", border: "none", cursor: "pointer", color: "#5C1A2B", fontFamily: "'Lora', serif", letterSpacing: "1px" }}>
         ← {cliente.negocio}
       </button>
 
-      <div className="rounded-lg p-6 shadow-sm mb-6" className="card">
-        <h2 className="font-serif text-lg mb-1" style={{ color: CORES.fogo }}>Briefing</h2>
-        <p className="text-xs mb-3" style={{ color: "#8A7A5C" }}>
-          Anote aqui o que saiu da reunião — necessidades, dores, o que existe e o que falta em cada área. A IA transforma isso em frentes e plano de ação. Se o contratante já estiver no Chapéu Seletor, o plano se molda ao temperamento dele — sem nunca mencioná-lo.
-        </p>
-        <textarea
-          rows={7}
-          className="w-full px-3 py-2 rounded border bg-white text-sm outline-none"
-          style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }}
-          placeholder="Ex.: Reunião com Driely em 18/07. Frente de pessoas: nada estruturado, começar do zero. Processos operacionais: existe uma leve estrutura, precisa ser formalizada e direcionada..."
-          value={gestao.briefing || ""}
-          onChange={(e) => onMudar({ ...gestao, briefing: e.target.value })}
-        />
-        <div className="mt-3 flex items-center gap-3 flex-wrap">
-          {frentes.length === 0 ? (
-            <BotaoPrimario onClick={onGerarPlano} disabled={gerando || !(gestao.briefing || "").trim()}>
-              {gerando ? "Gerando..." : "Gerar plano de ação com IA"}
-            </BotaoPrimario>
-          ) : (
-            <>
-              <BotaoPrimario onClick={onAtualizarPlano} disabled={gerando}>
-                {gerando ? "Atualizando..." : "Atualizar plano com IA"}
-              </BotaoPrimario>
-              <span className="text-xs" style={{ color: "#A89878" }}>
-                Lê o briefing e a última ata; preserva frentes, status e ações feitas — só acrescenta e ajusta.
-              </span>
-              <ConfirmarAcao rotulo="Recomeçar do zero" aviso="apaga frentes, status e ações marcadas" onConfirmar={onGerarPlano} />
-            </>
-          )}
+      <div style={{ background: "#FFFBF0", borderRadius: "4px", marginBottom: "32px", boxShadow: "0 2px 8px rgba(92, 26, 43, 0.1)" }}>
+        <div style={{ padding: "32px", borderBottom: "1px solid rgba(60, 24, 30, 0.08)", background: "linear-gradient(180deg, rgba(217, 145, 79, 0.08) 0%, rgba(245, 237, 217, 0.4) 100%)" }}>
+          <div style={{ fontSize: "18px", fontWeight: "600", color: "#5C1A2B", marginBottom: "4px" }}>Briefing</div>
+          <div style={{ fontSize: "12px", color: "#8B6F47" }}>Registre o que saiu da reunião para que a IA gere o plano</div>
         </div>
-        <AvisoErro erro={erro} />
-        {gerando && <Trabalhando />}
+        <div style={{ padding: "28px" }}>
+          <p style={{ fontSize: "11px", marginBottom: "16px", color: "#8A7A5C", fontFamily: "'Lora', serif" }}>
+            Anote aqui o que saiu da reunião — necessidades, dores, o que existe e o que falta em cada área. A IA transforma isso em frentes e plano de ação. Se o contratante já estiver no Chapéu Seletor, o plano se molda ao temperamento dele — sem nunca mencioná-lo.
+          </p>
+          <textarea
+            rows={7}
+            placeholder="Ex.: Reunião com Driely em 18/07. Frente de pessoas: nada estruturado, começar do zero. Processos operacionais: existe uma leve estrutura, precisa ser formalizada e direcionada..."
+            style={{
+              width: "100%",
+              padding: "10px 12px",
+              border: "1px solid #D9914F",
+              borderRadius: "4px",
+              fontFamily: "'Lora', serif",
+              fontSize: "13px",
+              background: "#FFFBF0",
+              color: "#3C181E",
+              outline: "none",
+              boxSizing: "border-box",
+              transition: "border-color 0.2s"
+            }}
+            value={gestao.briefing || ""}
+            onChange={(e) => onMudar({ ...gestao, briefing: e.target.value })}
+            onFocus={(e) => { e.target.style.borderColor = "#D4AF37"; e.target.style.boxShadow = "0 0 0 2px rgba(212, 175, 55, 0.1)"; }}
+            onBlur={(e) => { e.target.style.borderColor = "#D9914F"; e.target.style.boxShadow = "none"; }}
+          />
+          <div style={{ marginTop: "16px", display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+            {frentes.length === 0 ? (
+              <BotaoPrimario onClick={onGerarPlano} disabled={gerando || !(gestao.briefing || "").trim()}>
+                {gerando ? "Gerando..." : "Gerar plano de ação com IA"}
+              </BotaoPrimario>
+            ) : (
+              <>
+                <BotaoPrimario onClick={onAtualizarPlano} disabled={gerando}>
+                  {gerando ? "Atualizando..." : "Atualizar plano com IA"}
+                </BotaoPrimario>
+                <span style={{ fontSize: "11px", color: "#A89878", fontFamily: "'Lora', serif" }}>
+                  Lê o briefing e a última ata; preserva frentes, status e ações feitas — só acrescenta e ajusta.
+                </span>
+                <ConfirmarAcao rotulo="Recomeçar do zero" aviso="apaga frentes, status e ações marcadas" onConfirmar={onGerarPlano} />
+              </>
+            )}
+          </div>
+          <AvisoErro erro={erro} />
+          {gerando && <Trabalhando />}
+        </div>
       </div>
 
       {!gerando && (
         <div>
-          <div className="flex items-baseline justify-between mb-3">
-            <h3 className="font-serif text-lg" style={{ color: CORES.fogo }}>Frentes de trabalho</h3>
+          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "16px" }}>
+            <h3 style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "800", color: "#5C1A2B" }}>Frentes de trabalho</h3>
             <button
               onClick={() =>
                 onMudar({
@@ -3549,14 +3567,13 @@ function ModuloGestao({ cliente, gestao, atas, gerando, erro, onMudar, onGerarPl
                   frentes: [...frentes, { id: uid(), nome: "Nova frente", status: "nao_iniciada", escopo: "", acoes: [] }],
                 })
               }
-              className="text-sm"
-              style={{ color: CORES.dourado }}
+              style={{ fontSize: "13px", color: "#D4AF37", background: "none", border: "none", cursor: "pointer", fontFamily: "'Lora', serif", fontWeight: "600" }}
             >
               + Frente manual
             </button>
           </div>
           {frentes.length === 0 ? (
-            <p className="text-sm py-4" style={{ color: "#8A7A5C" }}>
+            <p style={{ fontSize: "13px", paddingTop: "16px", paddingBottom: "16px", color: "#8A7A5C", fontFamily: "'Lora', serif" }}>
               Nenhuma frente ainda. Preencha o briefing e gere o plano — ou adicione frentes manualmente.
             </p>
           ) : (
@@ -3570,27 +3587,28 @@ function ModuloGestao({ cliente, gestao, atas, gerando, erro, onMudar, onGerarPl
             ))
           )}
 
-          <div className="flex items-baseline justify-between mt-8 mb-3">
-            <h3 className="font-serif text-lg" style={{ color: CORES.fogo }}>Atas de reunião</h3>
-            <button onClick={onNovaAta} className="text-sm" style={{ color: CORES.dourado }}>
+          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginTop: "32px", marginBottom: "16px" }}>
+            <h3 style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "800", color: "#5C1A2B" }}>Atas de reunião</h3>
+            <button onClick={onNovaAta} style={{ fontSize: "13px", color: "#D4AF37", background: "none", border: "none", cursor: "pointer", fontFamily: "'Lora', serif", fontWeight: "600" }}>
               + Nova ata
             </button>
           </div>
           {atas.length === 0 ? (
-            <p className="text-sm py-2" style={{ color: "#8A7A5C" }}>
+            <p style={{ fontSize: "13px", paddingTop: "8px", paddingBottom: "8px", color: "#8A7A5C", fontFamily: "'Lora', serif" }}>
               Nenhuma ata ainda. Registre cada reunião de acompanhamento aqui — despeje as anotações e a IA estrutura em resumo, decisões e ações.
             </p>
           ) : (
-            <div className="grid gap-2">
+            <div style={{ display: "grid", gap: "8px" }}>
               {atas.map((a) => (
                 <button
                   key={a.id}
                   onClick={() => onAbrirAta(a.id)}
-                  className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between"
-                  style={{ background: "white", border: "2px solid #E97F3855" }}
+                  style={{ textAlign: "left", padding: "16px 20px", borderRadius: "4px", boxShadow: "0 2px 8px rgba(92, 26, 43, 0.1)", display: "flex", alignItems: "baseline", justifyContent: "space-between", background: "white", border: "1px solid #D9914F", cursor: "pointer", transition: "all 0.3s ease" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 16px rgba(92, 26, 43, 0.2)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 2px 8px rgba(92, 26, 43, 0.1)"; e.currentTarget.style.transform = "translateY(0)"; }}
                 >
-                  <span className="font-serif text-sm" style={{ color: CORES.fogo }}>{a.nome || "(sem título)"}</span>
-                  <span className="text-xs" style={{ color: "#8A7A5C" }}>{a.data || (a.resumo ? "" : "rascunho vazio")}</span>
+                  <span style={{ fontFamily: "'Crimson Text', serif", fontSize: "16px", fontWeight: "600", color: "#5C1A2B" }}>{a.nome || "(sem título)"}</span>
+                  <span style={{ fontSize: "11px", color: "#8A7A5C", fontFamily: "'Lora', serif" }}>{a.data || (a.resumo ? "" : "rascunho vazio")}</span>
                 </button>
               ))}
             </div>
