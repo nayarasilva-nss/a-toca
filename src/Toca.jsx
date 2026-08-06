@@ -2821,53 +2821,70 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
   const Cartao = ({ chave, compacto }) => (
     <button
       onClick={() => onModulo(chave)}
-      className={`objeto text-left rounded-lg shadow-sm ${compacto ? "p-4" : "p-6"}`}
-      className="card"
+      style={{
+        textAlign: "left",
+        padding: compacto ? "16px" : "20px",
+        borderRadius: "4px",
+        border: "1px solid #D9914F",
+        background: "#FFFBF0",
+        boxShadow: "0 2px 8px rgba(92, 26, 43, 0.1)",
+        cursor: "pointer",
+        transition: "all 0.3s ease"
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = "0 8px 16px rgba(92, 26, 43, 0.2)";
+        e.currentTarget.style.transform = "translateY(-2px)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = "0 2px 8px rgba(92, 26, 43, 0.1)";
+        e.currentTarget.style.transform = "translateY(0)";
+      }}
     >
-      <div className={`font-serif mb-1 ${compacto ? "text-base" : "text-lg"}`} style={{ color: CORES.fogo }}>
+      <div style={{ fontFamily: "'Crimson Text', serif", marginBottom: "4px", fontSize: compacto ? "16px" : "18px", fontWeight: "600", color: "#5C1A2B" }}>
         {TITULOS[chave]}
       </div>
-      <div className="text-xs" style={{ color: "#8A7A5C" }}>{estados[chave]}</div>
+      <div style={{ fontSize: "11px", color: "#8A7A5C", fontFamily: "'Lora', serif" }}>{estados[chave]}</div>
     </button>
   );
   return (
-    <div className="max-w-3xl mx-auto mt-8 px-10 pb-32">
-      <button onClick={onVoltar} className="text-sm mb-10 uppercase font-bold" style={{ color: "#8B3A3A", letterSpacing: 2 }}>
+    <div style={{ maxWidth: "1000px", margin: "0 auto", paddingTop: "16px", paddingLeft: "32px", paddingRight: "32px", paddingBottom: "128px" }}>
+      <button onClick={onVoltar} style={{ fontSize: "11px", marginBottom: "32px", textTransform: "uppercase", fontWeight: "600", background: "none", border: "none", cursor: "pointer", color: "#5C1A2B", fontFamily: "'Lora', serif", letterSpacing: "1px" }}>
         ← Todos os clientes
       </button>
-      <div className="flex items-baseline justify-between mb-4">
-        <h1 className="font-serif text-4xl font-bold" style={{ color: CORES.fogo }}>{cliente.negocio}</h1>
-        <button onClick={onEditarCliente} className="text-sm underline" style={{ color: CORES.dourado }}>
+
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "12px" }}>
+        <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "40px", fontWeight: "800", color: "#5C1A2B", letterSpacing: "3px" }}>{cliente.negocio}</h1>
+        <button onClick={onEditarCliente} style={{ fontSize: "11px", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", color: "#D4AF37", fontFamily: "'Lora', serif" }}>
           Editar dados
         </button>
       </div>
-      <div className="text-base mb-12" style={{ color: "#8A7A5C" }}>{cliente.segmento}</div>
+      <div style={{ fontSize: "13px", marginBottom: "32px", color: "#A0826D", fontFamily: "'Lora', serif" }}>{cliente.segmento}</div>
 
       {(metasAceitas || []).filter((m) => m.objetivo).length > 0 && (
-        <div className="mb-4 px-4 py-3 rounded-lg" style={{ background: "#F5EDD9", border: "1px solid #D4AF37AA" }}>
-          <div className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: "#9A6A2F" }}>Metas pactuadas</div>
+        <div style={{ marginBottom: "12px", padding: "16px", borderRadius: "4px", background: "#F5EDD9", border: "1px solid #D4AF37" }}>
+          <div style={{ fontSize: "11px", textTransform: "uppercase", fontWeight: "600", marginBottom: "8px", color: "#9A6A2F", fontFamily: "'Lora', serif", letterSpacing: "1px" }}>Metas pactuadas</div>
           {(metasAceitas || []).filter((m) => m.objetivo).map((m) => (
-            <div key={m.id} className="text-sm py-0.5" style={{ color: CORES.fogoEscuro }}>
-              • {m.objetivo}{m.prazo ? <span className="text-xs" style={{ color: "#8A7A5C" }}> — até {m.prazo}</span> : null}
+            <div key={m.id} style={{ fontSize: "13px", paddingTop: "3px", paddingBottom: "3px", color: "#3C181E", fontFamily: "'Lora', serif" }}>
+              • {m.objetivo}{m.prazo ? <span style={{ fontSize: "11px", color: "#8A7A5C" }}> — até {m.prazo}</span> : null}
             </div>
           ))}
         </div>
       )}
 
       {(servicosCliente.treinamentos || servicosCliente.mentoria) && (
-        <div className="grid sm:grid-cols-2 gap-6 mb-12">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "12px", marginBottom: "32px" }}>
           {servicosCliente.treinamentos && (
-            <button onClick={() => onModulo("treinamentos")} className="objeto text-left p-4 rounded-lg shadow-sm" className="card">
-              <div className="font-serif" style={{ color: CORES.fogo }}>Treinamentos</div>
-              <div className="text-xs mt-0.5" style={{ color: "#8A7A5C" }}>
+            <button onClick={() => onModulo("treinamentos")} style={{ textAlign: "left", padding: "16px", borderRadius: "4px", border: "1px solid #D9914F", background: "#FFFBF0", boxShadow: "0 2px 8px rgba(92, 26, 43, 0.1)", cursor: "pointer", transition: "all 0.3s ease" }} onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 16px rgba(92, 26, 43, 0.2)"; e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 2px 8px rgba(92, 26, 43, 0.1)"; e.currentTarget.style.transform = "translateY(0)"; }}>
+              <div style={{ fontFamily: "'Crimson Text', serif", color: "#5C1A2B", fontSize: "18px", fontWeight: "600" }}>Treinamentos</div>
+              <div style={{ fontSize: "11px", marginTop: "3px", color: "#8A7A5C", fontFamily: "'Lora', serif" }}>
                 {totalTreinamentos > 0 ? `${totalTreinamentosRealizados}/${totalTreinamentos} realizados` : "A Sala Precisa aguarda a primeira turma"}
               </div>
             </button>
           )}
           {servicosCliente.mentoria && (
-            <button onClick={() => onModulo("mentoria")} className="objeto text-left p-4 rounded-lg shadow-sm" className="card">
-              <div className="font-serif" style={{ color: CORES.fogo }}>Mentoria</div>
-              <div className="text-xs mt-0.5" style={{ color: "#8A7A5C" }}>
+            <button onClick={() => onModulo("mentoria")} style={{ textAlign: "left", padding: "16px", borderRadius: "4px", border: "1px solid #D9914F", background: "#FFFBF0", boxShadow: "0 2px 8px rgba(92, 26, 43, 0.1)", cursor: "pointer", transition: "all 0.3s ease" }} onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 16px rgba(92, 26, 43, 0.2)"; e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 2px 8px rgba(92, 26, 43, 0.1)"; e.currentTarget.style.transform = "translateY(0)"; }}>
+              <div style={{ fontFamily: "'Crimson Text', serif", color: "#5C1A2B", fontSize: "18px", fontWeight: "600" }}>Mentoria</div>
+              <div style={{ fontSize: "11px", marginTop: "3px", color: "#8A7A5C", fontFamily: "'Lora', serif" }}>
                 {totalEncontros > 0 ? `${totalEncontrosRealizados}/${totalEncontros} encontros realizados` : "Jornada ainda não desenhada"}
               </div>
             </button>
@@ -2878,31 +2895,33 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
       {proximoPasso && servicosCliente.consultoria && (
         <button
           onClick={() => onModulo(proximoPasso.modulo)}
-          className="objeto w-full text-left px-5 py-3 rounded-lg mb-4 flex items-center justify-between gap-3 flex-wrap"
-          style={{ background: "#F5EDD9", border: "2px solid #D4AF37AA" }}
+          style={{ textAlign: "left", width: "100%", padding: "16px 20px", borderRadius: "4px", marginBottom: "12px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", flexWrap: "wrap", background: "#F5EDD9", border: "1px solid #D4AF37", cursor: "pointer", transition: "all 0.3s ease" }}
+          onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 4px 12px rgba(212, 175, 55, 0.2)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "none"; }}
         >
-          <span className="text-sm" style={{ color: CORES.fogoEscuro }}>
-            <span className="font-semibold" style={{ color: CORES.dourado }}>Próximo passo · </span>
+          <span style={{ fontSize: "13px", color: "#3C181E", fontFamily: "'Lora', serif" }}>
+            <span style={{ fontWeight: "600", color: "#D4AF37" }}>Próximo passo · </span>
             {proximoPasso.texto}
           </span>
-          <span className="text-xs font-semibold" style={{ color: CORES.dourado }}>abrir →</span>
+          <span style={{ fontSize: "11px", fontWeight: "600", color: "#D4AF37", fontFamily: "'Lora', serif" }}>abrir →</span>
         </button>
       )}
 
       <button
         onClick={() => onModulo("penseira")}
-        className="objeto w-full text-left p-5 rounded-lg shadow-sm mb-8 flex items-baseline justify-between gap-3 flex-wrap"
-        style={{ background: CORES.fogoEscuro, border: `2px solid #D4AF37AA` }}
+        style={{ textAlign: "left", width: "100%", padding: "20px", borderRadius: "4px", marginBottom: "32px", display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "12px", flexWrap: "wrap", background: "#3C181E", border: "1px solid #8A3A2E", cursor: "pointer", transition: "all 0.3s ease" }}
+        onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 16px rgba(92, 26, 43, 0.3)"; }}
+        onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "none"; }}
       >
-        <span className="font-serif text-lg" style={{ color: CORES.douradoClaro }}>Penseira</span>
-        <span className="text-xs" style={{ color: "#C9A96199" }}>Despeje um pensamento e examine-o com clareza — soluções e dúvidas com base legal, sobre qualquer cômodo</span>
+        <span style={{ fontFamily: "'Crimson Text', serif", fontSize: "18px", fontWeight: "600", color: "#D4AF37" }}>Penseira</span>
+        <span style={{ fontSize: "11px", color: "#D9914F", fontFamily: "'Lora', serif" }}>Despeje um pensamento e examine-o com clareza — soluções e dúvidas com base legal, sobre qualquer cômodo</span>
       </button>
 
       {(servicosCliente.consultoria || ehPessoa) && (
-      <div className="mb-10">
-        <div className="font-serif text-lg font-bold mb-2" style={{ color: CORES.fogo }}>{ehPessoa ? "Ala do Mentorado" : "Ala do Contratante"}</div>
-        <div className="text-xs mb-3" style={{ color: "#A89878" }}>{ehPessoa ? "A pessoa, o combinado e o entorno — mapeie também quem ela lidera" : "A pessoa e a relação — de quem contrata ao que foi combinado"}</div>
-        <div className="grid gap-4 sm:grid-cols-2">
+      <div style={{ marginBottom: "32px" }}>
+        <div style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "800", marginBottom: "6px", color: "#5C1A2B" }}>{ehPessoa ? "Ala do Mentorado" : "Ala do Contratante"}</div>
+        <div style={{ fontSize: "11px", marginBottom: "16px", color: "#A89878", fontFamily: "'Lora', serif" }}>{ehPessoa ? "A pessoa, o combinado e o entorno — mapeie também quem ela lidera" : "A pessoa e a relação — de quem contrata ao que foi combinado"}</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "12px" }}>
           {alaContratante.map((chave) => (
             <Cartao key={chave} chave={chave} />
           ))}
@@ -2911,15 +2930,15 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
       )}
 
       {servicosCliente.consultoria && (
-      <div className="mb-10">
-        <div className="font-serif text-lg font-bold mb-2" style={{ color: CORES.fogo }}>Ala do Negócio</div>
-        <div className="text-xs mb-6" style={{ color: "#A89878" }}>A empresa, organizada por frentes de trabalho</div>
+      <div style={{ marginBottom: "32px" }}>
+        <div style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "800", marginBottom: "6px", color: "#5C1A2B" }}>Ala do Negócio</div>
+        <div style={{ fontSize: "11px", marginBottom: "16px", color: "#A89878", fontFamily: "'Lora', serif" }}>A empresa, organizada por frentes de trabalho</div>
         {alaNegocio.map((grupo) => (
-          <div key={grupo.frente} className="mb-6">
-            <div className="text-xs uppercase tracking-widest font-semibold mb-2" style={{ color: CORES.dourado }}>
+          <div key={grupo.frente} style={{ marginBottom: "24px" }}>
+            <div style={{ fontSize: "11px", textTransform: "uppercase", fontWeight: "600", marginBottom: "12px", color: "#D4AF37", fontFamily: "'Lora', serif", letterSpacing: "1px" }}>
               {grupo.frente}
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "12px" }}>
               {grupo.chaves.map((chave) => (
                 <Cartao key={chave} chave={chave} compacto />
               ))}
