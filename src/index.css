@@ -1,5 +1,7 @@
-/* 🏠 A Toca — Design System Completo */
-/* Tema: Mágico & Aconchegante (Toca dos Weasley) */
+/* 🏠 A Toca — Design System (Mockups Completos) */
+/* Tema: Elegant & Sophisticated (Toca dos Weasley Design) */
+
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Lora:wght@400;600&display=swap');
 
 * {
   box-sizing: border-box;
@@ -28,22 +30,22 @@ input, button, textarea, select {
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* Primárias — Vinho & Elegante */
-  --cor-fogo: #8B3A3A;
-  --cor-fogo-escuro: #6B2E2E;
-  --cor-fogo-claro: #A64545;
-  --cor-laranja: #8B3A3A;
-  --cor-laranja-escuro: #6B2E2E;
-  --cor-dourado: #A64545;
-  --cor-dourado-escuro: #8B3A3A;
-  --cor-dourado-claro: #C85656;
+  /* Primárias — Vinho Escuro & Dourado (Mockups) */
+  --cor-fogo: #5C1A2B;
+  --cor-fogo-escuro: #3C181E;
+  --cor-fogo-claro: #8A3A2E;
+  --cor-laranja: #D9914F;
+  --cor-laranja-escuro: #9A6A2F;
+  --cor-dourado: #D4AF37;
+  --cor-dourado-escuro: #B8860B;
+  --cor-dourado-claro: #D4AF37;
 
-  /* Neutras — Madeira & Creme */
+  /* Neutras — Browns & Creams (Mockups) */
   --cor-madeira: #8B6F47;
-  --cor-madeira-escuro: #7A6241;
-  --cor-cobre: #B87333;
-  --cor-cobre-escuro: #A0632A;
-  --cor-marrom-claro: #9A8B75;
+  --cor-madeira-escuro: #6B5D4F;
+  --cor-cobre: #D9914F;
+  --cor-cobre-escuro: #8A7A5C;
+  --cor-marrom-claro: #A0826D;
   --cor-creme-claro: #F5EDD9;
   --cor-creme-palido: #FFFBF0;
 
