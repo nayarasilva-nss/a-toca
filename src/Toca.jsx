@@ -5,16 +5,26 @@ import { useState, useEffect } from "react";
 // Módulos: Tabela Disciplinar · Descrições de Cargo
 // Paleta: Toca dos Weasley (caótica, aconchegante, mágica!)
 
+// Cores do Design System (Mockups A Toca - Elegante & Sofisticado)
 const CORES = {
-  fogo: "#D84315",           // Vermelho-fogo (magia)
-  fogoEscuro: "#C62E1C",     // Fogo escuro (sombra)
-  laranja: "#E97F38",        // Laranja quente (aconchego)
-  dourado: "#F4A460",        // Dourado quente (ouro mágico)
-  madeira: "#8B6F47",        // Marrom madeira
-  cobre: "#B87333",          // Cobre quente
-  azulNoite: "#1a1f35",      // Azul noite (céu mágico)
-  cremeClaro: "#F5EDD9",     // Creme quente (papel velho)
-  cremePalido: "#FFFBF0",    // Branco quente (luz mágica)
+  // Primárias - Vinho & Dourado
+  fogo: "#5C1A2B",           // Vinho escuro (botões primários)
+  fogoEscuro: "#3C181E",     // Vinho claro (texto principal)
+  fogoMedio: "#8A3A2E",      // Vinho médio (backgrounds alt)
+  laranja: "#D9914F",        // Cobre/laranja (inputs, borders)
+  dourado: "#D4AF37",        // Dourado (labels, ênfases)
+  douradoEscuro: "#B8860B",  // Dourado dark (hover states)
+
+  // Neutras - Browns & Creams
+  madeira: "#8B6F47",        // Brown (texto secundário)
+  madeireaEscura: "#6B5D4F", // Brown dark (descrições)
+  cobre: "#D9914F",          // Taupe (hints, placeholders)
+  taupe: "#8A7A5C",          // Taupe (hints)
+  taupeClaroo: "#A0826D",    // Taupe light (disabled)
+
+  // Backgrounds
+  cremeClaro: "#F5EDD9",     // Cream light (backgrounds, cards)
+  cremePalido: "#FFFBF0",    // Cream pale (main background)
   papel: "#FFFBF0",          // Papel (luz mágica)
 };
 
@@ -2137,13 +2147,23 @@ function CampoTexto({ rotulo, valor, onChange, area, linhas, placeholder }) {
   );
 }
 
-function BotaoPrimario({ children, onClick, disabled }) {
+function BotaoPrimario({ children, onClick, disabled, style }) {
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      className="px-4 py-2 rounded text-sm font-semibold text-white disabled:opacity-50"
-      style={{ background: CORES.fogo }}
+      className="rounded text-white disabled:opacity-60 transition-colors hover:opacity-90"
+      style={{
+        fontFamily: "'Lora', serif",
+        fontSize: "13px",
+        fontWeight: "600",
+        letterSpacing: "1px",
+        padding: "12px 16px",
+        background: CORES.fogo,
+        border: "none",
+        cursor: disabled ? "not-allowed" : "pointer",
+        ...style
+      }}
     >
       {children}
     </button>
@@ -2152,9 +2172,139 @@ function BotaoPrimario({ children, onClick, disabled }) {
 
 function BotaoContorno({ children, onClick }) {
   return (
-    <button onClick={onClick} className="px-4 py-2 rounded text-sm font-semibold" style={{ border: `1px solid ${CORES.dourado}`, color: CORES.fogo }}>
+    <button
+      onClick={onClick}
+      className="rounded transition-colors hover:opacity-80"
+      style={{
+        fontFamily: "'Lora', serif",
+        fontSize: "13px",
+        fontWeight: "600",
+        letterSpacing: "1px",
+        padding: "12px 16px",
+        border: `1px solid ${CORES.laranja}`,
+        background: "transparent",
+        color: CORES.fogo,
+        cursor: "pointer"
+      }}
+    >
       {children}
     </button>
+  );
+}
+
+function InputField({ label, placeholder, value, onChange, type = "text", required = false }) {
+  return (
+    <div style={{ marginBottom: "18px" }}>
+      {label && (
+        <label
+          style={{
+            display: "block",
+            fontFamily: "'Lora', serif",
+            fontSize: "11px",
+            letterSpacing: "1px",
+            color: CORES.dourado,
+            textTransform: "uppercase",
+            marginBottom: "6px",
+            fontWeight: "600"
+          }}
+        >
+          {label}
+        </label>
+      )}
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        required={required}
+        style={{
+          width: "100%",
+          padding: "10px 12px",
+          border: `1px solid ${CORES.laranja}`,
+          borderRadius: "4px",
+          fontFamily: "'Lora', serif",
+          fontSize: "13px",
+          background: CORES.cremePalido,
+          color: CORES.fogo,
+          outline: "none",
+          transition: "border-color 0.2s",
+          boxSizing: "border-box"
+        }}
+        onFocus={(e) => {
+          e.target.style.borderColor = CORES.dourado;
+          e.target.style.boxShadow = `0 0 0 2px rgba(212, 175, 55, 0.1)`;
+        }}
+        onBlur={(e) => {
+          e.target.style.borderColor = CORES.laranja;
+          e.target.style.boxShadow = "none";
+        }}
+      />
+    </div>
+  );
+}
+
+function CardComponent({ children, style, onClick, className = "" }) {
+  return (
+    <div
+      onClick={onClick}
+      className={`rounded-lg transition-all hover:shadow-lg ${className}`}
+      style={{
+        background: CORES.cremePalido,
+        border: `1px solid rgba(60, 24, 30, 0.08)`,
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
+        ...style
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function Label({ children, color = CORES.dourado, uppercase = true }) {
+  return (
+    <label
+      style={{
+        fontFamily: "'Lora', serif",
+        fontSize: "11px",
+        fontWeight: "600",
+        letterSpacing: `${uppercase ? "1px" : "0"}`,
+        color: color,
+        textTransform: uppercase ? "uppercase" : "none",
+        display: "block"
+      }}
+    >
+      {children}
+    </label>
+  );
+}
+
+function SectionHeader({ title, subtitle }) {
+  return (
+    <div
+      style={{
+        background: "linear-gradient(180deg, rgba(217, 145, 79, 0.08) 0%, rgba(245, 237, 217, 0.4) 100%)",
+        padding: "28px 32px",
+        borderBottom: `1px solid rgba(60, 24, 30, 0.08)`,
+        marginBottom: "28px"
+      }}
+    >
+      <div
+        style={{
+          fontFamily: "'Lora', serif",
+          fontSize: "18px",
+          fontWeight: "600",
+          color: CORES.fogo,
+          marginBottom: "4px"
+        }}
+      >
+        {title}
+      </div>
+      {subtitle && (
+        <div style={{ fontSize: "12px", color: CORES.madeira }}>
+          {subtitle}
+        </div>
+      )}
+    </div>
   );
 }
 
