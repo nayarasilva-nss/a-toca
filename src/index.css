@@ -812,6 +812,139 @@ textarea {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
+/* MOBILE REFINEMENTS — Otimizado para pequeñas telas */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 480px) {
+  /* Base text size for mobile */
+  html {
+    font-size: 14px;
+  }
+
+  /* Todos containers em mobile recebem padding reduzido */
+  div[style*="margin: 0 auto"] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Títulos em Crimson Text reduzidos */
+  h1 {
+    font-size: 28px !important;
+    letter-spacing: 2px !important;
+  }
+
+  /* Botão voltar com tamanho menor */
+  button[style*="fontFamily: \"'Lora'"][style*="uppercase"] {
+    font-size: 10px !important;
+    margin-bottom: 16px !important;
+    letter-spacing: 0.5px !important;
+  }
+
+  /* Cards com padding reduzido */
+  div[style*="background: #FFFBF0"],
+  div[style*="background: white"],
+  div[style*="padding: 28px"],
+  div[style*="padding: 32px"] {
+    padding: 12px !important;
+  }
+
+  /* Header dos cards com padding reduzido */
+  div[style*="borderBottom: 1px solid rgba(60, 24, 30, 0.08)"] {
+    padding: 16px !important;
+  }
+
+  /* Buttons menor em mobile */
+  button[style*="fontFamily: \"'Lora'"][style*="fontWeight: 600"] {
+    font-size: 11px !important;
+    padding: 8px 12px !important;
+  }
+
+  /* Inputs/textareas em mobile: 16px minimum para evitar zoom */
+  input,
+  textarea {
+    font-size: 16px !important;
+    padding: 10px !important;
+  }
+
+  /* Textarea reduzido */
+  textarea[rows="7"] {
+    min-height: 150px !important;
+  }
+
+  /* Flex stacking em mobile */
+  div[style*="display: flex"][style*="gap: 32px"],
+  div[style*="display: flex"][style*="gap: 24px"] {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  /* Grids = 1 coluna em mobile */
+  div[style*="display: grid"] {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  /* Tamanho de fonte reduzido para labels e hints */
+  div[style*="fontSize: 11px"] {
+    font-size: 10px !important;
+  }
+
+  div[style*="fontSize: 13px"] {
+    font-size: 11px !important;
+  }
+
+  /* Section headers em mobile */
+  div[style*="fontSize: 18px"][style*="fontWeight: 600"] {
+    font-size: 14px !important;
+  }
+
+  div[style*="fontSize: 20px"][style*="fontWeight: 800"] {
+    font-size: 16px !important;
+  }
+
+  div[style*="fontSize: 40px"][style*="fontWeight: 800"] {
+    font-size: 24px !important;
+  }
+
+  div[style*="fontSize: 48px"][style*="fontWeight: 800"] {
+    font-size: 32px !important;
+  }
+
+  /* Remover paddingTop excessivo */
+  div[style*="paddingTop: 32px"] {
+    padding-top: 16px !important;
+  }
+
+  /* Botões de seleção menores */
+  button[style*="border: 1px solid"][style*="fontFamily: \"'Lora'\""] {
+    padding: 8px 10px !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Esconder elementos grandes em mobile */
+  .hide-mobile {
+    display: none !important;
+  }
+
+  /* Botões em linha devem ser flexíveis */
+  button {
+    min-width: auto !important;
+  }
+
+  /* Descrições menores em mobile */
+  div[style*="fontSize: 12px"] {
+    font-size: 11px !important;
+  }
+
+  /* Heading secundário menor */
+  h2 {
+    font-size: 20px !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
 /* DECORAÇÕES TEMÁTICAS — Personalidade Toca */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
