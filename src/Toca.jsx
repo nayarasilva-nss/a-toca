@@ -2504,67 +2504,100 @@ function FormCliente({ inicial, onSalvar, onCancelar, onExcluir }) {
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-8 rounded-lg shadow-sm" className="card">
-      <h2 className="font-serif text-xl mb-6" style={{ color: CORES.fogo }}>
-        {inicial ? "Editar cliente" : "Novo cliente"}
-      </h2>
-      <div className="mb-2 text-xs uppercase tracking-widest font-semibold" style={{ color: CORES.dourado }}>Tipo de cliente</div>
-      <div className="flex gap-2 mb-4">
-        {[["empresa", "Empresa"], ["pessoa", "Pessoa (mentorado)"]].map(([chave, rotulo]) => (
-          <button
-            key={chave}
-            onClick={() => definirTipo(chave)}
-            className="px-3 py-1.5 text-sm rounded border font-semibold"
-            style={
-              c.tipo === chave
-                ? { background: "#F5EDD9", borderColor: CORES.dourado, color: CORES.fogo }
-                : { background: "white", borderColor: "#E0D5BC", color: "#A89878" }
-            }
-          >
-            {c.tipo === chave ? "✓ " : ""}{rotulo}
-          </button>
-        ))}
-      </div>
-      <CampoTexto rotulo={ehPessoa ? "Nome da pessoa" : "Nome do negócio"} valor={c.negocio} onChange={set("negocio")} placeholder={ehPessoa ? "Ex.: Carlos Andrade" : "Ex.: Caverna do Cheff"} />
-      <CampoTexto rotulo={ehPessoa ? "Atuação (cargo e empresa/negócio)" : "Segmento"} valor={c.segmento} onChange={set("segmento")} placeholder={ehPessoa ? "Ex.: Gerente geral — restaurante de médio porte" : "Ex.: Restaurante — hamburgueria artesanal"} />
-      {!ehPessoa && <CampoTexto rotulo="Setores / áreas" valor={c.setores} onChange={set("setores")} placeholder="Ex.: Salão, Cozinha, Delivery, Estoque" />}
-      {!ehPessoa && <CampoTexto rotulo="Regras próprias da casa" area valor={c.regras} onChange={set("regras")} placeholder="Ex.: celular proibido na operação; uniforme completo obrigatório" />}
-      <CampoTexto rotulo={ehPessoa ? "Contexto e objetivos (por que buscou a mentoria)" : "Contexto e dores relatadas"} area valor={c.contexto} onChange={set("contexto")} placeholder={ehPessoa ? "Ex.: liderança recém-promovida; time resiste; quer parar de apagar incêndio" : "Ex.: atrasos recorrentes, desperdício de insumos"} />
-      <div className="mb-2 text-xs uppercase tracking-widest font-semibold" style={{ color: CORES.dourado }}>Trilhas contratadas</div>
-      <div className="flex gap-2 flex-wrap mb-2">
-        {[["consultoria", "Consultoria"], ["mentoria", "Mentoria"], ["treinamentos", "Treinamentos"]].map(([chave, rotulo]) => (
-          <button
-            key={chave}
-            onClick={() => alternarServico(chave)}
-            className="px-3 py-1.5 text-sm rounded border font-semibold"
-            style={
-              servicos[chave]
-                ? { background: "#F5EDD9", borderColor: CORES.dourado, color: CORES.fogo }
-                : { background: "white", borderColor: "#E0D5BC", color: "#A89878" }
-            }
-          >
-            {servicos[chave] ? "✓ " : ""}{rotulo}
-          </button>
-        ))}
-      </div>
-      <p className="text-xs mb-4" style={{ color: "#8A7A5C" }}>
-        As trilhas definem quais alas aparecem na toca deste cliente. Treinamentos podem viver dentro da consultoria ou avulsos.
-      </p>
-      <div className="flex gap-3 mt-6">
-        <BotaoPrimario onClick={() => valido && onSalvar(c)} disabled={!valido}>Salvar cliente</BotaoPrimario>
-        <button onClick={onCancelar} className="px-5 py-2 rounded text-sm" style={{ color: CORES.fogo }}>
-          Cancelar
-        </button>
-      </div>
-      {inicial && onExcluir && (
-        <div className="mt-6 pt-4 border-t" style={{ borderColor: "#EFE8D6" }}>
-          <ConfirmarAcao
-            rotulo="Excluir este cliente e todos os seus dados"
-            aviso="apaga documentos, planos, atas e histórico deste cliente para sempre"
-            onConfirmar={onExcluir}
-          />
+    <div style={{ maxWidth: "440px", margin: "32px auto", background: "#FFFBF0", borderRadius: "4px", boxShadow: "0 2px 8px rgba(92, 26, 43, 0.1)" }}>
+      <div style={{ padding: "32px", borderBottom: "1px solid rgba(60, 24, 30, 0.08)", background: "linear-gradient(180deg, rgba(217, 145, 79, 0.08) 0%, rgba(245, 237, 217, 0.4) 100%)" }}>
+        <div style={{ fontSize: "18px", fontWeight: "600", color: "#5C1A2B", marginBottom: "4px" }}>
+          {inicial ? "Editar cliente" : "Novo cliente"}
         </div>
-      )}
+        <div style={{ fontSize: "12px", color: "#8B6F47" }}>
+          Preencha os dados básicos
+        </div>
+      </div>
+
+      <div style={{ padding: "28px" }}>
+        <Label>Tipo de cliente</Label>
+        <div style={{ display: "flex", gap: "8px", marginBottom: "18px" }}>
+          {[["empresa", "Empresa"], ["pessoa", "Pessoa (mentorado)"]].map(([chave, rotulo]) => (
+            <button
+              key={chave}
+              onClick={() => definirTipo(chave)}
+              style={{
+                flex: 1,
+                padding: "10px 12px",
+                borderRadius: "4px",
+                border: "1px solid",
+                fontFamily: "'Lora', serif",
+                fontSize: "13px",
+                fontWeight: "600",
+                cursor: "pointer",
+                borderColor: c.tipo === chave ? "#D4AF37" : "#D9914F",
+                background: c.tipo === chave ? "#F5EDD9" : "#FFFBF0",
+                color: c.tipo === chave ? "#5C1A2B" : "#8B6F47"
+              }}
+            >
+              {c.tipo === chave ? "✓ " : ""}{rotulo}
+            </button>
+          ))}
+        </div>
+
+        <InputField label={ehPessoa ? "Nome da pessoa" : "Nome do negócio"} value={c.negocio} onChange={set("negocio")} placeholder={ehPessoa ? "Ex.: Carlos Andrade" : "Ex.: Caverna do Cheff"} />
+        <InputField label={ehPessoa ? "Atuação (cargo e empresa/negócio)" : "Segmento"} value={c.segmento} onChange={set("segmento")} placeholder={ehPessoa ? "Ex.: Gerente geral — restaurante de médio porte" : "Ex.: Restaurante — hamburgueria artesanal"} />
+        {!ehPessoa && <InputField label="Setores / áreas" value={c.setores} onChange={set("setores")} placeholder="Ex.: Salão, Cozinha, Delivery, Estoque" />}
+        {!ehPessoa && (
+          <div style={{ marginBottom: "18px" }}>
+            <label style={{ display: "block", fontFamily: "'Lora', serif", fontSize: "11px", letterSpacing: "1px", color: "#D4AF37", textTransform: "uppercase", marginBottom: "6px", fontWeight: "600" }}>Regras próprias da casa</label>
+            <textarea placeholder="Ex.: celular proibido na operação; uniforme completo obrigatório" value={c.regras} onChange={(e) => set("regras")(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #D9914F", borderRadius: "4px", fontFamily: "'Lora', serif", fontSize: "13px", background: "#FFFBF0", color: "#3C181E", outline: "none", minHeight: "120px", boxSizing: "border-box", transition: "border-color 0.2s" }} onFocus={(e) => { e.target.style.borderColor = "#D4AF37"; e.target.style.boxShadow = "0 0 0 2px rgba(212, 175, 55, 0.1)"; }} onBlur={(e) => { e.target.style.borderColor = "#D9914F"; e.target.style.boxShadow = "none"; }} />
+          </div>
+        )}
+        <div style={{ marginBottom: "18px" }}>
+          <label style={{ display: "block", fontFamily: "'Lora', serif", fontSize: "11px", letterSpacing: "1px", color: "#D4AF37", textTransform: "uppercase", marginBottom: "6px", fontWeight: "600" }}>{ehPessoa ? "Contexto e objetivos (por que buscou a mentoria)" : "Contexto e dores relatadas"}</label>
+          <textarea placeholder={ehPessoa ? "Ex.: liderança recém-promovida; time resiste; quer parar de apagar incêndio" : "Ex.: atrasos recorrentes, desperdício de insumos"} value={c.contexto} onChange={(e) => set("contexto")(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #D9914F", borderRadius: "4px", fontFamily: "'Lora', serif", fontSize: "13px", background: "#FFFBF0", color: "#3C181E", outline: "none", minHeight: "120px", boxSizing: "border-box", transition: "border-color 0.2s" }} onFocus={(e) => { e.target.style.borderColor = "#D4AF37"; e.target.style.boxShadow = "0 0 0 2px rgba(212, 175, 55, 0.1)"; }} onBlur={(e) => { e.target.style.borderColor = "#D9914F"; e.target.style.boxShadow = "none"; }} />
+        </div>
+
+        <Label>Trilhas contratadas</Label>
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "12px" }}>
+          {[["consultoria", "Consultoria"], ["mentoria", "Mentoria"], ["treinamentos", "Treinamentos"]].map(([chave, rotulo]) => (
+            <button
+              key={chave}
+              onClick={() => alternarServico(chave)}
+              style={{
+                padding: "10px 12px",
+                borderRadius: "4px",
+                border: "1px solid",
+                fontFamily: "'Lora', serif",
+                fontSize: "13px",
+                fontWeight: "600",
+                cursor: "pointer",
+                borderColor: servicos[chave] ? "#D4AF37" : "#D9914F",
+                background: servicos[chave] ? "#F5EDD9" : "#FFFBF0",
+                color: servicos[chave] ? "#5C1A2B" : "#8B6F47"
+              }}
+            >
+              {servicos[chave] ? "✓ " : ""}{rotulo}
+            </button>
+          ))}
+        </div>
+        <p style={{ fontSize: "11px", marginBottom: "24px", color: "#8A7A5C", fontFamily: "'Lora', serif" }}>
+          As trilhas definem quais alas aparecem na toca deste cliente. Treinamentos podem viver dentro da consultoria ou avulsos.
+        </p>
+
+        <div style={{ display: "flex", gap: "12px", marginBottom: "24px" }}>
+          <BotaoPrimario onClick={() => valido && onSalvar(c)} disabled={!valido}>Salvar cliente</BotaoPrimario>
+          <button onClick={onCancelar} style={{ flex: 1, padding: "12px 16px", background: "transparent", color: "#5C1A2B", border: "1px solid #5C1A2B", borderRadius: "4px", fontFamily: "'Lora', serif", fontSize: "13px", fontWeight: "600", cursor: "pointer", letterSpacing: "1px" }}>
+            Cancelar
+          </button>
+        </div>
+
+        {inicial && onExcluir && (
+          <div style={{ paddingTop: "24px", borderTop: "1px solid #D9914F" }}>
+            <ConfirmarAcao
+              rotulo="Excluir este cliente e todos os seus dados"
+              aviso="apaga documentos, planos, atas e histórico deste cliente para sempre"
+              onConfirmar={onExcluir}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -2593,90 +2626,103 @@ function BadgesFrentes({ gestao }) {
 
 function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAplicarBackup, onCancelarBackup, onAbrir, onNovo, onExcluir, onExportarBackup, onImportarBackup }) {
   return (
-    <div className="max-w-6xl mx-auto mt-12 px-8 pb-16">
+    <div style={{ maxWidth: "1200px", margin: "0 auto", paddingTop: "32px", paddingLeft: "32px", paddingRight: "32px", paddingBottom: "32px" }}>
       {backupPendente && (
-        <div className="mb-6 p-4 rounded-lg flex items-center gap-3 flex-wrap" style={{ background: "#F5EDD9", border: "2px solid #D4AF37AA" }}>
-          <span className="text-sm" style={{ color: CORES.fogoEscuro }}>
+        <div style={{ marginBottom: "24px", padding: "16px", borderRadius: "4px", display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap", background: "#F5EDD9", border: "2px solid #D4AF37" }}>
+          <span style={{ fontSize: "13px", color: "#3C181E", fontFamily: "'Lora', serif" }}>
             Backup lido: {backupPendente.clientes.length} cliente(s). Aplicar substitui todos os dados atuais do app.
           </span>
           <BotaoPrimario onClick={onAplicarBackup}>Aplicar backup</BotaoPrimario>
-          <button onClick={onCancelarBackup} className="text-xs underline" style={{ color: "#8A7A5C" }}>Cancelar</button>
+          <button onClick={onCancelarBackup} style={{ fontSize: "11px", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", color: "#8A7A5C", fontFamily: "'Lora', serif" }}>Cancelar</button>
         </div>
       )}
+
       {clientes.length > 0 && (
-        <div className="mb-32 pb-24 border-b-4" style={{ borderColor: `rgba(139, 58, 58, 0.25)` }}>
-          <div className="max-w-2xl mx-auto">
-            <h2 className="text-sm uppercase tracking-widest font-bold mb-8" style={{ color: "#8B3A3A" }}>📍 Engajamento</h2>
+        <div style={{ marginBottom: "48px", paddingBottom: "32px", borderBottom: "4px solid rgba(92, 26, 43, 0.2)" }}>
+          <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+            <h2 style={{ fontSize: "11px", fontWeight: "600", letterSpacing: "1px", color: "#5C1A2B", marginBottom: "16px", textTransform: "uppercase", fontFamily: "'Lora', serif" }}>📍 Engajamento</h2>
             <RelogioWeasley clientes={clientes} fases={fases} onAbrir={onAbrir} />
           </div>
         </div>
       )}
-      <div className="mt-0 pt-20 mb-16 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-12">
-        <div className="flex-1">
-          <h1 className="font-serif text-5xl font-bold mb-3" style={{ color: CORES.fogo }}>Meus Clientes</h1>
-          <p className="text-base" style={{ color: "#A0826D" }}>📍 cada um com sua toca particular</p>
+
+      <div style={{ marginTop: "0", paddingTop: "32px", marginBottom: "32px", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: "32px" }}>
+        <div style={{ flex: 1 }}>
+          <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "48px", fontWeight: "800", letterSpacing: "4px", color: "#5C1A2B", marginBottom: "8px" }}>MEUS CLIENTES</h1>
+          <p style={{ fontSize: "13px", color: "#A0826D", fontFamily: "'Lora', serif" }}>📍 cada um com sua toca particular</p>
         </div>
-        <BotaoPrimario onClick={onNovo} style={{ whiteSpace: "nowrap", fontSize: "1rem", padding: "0.85rem 2rem" }}>✨ Novo cliente</BotaoPrimario>
+        <BotaoPrimario onClick={onNovo} style={{ whiteSpace: "nowrap", fontSize: "13px", padding: "12px 24px" }}>✨ Novo cliente</BotaoPrimario>
       </div>
+
       {clientes.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: "#FFFBF0", border: `2px dashed ${CORES.dourado}` }}>
-          <p className="text-lg font-serif mb-3" style={{ color: CORES.fogo }}>📭 A Toca está vazia</p>
-          <p className="text-sm" style={{ color: "#A0826D" }}>nem um gnomo no jardim</p>
-          <p className="text-xs mt-4" style={{ color: "#8A7A5C" }}>Cadastre o primeiro cliente para começar a gerar documentos.</p>
+        <div style={{ textAlign: "center", paddingTop: "32px", paddingBottom: "32px", borderRadius: "4px", background: "#FFFBF0", border: "2px dashed #D4AF37" }}>
+          <p style={{ fontSize: "16px", fontFamily: "'Crimson Text', serif", marginBottom: "12px", color: "#5C1A2B" }}>📭 A Toca está vazia</p>
+          <p style={{ fontSize: "13px", color: "#A0826D", fontFamily: "'Lora', serif" }}>nem um gnomo no jardim</p>
+          <p style={{ fontSize: "11px", marginTop: "16px", color: "#8A7A5C", fontFamily: "'Lora', serif" }}>Cadastre o primeiro cliente para começar a gerar documentos.</p>
         </div>
       ) : (
-        <div className="mt-16 grid gap-12 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl">
+        <div style={{ marginTop: "32px", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "24px" }}>
           {clientes.map((c) => (
             <div
               key={c.id}
               onClick={() => onAbrir(c.id)}
-              className="text-left p-10 rounded-lg cursor-pointer relative group hover:shadow-lg"
-              style={{ background: "#FFFBF0", border: `3px solid ${CORES.dourado}`, boxShadow: `0 6px 16px rgba(139, 58, 58, 0.15)`, transition: "all 0.3s ease" }}
+              style={{
+                textAlign: "left",
+                padding: "28px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                position: "relative",
+                background: "#FFFBF0",
+                border: "1px solid #D9914F",
+                boxShadow: "0 2px 8px rgba(92, 26, 43, 0.1)",
+                transition: "all 0.3s ease"
+              }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = `0 8px 16px rgba(139, 58, 58, 0.2)`;
-                e.currentTarget.style.transform = "translateY(-4px)";
+                e.currentTarget.style.boxShadow = "0 8px 16px rgba(92, 26, 43, 0.2)";
+                e.currentTarget.style.transform = "translateY(-2px)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = `0 2px 8px rgba(139, 58, 58, 0.1)`;
+                e.currentTarget.style.boxShadow = "0 2px 8px rgba(92, 26, 43, 0.1)";
                 e.currentTarget.style.transform = "translateY(0)";
               }}
             >
-              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
+              <div style={{ position: "absolute", top: "16px", right: "16px", opacity: 0, transition: "opacity 0.3s" }} onMouseEnter={(e) => e.currentTarget.parentElement.style.opacity = "1"} onMouseLeave={(e) => e.currentTarget.parentElement.style.opacity = "0"}>
                 <ConfirmarAcao
                   rotulo="✕"
                   aviso={`apaga ${c.negocio} e TODOS os seus dados`}
                   onConfirmar={() => onExcluir(c.id)}
                   classe="text-sm px-2 py-1 rounded font-semibold"
-                  style={{ color: CORES.fogo, background: "rgba(139, 58, 58, 0.1)" }}
+                  style={{ color: "#5C1A2B", background: "rgba(92, 26, 43, 0.1)" }}
                 />
               </div>
-              <div className="pr-10">
-                <h3 className="font-serif text-3xl font-bold mb-4" style={{ color: CORES.fogo }}>
+              <div style={{ paddingRight: "40px" }}>
+                <h3 style={{ fontFamily: "'Crimson Text', serif", fontSize: "28px", fontWeight: "800", marginBottom: "12px", color: "#5C1A2B", letterSpacing: "2px" }}>
                   {c.negocio}
                 </h3>
-                {c.tipo === "pessoa" && <span className="text-sm px-4 py-2 rounded inline-block mb-5 font-semibold" style={{ background: `rgba(139, 58, 58, 0.15)`, color: CORES.fogo }}>📌 Mentorado</span>}
-                <p className="text-base mb-8 leading-relaxed" style={{ color: "#A0826D" }}>
+                {c.tipo === "pessoa" && <span style={{ fontSize: "11px", padding: "6px 12px", borderRadius: "4px", display: "inline-block", marginBottom: "12px", fontWeight: "600", background: "rgba(92, 26, 43, 0.1)", color: "#5C1A2B", fontFamily: "'Lora', serif" }}>📌 Mentorado</span>}
+                <p style={{ fontSize: "13px", marginBottom: "16px", lineHeight: "1.6", color: "#A0826D", fontFamily: "'Lora', serif" }}>
                   {c.segmento}
                 </p>
               </div>
-              <div className="mt-8 pt-8 border-t-2" style={{ borderColor: "rgba(139, 58, 58, 0.2)" }}>
+              <div style={{ marginTop: "16px", paddingTop: "16px", borderTop: "1px solid rgba(92, 26, 43, 0.2)" }}>
                 <BadgesFrentes gestao={gestaoPorCliente[c.id]} />
               </div>
             </div>
           ))}
         </div>
       )}
-      <div className="mt-24 pt-12 border-t-4 flex items-center gap-6 text-sm" style={{ borderColor: "#D4AF37", color: "#8B3A3A" }}>
+
+      <div style={{ marginTop: "48px", paddingTop: "24px", borderTop: "4px solid #D4AF37", display: "flex", alignItems: "center", gap: "24px", fontSize: "13px", color: "#5C1A2B", fontFamily: "'Lora', serif" }}>
         <span>O Vira-Tempo da Toca — seus dados vivem neste app:</span>
-        <button onClick={onExportarBackup} className="underline" style={{ color: CORES.dourado }}>
+        <button onClick={onExportarBackup} style={{ textDecoration: "underline", background: "none", border: "none", cursor: "pointer", color: "#D4AF37", fontSize: "13px", fontFamily: "'Lora', serif" }}>
           Exportar backup (.json)
         </button>
-        <label className="underline cursor-pointer" style={{ color: CORES.dourado }}>
+        <label style={{ textDecoration: "underline", cursor: "pointer", color: "#D4AF37", fontSize: "13px", fontFamily: "'Lora', serif" }}>
           Importar backup
           <input
             type="file"
             accept="application/json"
-            className="hidden"
+            style={{ display: "none" }}
             onChange={(e) => {
               const arq = e.target.files && e.target.files[0];
               if (arq) onImportarBackup(arq);
