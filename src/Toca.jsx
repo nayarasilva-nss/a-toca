@@ -2687,13 +2687,13 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
                 e.currentTarget.style.transform = "translateY(0)";
               }}
             >
-              <div style={{ position: "absolute", top: "16px", right: "16px", opacity: 0, transition: "opacity 0.3s" }} onMouseEnter={(e) => e.currentTarget.parentElement.style.opacity = "1"} onMouseLeave={(e) => e.currentTarget.parentElement.style.opacity = "0"}>
+              <div style={{ position: "absolute", top: "16px", right: "16px" }}>
                 <ConfirmarAcao
-                  label="✕"
+                  label="🗑️"
                   aviso={`apaga ${c.negocio} e TODOS os seus dados`}
                   onConfirmar={() => onExcluir(c.id)}
-                  classe="text-sm px-2 py-1 rounded font-semibold"
-                  style={{ color: "#5C1A2B", background: "rgba(92, 26, 43, 0.1)" }}
+                  classe="text-xs px-2 py-1 rounded font-semibold"
+                  style={{ color: "#8A3A2E", background: "#F0DCD2", border: "1px solid #D9914F" }}
                 />
               </div>
               <div style={{ paddingRight: "40px" }}>
