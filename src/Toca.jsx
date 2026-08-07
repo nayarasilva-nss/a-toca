@@ -2215,7 +2215,7 @@ function InputField({ label, placeholder, value, onChange, type = "text", requir
         type={type}
         placeholder={placeholder}
         value={value}
-        onChange={onChange}
+        onChange={(e) => onChange(e.target.value)}
         required={required}
         style={{
           width: "100%",
