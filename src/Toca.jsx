@@ -106,22 +106,14 @@ async function stSet(chave, valor) {
 // ─── IA: chamada base ───────────────────────────────────────────
 
 async function chamarIA(prompt) {
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
+  const response = await fetch("/api/ia", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-6",
-      max_tokens: 1000,
-      messages: [{ role: "user", content: prompt }],
-    }),
+    body: JSON.stringify({ prompt }),
   });
   const data = await response.json();
-  if (data.error) throw new Error(data.error.message || "erro da API");
-  if (!Array.isArray(data.content)) throw new Error("resposta inesperada da API");
-  return data.content
-    .filter((b) => b.type === "text")
-    .map((b) => b.text)
-    .join("\n");
+  if (data.error) throw new Error(data.error);
+  return data.text || "";
 }
 
 async function comRetentativa(fn) {
