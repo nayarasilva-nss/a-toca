@@ -4659,17 +4659,10 @@ function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar, onImpr
         {!gerando && (
           <>
             <div className="grid sm:grid-cols-2 gap-x-4">
-              <CampoTexto label="Nome ou apelido" value={pessoa.nome} onChange={set("nome")} placeholder="Ex.: João (líder do salão)" />
-              <CampoTexto label="Cargo/função" value={pessoa.cargo} onChange={set("cargo")} placeholder="Ex.: Líder de Salão" />
+              <InputField label="Nome ou apelido" value={pessoa.nome} onChange={set("nome")} placeholder="Ex.: João (líder do salão)" />
+              <InputField label="Cargo/função" value={pessoa.cargo} onChange={set("cargo")} placeholder="Ex.: Líder de Salão" />
             </div>
-            <CampoTexto
-              label="Observações — comportamentos, reações, padrões"
-              area
-              linhas={4}
-              value={pessoa.obs}
-              onChange={set("obs")}
-              placeholder="Ex.: fala rápido e alto, resolve conflito na hora mas atropela; detesta rotina de fechamento; o time gosta dele mas reclama de instabilidade"
-            />
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações — comportamentos, reações, padrões</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} placeholder="Ex.: fala rápido e alto, resolve conflito na hora mas atropela; detesta rotina de fechamento; o time gosta dele mas reclama de instabilidade" value={pessoa.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
 
             <div className="mb-4 rounded-lg p-4" style={{ background: "white", border: "1px dashed #E97F3855" }}>
               <div className="flex items-baseline justify-between mb-1">
@@ -4745,16 +4738,10 @@ function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar, onImpr
               É o contratante/dono — orientar como conduzir a consultoria com essa pessoa
             </label>
             {pessoa.contratante && (
-              <CampoTexto
-                label="Como conduzir a consultoria com essa pessoa (uso interno — não sai na ficha PDF)"
-                area
-                linhas={4}
-                value={pessoa.abordagem}
-                onChange={set("abordagem")}
-              />
+              <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Como conduzir a consultoria com essa pessoa (uso interno — não sai na ficha PDF)</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={pessoa.abordagem} onChange={(e) => set("abordagem")(e.target.value)} /></label>
             )}
             {CAMPOS_PESSOA_GERADOS.map(([campo, rotulo, linhas]) => (
-              <CampoTexto key={campo} rotulo={rotulo} area linhas={linhas} value={pessoa[campo]} onChange={set(campo)} />
+              <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={pessoa[campo]} onChange={(e) => set(campo)(e.target.value)} /></label>
             ))}
             <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
               Excluir pessoa
@@ -4990,8 +4977,8 @@ function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerando, erro
         </div>
 
         <div className="grid sm:grid-cols-2 gap-x-4">
-          <CampoTexto label="Rótulo (opcional)" value={diag.rotulo} onChange={(v) => onMudar({ ...diag, rotulo: v })} placeholder="Ex.: Diagnóstico inicial" />
-          <CampoTexto label="Data" value={diag.data} onChange={(v) => onMudar({ ...diag, data: v })} />
+          <InputField label="Rótulo (opcional)" value={diag.rotulo} onChange={(v) => onMudar({ ...diag, rotulo: v })} placeholder="Ex.: Diagnóstico inicial" />
+          <InputField label="Data" value={diag.data} onChange={(v) => onMudar({ ...diag, data: v })} />
         </div>
 
         <div className="text-xs mb-3" style={{ color: "#A89878" }}>
@@ -5062,9 +5049,9 @@ function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerando, erro
 
             {(diag.leitura || diag.criticos || diag.prioridades) && (
               <>
-                <CampoTexto label="Leitura geral" area linhas={3} value={diag.leitura} onChange={(v) => onMudar({ ...diag, leitura: v })} />
-                <CampoTexto label="Pontos críticos (um por linha)" area linhas={3} value={diag.criticos} onChange={(v) => onMudar({ ...diag, criticos: v })} />
-                <CampoTexto label="Prioridades de ação (uma por linha)" area linhas={4} value={diag.prioridades} onChange={(v) => onMudar({ ...diag, prioridades: v })} />
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Leitura geral</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={diag.leitura} onChange={(e) => onMudar({ ...diag, leitura: e.target.value })} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Pontos críticos (um por linha)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={diag.criticos} onChange={(e) => onMudar({ ...diag, criticos: e.target.value })} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Prioridades de ação (uma por linha)</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={diag.prioridades} onChange={(e) => onMudar({ ...diag, prioridades: e.target.value })} /></label>
               </>
             )}
 
@@ -6296,17 +6283,10 @@ function EditorFluxo({ cliente, fluxo, gerando, erro, onMudar, onGerar, onImprim
         {!gerando && (
           <>
             <div className="grid sm:grid-cols-2 gap-x-4">
-              <CampoTexto label="Nome do processo" value={fluxo.nome} onChange={set("nome")} placeholder="Ex.: Pedido do delivery, do app à entrega" />
-              <CampoTexto label="Setor" value={fluxo.setor} onChange={set("setor")} placeholder="Ex.: Delivery" />
+              <InputField label="Nome do processo" value={fluxo.nome} onChange={set("nome")} placeholder="Ex.: Pedido do delivery, do app à entrega" />
+              <InputField label="Setor" value={fluxo.setor} onChange={set("setor")} placeholder="Ex.: Delivery" />
             </div>
-            <CampoTexto
-              label="Como funciona hoje — e onde trava (para a IA)"
-              area
-              linhas={3}
-              value={fluxo.obs}
-              onChange={set("obs")}
-              placeholder="Ex.: pedido cai no tablet, cozinha só vê quando alguém avisa; embalagem sem conferência; motoboy sai sem checar endereço"
-            />
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Como funciona hoje — e onde trava (para a IA)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} placeholder="Ex.: pedido cai no tablet, cozinha só vé quando alguém avisa; embalagem sem conferência; motoboy sai sem checar endereço" value={fluxo.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
 
             {etapas.length > 0 && (
               <>
@@ -6380,13 +6360,7 @@ function EditorFluxo({ cliente, fluxo, gerando, erro, onMudar, onGerar, onImprim
             )}
 
             <div className="mt-5">
-              <CampoTexto
-                label="Gargalos e melhorias propostas (um por linha)"
-                area
-                linhas={4}
-                value={fluxo.melhorias}
-                onChange={set("melhorias")}
-              />
+              <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Gargalos e melhorias propostas (um por linha)</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={fluxo.melhorias} onChange={(e) => set("melhorias")(e.target.value)} /></label>
             </div>
 
             <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
