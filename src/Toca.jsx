@@ -2380,10 +2380,10 @@ const FASES_RELOGIO = [
 const CORES_PONTEIROS = ["#5C1A2B", "#B8860B", "#4A5A7A", "#4F6B3A", "#8A3A2E", "#B0652F", "#6B4A7A", "#3F6B6B", "#7A3A5A"];
 
 function RelogioWeasley({ clientes, fases, onAbrir }) {
-  const T = 340;
+  const T = 280;
   const cx = T / 2;
   const cy = T / 2;
-  const raio = T / 2 - 46;
+  const raio = T / 2 - 36;
   const n = FASES_RELOGIO.length;
   const anguloDe = (idx) => (Math.PI * 2 * idx) / n - Math.PI / 2;
   const pos = (idx, fator) => [cx + Math.cos(anguloDe(idx)) * raio * fator, cy + Math.sin(anguloDe(idx)) * raio * fator];
@@ -2392,8 +2392,8 @@ function RelogioWeasley({ clientes, fases, onAbrir }) {
     <div className="mb-10">
       <div className="font-serif text-2xl mb-2 font-bold" style={{ color: CORES.fogo }}>O Relógio</div>
       <div className="text-sm mb-6" style={{ color: "#9A8B75" }}>Onde cada cliente está — de relance, como a Molly.</div>
-      <div className="card flex flex-col sm:flex-row items-center justify-center gap-8 py-8 px-8" style={{ background: "linear-gradient(135deg, #FFF8F0 0%, #FFFBF0 100%)" }}>
-        <svg width={T} height={T} viewBox={`0 0 ${T} ${T}`} className="shrink-0">
+      <div className="card flex flex-col items-center justify-center gap-6 py-6 px-4 sm:px-8" style={{ background: "linear-gradient(135deg, #FFF8F0 0%, #FFFBF0 100%)" }}>
+        <svg width={T} height={T} viewBox={`0 0 ${T} ${T}`} className="shrink-0" style={{ maxWidth: "100%", height: "auto" }}>
           <defs>
             <radialGradient id="fundoRelogio" cx="50%" cy="42%" r="65%">
               <stop offset="0%" stopColor="#FFFDF8" />
@@ -2418,11 +2418,11 @@ function RelogioWeasley({ clientes, fases, onAbrir }) {
                 y={ty}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                fontSize="10.5"
+                fontSize="12"
                 fontFamily="Georgia, serif"
                 fontStyle={ehPerigo ? "italic" : "normal"}
-                fontWeight={ehPerigo ? "bold" : "normal"}
-                fill={ehPerigo ? "#8A3A2E" : "#6B5D42"}
+                fontWeight={ehPerigo ? "bold" : "600"}
+                fill={ehPerigo ? "#8A3A2E" : "#5C1A2B"}
               >
                 {f.rotulo}
               </text>
