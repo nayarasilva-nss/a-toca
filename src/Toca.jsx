@@ -2591,7 +2591,7 @@ function FormCliente({ inicial, onSalvar, onCancelar, onExcluir }) {
         {inicial && onExcluir && (
           <div style={{ paddingTop: "24px", borderTop: "1px solid #D9914F" }}>
             <ConfirmarAcao
-              rotulo="Excluir este cliente e todos os seus dados"
+              label="Excluir este cliente e todos os seus dados"
               aviso="apaga documentos, planos, atas e histórico deste cliente para sempre"
               onConfirmar={onExcluir}
             />
@@ -2688,7 +2688,7 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
             >
               <div style={{ position: "absolute", top: "16px", right: "16px", opacity: 0, transition: "opacity 0.3s" }} onMouseEnter={(e) => e.currentTarget.parentElement.style.opacity = "1"} onMouseLeave={(e) => e.currentTarget.parentElement.style.opacity = "0"}>
                 <ConfirmarAcao
-                  rotulo="✕"
+                  label="✕"
                   aviso={`apaga ${c.negocio} e TODOS os seus dados`}
                   onConfirmar={() => onExcluir(c.id)}
                   classe="text-sm px-2 py-1 rounded font-semibold"
@@ -3229,19 +3229,12 @@ function EditorCargo({ cliente, cargo, gerando, erro, onMudar, onGerar, onImprim
         {!gerando && (
           <>
             <div className="grid sm:grid-cols-2 gap-x-4">
-              <CampoTexto rotulo="Nome do cargo" valor={cargo.nome} onChange={set("nome")} placeholder="Ex.: Chefe de Cozinha" />
-              <CampoTexto rotulo="Setor" valor={cargo.setor} onChange={set("setor")} placeholder="Ex.: Cozinha" />
+              <InputField label="Nome do cargo" value={cargo.nome} onChange={set("nome")} placeholder="Ex.: Chefe de Cozinha" />
+              <InputField label="Setor" value={cargo.setor} onChange={set("setor")} placeholder="Ex.: Cozinha" />
             </div>
-            <CampoTexto
-              rotulo="Observações para a IA (opcional)"
-              area
-              linhas={2}
-              valor={cargo.obs}
-              onChange={set("obs")}
-              placeholder="Ex.: responde ao gerente da unidade; supervisiona 2 auxiliares"
-            />
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} placeholder="Ex.: responde ao gerente da unidade; supervisiona 2 auxiliares" value={cargo.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
             {CAMPOS_CARGO.map(([campo, rotulo, linhas]) => (
-              <CampoTexto key={campo} rotulo={rotulo} area linhas={linhas} valor={cargo[campo]} onChange={set(campo)} />
+              <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={cargo[campo]} onChange={(e) => set(campo)(e.target.value)} /></label>
             ))}
             <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
               Excluir cargo
@@ -3547,7 +3540,7 @@ function ModuloGestao({ cliente, gestao, atas, gerando, erro, onMudar, onGerarPl
                 <span style={{ fontSize: "11px", color: "#A89878", fontFamily: "'Lora', serif" }}>
                   Lê o briefing e a última ata; preserva frentes, status e ações feitas — só acrescenta e ajusta.
                 </span>
-                <ConfirmarAcao rotulo="Recomeçar do zero" aviso="apaga frentes, status e ações marcadas" onConfirmar={onGerarPlano} />
+                <ConfirmarAcao label="Recomeçar do zero" aviso="apaga frentes, status e ações marcadas" onConfirmar={onGerarPlano} />
               </>
             )}
           </div>
@@ -3932,7 +3925,7 @@ function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, onVoltar 
         {pontos.length > 0 && !gerando && (
           <span className="ml-3">
             <ConfirmarAcao
-              rotulo="Recomeçar do zero"
+              label="Recomeçar do zero"
               aviso="apaga pontos e documentos analisados"
               onConfirmar={() => onMudar({ nomeArquivo: "", dataAnalise: "", documentos: [], pontos: [] })}
             />
@@ -4225,19 +4218,12 @@ function EditorPop({ cliente, pop, gerando, erro, onMudar, onGerar, onImprimir, 
         {!gerando && (
           <>
             <div className="grid sm:grid-cols-2 gap-x-4">
-              <CampoTexto rotulo="Nome do processo" valor={pop.nome} onChange={set("nome")} placeholder="Ex.: Abertura do salão" />
-              <CampoTexto rotulo="Setor" valor={pop.setor} onChange={set("setor")} placeholder="Ex.: Salão" />
+              <InputField label="Nome do processo" value={pop.nome} onChange={set("nome")} placeholder="Ex.: Abertura do salão" />
+              <InputField label="Setor" value={pop.setor} onChange={set("setor")} placeholder="Ex.: Salão" />
             </div>
-            <CampoTexto
-              rotulo="Observações para a IA (opcional)"
-              area
-              linhas={2}
-              valor={pop.obs}
-              onChange={set("obs")}
-              placeholder="Ex.: o processo inclui conferir o caixa e ligar os equipamentos da cozinha"
-            />
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} placeholder="Ex.: o processo inclui conferir o caixa e ligar os equipamentos da cozinha" value={pop.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
             {CAMPOS_POP.map(([campo, rotulo, linhas]) => (
-              <CampoTexto key={campo} rotulo={rotulo} area={linhas > 1} linhas={linhas} valor={pop[campo]} onChange={set(campo)} />
+              <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={pop[campo]} onChange={(e) => set(campo)(e.target.value)} /></label>
             ))}
             <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
               Excluir POP
@@ -4388,10 +4374,10 @@ function EditorDoc({ cliente, tipo, doc, rotuloVoltar, gerando, erro, onMudar, o
         {!gerando && (
           <>
             {cfg.camposBase.map(([campo, rotulo, area, linhas, placeholder]) => (
-              <CampoTexto key={campo} rotulo={rotulo} area={area} linhas={linhas} valor={doc[campo] || ""} onChange={set(campo)} placeholder={placeholder} />
+              <CampoTexto key={campo} rotulo={rotulo} area={area} linhas={linhas} value={doc[campo] || ""} onChange={set(campo)} placeholder={placeholder} />
             ))}
             {cfg.camposGerados.map(([campo, rotulo, area, linhas]) => (
-              <CampoTexto key={campo} rotulo={rotulo} area={area} linhas={linhas} valor={doc[campo] || ""} onChange={set(campo)} />
+              <CampoTexto key={campo} rotulo={rotulo} area={area} linhas={linhas} value={doc[campo] || ""} onChange={set(campo)} />
             ))}
             <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
               Excluir {cfg.singular}
@@ -4673,14 +4659,14 @@ function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar, onImpr
         {!gerando && (
           <>
             <div className="grid sm:grid-cols-2 gap-x-4">
-              <CampoTexto rotulo="Nome ou apelido" valor={pessoa.nome} onChange={set("nome")} placeholder="Ex.: João (líder do salão)" />
-              <CampoTexto rotulo="Cargo/função" valor={pessoa.cargo} onChange={set("cargo")} placeholder="Ex.: Líder de Salão" />
+              <CampoTexto label="Nome ou apelido" value={pessoa.nome} onChange={set("nome")} placeholder="Ex.: João (líder do salão)" />
+              <CampoTexto label="Cargo/função" value={pessoa.cargo} onChange={set("cargo")} placeholder="Ex.: Líder de Salão" />
             </div>
             <CampoTexto
-              rotulo="Observações — comportamentos, reações, padrões"
+              label="Observações — comportamentos, reações, padrões"
               area
               linhas={4}
-              valor={pessoa.obs}
+              value={pessoa.obs}
               onChange={set("obs")}
               placeholder="Ex.: fala rápido e alto, resolve conflito na hora mas atropela; detesta rotina de fechamento; o time gosta dele mas reclama de instabilidade"
             />
@@ -4760,15 +4746,15 @@ function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar, onImpr
             </label>
             {pessoa.contratante && (
               <CampoTexto
-                rotulo="Como conduzir a consultoria com essa pessoa (uso interno — não sai na ficha PDF)"
+                label="Como conduzir a consultoria com essa pessoa (uso interno — não sai na ficha PDF)"
                 area
                 linhas={4}
-                valor={pessoa.abordagem}
+                value={pessoa.abordagem}
                 onChange={set("abordagem")}
               />
             )}
             {CAMPOS_PESSOA_GERADOS.map(([campo, rotulo, linhas]) => (
-              <CampoTexto key={campo} rotulo={rotulo} area linhas={linhas} valor={pessoa[campo]} onChange={set(campo)} />
+              <CampoTexto key={campo} rotulo={rotulo} area linhas={linhas} value={pessoa[campo]} onChange={set(campo)} />
             ))}
             <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
               Excluir pessoa
@@ -5004,8 +4990,8 @@ function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerando, erro
         </div>
 
         <div className="grid sm:grid-cols-2 gap-x-4">
-          <CampoTexto rotulo="Rótulo (opcional)" valor={diag.rotulo} onChange={(v) => onMudar({ ...diag, rotulo: v })} placeholder="Ex.: Diagnóstico inicial" />
-          <CampoTexto rotulo="Data" valor={diag.data} onChange={(v) => onMudar({ ...diag, data: v })} />
+          <CampoTexto label="Rótulo (opcional)" value={diag.rotulo} onChange={(v) => onMudar({ ...diag, rotulo: v })} placeholder="Ex.: Diagnóstico inicial" />
+          <CampoTexto label="Data" value={diag.data} onChange={(v) => onMudar({ ...diag, data: v })} />
         </div>
 
         <div className="text-xs mb-3" style={{ color: "#A89878" }}>
@@ -5076,9 +5062,9 @@ function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerando, erro
 
             {(diag.leitura || diag.criticos || diag.prioridades) && (
               <>
-                <CampoTexto rotulo="Leitura geral" area linhas={3} valor={diag.leitura} onChange={(v) => onMudar({ ...diag, leitura: v })} />
-                <CampoTexto rotulo="Pontos críticos (um por linha)" area linhas={3} valor={diag.criticos} onChange={(v) => onMudar({ ...diag, criticos: v })} />
-                <CampoTexto rotulo="Prioridades de ação (uma por linha)" area linhas={4} valor={diag.prioridades} onChange={(v) => onMudar({ ...diag, prioridades: v })} />
+                <CampoTexto label="Leitura geral" area linhas={3} value={diag.leitura} onChange={(v) => onMudar({ ...diag, leitura: v })} />
+                <CampoTexto label="Pontos críticos (um por linha)" area linhas={3} value={diag.criticos} onChange={(v) => onMudar({ ...diag, criticos: v })} />
+                <CampoTexto label="Prioridades de ação (uma por linha)" area linhas={4} value={diag.prioridades} onChange={(v) => onMudar({ ...diag, prioridades: v })} />
               </>
             )}
 
@@ -5432,14 +5418,14 @@ function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, 
                 </div>
               )}
               {CAMPOS_PROPOSTA_PARAMS.slice(0, 5).map(([campo, rotulo, area, linhas, placeholder]) => (
-                <CampoTexto key={campo} rotulo={rotulo} area={area} linhas={linhas} valor={prop[campo] || ""} onChange={set(campo)} placeholder={placeholder} />
+                <CampoTexto key={campo} rotulo={rotulo} area={area} linhas={linhas} value={prop[campo] || ""} onChange={set(campo)} placeholder={placeholder} />
               ))}
             </div>
             {CAMPOS_PROPOSTA_PARAMS.slice(5).map(([campo, rotulo, area, linhas, placeholder]) => (
-              <CampoTexto key={campo} rotulo={rotulo} area={area} linhas={linhas} valor={prop[campo] || ""} onChange={set(campo)} placeholder={placeholder} />
+              <CampoTexto key={campo} rotulo={rotulo} area={area} linhas={linhas} value={prop[campo] || ""} onChange={set(campo)} placeholder={placeholder} />
             ))}
             {CAMPOS_PROPOSTA_GERADOS.map(([campo, rotulo, linhas]) => (
-              <CampoTexto key={campo} rotulo={rotulo} area linhas={linhas} valor={prop[campo] || ""} onChange={set(campo)} />
+              <CampoTexto key={campo} rotulo={rotulo} area linhas={linhas} value={prop[campo] || ""} onChange={set(campo)} />
             ))}
             <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
               Excluir proposta
@@ -5610,14 +5596,14 @@ function ModuloCronograma({ cliente, gestao, gerando, erro, onMudar, onDistribui
 
         <div className="grid sm:grid-cols-2 gap-x-4">
           <CampoTexto
-            rotulo="Início do engajamento (dd/mm/aaaa)"
-            valor={gestao.inicio || ""}
+            label="Início do engajamento (dd/mm/aaaa)"
+            value={gestao.inicio || ""}
             onChange={(v) => onMudar({ ...gestao, inicio: v })}
             placeholder="Ex.: 04/08/2026"
           />
           <CampoTexto
-            rotulo="Duração (semanas)"
-            valor={gestao.duracaoSemanas || ""}
+            label="Duração (semanas)"
+            value={gestao.duracaoSemanas || ""}
             onChange={(v) => onMudar({ ...gestao, duracaoSemanas: v })}
             placeholder="Ex.: 10"
           />
@@ -5923,15 +5909,15 @@ function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAcordo, g
         {!gerando && (
           <>
             <CampoTexto
-              rotulo="Observações para a IA (opcional)"
+              label="Observações para a IA (opcional)"
               area
               linhas={2}
-              valor={relAberto.obs}
+              value={relAberto.obs}
               onChange={set("obs")}
               placeholder="Ex.: destacar a autonomia conquistada pelo gerente; cliente quer continuar com mentoria mensal"
             />
             {CAMPOS_RELATORIO.map(([campo, rotulo, linhas]) => (
-              <CampoTexto key={campo} rotulo={rotulo} area linhas={linhas} valor={relAberto[campo]} onChange={set(campo)} />
+              <CampoTexto key={campo} rotulo={rotulo} area linhas={linhas} value={relAberto[campo]} onChange={set(campo)} />
             ))}
             <button
               onClick={() => {
@@ -6310,14 +6296,14 @@ function EditorFluxo({ cliente, fluxo, gerando, erro, onMudar, onGerar, onImprim
         {!gerando && (
           <>
             <div className="grid sm:grid-cols-2 gap-x-4">
-              <CampoTexto rotulo="Nome do processo" valor={fluxo.nome} onChange={set("nome")} placeholder="Ex.: Pedido do delivery, do app à entrega" />
-              <CampoTexto rotulo="Setor" valor={fluxo.setor} onChange={set("setor")} placeholder="Ex.: Delivery" />
+              <CampoTexto label="Nome do processo" value={fluxo.nome} onChange={set("nome")} placeholder="Ex.: Pedido do delivery, do app à entrega" />
+              <CampoTexto label="Setor" value={fluxo.setor} onChange={set("setor")} placeholder="Ex.: Delivery" />
             </div>
             <CampoTexto
-              rotulo="Como funciona hoje — e onde trava (para a IA)"
+              label="Como funciona hoje — e onde trava (para a IA)"
               area
               linhas={3}
-              valor={fluxo.obs}
+              value={fluxo.obs}
               onChange={set("obs")}
               placeholder="Ex.: pedido cai no tablet, cozinha só vê quando alguém avisa; embalagem sem conferência; motoboy sai sem checar endereço"
             />
@@ -6395,10 +6381,10 @@ function EditorFluxo({ cliente, fluxo, gerando, erro, onMudar, onGerar, onImprim
 
             <div className="mt-5">
               <CampoTexto
-                rotulo="Gargalos e melhorias propostas (um por linha)"
+                label="Gargalos e melhorias propostas (um por linha)"
                 area
                 linhas={4}
-                valor={fluxo.melhorias}
+                value={fluxo.melhorias}
                 onChange={set("melhorias")}
               />
             </div>
@@ -6474,10 +6460,10 @@ function ModuloAlcadas({ cliente, alcadas, gerando, erro, onMudar, onGerar, onIm
         </p>
 
         <CampoTexto
-          rotulo="Observações para a IA (opcional)"
+          label="Observações para a IA (opcional)"
           area
           linhas={2}
-          valor={alcadas.obs || ""}
+          value={alcadas.obs || ""}
           onChange={(v) => onMudar({ ...alcadas, obs: v })}
           placeholder="Ex.: dono quer aprovar toda compra acima de R$ 500; gerente pode dar até 10% de desconto"
         />
@@ -6633,10 +6619,10 @@ function ModuloIndicadores({ cliente, painel, gerando, erro, onMudar, onGerar, o
         </p>
 
         <CampoTexto
-          rotulo="Observações para a IA (opcional)"
+          label="Observações para a IA (opcional)"
           area
           linhas={2}
-          valor={painel.obs || ""}
+          value={painel.obs || ""}
           onChange={(v) => onMudar({ ...painel, obs: v })}
           placeholder="Ex.: dor principal é desperdício e atraso no delivery; sistema de vendas é o Consumer"
         />
@@ -6802,10 +6788,10 @@ function ModuloRitos({ cliente, ritos, gerando, erro, onMudar, onGerar, onImprim
         </p>
 
         <CampoTexto
-          rotulo="Observações para a IA (opcional)"
+          label="Observações para a IA (opcional)"
           area
           linhas={2}
-          valor={ritos.obs || ""}
+          value={ritos.obs || ""}
           onChange={(v) => onMudar({ ...ritos, obs: v })}
           placeholder="Ex.: turnos de almoço e jantar; líderes só se encontram todos às segundas"
         />
@@ -7126,7 +7112,7 @@ function EditorCampo({ cliente, reg, pessoas, gerando, erro, onMudar, onGerarRot
             )}
 
             <div className="mt-4">
-              <ConfirmarAcao rotulo="Excluir este registro" aviso="apaga este registro de campo" onConfirmar={onExcluir} />
+              <ConfirmarAcao label="Excluir este registro" aviso="apaga este registro de campo" onConfirmar={onExcluir} />
             </div>
           </>
         )}
@@ -7301,7 +7287,7 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
             </div>
             {t.status === "realizado" && (
               <>
-                <CampoTexto rotulo="Como foi (registro interno — alimenta o relatório)" area linhas={3} valor={t.obsRealizacao} onChange={set("obsRealizacao")} />
+                <CampoTexto label="Como foi (registro interno — alimenta o relatório)" area linhas={3} value={t.obsRealizacao} onChange={set("obsRealizacao")} />
                 <div className="mb-4 flex gap-2 flex-wrap">
                   {(t.participantesLista || []).some((p) => p.presente && p.nome.trim()) && (
                     <BotaoContorno onClick={() => onImprimir({ seletor: ".area-cert", nome: `${cliente.negocio} — Certificados ${t.tema}` })}>
@@ -7319,14 +7305,14 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
                 </div>
                 {t.relResumo && (
                   <>
-                    <CampoTexto rotulo="Relatório — resumo do realizado" area linhas={3} valor={t.relResumo} onChange={set("relResumo")} />
-                    <CampoTexto rotulo="Relatório — resultados e reações observadas" area linhas={3} valor={t.relResultados} onChange={set("relResultados")} />
-                    <CampoTexto rotulo="Relatório — recomendações de continuidade" area linhas={3} valor={t.relRecomendacoes} onChange={set("relRecomendacoes")} />
+                    <CampoTexto label="Relatório — resumo do realizado" area linhas={3} value={t.relResumo} onChange={set("relResumo")} />
+                    <CampoTexto label="Relatório — resultados e reações observadas" area linhas={3} value={t.relResultados} onChange={set("relResultados")} />
+                    <CampoTexto label="Relatório — recomendações de continuidade" area linhas={3} value={t.relRecomendacoes} onChange={set("relRecomendacoes")} />
                   </>
                 )}
               </>
             )}
-            <ConfirmarAcao rotulo="Excluir este treinamento" aviso="apaga o treinamento e seu plano" onConfirmar={onExcluir} />
+            <ConfirmarAcao label="Excluir este treinamento" aviso="apaga o treinamento e seu plano" onConfirmar={onExcluir} />
           </>
         )}
       </div>
@@ -7736,9 +7722,9 @@ function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAcordo, te
               <div className="text-xs mt-1" style={{ color: "#9A6A2F" }}>Temperamento ainda não classificado — o formulário de observação da ficha ajuda.</div>
             )}
           </div>
-          <CampoTexto rotulo="Objetivos da mentoria" area linhas={3} valor={mentoria.objetivos || ""} onChange={(v) => onMudar({ ...mentoria, objetivos: v })} placeholder="Ex.: liderar sem centralizar; preparar o time para funcionar sem ele" />
+          <CampoTexto label="Objetivos da mentoria" area linhas={3} value={mentoria.objetivos || ""} onChange={(v) => onMudar({ ...mentoria, objetivos: v })} placeholder="Ex.: liderar sem centralizar; preparar o time para funcionar sem ele" />
         </div>
-        <CampoTexto rotulo="Briefing da conversa inicial (alimenta a jornada)" area linhas={3} valor={mentoria.briefing || ""} onChange={(v) => onMudar({ ...mentoria, briefing: v })} placeholder="Ex.: recém-promovido, era par do time que agora lidera; evita conflito; o dono cobra resultado" />
+        <CampoTexto label="Briefing da conversa inicial (alimenta a jornada)" area linhas={3} value={mentoria.briefing || ""} onChange={(v) => onMudar({ ...mentoria, briefing: v })} placeholder="Ex.: recém-promovido, era par do time que agora lidera; evita conflito; o dono cobra resultado" />
 
         <SecaoMoldagem mentoria={mentoria} mentorado={mentorado} gerando={gerando} onMudar={onMudar} onGerarFicha={onGerarFicha} />
 
@@ -7977,10 +7963,10 @@ function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, framework: f
                 )}
               </div>
             )}
-            <CampoTexto rotulo="Retrospectiva da jornada" area linhas={4} valor={rel.retrospectiva} onChange={set("retrospectiva")} />
-            <CampoTexto rotulo="Evolução observada" area linhas={4} valor={rel.evolucao} onChange={set("evolucao")} />
-            <CampoTexto rotulo="Conquistas (uma por linha)" area linhas={4} valor={rel.conquistas} onChange={set("conquistas")} />
-            <CampoTexto rotulo="Recomendações de continuidade (uma por linha)" area linhas={3} valor={rel.recomendacoes} onChange={set("recomendacoes")} />
+            <CampoTexto label="Retrospectiva da jornada" area linhas={4} value={rel.retrospectiva} onChange={set("retrospectiva")} />
+            <CampoTexto label="Evolução observada" area linhas={4} value={rel.evolucao} onChange={set("evolucao")} />
+            <CampoTexto label="Conquistas (uma por linha)" area linhas={4} value={rel.conquistas} onChange={set("conquistas")} />
+            <CampoTexto label="Recomendações de continuidade (uma por linha)" area linhas={3} value={rel.recomendacoes} onChange={set("recomendacoes")} />
           </>
         )}
       </div>
@@ -8183,8 +8169,8 @@ function ModuloPainel({ cliente, dados, painel, onMudar, onVoltar }) {
         )}
         <div className="mb-5">
           <div className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: CORES.dourado }}>Itens de controle (resultado)</div>
-          <LinhaPainel rotulo="Índice de formalização" valor={`${d.formalizacao}%`} alerta={d.formalizacao < 60} dica="% dos tipos de documento das frentes já gerados" />
-          <LinhaPainel rotulo="Pendências de conformidade resolvidas" valor={`${d.cctResolvidos}/${d.cctTotal}`} alerta={d.cctTotal > 0 && d.cctResolvidos < d.cctTotal} />
+          <LinhaPainel label="Índice de formalização" value={`${d.formalizacao}%`} alerta={d.formalizacao < 60} dica="% dos tipos de documento das frentes já gerados" />
+          <LinhaPainel label="Pendências de conformidade resolvidas" value={`${d.cctResolvidos}/${d.cctTotal}`} alerta={d.cctTotal > 0 && d.cctResolvidos < d.cctTotal} />
           <div className="mt-2">
             <div className="text-xs mb-1" style={{ color: "#6B5D42" }}>Autonomia decisória — relato do dono na fase Prova ("quantas vezes te acionaram este mês para algo que a alçada já resolvia?")</div>
             <div className="flex gap-2">
@@ -8216,8 +8202,8 @@ function ModuloPainel({ cliente, dados, painel, onMudar, onVoltar }) {
             </div>
           </div>
           <div className="mt-2">
-            <LinhaPainel rotulo="Anomalias tratadas × relatadas" valor={`${d.anomTratadas}/${d.anomTotal}`} alerta={d.anomTotal > 0 && d.anomTratadas / d.anomTotal < 0.7} />
-            <LinhaPainel rotulo="Atas registradas (última)" valor={d.ultimaAta ? `${d.totalAtas} · ${d.ultimaAta}` : "nenhuma"} alerta={!d.ultimaAta} />
+            <LinhaPainel label="Anomalias tratadas × relatadas" value={`${d.anomTratadas}/${d.anomTotal}`} alerta={d.anomTotal > 0 && d.anomTratadas / d.anomTotal < 0.7} />
+            <LinhaPainel label="Atas registradas (última)" value={d.ultimaAta ? `${d.totalAtas} · ${d.ultimaAta}` : "nenhuma"} alerta={!d.ultimaAta} />
           </div>
         </div>
       </div>
