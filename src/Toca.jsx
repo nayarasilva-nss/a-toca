@@ -2160,6 +2160,7 @@ function BotaoPrimario({ children, onClick, disabled, style }) {
         letterSpacing: "1px",
         padding: "12px 16px",
         background: CORES.fogo,
+        color: "white",
         border: "none",
         cursor: disabled ? "not-allowed" : "pointer",
         ...style
