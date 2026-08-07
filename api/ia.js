@@ -21,6 +21,7 @@ export default async (req, res) => {
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
@@ -32,10 +33,12 @@ export default async (req, res) => {
     const data = await response.json();
 
     if (!response.ok) {
+      console.error('API error response:', response.status, data);
       return res.status(response.status).json({ error: data.error?.message || 'API error' });
     }
 
     if (!Array.isArray(data.content)) {
+      console.error('Unexpected response structure:', data);
       return res.status(500).json({ error: 'Unexpected API response' });
     }
 
@@ -46,7 +49,7 @@ export default async (req, res) => {
 
     return res.status(200).json({ text });
   } catch (e) {
-    console.error('IA API error:', e);
+    console.error('IA API error:', e.message, e.stack);
     return res.status(500).json({ error: e.message || 'Internal server error' });
   }
 };
