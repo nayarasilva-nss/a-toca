@@ -4374,10 +4374,18 @@ function EditorDoc({ cliente, tipo, doc, rotuloVoltar, gerando, erro, onMudar, o
         {!gerando && (
           <>
             {cfg.camposBase.map(([campo, rotulo, area, linhas, placeholder]) => (
-              <CampoTexto key={campo} rotulo={rotulo} area={area} linhas={linhas} value={doc[campo] || ""} onChange={set(campo)} placeholder={placeholder} />
+              area ? (
+                <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} placeholder={placeholder} value={doc[campo] || ""} onChange={(e) => set(campo)(e.target.value)} /></label>
+              ) : (
+                <InputField key={campo} label={rotulo} value={doc[campo] || ""} onChange={set(campo)} placeholder={placeholder} />
+              )
             ))}
             {cfg.camposGerados.map(([campo, rotulo, area, linhas]) => (
-              <CampoTexto key={campo} rotulo={rotulo} area={area} linhas={linhas} value={doc[campo] || ""} onChange={set(campo)} />
+              area ? (
+                <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={doc[campo] || ""} onChange={(e) => set(campo)(e.target.value)} /></label>
+              ) : (
+                <InputField key={campo} label={rotulo} value={doc[campo] || ""} onChange={set(campo)} />
+              )
             ))}
             <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
               Excluir {cfg.singular}
@@ -5405,14 +5413,22 @@ function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, 
                 </div>
               )}
               {CAMPOS_PROPOSTA_PARAMS.slice(0, 5).map(([campo, rotulo, area, linhas, placeholder]) => (
-                <CampoTexto key={campo} rotulo={rotulo} area={area} linhas={linhas} value={prop[campo] || ""} onChange={set(campo)} placeholder={placeholder} />
+                area ? (
+                  <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} placeholder={placeholder} value={prop[campo] || ""} onChange={(e) => set(campo)(e.target.value)} /></label>
+                ) : (
+                  <InputField key={campo} label={rotulo} value={prop[campo] || ""} onChange={set(campo)} placeholder={placeholder} />
+                )
               ))}
             </div>
             {CAMPOS_PROPOSTA_PARAMS.slice(5).map(([campo, rotulo, area, linhas, placeholder]) => (
-              <CampoTexto key={campo} rotulo={rotulo} area={area} linhas={linhas} value={prop[campo] || ""} onChange={set(campo)} placeholder={placeholder} />
+              area ? (
+                <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} placeholder={placeholder} value={prop[campo] || ""} onChange={(e) => set(campo)(e.target.value)} /></label>
+              ) : (
+                <InputField key={campo} label={rotulo} value={prop[campo] || ""} onChange={set(campo)} placeholder={placeholder} />
+              )
             ))}
             {CAMPOS_PROPOSTA_GERADOS.map(([campo, rotulo, linhas]) => (
-              <CampoTexto key={campo} rotulo={rotulo} area linhas={linhas} value={prop[campo] || ""} onChange={set(campo)} />
+              <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={prop[campo] || ""} onChange={(e) => set(campo)(e.target.value)} /></label>
             ))}
             <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
               Excluir proposta
@@ -5582,13 +5598,13 @@ function ModuloCronograma({ cliente, gestao, gerando, erro, onMudar, onDistribui
         </p>
 
         <div className="grid sm:grid-cols-2 gap-x-4">
-          <CampoTexto
+          <InputField
             label="Início do engajamento (dd/mm/aaaa)"
             value={gestao.inicio || ""}
             onChange={(v) => onMudar({ ...gestao, inicio: v })}
             placeholder="Ex.: 04/08/2026"
           />
-          <CampoTexto
+          <InputField
             label="Duração (semanas)"
             value={gestao.duracaoSemanas || ""}
             onChange={(v) => onMudar({ ...gestao, duracaoSemanas: v })}
