@@ -5911,16 +5911,9 @@ function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAcordo, g
 
         {!gerando && (
           <>
-            <CampoTexto
-              label="Observações para a IA (opcional)"
-              area
-              linhas={2}
-              value={relAberto.obs}
-              onChange={set("obs")}
-              placeholder="Ex.: destacar a autonomia conquistada pelo gerente; cliente quer continuar com mentoria mensal"
-            />
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} placeholder="Ex.: destacar a autonomia conquistada pelo gerente; cliente quer continuar com mentoria mensal" value={relAberto.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
             {CAMPOS_RELATORIO.map(([campo, rotulo, linhas]) => (
-              <CampoTexto key={campo} rotulo={rotulo} area linhas={linhas} value={relAberto[campo]} onChange={set(campo)} />
+              <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={relAberto[campo]} onChange={(e) => set(campo)(e.target.value)} /></label>
             ))}
             <button
               onClick={() => {
@@ -6449,14 +6442,7 @@ function ModuloAlcadas({ cliente, alcadas, gerando, erro, onMudar, onGerar, onIm
           A Seção Restrita: quem pode decidir o quê sem pedir licença, até que limite, e para quem escala. O documento que liberta o dono do operacional.
         </p>
 
-        <CampoTexto
-          label="Observações para a IA (opcional)"
-          area
-          linhas={2}
-          value={alcadas.obs || ""}
-          onChange={(v) => onMudar({ ...alcadas, obs: v })}
-          placeholder="Ex.: dono quer aprovar toda compra acima de R$ 500; gerente pode dar até 10% de desconto"
-        />
+        <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} placeholder="Ex.: dono quer aprovar toda compra acima de R$ 500; gerente pode dar até 10% de desconto" value={alcadas.obs || ""} onChange={(v) => onMudar({ ...alcadas, obs: v })} /></label>
 
         <AvisoErro erro={erro} />
         {gerando && <Trabalhando />}
@@ -6608,14 +6594,7 @@ function ModuloIndicadores({ cliente, painel, gerando, erro, onMudar, onGerar, o
           A Taça das Casas: os pontos que cada área acompanha — poucos, mensuráveis com o que a PME tem, com meta e dono. Sem isso, os ritos viram reunião de opinião.
         </p>
 
-        <CampoTexto
-          label="Observações para a IA (opcional)"
-          area
-          linhas={2}
-          value={painel.obs || ""}
-          onChange={(v) => onMudar({ ...painel, obs: v })}
-          placeholder="Ex.: dor principal é desperdício e atraso no delivery; sistema de vendas é o Consumer"
-        />
+        <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} placeholder="Ex.: dor principal é desperdício e atraso no delivery; sistema de vendas é o Consumer" value={painel.obs || ""} onChange={(v) => onMudar({ ...painel, obs: v })} /></label>
 
         <AvisoErro erro={erro} />
         {gerando && <Trabalhando />}
@@ -6777,14 +6756,7 @@ function ModuloRitos({ cliente, ritos, gerando, erro, onMudar, onGerar, onImprim
           Os banquetes do Salão Principal: encontros fixos que ninguém cancela. Cada rito com pauta padrão fixa, pra virar hábito — a gestão acontece sem depender do dono lembrar.
         </p>
 
-        <CampoTexto
-          label="Observações para a IA (opcional)"
-          area
-          linhas={2}
-          value={ritos.obs || ""}
-          onChange={(v) => onMudar({ ...ritos, obs: v })}
-          placeholder="Ex.: turnos de almoço e jantar; líderes só se encontram todos às segundas"
-        />
+        <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} placeholder="Ex.: turnos de almoço e jantar; líderes só se encontram todos às segundas" value={ritos.obs || ""} onChange={(v) => onMudar({ ...ritos, obs: v })} /></label>
 
         <AvisoErro erro={erro} />
         {gerando && <Trabalhando />}
@@ -7277,7 +7249,7 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
             </div>
             {t.status === "realizado" && (
               <>
-                <CampoTexto label="Como foi (registro interno — alimenta o relatório)" area linhas={3} value={t.obsRealizacao} onChange={set("obsRealizacao")} />
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Como foi (registro interno — alimenta o relatório)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={t.obsRealizacao} onChange={(e) => set("obsRealizacao")(e.target.value)} /></label>
                 <div className="mb-4 flex gap-2 flex-wrap">
                   {(t.participantesLista || []).some((p) => p.presente && p.nome.trim()) && (
                     <BotaoContorno onClick={() => onImprimir({ seletor: ".area-cert", nome: `${cliente.negocio} — Certificados ${t.tema}` })}>
@@ -7295,9 +7267,9 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
                 </div>
                 {t.relResumo && (
                   <>
-                    <CampoTexto label="Relatório — resumo do realizado" area linhas={3} value={t.relResumo} onChange={set("relResumo")} />
-                    <CampoTexto label="Relatório — resultados e reações observadas" area linhas={3} value={t.relResultados} onChange={set("relResultados")} />
-                    <CampoTexto label="Relatório — recomendações de continuidade" area linhas={3} value={t.relRecomendacoes} onChange={set("relRecomendacoes")} />
+                    <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Relatório — resumo do realizado</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={t.relResumo} onChange={(e) => set("relResumo")(e.target.value)} /></label>
+                    <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Relatório — resultados e reações observadas</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={t.relResultados} onChange={(e) => set("relResultados")(e.target.value)} /></label>
+                    <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Relatório — recomendações de continuidade</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={t.relRecomendacoes} onChange={(e) => set("relRecomendacoes")(e.target.value)} /></label>
                   </>
                 )}
               </>
@@ -7712,9 +7684,9 @@ function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAcordo, te
               <div className="text-xs mt-1" style={{ color: "#9A6A2F" }}>Temperamento ainda não classificado — o formulário de observação da ficha ajuda.</div>
             )}
           </div>
-          <CampoTexto label="Objetivos da mentoria" area linhas={3} value={mentoria.objetivos || ""} onChange={(v) => onMudar({ ...mentoria, objetivos: v })} placeholder="Ex.: liderar sem centralizar; preparar o time para funcionar sem ele" />
+          <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Objetivos da mentoria</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} placeholder="Ex.: liderar sem centralizar; preparar o time para funcionar sem ele" value={mentoria.objetivos || ""} onChange={(v) => onMudar({ ...mentoria, objetivos: v })} /></label>
         </div>
-        <CampoTexto label="Briefing da conversa inicial (alimenta a jornada)" area linhas={3} value={mentoria.briefing || ""} onChange={(v) => onMudar({ ...mentoria, briefing: v })} placeholder="Ex.: recém-promovido, era par do time que agora lidera; evita conflito; o dono cobra resultado" />
+        <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Briefing da conversa inicial (alimenta a jornada)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} placeholder="Ex.: recém-promovido, era par do time que agora lidera; evita conflito; o dono cobra resultado" value={mentoria.briefing || ""} onChange={(v) => onMudar({ ...mentoria, briefing: v })} /></label>
 
         <SecaoMoldagem mentoria={mentoria} mentorado={mentorado} gerando={gerando} onMudar={onMudar} onGerarFicha={onGerarFicha} />
 
@@ -7953,10 +7925,10 @@ function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, framework: f
                 )}
               </div>
             )}
-            <CampoTexto label="Retrospectiva da jornada" area linhas={4} value={rel.retrospectiva} onChange={set("retrospectiva")} />
-            <CampoTexto label="Evolução observada" area linhas={4} value={rel.evolucao} onChange={set("evolucao")} />
-            <CampoTexto label="Conquistas (uma por linha)" area linhas={4} value={rel.conquistas} onChange={set("conquistas")} />
-            <CampoTexto label="Recomendações de continuidade (uma por linha)" area linhas={3} value={rel.recomendacoes} onChange={set("recomendacoes")} />
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Retrospectiva da jornada</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={rel.retrospectiva} onChange={(e) => set("retrospectiva")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Evolução observada</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={rel.evolucao} onChange={(e) => set("evolucao")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Conquistas (uma por linha)</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={rel.conquistas} onChange={(e) => set("conquistas")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Recomendações de continuidade (uma por linha)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={rel.recomendacoes} onChange={(e) => set("recomendacoes")(e.target.value)} /></label>
           </>
         )}
       </div>
