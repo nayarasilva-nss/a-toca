@@ -7216,11 +7216,11 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
         {!gerando && (
           <>
             <div className="grid sm:grid-cols-2 gap-x-4">
-              <CampoTexto rotulo="Tema" valor={t.tema} onChange={set("tema")} placeholder="Ex.: Liderança pelo temperamento" />
-              <CampoTexto rotulo="Público" valor={t.publico} onChange={set("publico")} placeholder="Ex.: líderes de setor" />
-              <CampoTexto rotulo="Carga horária" valor={t.cargaHoraria} onChange={set("cargaHoraria")} placeholder="Ex.: 4h" />
-              <CampoTexto rotulo="Data prevista/realizada" valor={t.data} onChange={set("data")} placeholder="dd/mm/aaaa" />
-              <CampoTexto rotulo="Valor (se avulso — uso interno)" valor={t.valor} onChange={set("valor")} placeholder="Ex.: 1.800" />
+              <InputField label="Tema" value={t.tema} onChange={set("tema")} placeholder="Ex.: Liderança pelo temperamento" />
+              <InputField label="Público" value={t.publico} onChange={set("publico")} placeholder="Ex.: líderes de setor" />
+              <InputField label="Carga horária" value={t.cargaHoraria} onChange={set("cargaHoraria")} placeholder="Ex.: 4h" />
+              <InputField label="Data prevista/realizada" value={t.data} onChange={set("data")} placeholder="dd/mm/aaaa" />
+              <InputField label="Valor (se avulso — uso interno)" value={t.valor} onChange={set("valor")} placeholder="Ex.: 1.800" />
               <div className="mb-4">
                 <div className="text-xs uppercase tracking-widest mb-1 font-semibold" style={{ color: CORES.dourado }}>Vínculo</div>
                 <select
@@ -7236,11 +7236,11 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
                 </select>
               </div>
             </div>
-            <CampoTexto rotulo="Observações para a IA" area linhas={2} valor={t.obs} onChange={set("obs")} placeholder="Ex.: turma resistente a teoria; já houve conflito entre salão e cozinha" />
-            <CampoTexto rotulo="Objetivos de aprendizagem" area linhas={3} valor={t.objetivos} onChange={set("objetivos")} />
-            <CampoTexto rotulo="Blocos de conteúdo (um por linha: título — duração: conteúdo)" area linhas={6} valor={t.blocos} onChange={set("blocos")} />
-            <CampoTexto rotulo="Dinâmicas" area linhas={3} valor={t.dinamicas} onChange={set("dinamicas")} />
-            <CampoTexto rotulo="Avaliação de eficácia" area linhas={2} valor={t.avaliacao} onChange={set("avaliacao")} />
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} placeholder="Ex.: turma resistente a teoria; já houve conflito entre salão e cozinha" value={t.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Objetivos de aprendizagem</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={t.objetivos} onChange={(e) => set("objetivos")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Blocos de conteúdo (um por linha: título — duração: conteúdo)</span><textarea rows={6} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={t.blocos} onChange={(e) => set("blocos")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Dinâmicas</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={t.dinamicas} onChange={(e) => set("dinamicas")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Avaliação de eficácia</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={t.avaliacao} onChange={(e) => set("avaliacao")(e.target.value)} /></label>
             <div className="mb-4 p-3 rounded-lg" style={{ background: "white", border: "1px solid #EFE8D6" }}>
               <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
                 <div className="label" style={{ color: CORES.dourado }}>
