@@ -7015,13 +7015,13 @@ function EditorCampo({ cliente, reg, pessoas, gerando, erro, onMudar, onGerarRot
         {!gerando && (
           <>
             <div className="grid sm:grid-cols-2 gap-x-4">
-              <CampoTexto rotulo="Data" valor={reg.data} onChange={set("data")} />
-              {reg.tipo === "visita" && <CampoTexto rotulo="Foco da visita (opcional)" valor={reg.titulo} onChange={set("titulo")} placeholder="Ex.: produção do sushibar no pico" />}
-              {reg.tipo === "turno" && <CampoTexto rotulo="Setor / turno" valor={reg.setor} onChange={set("setor")} placeholder="Ex.: Cozinha — turno do jantar" />}
+              <InputField label="Data" value={reg.data} onChange={set("data")} />
+              {reg.tipo === "visita" && <InputField label="Foco da visita (opcional)" value={reg.titulo} onChange={set("titulo")} placeholder="Ex.: produção do sushibar no pico" />}
+              {reg.tipo === "turno" && <InputField label="Setor / turno" value={reg.setor} onChange={set("setor")} placeholder="Ex.: Cozinha — turno do jantar" />}
               {reg.tipo === "entrevista" && (
                 <>
-                  <CampoTexto rotulo="Nome do entrevistado" valor={reg.entrevistado} onChange={set("entrevistado")} />
-                  <CampoTexto rotulo="Função" valor={reg.funcao} onChange={set("funcao")} placeholder="Ex.: Sushiman" />
+                  <InputField label="Nome do entrevistado" value={reg.entrevistado} onChange={set("entrevistado")} />
+                  <InputField label="Função" value={reg.funcao} onChange={set("funcao")} placeholder="Ex.: Sushiman" />
                 </>
               )}
             </div>
@@ -7047,31 +7047,29 @@ function EditorCampo({ cliente, reg, pessoas, gerando, erro, onMudar, onGerarRot
             )}
 
             {(reg.tipo === "visita" || reg.tipo === "entrevista") && (
-              <CampoTexto
-                rotulo={reg.tipo === "visita" ? "Roteiro de observação (um ponto por linha)" : "Roteiro de perguntas (uma por linha)"}
-                area
-                linhas={6}
-                valor={reg.roteiro}
-                onChange={set("roteiro")}
-                placeholder="Gere com IA ou escreva o seu"
-              />
+              <label className="block mb-4">
+                <span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>
+                  {reg.tipo === "visita" ? "Roteiro de observação (um ponto por linha)" : "Roteiro de perguntas (uma por linha)"}
+                </span>
+                <textarea rows={6} className="w-full px-3 py-2 rounded border bg-white text-sm outline-none" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={reg.roteiro} onChange={(e) => set("roteiro")(e.target.value)} placeholder="Gere com IA ou escreva o seu" />
+              </label>
             )}
 
             {reg.tipo === "visita" && (
               <>
-                <CampoTexto rotulo="O que foi observado" area linhas={4} valor={reg.observado} onChange={set("observado")} />
-                <CampoTexto rotulo="Evidências de informalidade" area linhas={3} valor={reg.informalidades} onChange={set("informalidades")} placeholder="Controles em papel, combinados verbais, ponto frouxo..." />
-                <CampoTexto rotulo="Riscos percebidos (trabalhista / contábil / administrativo)" area linhas={3} valor={reg.riscos} onChange={set("riscos")} />
-                <CampoTexto rotulo="Pontos fortes a preservar" area linhas={2} valor={reg.pontosFortes} onChange={set("pontosFortes")} />
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>O que foi observado</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={reg.observado} onChange={(e) => set("observado")(e.target.value)} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Evidências de informalidade</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} placeholder="Controles em papel, combinados verbais, ponto frouxo..." value={reg.informalidades} onChange={(e) => set("informalidades")(e.target.value)} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Riscos percebidos (trabalhista / contábil / administrativo)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={reg.riscos} onChange={(e) => set("riscos")(e.target.value)} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Pontos fortes a preservar</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={reg.pontosFortes} onChange={(e) => set("pontosFortes")(e.target.value)} /></label>
               </>
             )}
 
             {reg.tipo === "entrevista" && (
               <>
-                <CampoTexto rotulo="Atividades relatadas (o que ele faz de verdade)" area linhas={4} valor={reg.atividades} onChange={set("atividades")} />
-                <CampoTexto rotulo="O que faz e não deveria ser dele" area linhas={2} valor={reg.fazNaoDeveria} onChange={set("fazNaoDeveria")} />
-                <CampoTexto rotulo="O que deveria fazer e não faz (e por quê)" area linhas={2} valor={reg.deveriaNaoFaz} onChange={set("deveriaNaoFaz")} />
-                <CampoTexto rotulo="Dores relatadas" area linhas={3} valor={reg.dores} onChange={set("dores")} />
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Atividades relatadas (o que ele faz de verdade)</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={reg.atividades} onChange={(e) => set("atividades")(e.target.value)} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>O que faz e não deveria ser dele</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={reg.fazNaoDeveria} onChange={(e) => set("fazNaoDeveria")(e.target.value)} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>O que deveria fazer e não faz (e por quê)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={reg.deveriaNaoFaz} onChange={(e) => set("deveriaNaoFaz")(e.target.value)} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Dores relatadas</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "#D9914F", color: CORES.fogoEscuro }} value={reg.dores} onChange={(e) => set("dores")(e.target.value)} /></label>
               </>
             )}
 
