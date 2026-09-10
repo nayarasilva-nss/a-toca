@@ -7471,6 +7471,19 @@ function treinamentoVazio() {
   return { id: uid(), tema: "", publico: "", cargaHoraria: "", data: "", valor: "", frenteId: "", status: "planejado", obs: "", objetivos: "", blocos: "", dinamicas: "", avaliacao: "", participantes: "", obsRealizacao: "" };
 }
 
+function mentoriaVazia() {
+  return {
+    mentoradoId: "",
+    objetivos: "",
+    foco: "lideranca",
+    encontros: [],
+    moldagem: { virtudeCentral: { nome: "", manifesto: "", cultivo: "" }, tendencias: [], praticasSugeridas: [] },
+    praticas: [],
+    virtudes: [],
+    relatorio: { retrospectiva: "", evolucao: "", conquistas: "", recomendacoes: "" }
+  };
+}
+
 function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, erro, aberto, onAbrir, onNovo, onMudar, onGerar, onGerarRelatorio, onImprimir, onExcluir, onVoltar }) {
   const t = treinamentos.find((x) => x.id === aberto);
 
