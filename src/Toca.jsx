@@ -2608,27 +2608,21 @@ function MagicClock() {
 
 function DashboardGamificado({ onNavigate, clientes = [] }) {
   const [dados] = useState({
-    pontos: Math.max(285, clientes.length * 50),
-    pontosHoje: Math.min(12, clientes.length * 3),
-    proximaMeta: 300,
-    semanas: Math.max(1, Math.floor(clientes.length / 2)),
-    ultimoDia: "Segunda",
-    progressoSemanal: { seg: 70, ter: 100, qua: 85, qui: 0, sex: 60, sab: 90, dom: 40 },
-    badgesDesbloqueadas: clientes.length > 0 ? ["Primeiro\nPasso", "Consistência", "Velocista", "Estrategista"] : ["Primeiro\nPasso"],
+    pontos: clientes.length * 50,
+    pontosHoje: clientes.length * 3,
+    proximaMeta: (clientes.length + 1) * 50,
+    semanas: Math.max(0, Math.floor(clientes.length / 2)),
+    ultimoDia: clientes.length > 0 ? "Segunda" : "-",
+    progressoSemanal: { seg: 0, ter: 0, qua: 0, qui: 0, sex: 0, sab: 0, dom: 0 },
+    badgesDesbloqueadas: [],
     proximaBadge: {
-      nome: "Mestre do Planejamento",
-      descricao: `Complete ${Math.max(10, clientes.length * 2)} tarefas estratégicas`,
+      nome: clientes.length > 0 ? "Primeira Conquista" : "Comece com um cliente",
+      descricao: clientes.length > 0 ? `Gerencie ${clientes.length} cliente(s) com sucesso` : "Cadastre clientes para desbloquear badges",
       progresso: clientes.length,
-      meta: Math.max(10, clientes.length * 2),
+      meta: Math.max(1, clientes.length + 1),
     },
-    tarefasUrgentes: clientes.length > 0 ? [
-      { id: 1, nome: `Revisar ${clientes[0]?.nome || "cliente"}`, vencimento: "Hoje às 17h", prioridade: "CRÍTICA" },
-      { id: 2, nome: "Feedback ao cliente", vencimento: "Amanhã", prioridade: "ALTA" },
-    ] : [],
-    tarefasCompletas: clientes.length > 0 ? [
-      { id: 3, nome: "Análise de temperamento" },
-      { id: 4, nome: "Planejamento estratégico" },
-    ] : [],
+    tarefasUrgentes: [],
+    tarefasCompletas: [],
   });
 
   const dias = ["seg", "ter", "qua", "qui", "sex", "sab", "dom"];
