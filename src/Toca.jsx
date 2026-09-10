@@ -3514,14 +3514,14 @@ function cargoVazio() {
 
 function ListaCargos({ cliente, cargos, onAbrirCargo, onNovoCargo, onVoltar }) {
   return (
-    <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
-        ← {cliente.negocio}
-      </button>
-      <div className="flex items-baseline justify-between mb-6">
-        <h2 className="font-serif text-xl" style={{ color: CORES.fogo }}>Descrições de Cargo</h2>
-        <BotaoPrimario onClick={onNovoCargo}>+ Novo cargo</BotaoPrimario>
-      </div>
+    <div style={{ background: "#FFFBF0", minHeight: "100vh", paddingBottom: "64px" }}>
+      <HeaderModulo
+        titulo="Descrições de Cargo"
+        cliente={cliente}
+        onVoltar={onVoltar}
+        acoes={<BotaoPrimario onClick={onNovoCargo}>+ Novo cargo</BotaoPrimario>}
+      />
+      <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
       {cargos.length === 0 ? (
         <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #D9914F" }}>
           <p className="text-sm" style={{ color: "#8A7A5C" }}>
@@ -3545,6 +3545,7 @@ function ListaCargos({ cliente, cargos, onAbrirCargo, onNovoCargo, onVoltar }) {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }
