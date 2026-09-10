@@ -2606,7 +2606,7 @@ function MagicClock() {
   );
 }
 
-function DashboardGamificado() {
+function DashboardGamificado({ onNavigate }) {
   const [dados] = useState({
     pontos: 285,
     pontosHoje: 12,
@@ -2642,6 +2642,24 @@ function DashboardGamificado() {
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px" }}>
         <h1 style={{ fontSize: "28px", fontWeight: "800", color: "#D4AF37", fontFamily: "'Crimson Text', serif", margin: "0" }}>A TOCA</h1>
+        {onNavigate && (
+          <button
+            onClick={() => onNavigate({ nome: "home", view: "clientes" })}
+            style={{
+              background: "#5C1A2B",
+              color: "#FFFBF0",
+              border: "none",
+              padding: "8px 16px",
+              borderRadius: "4px",
+              fontSize: "12px",
+              fontWeight: "600",
+              cursor: "pointer",
+              fontFamily: "'Lora', serif",
+            }}
+          >
+            📋 Clientes
+          </button>
+        )}
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "24px", marginBottom: "40px" }}>
@@ -2767,7 +2785,7 @@ function DashboardGamificado() {
   );
 }
 
-function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAplicarBackup, onCancelarBackup, onAbrir, onNovo, onExcluir, onExportarBackup, onImportarBackup }) {
+function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAplicarBackup, onCancelarBackup, onAbrir, onNovo, onExcluir, onExportarBackup, onImportarBackup, onVoltar }) {
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto", paddingTop: "32px", paddingLeft: "32px", paddingRight: "32px", paddingBottom: "32px" }}>
       {backupPendente && (
@@ -2781,8 +2799,26 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
       )}
 
       {/* Dashboard de Clientes */}
-      <div style={{ marginTop: "0", paddingTop: "32px", marginBottom: "24px" }}>
+      <div style={{ marginTop: "0", paddingTop: "32px", marginBottom: "24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "28px", fontWeight: "800", letterSpacing: "2px", color: "#5C1A2B", margin: "0 0 24px 0" }}>Dashboard de Clientes</h1>
+        {onVoltar && (
+          <button
+            onClick={onVoltar}
+            style={{
+              background: "#5C1A2B",
+              color: "#FFFBF0",
+              border: "none",
+              padding: "8px 16px",
+              borderRadius: "4px",
+              fontSize: "12px",
+              fontWeight: "600",
+              cursor: "pointer",
+              fontFamily: "'Lora', serif",
+            }}
+          >
+            ← Voltar
+          </button>
+        )}
       </div>
 
       <div style={{ marginBottom: "24px", padding: "20px 24px", background: "linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%)", borderBottom: "1px solid rgba(60, 24, 30, 0.08)", borderRadius: "4px 4px 0 0" }}>
@@ -9797,7 +9833,11 @@ ${conteudo}
         {!pronto ? (
           <div className="text-center py-20 font-serif italic" style={{ color: CORES.dourado }}>Abrindo A Toca...</div>
         ) : tela.nome === "home" ? (
-          <DashboardGamificado />
+          tela.view === "clientes" ? (
+            <ListaClientes clientes={clientes} gestaoPorCliente={gestaoPorCliente} fases={fasesClientes} backupPendente={backupPendente} onAplicarBackup={aplicarBackup} onCancelarBackup={() => setBackupPendente(null)} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} onExcluir={excluirCliente} onExportarBackup={exportarBackup} onImportarBackup={importarBackup} onVoltar={() => setTela({ nome: "home" })} />
+          ) : (
+            <DashboardGamificado onNavigate={setTela} />
+          )
         ) : tela.nome === "novo" ? (
           <FormCliente onSalvar={salvarNovoCliente} onCancelar={() => setTela({ nome: "home" })} />
         ) : tela.nome === "editar" && clienteAtual ? (
