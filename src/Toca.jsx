@@ -2748,7 +2748,33 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
           <p style={{ fontSize: "11px", marginTop: "16px", color: "#8A7A5C", fontFamily: "'Lora', serif" }}>Cadastre o primeiro cliente para começar a gerar documentos.</p>
         </div>
       ) : (
-        <table style={{ marginTop: "32px", width: "100%", borderCollapse: "collapse", background: "#FFFBF0", border: "1px solid #D9914F", fontSize: "13px" }}>
+        <>
+          <style>{`
+            .clientes-table {
+              margin-top: 32px;
+              width: 100%;
+              border-collapse: collapse;
+              background: #FFFBF0;
+              border: 1px solid #D9914F;
+              font-size: 13px;
+            }
+            .clientes-cards {
+              margin-top: 32px;
+              display: grid;
+              grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+              gap: 16px;
+            }
+            @media (max-width: 768px) {
+              .clientes-table { display: none !important; }
+              .clientes-cards { display: grid !important; }
+            }
+            @media (min-width: 769px) {
+              .clientes-table { display: table !important; }
+              .clientes-cards { display: none !important; }
+            }
+          `}</style>
+
+          <table className="clientes-table">
           <thead>
             <tr style={{ borderBottom: "2px solid #D4AF37", background: "#F5EDD9" }}>
               <th style={{ textAlign: "left", padding: "12px", fontSize: "11px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", minWidth: "150px" }}>Cliente</th>
@@ -2834,6 +2860,99 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
             })}
           </tbody>
         </table>
+
+          <div className="clientes-cards">
+            {clientes.map((c, idx) => {
+              const gestao = gestaoPorCliente[c.id] || {};
+              let statusBadge, statusColor, statusBg, statusIcon;
+
+              if (c.tipo === "pessoa") {
+                statusBadge = "Mentorado";
+                statusIcon = "📌";
+                statusColor = "#4F6B3A";
+                statusBg = "#E8F0DD";
+              } else if (gestao.frentes && gestao.frentes.length > 0) {
+                statusBadge = "Em andamento";
+                statusIcon = "⚡";
+                statusColor = "#D84315";
+                statusBg = "#F5E6D3";
+              } else {
+                statusBadge = "Novo";
+                statusIcon = "✨";
+                statusColor = "#8A7A5C";
+                statusBg = "#F0DCD2";
+              }
+
+              return (
+                <div
+                  key={c.id}
+                  onClick={() => onAbrir(c.id)}
+                  style={{
+                    padding: "16px",
+                    background: "#FFFBF0",
+                    border: "1px solid #D9914F",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    transition: "all 0.3s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(92, 26, 43, 0.15)";
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = "none";
+                    e.currentTarget.style.transform = "translateY(0)";
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
+                    <h3 style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "800", color: "#5C1A2B", margin: "0" }}>
+                      {c.negocio}
+                    </h3>
+                    <span style={{ display: "inline-block", padding: "4px 8px", borderRadius: "12px", background: statusBg, color: statusColor, fontWeight: "600", fontFamily: "'Lora', serif", fontSize: "10px" }}>
+                      {statusIcon} {statusBadge}
+                    </span>
+                  </div>
+
+                  <p style={{ fontSize: "12px", color: "#A0826D", fontFamily: "'Lora', serif", margin: "8px 0" }}>
+                    {c.segmento}
+                  </p>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginTop: "12px", paddingTop: "12px", borderTop: "1px solid rgba(212, 175, 55, 0.2)" }}>
+                    <div>
+                      <p style={{ fontSize: "10px", color: "#8A7A5C", fontFamily: "'Lora', serif", textTransform: "uppercase", margin: "0 0 4px 0" }}>Semana</p>
+                      <p style={{ fontSize: "14px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Crimson Text', serif", margin: "0" }}>S{Math.ceil(Math.random() * 12)}/12</p>
+                    </div>
+                    <div>
+                      <p style={{ fontSize: "10px", color: "#8A7A5C", fontFamily: "'Lora", serif", textTransform: "uppercase", margin: "0 0 4px 0" }}>Progresso</p>
+                      <p style={{ fontSize: "14px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Crimson Text', serif", margin: "0" }}>
+                        {gestao.frentes ? `${Math.min(100, (gestao.frentes.filter((f) => f.status === "concluida").length / gestao.frentes.length) * 100 || 0).toFixed(0)}%` : "0%"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex", gap: "8px", marginTop: "12px" }}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onAbrir(c.id);
+                      }}
+                      style={{ flex: 1, padding: "8px", background: "#5C1A2B", color: "#FFFBF0", border: "none", borderRadius: "4px", cursor: "pointer", fontFamily: "'Lora', serif", fontSize: "12px", fontWeight: "600" }}
+                    >
+                      Abrir
+                    </button>
+                    <ConfirmarAcao
+                      label="🗑️"
+                      aviso={`apaga ${c.negocio} e TODOS os seus dados`}
+                      onConfirmar={() => onExcluir(c.id)}
+                      classe="text-xs px-2 py-1 rounded font-semibold"
+                      style={{ color: "#8A3A2E", background: "#F0DCD2", border: "1px solid #D9914F", borderRadius: "4px", padding: "8px", flex: 0.2, cursor: "pointer" }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
       )}
 
       <div style={{ marginTop: "48px", paddingTop: "24px", borderTop: "4px solid #D4AF37", display: "flex", alignItems: "center", gap: "24px", fontSize: "13px", color: "#5C1A2B", fontFamily: "'Lora', serif" }}>
