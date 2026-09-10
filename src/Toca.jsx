@@ -2110,7 +2110,7 @@ async function gerarPdfDoNo(nodeOculto) {
 
 // ─── Componentes base ───────────────────────────────────────────
 
-function Cabecalho({ onHome }) {
+function Cabecalho({ onHome, onClientes }) {
   return (
     <header
       className="px-8 py-6 flex items-baseline justify-between print:hidden"
@@ -2142,6 +2142,25 @@ function Cabecalho({ onHome }) {
       <div className="fonte-corpo italic text-sm hidden sm:block" style={{ color: "#A0826D" }}>
         onde tudo funciona sozinho
       </div>
+      {onClientes && (
+        <button
+          onClick={onClientes}
+          style={{
+            background: "transparent",
+            border: "2px solid #D4AF37",
+            color: "#D4AF37",
+            padding: "8px 16px",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "12px",
+            fontWeight: "600",
+            fontFamily: "'Lora', serif",
+            letterSpacing: "1px",
+          }}
+        >
+          🏢 Clientes
+        </button>
+      )}
     </header>
   );
 }
@@ -9928,7 +9947,7 @@ ${conteudo}
         .scale-in { animation: scaleIn 0.3s ease-out; }
         @media print { body { background: white; } .font-serif { font-family: Georgia, serif; } }
       `}</style>
-      <Cabecalho onHome={() => setTela({ nome: "home" })} />
+      <Cabecalho onHome={() => setTela({ nome: "home" })} onClientes={() => setTela({ nome: "home", view: "clientes" })} />
 
       <div className="print:hidden">
         {!pronto ? (
