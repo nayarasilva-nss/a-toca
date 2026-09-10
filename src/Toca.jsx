@@ -6169,6 +6169,24 @@ const CAMPOS_RELATORIO = [
 
 const STATUS_META = { batida: "Batida ✓", parcial: "Parcial", nao: "Não batida" };
 
+const STATUS_PRATICA = {
+  ativa: { rotulo: "Ativa", cor: "#9A6A2F", fundo: "#F5E6C8" },
+  consolidada: { rotulo: "Consolidada", cor: "#4F6B3A", fundo: "#E3EBD8" },
+  pausada: { rotulo: "Pausada", cor: "#8A7A5C", fundo: "#EFE8D6" },
+};
+
+const STATUS_ANOMALIA = {
+  pendente: { rotulo: "Pendente", cor: "#9A6A2F", fundo: "#F5E6C8" },
+  tratada: { rotulo: "Tratada", cor: "#4F6B3A", fundo: "#E3EBD8" },
+  reaberta: { rotulo: "Reaberta", cor: "#8A3A2E", fundo: "#F0DCD2" },
+};
+
+const STATUS_ENCONTRO = {
+  planejado: { rotulo: "Planejado", cor: "#8A7A5C", fundo: "#EFE8D6" },
+  realizado: { rotulo: "Realizado", cor: "#4F6B3A", fundo: "#E3EBD8" },
+  cancelado: { rotulo: "Cancelado", cor: "#8A3A2E", fundo: "#F0DCD2" },
+};
+
 function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAcordo, gerando, erro, onMudarLista, onAbrir, onGerar, onImprimir, onVoltar }) {
   if (!relAberto) {
     return (
