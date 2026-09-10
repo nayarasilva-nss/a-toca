@@ -9718,12 +9718,32 @@ ${conteudo}
       )}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Playfair+Display:wght@700;800&display=swap');
+
+        * { transition-property: background-color, border-color, box-shadow, transform; transition-duration: 0.2s; transition-timing-function: ease; }
+
         input, select, textarea, button { font-family: -apple-system, 'Segoe UI', sans-serif; }
         .font-serif { font-family: 'Playfair Display', Georgia, serif; }
         .fonte-corpo { font-family: 'Crimson Text', Georgia, serif; }
+
         .objeto { transition: all 0.3s ease; }
         .objeto:hover { border-color: #D4AF37AA !important; box-shadow: 0 8px 20px rgba(212, 175, 55, 0.15); transform: translateY(-2px); }
+
+        button, [role="button"] { transition: all 0.2s ease; }
+        button:hover:not(:disabled), [role="button"]:hover { transform: scale(1.02); }
+        button:active:not(:disabled), [role="button"]:active { transform: scale(0.98); }
+
+        table tr { transition: background-color 0.2s ease; }
+        table tr:hover { background-color: #F5EDD9 !important; }
+
+        .card, [class*="card"] { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        .slide-in { animation: slideInLeft 0.4s ease-out; }
+        .scale-in { animation: scaleIn 0.3s ease-out; }
         @media print { body { background: white; } .font-serif { font-family: Georgia, serif; } }
       `}</style>
       <Cabecalho onHome={() => setTela({ nome: "home" })} />
