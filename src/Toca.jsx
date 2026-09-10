@@ -2286,6 +2286,48 @@ function CardFase({ fase, ativo = false, onClick }) {
   );
 }
 
+// ─── TelaDeFases (Dashboard principal com as 6 fases) ────────────
+function TelaDeFases({ faseAtual, onMudarFase }) {
+  return (
+    <div style={{ padding: "32px", background: CORES.fundoPrincipal, minHeight: "100vh" }}>
+      <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        {/* Título */}
+        <h1 style={{ textAlign: "center", fontSize: "32px", fontWeight: "700", color: CORES.principal, marginBottom: "12px", fontFamily: "'Lora', serif" }}>
+          Método Enraizar
+        </h1>
+        <p style={{ textAlign: "center", fontSize: "14px", color: CORES.textoDim, marginBottom: "48px", fontFamily: "'Lora', serif" }}>
+          Todo crescimento começa em quem enraiza — 6 fases de desenvolvimento organizacional
+        </p>
+
+        {/* Grid de Fases */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "24px", marginBottom: "48px" }}>
+          {FASES_ENRAIZAR.map((fase) => (
+            <CardFase
+              key={fase.id}
+              fase={fase}
+              ativo={faseAtual === fase.id}
+              onClick={() => onMudarFase(fase.id)}
+            />
+          ))}
+        </div>
+
+        {/* Legenda */}
+        <div style={{ background: CORES.cartao, padding: "24px", borderRadius: "12px", border: `1px solid ${CORES.border}`, marginTop: "40px" }}>
+          <h3 style={{ margin: "0 0 16px", fontSize: "16px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif" }}>
+            Sobre o Enraizar
+          </h3>
+          <p style={{ margin: "0", fontSize: "13px", color: CORES.textoDim, lineHeight: "1.6", fontFamily: "'Lora', serif" }}>
+            O Método Enraizar é uma abordagem integrada de desenvolvimento organizacional que funciona como as raízes de uma árvore.
+            Cada fase é essencial para o crescimento saudável: começamos ouvindo (Escuta), entendendo o contexto (Raio-X),
+            alinhando objetivos (Acordo), desenvolvendo ações (Construção), mantendo o ritmo (Sustentação), e finalmente
+            validando resultados (Prova). As raízes são o alicerce para que a organização cresça forte, significativa e duradoura.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function CampoTexto({ rotulo, valor, onChange, area, linhas, placeholder }) {
   const base = "w-full px-3 py-2 rounded border bg-white text-sm outline-none focus:ring-2";
   const estilo = { borderColor: "#D9914F", color: CORES.fogoEscuro };
