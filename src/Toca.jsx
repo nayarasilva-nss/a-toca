@@ -4038,13 +4038,16 @@ function ModuloEstrutura({ cliente, posicoes, cargos, gerando, erro, onMudar, on
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
-        ← {cliente.negocio}
-      </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
-        <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
-          <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Estrutura de Governança</h2>
+    <div style={{ background: "#FFFBF0", minHeight: "100vh", paddingBottom: "64px" }}>
+      <HeaderModulo
+        titulo="Estrutura de Governança"
+        cliente={cliente}
+        onVoltar={onVoltar}
+        acoes={null}
+      />
+      <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
+        <div className="rounded-lg p-6 shadow-sm" className="card">
+          <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <div className="flex gap-2 flex-wrap">
             <BotaoPrimario onClick={onGerar} disabled={gerando}>
               {gerando ? "Gerando..." : posicoes.length ? "Gerar novamente" : "Gerar com IA"}
@@ -4128,6 +4131,7 @@ function ModuloEstrutura({ cliente, posicoes, cargos, gerando, erro, onMudar, on
           </>
         )}
       </div>
+      </div>
     </div>
   );
 }
@@ -4154,13 +4158,16 @@ function ImpressaoEstrutura({ cliente, posicoes }) {
 
 function ModuloManual({ cliente, secoes, gerando, erro, onMudar, onGerar, onImprimir, onVoltar }) {
   return (
-    <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
-        ← {cliente.negocio}
-      </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
-        <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
-          <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Manual do Colaborador</h2>
+    <div style={{ background: "#FFFBF0", minHeight: "100vh", paddingBottom: "64px" }}>
+      <HeaderModulo
+        titulo="Manual do Colaborador"
+        cliente={cliente}
+        onVoltar={onVoltar}
+        acoes={null}
+      />
+      <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
+        <div className="rounded-lg p-6 shadow-sm" className="card">
+          <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <div className="flex gap-2">
             <BotaoPrimario onClick={onGerar} disabled={gerando}>
               {gerando ? "Gerando..." : secoes.length ? "Gerar novamente" : "Gerar com IA"}
@@ -4216,6 +4223,7 @@ function ModuloManual({ cliente, secoes, gerando, erro, onMudar, onGerar, onImpr
           </button>
         )}
       </div>
+      </div>
     </div>
   );
 }
@@ -4267,15 +4275,18 @@ function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, onVoltar 
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
-        ← {cliente.negocio}
-      </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
-        <h2 className="font-serif text-lg mb-1" style={{ color: CORES.fogo }}>CCT & Conformidade</h2>
-        <p className="text-xs mb-4" style={{ color: "#8A7A5C" }}>
-          As leis do Ministério: suba o PDF da convenção coletiva do setor — e depois os termos aditivos, um a um. A cada documento, a IA atualiza a análise: remove o que foi superado, ajusta o que mudou e soma o que é novo. Todas as gerações deste cliente respeitam o resultado. Os arquivos não ficam armazenados; só a análise.
-        </p>
+    <div style={{ background: "#FFFBF0", minHeight: "100vh", paddingBottom: "64px" }}>
+      <HeaderModulo
+        titulo="CCT & Conformidade"
+        cliente={cliente}
+        onVoltar={onVoltar}
+        acoes={null}
+      />
+      <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
+        <div className="rounded-lg p-6 shadow-sm" className="card">
+          <p className="text-xs mb-4" style={{ color: "#8A7A5C" }}>
+            As leis do Ministério: suba o PDF da convenção coletiva do setor — e depois os termos aditivos, um a um. A cada documento, a IA atualiza a análise: remove o que foi superado, ajusta o que mudou e soma o que é novo. Todas as gerações deste cliente respeitam o resultado. Os arquivos não ficam armazenados; só a análise.
+          </p>
 
         <label
           className="inline-block px-4 py-2 rounded text-sm font-semibold text-white cursor-pointer"
@@ -4401,6 +4412,7 @@ function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, onVoltar 
           </div>
         )}
       </div>
+      </div>
     </div>
   );
 }
@@ -4418,14 +4430,17 @@ function ModuloPenseira({ cliente, mensagens, gerando, erro, onEnviar, onLimpar,
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
-        ← {cliente.negocio}
-      </button>
-      <div className="rounded-lg shadow-sm flex flex-col" style={{ background: CORES.papel, border: "2px solid #E97F3855", minHeight: "60vh" }}>
+    <div style={{ background: "#FFFBF0", minHeight: "100vh", paddingBottom: "64px" }}>
+      <HeaderModulo
+        titulo="Penseira"
+        cliente={cliente}
+        onVoltar={onVoltar}
+        acoes={null}
+      />
+      <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
+        <div className="rounded-lg shadow-sm flex flex-col" style={{ background: CORES.papel, border: "2px solid #E97F3855", minHeight: "60vh" }}>
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: "#EFE8D6" }}>
           <div>
-            <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Penseira</h2>
             <p className="text-xs" style={{ color: "#8A7A5C" }}>
               Pense em voz alta sobre {cliente.negocio}. Dúvidas trabalhistas vêm com base legal.
             </p>
@@ -4488,6 +4503,7 @@ function ModuloPenseira({ cliente, mensagens, gerando, erro, onEnviar, onLimpar,
         </div>
       </div>
     </div>
+    </div>
   );
 }
 
@@ -4519,37 +4535,38 @@ function popVazio() {
 
 function ListaPops({ cliente, pops, onAbrirPop, onNovoPop, onVoltar }) {
   return (
-    <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
-        ← {cliente.negocio}
-      </button>
-      <div className="flex items-baseline justify-between mb-6">
-        <h2 className="font-serif text-xl" style={{ color: CORES.fogo }}>POPs — Processos Operacionais</h2>
-        <BotaoPrimario onClick={onNovoPop}>+ Novo POP</BotaoPrimario>
+    <div style={{ background: "#FFFBF0", minHeight: "100vh", paddingBottom: "64px" }}>
+      <HeaderModulo
+        titulo="POPs — Processos Operacionais"
+        cliente={cliente}
+        onVoltar={onVoltar}
+        acoes={<BotaoPrimario onClick={onNovoPop}>+ Novo POP</BotaoPrimario>}
+      />
+      <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
+        {pops.length === 0 ? (
+          <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #D9914F" }}>
+            <p className="text-sm" style={{ color: "#8A7A5C" }}>
+              O livro de feitiços da operação está em branco. Crie o primeiro — informe o nome do processo e o setor, e a IA escreve o encantamento passo a passo para sua revisão.
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-2">
+            {pops.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => onAbrirPop(p.id)}
+                className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between"
+                className="card"
+              >
+                <span className="font-serif" style={{ color: CORES.fogo }}>{p.nome || "(sem nome)"}</span>
+                <span className="text-xs" style={{ color: "#8A7A5C" }}>
+                  {p.setor}{p.passos ? "" : " · rascunho vazio"}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
-      {pops.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #D9914F" }}>
-          <p className="text-sm" style={{ color: "#8A7A5C" }}>
-            O livro de feitiços da operação está em branco. Crie o primeiro — informe o nome do processo e o setor, e a IA escreve o encantamento passo a passo para sua revisão.
-          </p>
-        </div>
-      ) : (
-        <div className="grid gap-2">
-          {pops.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => onAbrirPop(p.id)}
-              className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between"
-              className="card"
-            >
-              <span className="font-serif" style={{ color: CORES.fogo }}>{p.nome || "(sem nome)"}</span>
-              <span className="text-xs" style={{ color: "#8A7A5C" }}>
-                {p.setor}{p.passos ? "" : " · rascunho vazio"}
-              </span>
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
@@ -4675,14 +4692,14 @@ function ImpressaoPop({ cliente, pop }) {
 function ListaDocs({ cliente, tipo, docs, onAbrir, onNovo, onVoltar }) {
   const cfg = CONFIG_DOCS[tipo];
   return (
-    <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
-        ← {cliente.negocio}
-      </button>
-      <div className="flex items-baseline justify-between mb-6">
-        <h2 className="font-serif text-xl" style={{ color: CORES.fogo }}>{cfg.tituloModulo}</h2>
-        <BotaoPrimario onClick={onNovo}>{cfg.novoRotulo}</BotaoPrimario>
-      </div>
+    <div style={{ background: "#FFFBF0", minHeight: "100vh", paddingBottom: "64px" }}>
+      <HeaderModulo
+        titulo={cfg.tituloModulo}
+        cliente={cliente}
+        onVoltar={onVoltar}
+        acoes={<BotaoPrimario onClick={onNovo}>{cfg.novoRotulo}</BotaoPrimario>}
+      />
+      <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
       {docs.length === 0 ? (
         <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #D9914F" }}>
           <p className="text-sm" style={{ color: "#8A7A5C" }}>
@@ -4704,6 +4721,7 @@ function ListaDocs({ cliente, tipo, docs, onAbrir, onNovo, onVoltar }) {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }
