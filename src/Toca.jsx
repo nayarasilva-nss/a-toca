@@ -8589,7 +8589,7 @@ export default function App() {
   const [treinamentosPorCliente, setTreinamentosPorCliente] = useState({});
   const [mentoriaPorCliente, setMentoriaPorCliente] = useState({});
   const [diagsLiderPorCliente, setDiagsLiderPorCliente] = useState({});
-  const [relMentoriaPorCliente, setRelMentoriaPorCliente] = useState({});
+  // RelMentoria agora é integrado em mentoriaPorCliente[id].relatorio
   const [anomaliasPorCliente, setAnomaliasPorCliente] = useState({});
   const [painelPorCliente, setPainelPorCliente] = useState({});
   const [alcadasPorCliente, setAlcadasPorCliente] = useState({});
@@ -8687,15 +8687,17 @@ export default function App() {
     }
     if (mentoriaPorCliente[id] === undefined) {
       const mt = await stGet(`toca:mentoria:${id}`);
-      setMentoriaPorCliente((prev) => ({ ...prev, [id]: mt || { mentoradoId: "", objetivos: "", encontros: [] } }));
+      const normalizarMentoria = (m) => ({ ...mentoriaVazia(), ...(m || {}) });
+      setMentoriaPorCliente((prev) => ({ ...prev, [id]: normalizarMentoria(mt) }));
     }
     if (diagsLiderPorCliente[id] === undefined) {
       const dl = await stGet(`toca:diagslider:${id}`);
       setDiagsLiderPorCliente((prev) => ({ ...prev, [id]: dl || [] }));
     }
-    if (relMentoriaPorCliente[id] === undefined) {
-      const rm = await stGet(`toca:relmentoria:${id}`);
-      setRelMentoriaPorCliente((prev) => ({ ...prev, [id]: rm || { retrospectiva: "", evolucao: "", conquistas: "", recomendacoes: "" } }));
+    // RelMentoria carregada como parte de mentoriaPorCliente.relatorio
+    const relMentoriaCarregada = await stGet(`toca:relmentoria:${id}`);
+    if (relMentoriaCarregada && mentoriaPorCliente[id]) {
+      setMentoriaPorCliente((prev) => ({ ...prev, [id]: { ...prev[id], relatorio: relMentoriaCarregada } }));
     }
     if (anomaliasPorCliente[id] === undefined) {
       const an = await stGet(`toca:anomalias:${id}`);
@@ -9353,7 +9355,7 @@ export default function App() {
   };
 
   const mudarRelMentoria = async (clienteId, novo) => {
-    setRelMentoriaPorCliente((prev) => ({ ...prev, [clienteId]: novo }));
+    setMentoriaPorCliente((prev) => ({ ...prev, [clienteId]: { ...(prev[clienteId] || mentoriaVazia()), relatorio: novo } }));
     await stSet(`toca:relmentoria:${clienteId}`, novo);
   };
 
@@ -9364,7 +9366,7 @@ export default function App() {
       const mentoria = mentoriaPorCliente[cliente.id] || { encontros: [] };
       const mentorado = (pessoasPorCliente[cliente.id] || []).find((p) => p.id === mentoria.mentoradoId) || null;
       const gerado = await comRetentativa(() => gerarRelatorioEvolucao(cliente, mentoria, mentorado, diagsLiderPorCliente[cliente.id] || []));
-      await mudarRelMentoria(cliente.id, { ...(relMentoriaPorCliente[cliente.id] || {}), ...gerado });
+      await mudarRelMentoria(cliente.id, { ...(mentoriaPorCliente[cliente.id]?.relatorio || {}), ...gerado });
     } catch (e) {
       setErro(e.message || "erro desconhecido");
     } finally {
@@ -9409,7 +9411,7 @@ export default function App() {
   };
 
   const gerarJornadaCliente = async (cliente) => {
-    const mentoria = mentoriaPorCliente[cliente.id] || { mentoradoId: "", objetivos: "", encontros: [] };
+    const mentoria = mentoriaPorCliente[cliente.id] || mentoriaVazia();
     setGerando(true);
     setErro(null);
     try {
@@ -9607,7 +9609,7 @@ export default function App() {
       const ment = mentoriaPorCliente[c.id] || { encontros: [] };
       const encontros = ment.encontros || [];
       const treinos = treinamentosPorCliente[c.id] || [];
-      const rm = relMentoriaPorCliente[c.id] || {};
+      const rm = mentoriaPorCliente[c.id]?.relatorio || {};
       const realizadosM = encontros.filter((e) => e.realizada).length;
       const atividadesM = encontros.flatMap((e) => e.atividades || []);
       const pctPraCasaM = atividadesM.length ? atividadesM.filter((a) => a.feita).length / atividadesM.length : 0;
@@ -9693,13 +9695,13 @@ export default function App() {
   const campoAtual = campoAtuais.find((r) => r.id === tela.regId);
   const treinamentosAtuais = clienteAtual ? treinamentosPorCliente[clienteAtual.id] || [] : [];
   const treinamentoAtual = treinamentosAtuais.find((t) => t.id === tela.treinoId);
-  const mentoriaAtual = clienteAtual ? mentoriaPorCliente[clienteAtual.id] || { mentoradoId: "", objetivos: "", encontros: [] } : { mentoradoId: "", objetivos: "", encontros: [] };
+  const mentoriaAtual = clienteAtual ? mentoriaPorCliente[clienteAtual.id] || mentoriaVazia() : mentoriaVazia();
   const diagsLiderAtuais = clienteAtual ? diagsLiderPorCliente[clienteAtual.id] || [] : [];
   const focoMentoriaAtual = (mentoriaPorCliente[clienteAtual ? clienteAtual.id : ""] || {}).foco || "lideranca";
   const frameworkMentorado = focoMentoriaAtual === "autoconhecimento" ? FRAMEWORK_PESSOAL : FRAMEWORK_LIDER;
   const tituloDiagMentorado = focoMentoriaAtual === "autoconhecimento" ? "Diagnóstico Pessoal" : "Diagnóstico de Liderança";
   const diagLiderAtual = diagsLiderAtuais.find((d) => d.id === tela.diagId);
-  const relMentoriaAtual = clienteAtual ? relMentoriaPorCliente[clienteAtual.id] || { retrospectiva: "", evolucao: "", conquistas: "", recomendacoes: "" } : { retrospectiva: "", evolucao: "", conquistas: "", recomendacoes: "" };
+  const relMentoriaAtual = clienteAtual ? (mentoriaPorCliente[clienteAtual.id]?.relatorio || {}) : {};
   const alcadasAtuais = clienteAtual ? alcadasPorCliente[clienteAtual.id] || { obs: "", itens: [] } : { obs: "", itens: [] };
   const ritosAtuais = clienteAtual ? ritosPorCliente[clienteAtual.id] || { obs: "", itens: [] } : { obs: "", itens: [] };
   const indicadoresAtuais = clienteAtual ? indicadoresPorCliente[clienteAtual.id] || { obs: "", itens: [] } : { obs: "", itens: [] };
