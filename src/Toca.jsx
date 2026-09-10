@@ -2941,7 +2941,7 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
                       <p style={{ fontSize: "14px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Crimson Text', serif", margin: "0" }}>S{Math.ceil(Math.random() * 12)}/12</p>
                     </div>
                     <div>
-                      <p style={{ fontSize: "10px", color: "#8A7A5C", fontFamily: "'Lora", serif", textTransform: "uppercase", margin: "0 0 4px 0" }}>Progresso</p>
+                      <p style={{ fontSize: "10px", color: "#8A7A5C", fontFamily: "'Lora', serif", textTransform: "uppercase", margin: "0 0 4px 0" }}>Progresso</p>
                       <p style={{ fontSize: "14px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Crimson Text', serif", margin: "0" }}>
                         {gestao.frentes ? `${Math.min(100, (gestao.frentes.filter((f) => f.status === "concluida").length / gestao.frentes.length) * 100 || 0).toFixed(0)}%` : "0%"}
                       </p>
