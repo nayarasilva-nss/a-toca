@@ -2373,88 +2373,101 @@ const FASES_RELOGIO = [
 const CORES_PONTEIROS = ["#5C1A2B", "#B8860B", "#4A5A7A", "#4F6B3A", "#8A3A2E", "#B0652F", "#6B4A7A", "#3F6B6B", "#7A3A5A"];
 
 function RelogioWeasley({ clientes, fases, onAbrir }) {
-  const T = 360;
-  const cx = T / 2;
-  const cy = T / 2;
-  const raio = T / 2 - 48;
-  const n = FASES_RELOGIO.length;
-  const anguloDe = (idx) => (Math.PI * 2 * idx) / n - Math.PI / 2;
-  const pos = (idx, fator) => [cx + Math.cos(anguloDe(idx)) * raio * fator, cy + Math.sin(anguloDe(idx)) * raio * fator];
+  const progressData = {
+    pessoas: 75,
+    acao: 33,
+    geral: 12,
+    docs: 55
+  };
+
+  const calcularRotacao = (progress, maxRotation) => (progress / 100) * maxRotation;
 
   return (
     <div className="mb-10">
+      <style>{`
+        @keyframes rotatePointer1 { 0% { transform: rotate(0deg); } 100% { transform: rotate(${calcularRotacao(progressData.pessoas, 270)}deg); } }
+        @keyframes rotatePointer2 { 0% { transform: rotate(0deg); } 100% { transform: rotate(${calcularRotacao(progressData.acao, 120)}deg); } }
+        @keyframes rotatePointer3 { 0% { transform: rotate(0deg); } 100% { transform: rotate(${calcularRotacao(progressData.geral, 45)}deg); } }
+        @keyframes rotatePointer4 { 0% { transform: rotate(0deg); } 100% { transform: rotate(${calcularRotacao(progressData.docs, 200)}deg); } }
+        .p1 { animation: rotatePointer1 3s ease-in-out infinite; transform-origin: 70px 70px; }
+        .p2 { animation: rotatePointer2 4s ease-in-out infinite; transform-origin: 70px 70px; }
+        .p3 { animation: rotatePointer3 5s ease-in-out infinite; transform-origin: 70px 70px; }
+        .p4 { animation: rotatePointer4 6s ease-in-out infinite; transform-origin: 70px 70px; }
+      `}</style>
+
       <div style={{ fontFamily: "'Crimson Text', serif", fontSize: "28px", fontWeight: "800", letterSpacing: "2px", color: "#5C1A2B", marginBottom: "12px" }}>O Relógio</div>
-      <div style={{ fontSize: "14px", color: "#8B6F47", fontFamily: "'Lora', serif", marginBottom: "24px" }}>Jornada de cada cliente — de relance, como a Molly vê tudo.</div>
+      <div style={{ fontSize: "14px", color: "#8B6F47", fontFamily: "'Lora', serif", marginBottom: "24px" }}>Jornada das 4 frentes — de relance, como a Molly vê tudo.</div>
+
       <div style={{ padding: "32px", background: "linear-gradient(135deg, #FFF8F0 0%, #FFFBF0 100%)", borderRadius: "8px", border: "1px solid #D9914F", display: "flex", flexDirection: "column", alignItems: "center", gap: "32px" }}>
-        <svg width={T} height={T} viewBox={`0 0 ${T} ${T}`} style={{ maxWidth: "100%", height: "auto" }}>
+        <svg width="140" height="140" viewBox="0 0 140 140" style={{ maxWidth: "100%", height: "auto", filter: "drop-shadow(0 8px 16px rgba(92, 26, 43, 0.2))" }}>
           <defs>
-            <radialGradient id="fundoRelogio2" cx="50%" cy="50%" r="60%">
-              <stop offset="0%" stopColor="#FFFEF9" />
-              <stop offset="100%" stopColor="#F0E6D2" />
+            <radialGradient id="innerGradient" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stopColor="#FFFBF0" stopOpacity="1" />
+              <stop offset="100%" stopColor="#F0E6D2" stopOpacity="0.6" />
             </radialGradient>
-            <filter id="sombraRelogio">
-              <feDropShadow dx="0" dy="2" stdDeviation="4" floodOpacity="0.15" />
-            </filter>
           </defs>
 
+          {/* Sombra decorativa */}
+          <circle cx="70" cy="70" r="62" fill="none" stroke="#D4AF37" strokeWidth="0.5" opacity="0.3" />
+
           {/* Fundo principal */}
-          <circle cx={cx} cy={cy} r={raio + 8} fill="url(#fundoRelogio2)" stroke="#D4AF37" strokeWidth="4" filter="url(#sombraRelogio)" />
+          <circle cx="70" cy="70" r="62" fill="url(#innerGradient)" stroke="#8B6F47" strokeWidth="3.5" />
 
-          {/* Anel decorativo */}
-          <circle cx={cx} cy={cy} r={raio + 3} fill="none" stroke="#D4AF37" strokeWidth="1" opacity="0.4" />
-          <circle cx={cx} cy={cy} r={raio - 4} fill="none" stroke="#D4AF37" strokeWidth="1" opacity="0.3" />
+          {/* Anéis decorativos */}
+          <circle cx="70" cy="70" r="58" fill="none" stroke="#D4AF37" strokeWidth="1" />
+          <circle cx="70" cy="70" r="54" fill="none" stroke="#D4AF37" strokeWidth="1" strokeDasharray="2,2" opacity="0.5" />
 
-          {/* Divisões das fases */}
-          {FASES_RELOGIO.map((_, i) => {
-            const [x1, y1] = pos(i, 0.92);
-            const [x2, y2] = pos(i, 1.0);
-            return <line key={`mark-${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#D4AF37" strokeWidth="2" />;
+          {/* Marcadores principais (4 direções) */}
+          <line x1="70" y1="14" x2="70" y2="20" stroke="#8B6F47" strokeWidth="2.5" strokeLinecap="round" />
+          <line x1="120" y1="70" x2="114" y2="70" stroke="#8B6F47" strokeWidth="2.5" strokeLinecap="round" />
+          <line x1="70" y1="126" x2="70" y2="120" stroke="#8B6F47" strokeWidth="2.5" strokeLinecap="round" />
+          <line x1="20" y1="70" x2="26" y2="70" stroke="#8B6F47" strokeWidth="2.5" strokeLinecap="round" />
+
+          {/* Marcadores diagonais (8 linhas tracejadas) */}
+          {[45, 135, 225, 315].map((angle) => {
+            const rad = (angle * Math.PI) / 180;
+            const x1 = 70 + 54 * Math.cos(rad);
+            const y1 = 70 + 54 * Math.sin(rad);
+            const x2 = 70 + 58 * Math.cos(rad);
+            const y2 = 70 + 58 * Math.sin(rad);
+            return <line key={`diag-${angle}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#D9914F" strokeWidth="1" strokeDasharray="2,2" opacity="0.4" />;
           })}
 
-          {/* Textos das fases */}
-          {FASES_RELOGIO.map((f, i) => {
-            const [tx, ty] = pos(i, 1.18);
-            const ehPerigo = f.chave === "perigo";
-            return (
-              <text
-                key={f.chave}
-                x={tx}
-                y={ty}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fontSize="13"
-                fontFamily="'Crimson Text', serif"
-                fontStyle={ehPerigo ? "italic" : "normal"}
-                fontWeight={ehPerigo ? "700" : "600"}
-                fill={ehPerigo ? "#8A3A2E" : "#5C1A2B"}
-              >
-                {f.rotulo}
-              </text>
-            );
-          })}
+          {/* Ponteiros animados */}
+          <line className="p1" x1="70" y1="70" x2="70" y2="28" stroke="#5C1A2B" strokeWidth="4" strokeLinecap="round" />
+          <circle className="p1" cx="70" cy="28" r="3.5" fill="#5C1A2B" />
 
-          {/* Ponteiros dos clientes */}
-          {clientes.map((c, idx) => {
-            const fase = fases[c.id] || "prospeccao";
-            const fIdx = Math.max(0, FASES_RELOGIO.findIndex((f) => f.chave === fase));
-            const cor = CORES_PONTEIROS[idx % CORES_PONTEIROS.length];
-            const comprimento = 0.58 + (idx % 3) * 0.1;
-            const [px, py] = pos(fIdx, comprimento);
-            const angle = anguloDe(fIdx) * (180 / Math.PI) + 90;
+          <line className="p2" x1="70" y1="70" x2="112" y2="76" stroke="#D9914F" strokeWidth="3.5" strokeLinecap="round" />
+          <circle className="p2" cx="112" cy="76" r="3" fill="#D9914F" />
 
-            return (
-              <g key={c.id} style={{ cursor: "pointer" }} onClick={() => onAbrir(c.id)}>
-                {/* Ponteiro */}
-                <line x1={cx} y1={cy} x2={px} y2={py} stroke={cor} strokeWidth="4" strokeLinecap="round" opacity="0.9" />
-                {/* Ponta do ponteiro */}
-                <circle cx={px} cy={py} r="6" fill={cor} stroke="white" strokeWidth="2" />
-              </g>
-            );
-          })}
+          <line className="p3" x1="70" y1="70" x2="70" y2="105" stroke="#4F6B3A" strokeWidth="3" strokeLinecap="round" />
+          <circle className="p3" cx="70" cy="105" r="2.5" fill="#4F6B3A" />
 
-          {/* Centro do relógio */}
-          <circle cx={cx} cy={cy} r="10" fill="#D4AF37" stroke="#5C1A2B" strokeWidth="2" />
-          <circle cx={cx} cy={cy} r="5" fill="#5C1A2B" />
+          <line className="p4" x1="70" y1="70" x2="28" y2="76" stroke="#D4AF37" strokeWidth="2.5" strokeLinecap="round" />
+          <circle className="p4" cx="28" cy="76" r="2" fill="#D4AF37" />
+
+          {/* Labels de letras (Frentes) */}
+          <text x="70" y="18" textAnchor="middle" dominantBaseline="middle" fontSize="14" fontWeight="800" fontFamily="'Crimson Text', serif" fill="#5C1A2B">P</text>
+          <text x="122" y="76" textAnchor="middle" dominantBaseline="middle" fontSize="14" fontWeight="800" fontFamily="'Crimson Text', serif" fill="#5C1A2B">A</text>
+          <text x="70" y="132" textAnchor="middle" dominantBaseline="middle" fontSize="14" fontWeight="800" fontFamily="'Crimson Text', serif" fill="#5C1A2B">G</text>
+          <text x="18" y="76" textAnchor="middle" dominantBaseline="middle" fontSize="14" fontWeight="800" fontFamily="'Crimson Text', serif" fill="#5C1A2B">D</text>
+
+          {/* Labels descritivos */}
+          <text x="70" y="23" textAnchor="middle" dominantBaseline="middle" fontSize="9" fontWeight="600" fontFamily="'Lora', serif" fill="#8B6F47">Pessoas</text>
+          <text x="112" y="82" textAnchor="middle" dominantBaseline="middle" fontSize="9" fontWeight="600" fontFamily="'Lora', serif" fill="#8B6F47">Ação</text>
+          <text x="70" y="127" textAnchor="middle" dominantBaseline="middle" fontSize="9" fontWeight="600" fontFamily="'Lora', serif" fill="#8B6F47">Geral</text>
+          <text x="28" y="82" textAnchor="middle" dominantBaseline="middle" fontSize="9" fontWeight="600" fontFamily="'Lora', serif" fill="#8B6F47">Docs</text>
+
+          {/* Percentuais de progresso */}
+          <text x="70" y="42" textAnchor="middle" dominantBaseline="middle" fontSize="8" fontWeight="600" fontFamily="'Lora', serif" fill="#D9914F" opacity="0.7">75%</text>
+          <text x="105" y="77" textAnchor="middle" dominantBaseline="middle" fontSize="8" fontWeight="600" fontFamily="'Lora', serif" fill="#D9914F" opacity="0.7">33%</text>
+          <text x="70" y="102" textAnchor="middle" dominantBaseline="middle" fontSize="8" fontWeight="600" fontFamily="'Lora', serif" fill="#D9914F" opacity="0.7">12%</text>
+          <text x="35" y="77" textAnchor="middle" dominantBaseline="middle" fontSize="8" fontWeight="600" fontFamily="'Lora', serif" fill="#D9914F" opacity="0.7">55%</text>
+
+          {/* Centro - hub em 3 camadas */}
+          <circle cx="70" cy="70" r="7" fill="#5C1A2B" />
+          <circle cx="70" cy="70" r="5" fill="#D4AF37" />
+          <circle cx="70" cy="70" r="2.5" fill="#FFFBF0" />
         </svg>
 
         {/* Lista de clientes */}
