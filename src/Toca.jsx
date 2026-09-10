@@ -2515,6 +2515,258 @@ function BadgesFrentes({ gestao }) {
   );
 }
 
+function MagicClock() {
+  const radiusMain = 62;
+  const radiusRing1 = 58;
+  const radiusRing2 = 54;
+  const cx = 70;
+  const cy = 70;
+
+  const progressPessoas = 75;
+  const progressAcao = 33;
+  const progressGeral = 12;
+  const progressDocs = 55;
+
+  const rotateP = (progressPessoas / 100) * 270;
+  const rotateA = (progressAcao / 100) * 120;
+  const rotateG = (progressGeral / 100) * 45;
+  const rotateD = (progressDocs / 100) * 200;
+
+  return (
+    <svg
+      viewBox="0 0 140 140"
+      width="140"
+      height="140"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ filter: "drop-shadow(0 8px 16px rgba(92, 26, 43, 0.2))" }}
+    >
+      <defs>
+        <radialGradient id="innerGradient" cx="50%" cy="50%">
+          <stop offset="0%" stopColor="#FFFBF0" stopOpacity="1" />
+          <stop offset="100%" stopColor="#F5EDD9" stopOpacity="0.6" />
+        </radialGradient>
+      </defs>
+
+      <circle cx={cx} cy={cy} r={radiusMain} fill="#FFFBF0" stroke="#8B6F47" strokeWidth="3.5" />
+      <circle cx={cx} cy={cy} r={radiusRing1} fill="none" stroke="#D4AF37" strokeWidth="1.5" opacity="0.8" />
+      <circle cx={cx} cy={cy} r={radiusRing2} fill="none" stroke="#D4AF37" strokeWidth="1.5" strokeDasharray="3,3" opacity="0.5" />
+      <circle cx={cx} cy={cy} r={radiusMain} fill="url(#innerGradient)" />
+
+      <line x1={cx} y1={cy - radiusMain - 5} x2={cx} y2={cy - radiusMain + 8} stroke="#8B6F47" strokeWidth="2.5" strokeLinecap="round" />
+      <line x1={cx + radiusMain + 5} y1={cy} x2={cx + radiusMain - 8} y2={cy} stroke="#8B6F47" strokeWidth="2.5" strokeLinecap="round" />
+      <line x1={cx} y1={cy + radiusMain + 5} x2={cx} y2={cy + radiusMain - 8} stroke="#8B6F47" strokeWidth="2.5" strokeLinecap="round" />
+      <line x1={cx - radiusMain - 5} y1={cy} x2={cx - radiusMain + 8} y2={cy} stroke="#8B6F47" strokeWidth="2.5" strokeLinecap="round" />
+
+      <line x1={cx - 15} y1={cy - 15} x2={cx - 8} y2={cy - 8} stroke="#D9914F" strokeWidth="1" strokeDasharray="2,2" opacity="0.4" />
+      <line x1={cx + 15} y1={cy - 15} x2={cx + 8} y2={cy - 8} stroke="#D9914F" strokeWidth="1" strokeDasharray="2,2" opacity="0.4" />
+      <line x1={cx + 15} y1={cy + 15} x2={cx + 8} y2={cy + 8} stroke="#D9914F" strokeWidth="1" strokeDasharray="2,2" opacity="0.4" />
+      <line x1={cx - 15} y1={cy + 15} x2={cx - 8} y2={cy + 8} stroke="#D9914F" strokeWidth="1" strokeDasharray="2,2" opacity="0.4" />
+
+      <g style={{ transformOrigin: `${cx}px ${cy}px`, animation: "rotatePointer1 3s ease-in-out infinite" }}>
+        <line x1={cx} y1={cy} x2={cx} y2={28} stroke="#5C1A2B" strokeWidth="4" strokeLinecap="round" />
+        <circle cx={cx} cy={28} r="2.5" fill="#5C1A2B" />
+      </g>
+
+      <g style={{ transformOrigin: `${cx}px ${cy}px`, animation: "rotatePointer2 4s ease-in-out infinite" }}>
+        <line x1={cx} y1={cy} x2={122} y2={cy} stroke="#D9914F" strokeWidth="3.5" strokeLinecap="round" />
+        <circle cx={122} cy={cy} r="2" fill="#D9914F" />
+      </g>
+
+      <g style={{ transformOrigin: `${cx}px ${cy}px`, animation: "rotatePointer3 5s ease-in-out infinite" }}>
+        <line x1={cx} y1={cy} x2={cx} y2={105} stroke="#4F6B3A" strokeWidth="3" strokeLinecap="round" />
+        <circle cx={cx} cy={105} r="1.5" fill="#4F6B3A" />
+      </g>
+
+      <g style={{ transformOrigin: `${cx}px ${cy}px`, animation: "rotatePointer4 6s ease-in-out infinite" }}>
+        <line x1={cx} y1={cy} x2={18} y2={cy} stroke="#D4AF37" strokeWidth="2.5" strokeLinecap="round" />
+        <circle cx={18} cy={cy} r="1.5" fill="#D4AF37" />
+      </g>
+
+      <text x={cx} y={18} textAnchor="middle" fontSize="14" fontWeight="800" fill="#5C1A2B" fontFamily="'Crimson Text', serif">P</text>
+      <text x={122} y={80} textAnchor="middle" fontSize="14" fontWeight="800" fill="#5C1A2B" fontFamily="'Crimson Text', serif">A</text>
+      <text x={cx} y={132} textAnchor="middle" fontSize="14" fontWeight="800" fill="#5C1A2B" fontFamily="'Crimson Text', serif">G</text>
+      <text x={18} y={80} textAnchor="middle" fontSize="14" fontWeight="800" fill="#5C1A2B" fontFamily="'Crimson Text', serif">D</text>
+
+      <text x={cx} y={42} textAnchor="middle" fontSize="8" fontWeight="600" fill="#D9914F" opacity="0.7" fontFamily="'Lora', serif">{progressPessoas}%</text>
+      <text x={105} y={77} textAnchor="middle" fontSize="8" fontWeight="600" fill="#D9914F" opacity="0.7" fontFamily="'Lora', serif">{progressAcao}%</text>
+      <text x={cx} y={102} textAnchor="middle" fontSize="8" fontWeight="600" fill="#D9914F" opacity="0.7" fontFamily="'Lora', serif">{progressGeral}%</text>
+      <text x={35} y={77} textAnchor="middle" fontSize="8" fontWeight="600" fill="#D9914F" opacity="0.7" fontFamily="'Lora', serif">{progressDocs}%</text>
+
+      <circle cx={cx} cy={cy} r="7" fill="#5C1A2B" />
+      <circle cx={cx} cy={cy} r="5" fill="#D4AF37" />
+      <circle cx={cx} cy={cy} r="2.5" fill="#FFFBF0" />
+
+      <style>{`
+        @keyframes rotatePointer1 { 0% { transform: rotate(0deg); } 100% { transform: rotate(270deg); } }
+        @keyframes rotatePointer2 { 0% { transform: rotate(0deg); } 100% { transform: rotate(120deg); } }
+        @keyframes rotatePointer3 { 0% { transform: rotate(0deg); } 100% { transform: rotate(45deg); } }
+        @keyframes rotatePointer4 { 0% { transform: rotate(0deg); } 100% { transform: rotate(200deg); } }
+      `}</style>
+    </svg>
+  );
+}
+
+function DashboardGamificado() {
+  const [dados] = useState({
+    pontos: 285,
+    pontosHoje: 12,
+    proximaMeta: 300,
+    semanas: 4,
+    ultimoDia: "Segunda",
+    progressoSemanal: { seg: 70, ter: 100, qua: 85, qui: 0, sex: 60, sab: 90, dom: 40 },
+    badgesDesbloqueadas: ["Primeiro\nPasso", "Consistência", "Velocista", "Estrategista"],
+    proximaBadge: {
+      nome: "Mestre do Planejamento",
+      descricao: "Complete 10 tarefas estratégicas",
+      progresso: 6,
+      meta: 10,
+    },
+    tarefasUrgentes: [
+      { id: 1, nome: "Revisão de documentos", vencimento: "Hoje às 17h", prioridade: "CRÍTICA" },
+      { id: 2, nome: "Feedback ao cliente", vencimento: "Amanhã", prioridade: "ALTA" },
+    ],
+    tarefasCompletas: [
+      { id: 3, nome: "Análise de temperamento" },
+      { id: 4, nome: "Planejamento estratégico" },
+    ],
+  });
+
+  const dias = ["seg", "ter", "qua", "qui", "sex", "sab", "dom"];
+  const diasNomes = ["SEG", "TER", "QUA", "QUI", "SEX", "SAB", "DOM"];
+
+  return (
+    <div style={{ background: "#FFFBF0", minHeight: "100vh", padding: "32px" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Lora:wght@400;500;600;700&display=swap');
+      `}</style>
+
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px" }}>
+        <h1 style={{ fontSize: "28px", fontWeight: "800", color: "#D4AF37", fontFamily: "'Crimson Text', serif", margin: "0" }}>A TOCA</h1>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "24px", marginBottom: "40px" }}>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", background: "#F5EDD9", borderRadius: "8px", padding: "24px" }}>
+          <MagicClock />
+        </div>
+
+        <div style={{ background: "linear-gradient(135deg, rgba(92, 26, 43, 0.05), rgba(217, 145, 79, 0.1))", border: "2px solid #D9914F", borderRadius: "8px", padding: "24px", textAlign: "center" }}>
+          <div style={{ fontSize: "11px", fontWeight: "600", color: "#D4AF37", uppercase: true, letterSpacing: "1px", fontFamily: "'Lora', serif", marginBottom: "8px" }}>SEUS PONTOS</div>
+          <div style={{ fontSize: "56px", fontWeight: "800", color: "#5C1A2B", fontFamily: "'Crimson Text', serif", margin: "8px 0" }}>{dados.pontos}</div>
+          <div style={{ fontSize: "12px", color: "#8B6F47", fontFamily: "'Lora', serif", marginBottom: "12px" }}>+{dados.pontosHoje} hoje</div>
+          <div style={{ fontSize: "10px", color: "#4F6B3A", fontFamily: "'Lora', serif", fontWeight: "600" }}>Próximo: {dados.proximaMeta}</div>
+        </div>
+
+        <div style={{ background: "linear-gradient(135deg, rgba(92, 26, 43, 0.05), rgba(217, 145, 79, 0.1))", border: "2px solid #D9914F", borderRadius: "8px", padding: "24px", textAlign: "center" }}>
+          <div style={{ fontSize: "11px", fontWeight: "600", color: "#D4AF37", uppercase: true, letterSpacing: "1px", fontFamily: "'Lora', serif", marginBottom: "8px" }}>SEMANAS SEGUIDAS</div>
+          <div style={{ fontSize: "56px", fontWeight: "800", color: "#5C1A2B", fontFamily: "'Crimson Text', serif", margin: "8px 0" }}>
+            {dados.semanas} 🔥
+          </div>
+          <div style={{ fontSize: "12px", color: "#8B6F47", fontFamily: "'Lora', serif", marginBottom: "12px" }}>Última: {dados.ultimoDia}</div>
+          <div style={{ width: "100%", height: "6px", background: "#E3EBD8", borderRadius: "3px", marginTop: "12px", overflow: "hidden" }}>
+            <div style={{ width: `${(dados.semanas / 8) * 100}%`, height: "100%", background: "#4F6B3A" }} />
+          </div>
+        </div>
+      </div>
+
+      <div style={{ marginBottom: "40px" }}>
+        <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#5C1A2B", fontFamily: "'Lora', serif", uppercase: true, letterSpacing: "1px", borderBottom: "2px solid #D4AF37", paddingBottom: "12px", marginBottom: "24px" }}>PROGRESSO ESTA SEMANA</h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "12px" }}>
+          {dias.map((dia, idx) => {
+            const percentual = dados.progressoSemanal[dia];
+            const corBarra = percentual === 100 ? "#4F6B3A" : percentual > 0 ? "#D9914F" : "#E3EBD8";
+            return (
+              <div key={dia} style={{ textAlign: "center" }}>
+                <div style={{ fontSize: "10px", fontWeight: "600", color: "#8B6F47", fontFamily: "'Lora', serif", marginBottom: "6px" }}>{diasNomes[idx]}</div>
+                <div style={{ width: "100%", height: "6px", background: "#E3EBD8", borderRadius: "4px", marginBottom: "6px", overflow: "hidden" }}>
+                  <div style={{ width: `${percentual}%`, height: "100%", background: corBarra }} />
+                </div>
+                <div style={{ fontSize: "10px", color: "#8B6F47", fontFamily: "'Lora', serif" }}>{percentual}%</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div style={{ marginBottom: "40px" }}>
+        <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#5C1A2B", fontFamily: "'Lora', serif", uppercase: true, letterSpacing: "1px", borderBottom: "2px solid #D4AF37", paddingBottom: "12px", marginBottom: "24px" }}>CONQUISTAS DESBLOQUEADAS</h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))", gap: "16px" }}>
+          {dados.badgesDesbloqueadas.map((badge, idx) => (
+            <div
+              key={idx}
+              style={{
+                background: "#E3EBD8",
+                border: "2px solid #4F6B3A",
+                borderRadius: "8px",
+                padding: "12px",
+                textAlign: "center",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = "#4F6B3A";
+                e.target.style.color = "#FFFBF0";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = "#E3EBD8";
+                e.target.style.color = "inherit";
+              }}
+            >
+              <div style={{ fontSize: "40px", marginBottom: "6px" }}>🏆</div>
+              <div style={{ fontSize: "10px", fontWeight: "600", fontFamily: "'Lora', serif", color: "#3C181E" }}>{badge}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ marginBottom: "40px", background: "linear-gradient(135deg, rgba(217, 145, 79, 0.1), rgba(212, 175, 55, 0.05))", border: "2px dashed #D9914F", borderRadius: "8px", padding: "24px", textAlign: "center" }}>
+        <div style={{ fontSize: "48px", marginBottom: "12px" }}>🔒</div>
+        <h3 style={{ fontSize: "16px", fontWeight: "700", color: "#5C1A2B", fontFamily: "'Lora', serif", margin: "12px 0" }}>{dados.proximaBadge.nome}</h3>
+        <p style={{ fontSize: "12px", color: "#8B6F47", fontFamily: "'Lora', serif", margin: "8px 0", marginBottom: "16px" }}>{dados.proximaBadge.descricao}</p>
+        <div style={{ fontSize: "11px", fontWeight: "600", color: "#4F6B3A", fontFamily: "'Lora', serif", marginBottom: "8px" }}>
+          {dados.proximaBadge.progresso} de {dados.proximaBadge.meta} completas
+        </div>
+        <div style={{ width: "100%", height: "8px", background: "#E3EBD8", borderRadius: "4px", marginBottom: "16px", overflow: "hidden" }}>
+          <div style={{ width: `${(dados.proximaBadge.progresso / dados.proximaBadge.meta) * 100}%`, height: "100%", background: "#D9914F" }} />
+        </div>
+        <button style={{ background: "#5C1A2B", color: "#FFFBF0", border: "none", padding: "8px 16px", borderRadius: "4px", fontSize: "12px", fontWeight: "600", cursor: "pointer", fontFamily: "'Lora', serif" }}>CONTINUAR ASSIM</button>
+      </div>
+
+      <div style={{ marginBottom: "40px" }}>
+        <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#8A3A2E", fontFamily: "'Lora', serif", uppercase: true, letterSpacing: "1px", marginBottom: "16px" }}>⚠️ URGENTES</h2>
+        {dados.tarefasUrgentes.map((tarefa) => (
+          <div key={tarefa.id} style={{ display: "flex", gap: "12px", padding: "16px", borderBottom: "1px solid #E3EBD8" }}>
+            <input type="checkbox" style={{ width: "24px", height: "24px", borderRadius: "4px", border: "2px solid #8A3A2E", accentColor: "#8A3A2E", cursor: "pointer" }} />
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "13px", fontWeight: "600", color: "#3C181E", fontFamily: "'Lora', serif" }}>{tarefa.nome}</div>
+              <div style={{ fontSize: "11px", color: "#8B6F47", fontFamily: "'Lora', serif", marginTop: "4px" }}>Vencimento: {tarefa.vencimento}</div>
+              <span style={{ fontSize: "10px", fontWeight: "600", fontFamily: "'Lora', serif", color: "#8A3A2E" }}>Prioridade: {tarefa.prioridade}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ marginBottom: "40px" }}>
+        <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#4F6B3A", fontFamily: "'Lora', serif", uppercase: true, letterSpacing: "1px", marginBottom: "16px" }}>✓ COMPLETAS HOJE</h2>
+        {dados.tarefasCompletas.map((tarefa) => (
+          <div key={tarefa.id} style={{ display: "flex", gap: "12px", padding: "16px", borderBottom: "1px solid #E3EBD8", background: "#E3EBD8" }}>
+            <input type="checkbox" checked style={{ width: "24px", height: "24px", borderRadius: "4px", border: "2px solid #4F6B3A", accentColor: "#4F6B3A", cursor: "pointer" }} />
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "13px", fontWeight: "600", color: "#8B6F47", fontFamily: "'Lora', serif", textDecoration: "line-through" }}>{tarefa.nome}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ background: "#FFFBF0", borderTop: "2px solid #D4AF37", padding: "24px", textAlign: "center" }}>
+        <div style={{ fontSize: "24px", marginBottom: "8px" }}>💡</div>
+        <p style={{ fontSize: "13px", color: "#8B6F47", fontFamily: "'Lora', serif", lineHeight: "1.6", margin: "0", maxWidth: "600px", marginLeft: "auto", marginRight: "auto" }}>
+          Dica: Quanto mais consistente, mais pontos!<br />Continue sua sequência de {dados.semanas} semanas.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAplicarBackup, onCancelarBackup, onAbrir, onNovo, onExcluir, onExportarBackup, onImportarBackup }) {
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto", paddingTop: "32px", paddingLeft: "32px", paddingRight: "32px", paddingBottom: "32px" }}>
@@ -9545,7 +9797,7 @@ ${conteudo}
         {!pronto ? (
           <div className="text-center py-20 font-serif italic" style={{ color: CORES.dourado }}>Abrindo A Toca...</div>
         ) : tela.nome === "home" ? (
-          <ListaClientes clientes={clientes} gestaoPorCliente={gestaoPorCliente} fases={fasesClientes} backupPendente={backupPendente} onAplicarBackup={aplicarBackup} onCancelarBackup={() => setBackupPendente(null)} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} onExcluir={excluirCliente} onExportarBackup={exportarBackup} onImportarBackup={importarBackup} />
+          <DashboardGamificado />
         ) : tela.nome === "novo" ? (
           <FormCliente onSalvar={salvarNovoCliente} onCancelar={() => setTela({ nome: "home" })} />
         ) : tela.nome === "editar" && clienteAtual ? (
