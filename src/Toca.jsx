@@ -2747,12 +2747,19 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
         </div>
       </div>
 
-      <div style={{ marginTop: "0", paddingTop: "32px", marginBottom: "32px", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: "32px" }}>
-        <div style={{ flex: 1 }}>
-          <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "48px", fontWeight: "800", letterSpacing: "4px", color: "#5C1A2B", marginBottom: "8px" }}>MEUS CLIENTES</h1>
-          <p style={{ fontSize: "13px", color: "#A0826D", fontFamily: "'Lora', serif" }}>📍 cada um com sua toca particular</p>
+      <div style={{ marginTop: "0", paddingTop: "32px", marginBottom: "24px" }}>
+        <div style={{ display: "flex", alignItems: "baseline", gap: "16px", marginBottom: "16px" }}>
+          <span style={{ fontSize: "11px", fontWeight: "600", background: "#2C1118", color: "#D4AF37", padding: "6px 12px", borderRadius: "4px", fontFamily: "'Lora', serif" }}>12</span>
+          <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "32px", fontWeight: "800", letterSpacing: "2px", color: "#5C1A2B", margin: "0" }}>Dashboard de Clientes</h1>
         </div>
-        <BotaoPrimario onClick={onNovo} style={{ whiteSpace: "nowrap", fontSize: "13px", padding: "12px 24px" }}>✨ Novo cliente</BotaoPrimario>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "24px" }}>
+          <span style={{ fontSize: "11px", fontWeight: "600", background: "#2C1118", color: "#D4AF37", padding: "4px 10px", borderRadius: "4px", fontFamily: "'Lora', serif" }}>13a</span>
+          <h2 style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "700", color: "#5C1A2B", margin: "0" }}>Meus Engajamentos</h2>
+        </div>
+      </div>
+
+      <div style={{ marginBottom: "16px" }}>
+        <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Crimson Text', serif", margin: "0 0 16px 0" }}>Engajamentos Ativos</h3>
       </div>
 
       {clientes.length === 0 ? (
@@ -2857,23 +2864,20 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
                         e.stopPropagation();
                         onAbrir(c.id);
                       }}
-                      style={{ color: "#5C1A2B", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", fontFamily: "'Lora', serif", marginRight: "12px" }}
+                      style={{ color: "#5C1A2B", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", fontFamily: "'Lora', serif", marginRight: "12px", fontSize: "12px" }}
                     >
-                      Abrir
+                      {statusBadge === "Novo" ? "Abrir" : statusBadge === "Em andamento" ? "Ver relatório" : "Aguardando"}
                     </button>
-                    <ConfirmarAcao
-                      label="Excluir"
-                      aviso={`apaga ${c.negocio} e TODOS os seus dados`}
-                      onConfirmar={() => onExcluir(c.id)}
-                      classe="text-xs px-2 py-1 rounded font-semibold"
-                      style={{ color: "#8A3A2E", background: "transparent", border: "none", textDecoration: "underline", fontSize: "12px", fontFamily: "'Lora', serif", cursor: "pointer" }}
-                    />
                   </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
+
+        <div style={{ marginTop: "16px", padding: "12px 16px", background: "#F5EDD9", borderRadius: "4px", fontSize: "12px", color: "#5C1A2B", fontFamily: "'Lora', serif", textAlign: "center" }}>
+          {clientes.length} cliente(s) · {clientes.filter(c => gestaoPorCliente[c.id]?.frentes?.length).length} em andamento · {clientes.filter(c => c.tipo === "pessoa").length} mentorado(s)
+        </div>
 
           <div className="clientes-cards">
             {clientes.map((c, idx) => {
