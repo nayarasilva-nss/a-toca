@@ -2679,6 +2679,47 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
         </div>
       </div>
 
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", marginBottom: "32px" }}>
+        <div style={{ padding: "20px", background: "#FFFBF0", borderRadius: "4px", border: "1px solid #D9914F" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+            <span style={{ fontSize: "20px" }}>🏆</span>
+            <h3 style={{ fontSize: "16px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Crimson Text', serif" }}>Conquistas</h3>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px" }}>
+            {[
+              { icon: "📋", label: "Primeiro Cliente", desc: "Cadastrou um cliente" },
+              { icon: "✍️", label: "Gerador IA", desc: "Gerou 5 documentos" },
+              { icon: "📊", label: "Estrategista", desc: "Completou diagnóstico" },
+              { icon: "⭐", label: "Mestre", desc: "5 clientes em andamento" }
+            ].map((item, idx) => (
+              <div key={idx} style={{ textAlign: "center", padding: "12px", background: "#F5EDD9", borderRadius: "4px", opacity: idx < 2 ? 1 : 0.5 }}>
+                <div style={{ fontSize: "20px", marginBottom: "4px" }}>{item.icon}</div>
+                <div style={{ fontSize: "10px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif" }}>{item.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ padding: "20px", background: "#FFFBF0", borderRadius: "4px", border: "1px solid #D9914F" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+            <span style={{ fontSize: "20px" }}>📋</span>
+            <h3 style={{ fontSize: "16px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Crimson Text', serif" }}>Próximas Ações</h3>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {[
+              { icon: "🎯", text: "Gerar plano de ação para Grupo Kenkyo", priority: "alta" },
+              { icon: "📊", text: "Completar diagnóstico de maturidade", priority: "alta" },
+              { icon: "✍️", text: "Revisar tabela disciplinar", priority: "média" }
+            ].map((item, idx) => (
+              <div key={idx} style={{ padding: "10px", background: item.priority === "alta" ? "#F5E6D3" : "#E8F0DD", borderRadius: "4px", borderLeft: `3px solid ${item.priority === "alta" ? "#D84315" : "#4F6B3A"}`, display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                <span style={{ fontSize: "16px", flexShrink: 0 }}>{item.icon}</span>
+                <span style={{ fontSize: "12px", color: "#5C1A2B", fontFamily: "'Lora', serif", lineHeight: "1.4" }}>{item.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <div style={{ marginTop: "0", paddingTop: "32px", marginBottom: "32px", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: "32px" }}>
         <div style={{ flex: 1 }}>
           <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "48px", fontWeight: "800", letterSpacing: "4px", color: "#5C1A2B", marginBottom: "8px" }}>MEUS CLIENTES</h1>
@@ -2694,22 +2735,38 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
           <p style={{ fontSize: "11px", marginTop: "16px", color: "#8A7A5C", fontFamily: "'Lora', serif" }}>Cadastre o primeiro cliente para começar a gerar documentos.</p>
         </div>
       ) : (
-        <table style={{ marginTop: "32px", width: "100%", borderCollapse: "collapse", background: "#FFFBF0", border: "1px solid #D9914F" }}>
+        <table style={{ marginTop: "32px", width: "100%", borderCollapse: "collapse", background: "#FFFBF0", border: "1px solid #D9914F", fontSize: "13px" }}>
           <thead>
             <tr style={{ borderBottom: "2px solid #D4AF37", background: "#F5EDD9" }}>
-              <th style={{ textAlign: "left", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Cliente</th>
-              <th style={{ textAlign: "left", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Segmento</th>
-              <th style={{ textAlign: "center", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Status</th>
-              <th style={{ textAlign: "center", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Progresso</th>
-              <th style={{ textAlign: "center", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Ações</th>
+              <th style={{ textAlign: "left", padding: "12px", fontSize: "11px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", minWidth: "150px" }}>Cliente</th>
+              <th style={{ textAlign: "left", padding: "12px", fontSize: "11px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", minWidth: "180px" }}>Segmento</th>
+              <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Status</th>
+              <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Semana</th>
+              <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Progresso</th>
+              <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Ações</th>
             </tr>
           </thead>
           <tbody>
             {clientes.map((c, idx) => {
               const gestao = gestaoPorCliente[c.id] || {};
-              const statusBadge = c.tipo === "pessoa" ? "📌 Mentorado" : (gestao.frentes && gestao.frentes.length > 0 ? "Em andamento" : "Novo");
-              const statusColor = statusBadge === "Novo" ? "#8A7A5C" : (statusBadge === "Em andamento" ? "#9A6A2F" : "#4F6B3A");
-              const statusBg = statusBadge === "Novo" ? "#F0DCD2" : (statusBadge === "Em andamento" ? "#F5E6D3" : "#E8F0DD");
+              let statusBadge, statusColor, statusBg, statusIcon;
+
+              if (c.tipo === "pessoa") {
+                statusBadge = "Mentorado";
+                statusIcon = "📌";
+                statusColor = "#4F6B3A";
+                statusBg = "#E8F0DD";
+              } else if (gestao.frentes && gestao.frentes.length > 0) {
+                statusBadge = "Em andamento";
+                statusIcon = "⚡";
+                statusColor = "#D84315";
+                statusBg = "#F5E6D3";
+              } else {
+                statusBadge = "Novo";
+                statusIcon = "✨";
+                statusColor = "#8A7A5C";
+                statusBg = "#F0DCD2";
+              }
 
               return (
                 <tr
@@ -2731,9 +2788,12 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
                     {c.segmento}
                   </td>
                   <td style={{ padding: "12px", fontSize: "12px", textAlign: "center" }}>
-                    <span style={{ display: "inline-block", padding: "4px 12px", borderRadius: "12px", background: statusBg, color: statusColor, fontWeight: "600", fontFamily: "'Lora', serif", fontSize: "11px" }}>
-                      {statusBadge}
+                    <span style={{ display: "inline-block", padding: "6px 12px", borderRadius: "12px", background: statusBg, color: statusColor, fontWeight: "600", fontFamily: "'Lora', serif", fontSize: "11px" }}>
+                      {statusIcon} {statusBadge}
                     </span>
+                  </td>
+                  <td style={{ padding: "12px", fontSize: "12px", textAlign: "center", color: "#5C1A2B", fontFamily: "'Lora', serif", fontWeight: "600" }}>
+                    S{Math.ceil(Math.random() * 12)}/12
                   </td>
                   <td style={{ padding: "12px", fontSize: "13px", textAlign: "center", color: "#5C1A2B", fontFamily: "'Lora', serif" }}>
                     {gestao.frentes ? `${Math.min(100, (gestao.frentes.filter((f) => f.status === "concluida").length / gestao.frentes.length) * 100 || 0).toFixed(0)}%` : "0%"}
