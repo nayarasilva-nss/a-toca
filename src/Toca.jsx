@@ -2202,6 +2202,82 @@ const FASES_ENRAIZAR = [
   { id: "prova", nome: "Prova", emoji: "🏆", cor: CORES.dourado, descricao: "Reavaliação e verificação" },
 ];
 
+// ─── Conteúdo Detalhado de Cada Fase ────────────────────────────
+const CONTEUDO_FASES = {
+  escuta: {
+    titulo: "Fase 1: Escuta",
+    descricaoLonga: "A jornada começa com a escuta profunda. É nesta fase que conhecemos a organização, sua história, desafios e aspirações.",
+    atividades: [
+      "Entrevistas com lideranças e equipes",
+      "Visitas às operações",
+      "Análise de documentação existente",
+      "Mapeamento de processos informais",
+      "Identificação de pontos de fricção"
+    ],
+    objetivo: "Compreender profundamente o contexto da organização para fundamentar as próximas fases"
+  },
+  raioX: {
+    titulo: "Fase 2: Raio-X",
+    descricaoLonga: "Análise estruturada dos dados coletados na Escuta. Produzimos um diagnóstico de maturidade organizacional.",
+    atividades: [
+      "Consolidação de dados e informações",
+      "Avaliação de maturidade em 6 dimensões",
+      "Identificação de gaps e oportunidades",
+      "Criação de matriz de priorização",
+      "Elaboração de relatório diagnóstico"
+    ],
+    objetivo: "Ter clareza total sobre o estado atual e as prioridades de melhoria"
+  },
+  acordo: {
+    titulo: "Fase 3: Acordo",
+    descricaoLonga: "Alinhamento com a liderança sobre o que será trabalhado, em qual sequência e com qual investimento.",
+    atividades: [
+      "Apresentação do diagnóstico",
+      "Definição conjunta de escopo",
+      "Estabelecimento de cronograma",
+      "Alinhamento de investimento",
+      "Formalização da proposta"
+    ],
+    objetivo: "Garantir que todas as partes entendem e concordam com o caminho a seguir"
+  },
+  construcao: {
+    titulo: "Fase 4: Construção",
+    descricaoLonga: "A implementação prática das mudanças. Aqui estruturamos cargos, processos, políticas e regulamentações.",
+    atividades: [
+      "Desenho de estrutura organizacional",
+      "Criação de descrições de cargos",
+      "Desenvolvimento de processos",
+      "Elaboração de políticas e regras",
+      "Treinamento de equipes"
+    ],
+    objetivo: "Estruturar a organização de forma clara, documentada e comunicada"
+  },
+  sustentacao: {
+    titulo: "Fase 5: Sustentação",
+    descricaoLonga: "Garantir que as mudanças se mantenham e evoluam. Implementamos ritos, indicadores e sistemas de tracking.",
+    atividades: [
+      "Definição de reuniões de ritos",
+      "Criação de indicadores de performance",
+      "Implementação de painéis de controle",
+      "Acompanhamento mensal de resultados",
+      "Ajustes e refinamentos"
+    ],
+    objetivo: "Assegurar a continuidade e evolução constante das mudanças"
+  },
+  prova: {
+    titulo: "Fase 6: Prova",
+    descricaoLonga: "Reavaliação estruturada do progresso. Verificamos se os objetivos foram atingidos e o impacto gerado.",
+    atividades: [
+      "Coleta de feedback das equipes",
+      "Reavaliação de indicadores",
+      "Análise de impacto das mudanças",
+      "Identificação de pontos de evolução",
+      "Planejamento dos próximos passos"
+    ],
+    objetivo: "Validar resultados e preparar a organização para evoluir ainda mais"
+  }
+};
+
 function NavegacaoFases({ faseAtual, onMudarFase, cliente }) {
   return (
     <nav
@@ -2310,6 +2386,8 @@ function CardFase({ fase, ativo = false, onClick }) {
 
 // ─── TelaDeFases (Dashboard principal com as 6 fases) ────────────
 function TelaDeFases({ faseAtual, onMudarFase }) {
+  const conteudo = CONTEUDO_FASES[faseAtual] || CONTEUDO_FASES.escuta;
+
   return (
     <div style={{ padding: "32px", background: CORES.fundoPrincipal, minHeight: "100vh" }}>
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
@@ -2333,8 +2411,46 @@ function TelaDeFases({ faseAtual, onMudarFase }) {
           ))}
         </div>
 
+        {/* Conteúdo da Fase Selecionada */}
+        <div style={{ background: CORES.cartao, padding: "32px", borderRadius: "12px", border: `2px solid ${CORES.dourado}`, marginBottom: "40px" }}>
+          <h2 style={{ margin: "0 0 16px", fontSize: "24px", fontWeight: "700", color: CORES.principal, fontFamily: "'Lora', serif" }}>
+            {conteudo.titulo}
+          </h2>
+          <p style={{ margin: "0 0 24px", fontSize: "14px", color: CORES.textoDim, lineHeight: "1.6", fontFamily: "'Lora', serif" }}>
+            {conteudo.descricaoLonga}
+          </p>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "32px" }}>
+            {/* Atividades */}
+            <div>
+              <h3 style={{ margin: "0 0 12px", fontSize: "14px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>
+                Atividades
+              </h3>
+              <ul style={{ margin: "0", padding: "0", listStyle: "none" }}>
+                {conteudo.atividades.map((atividade, idx) => (
+                  <li key={idx} style={{ padding: "8px 0", fontSize: "13px", color: CORES.texto, fontFamily: "'Lora', serif", borderBottom: `1px solid ${CORES.border}`, paddingBottom: "8px" }}>
+                    ✓ {atividade}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Objetivo */}
+            <div>
+              <h3 style={{ margin: "0 0 12px", fontSize: "14px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>
+                Objetivo
+              </h3>
+              <div style={{ background: CORES.hover, padding: "16px", borderRadius: "8px", borderLeft: `4px solid ${CORES.dourado}` }}>
+                <p style={{ margin: "0", fontSize: "13px", color: CORES.texto, lineHeight: "1.6", fontFamily: "'Lora', serif" }}>
+                  {conteudo.objetivo}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Legenda */}
-        <div style={{ background: CORES.cartao, padding: "24px", borderRadius: "12px", border: `1px solid ${CORES.border}`, marginTop: "40px" }}>
+        <div style={{ background: CORES.cartao, padding: "24px", borderRadius: "12px", border: `1px solid ${CORES.border}` }}>
           <h3 style={{ margin: "0 0 16px", fontSize: "16px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif" }}>
             Sobre o Enraizar
           </h3>
