@@ -2639,6 +2639,46 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
         </div>
       )}
 
+      <div style={{ marginBottom: "32px", padding: "24px", background: "#2C1118", borderRadius: "4px", border: "1px solid #D4AF37" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", marginBottom: "24px" }}>
+          <div>
+            <p style={{ fontSize: "11px", color: "#D4AF37", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" }}>Pontos Totais</p>
+            <div style={{ fontSize: "48px", fontWeight: "800", color: "#D4AF37", fontFamily: "'Crimson Text', serif" }}>
+              {clientes.reduce((sum, c) => sum + (gestaoPorCliente[c.id]?.pontos || 0), 0)}
+            </div>
+          </div>
+          <div>
+            <p style={{ fontSize: "11px", color: "#D4AF37", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" }}>🔥 Streak</p>
+            <div style={{ fontSize: "48px", fontWeight: "800", color: "#D4AF37", fontFamily: "'Crimson Text', serif" }}>4 semanas</div>
+          </div>
+        </div>
+
+        <p style={{ fontSize: "11px", color: "#D4AF37", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "12px" }}>Progresso Semanal</p>
+        <div style={{ display: "flex", gap: "12px", justifyContent: "flex-start" }}>
+          {["Seg", "Ter", "Qua", "Qui", "Sex"].map((dia, idx) => (
+            <div
+              key={dia}
+              style={{
+                flex: 1,
+                padding: "12px",
+                borderRadius: "4px",
+                border: "2px solid #D4AF37",
+                textAlign: "center",
+                background: idx < 3 ? "#A0826D" : "#2C1118",
+                cursor: "pointer"
+              }}
+            >
+              <div style={{ fontSize: "11px", color: "#D4AF37", fontFamily: "'Lora', serif", fontWeight: "600", marginBottom: "4px" }}>
+                {dia}
+              </div>
+              <div style={{ fontSize: "18px", color: idx < 3 ? "#FFFBF0" : "#D4AF37" }}>
+                {idx < 3 ? "✓" : "○"}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div style={{ marginTop: "0", paddingTop: "32px", marginBottom: "32px", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: "32px" }}>
         <div style={{ flex: 1 }}>
           <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "48px", fontWeight: "800", letterSpacing: "4px", color: "#5C1A2B", marginBottom: "8px" }}>MEUS CLIENTES</h1>
@@ -2654,55 +2694,73 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
           <p style={{ fontSize: "11px", marginTop: "16px", color: "#8A7A5C", fontFamily: "'Lora', serif" }}>Cadastre o primeiro cliente para começar a gerar documentos.</p>
         </div>
       ) : (
-        <div style={{ marginTop: "32px", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "24px" }}>
-          {clientes.map((c) => (
-            <div
-              key={c.id}
-              onClick={() => onAbrir(c.id)}
-              style={{
-                textAlign: "left",
-                padding: "28px",
-                borderRadius: "4px",
-                cursor: "pointer",
-                position: "relative",
-                background: "#FFFBF0",
-                border: "1px solid #D9914F",
-                boxShadow: "0 2px 8px rgba(92, 26, 43, 0.1)",
-                transition: "all 0.3s ease"
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = "0 8px 16px rgba(92, 26, 43, 0.2)";
-                e.currentTarget.style.transform = "translateY(-2px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = "0 2px 8px rgba(92, 26, 43, 0.1)";
-                e.currentTarget.style.transform = "translateY(0)";
-              }}
-            >
-              <div style={{ position: "absolute", top: "16px", right: "16px" }}>
-                <ConfirmarAcao
-                  label="🗑️"
-                  aviso={`apaga ${c.negocio} e TODOS os seus dados`}
-                  onConfirmar={() => onExcluir(c.id)}
-                  classe="text-xs px-2 py-1 rounded font-semibold"
-                  style={{ color: "#8A3A2E", background: "#F0DCD2", border: "1px solid #D9914F" }}
-                />
-              </div>
-              <div style={{ paddingRight: "40px" }}>
-                <h3 style={{ fontFamily: "'Crimson Text', serif", fontSize: "28px", fontWeight: "800", marginBottom: "12px", color: "#5C1A2B", letterSpacing: "2px" }}>
-                  {c.negocio}
-                </h3>
-                {c.tipo === "pessoa" && <span style={{ fontSize: "11px", padding: "6px 12px", borderRadius: "4px", display: "inline-block", marginBottom: "12px", fontWeight: "600", background: "rgba(92, 26, 43, 0.1)", color: "#5C1A2B", fontFamily: "'Lora', serif" }}>📌 Mentorado</span>}
-                <p style={{ fontSize: "13px", marginBottom: "16px", lineHeight: "1.6", color: "#A0826D", fontFamily: "'Lora', serif" }}>
-                  {c.segmento}
-                </p>
-              </div>
-              <div style={{ marginTop: "16px", paddingTop: "16px", borderTop: "1px solid rgba(92, 26, 43, 0.2)" }}>
-                <BadgesFrentes gestao={gestaoPorCliente[c.id]} />
-              </div>
-            </div>
-          ))}
-        </div>
+        <table style={{ marginTop: "32px", width: "100%", borderCollapse: "collapse", background: "#FFFBF0", border: "1px solid #D9914F" }}>
+          <thead>
+            <tr style={{ borderBottom: "2px solid #D4AF37", background: "#F5EDD9" }}>
+              <th style={{ textAlign: "left", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Cliente</th>
+              <th style={{ textAlign: "left", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Segmento</th>
+              <th style={{ textAlign: "center", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Status</th>
+              <th style={{ textAlign: "center", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Progresso</th>
+              <th style={{ textAlign: "center", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {clientes.map((c, idx) => {
+              const gestao = gestaoPorCliente[c.id] || {};
+              const statusBadge = c.tipo === "pessoa" ? "📌 Mentorado" : (gestao.frentes && gestao.frentes.length > 0 ? "Em andamento" : "Novo");
+              const statusColor = statusBadge === "Novo" ? "#8A7A5C" : (statusBadge === "Em andamento" ? "#9A6A2F" : "#4F6B3A");
+              const statusBg = statusBadge === "Novo" ? "#F0DCD2" : (statusBadge === "Em andamento" ? "#F5E6D3" : "#E8F0DD");
+
+              return (
+                <tr
+                  key={c.id}
+                  style={{
+                    borderBottom: "1px solid rgba(212, 175, 55, 0.2)",
+                    background: idx % 2 === 0 ? "#FFFBF0" : "#FBF9F5",
+                    cursor: "pointer",
+                    transition: "background-color 0.2s ease"
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = "#F5EDD9"}
+                  onMouseLeave={(e) => e.currentTarget.style.background = (idx % 2 === 0 ? "#FFFBF0" : "#FBF9F5")}
+                  onClick={() => onAbrir(c.id)}
+                >
+                  <td style={{ padding: "12px", fontSize: "13px", color: "#5C1A2B", fontFamily: "'Lora', serif", fontWeight: "600" }}>
+                    {c.negocio}
+                  </td>
+                  <td style={{ padding: "12px", fontSize: "13px", color: "#A0826D", fontFamily: "'Lora', serif" }}>
+                    {c.segmento}
+                  </td>
+                  <td style={{ padding: "12px", fontSize: "12px", textAlign: "center" }}>
+                    <span style={{ display: "inline-block", padding: "4px 12px", borderRadius: "12px", background: statusBg, color: statusColor, fontWeight: "600", fontFamily: "'Lora', serif", fontSize: "11px" }}>
+                      {statusBadge}
+                    </span>
+                  </td>
+                  <td style={{ padding: "12px", fontSize: "13px", textAlign: "center", color: "#5C1A2B", fontFamily: "'Lora', serif" }}>
+                    {gestao.frentes ? `${Math.min(100, (gestao.frentes.filter((f) => f.status === "concluida").length / gestao.frentes.length) * 100 || 0).toFixed(0)}%` : "0%"}
+                  </td>
+                  <td style={{ padding: "12px", fontSize: "12px", textAlign: "center" }}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onAbrir(c.id);
+                      }}
+                      style={{ color: "#5C1A2B", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", fontFamily: "'Lora', serif", marginRight: "12px" }}
+                    >
+                      Abrir
+                    </button>
+                    <ConfirmarAcao
+                      label="Excluir"
+                      aviso={`apaga ${c.negocio} e TODOS os seus dados`}
+                      onConfirmar={() => onExcluir(c.id)}
+                      classe="text-xs px-2 py-1 rounded font-semibold"
+                      style={{ color: "#8A3A2E", background: "transparent", border: "none", textDecoration: "underline", fontSize: "12px", fontFamily: "'Lora', serif", cursor: "pointer" }}
+                    />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       )}
 
       <div style={{ marginTop: "48px", paddingTop: "24px", borderTop: "4px solid #D4AF37", display: "flex", alignItems: "center", gap: "24px", fontSize: "13px", color: "#5C1A2B", fontFamily: "'Lora', serif" }}>
@@ -3021,35 +3079,75 @@ function ModuloTabela({ cliente, tabela, gerando, erro, onGerar, onMudarTabela, 
 
         {!gerando && tabela && (
           <>
-            <div className="flex gap-4 mb-4 flex-wrap">
+            <div className="flex gap-4 mb-6 flex-wrap">
               {GRAVIDADES.map((g) => (
                 <div key={g} className="flex items-center gap-1 text-xs">
                   <span className="w-3 h-3 rounded-full inline-block" style={{ background: GRAV_INFO[g].cor }} />
-                  <span style={{ color: "#6B5D42" }}>
+                  <span style={{ color: "#6B5D42", fontFamily: "'Lora', serif" }}>
                     {GRAV_INFO[g].rotulo} → {GRAV_INFO[g].medida}
                   </span>
                 </div>
               ))}
             </div>
-            {grupos.map((gr) => (
-              <div key={gr.setor} className="mb-5">
-                <div className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: CORES.dourado }}>
-                  {gr.setor}
-                </div>
-                {gr.itens.map((item) => (
-                  <LinhaInfracao
+
+            <table style={{ width: "100%", borderCollapse: "collapse", background: "#FFFBF0", border: "1px solid #D9914F", marginBottom: "20px" }}>
+              <thead>
+                <tr style={{ borderBottom: "2px solid #D4AF37", background: "#F5EDD9" }}>
+                  <th style={{ textAlign: "left", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Setor</th>
+                  <th style={{ textAlign: "left", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Infração</th>
+                  <th style={{ textAlign: "center", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Gravidade</th>
+                  <th style={{ textAlign: "center", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Medida</th>
+                  <th style={{ textAlign: "center", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tabela.map((item, idx) => (
+                  <tr
                     key={item.id}
-                    item={item}
-                    onMudar={(novo) => onMudarTabela(tabela.map((t) => (t.id === item.id ? novo : t)))}
-                    onRemover={() => onMudarTabela(tabela.filter((t) => t.id !== item.id))}
-                  />
+                    style={{
+                      borderBottom: "1px solid rgba(212, 175, 55, 0.2)",
+                      background: idx % 2 === 0 ? "#FFFBF0" : "#FBF9F5"
+                    }}
+                  >
+                    <td style={{ padding: "12px", fontSize: "13px", color: "#5C1A2B", fontFamily: "'Lora', serif", fontWeight: "600" }}>
+                      <input
+                        style={{ width: "100%", padding: "4px 8px", border: "1px solid #E0D5BC", borderRadius: "4px", fontSize: "12px", color: "#5C1A2B" }}
+                        value={item.setor}
+                        onChange={(e) => onMudarTabela(tabela.map((t) => (t.id === item.id ? { ...t, setor: e.target.value } : t)))}
+                      />
+                    </td>
+                    <td style={{ padding: "12px", fontSize: "13px", color: "#5C1A2B", fontFamily: "'Lora', serif" }}>
+                      <input
+                        style={{ width: "100%", padding: "4px 8px", border: "1px solid #E0D5BC", borderRadius: "4px", fontSize: "12px", color: "#5C1A2B" }}
+                        value={item.infracao}
+                        onChange={(e) => onMudarTabela(tabela.map((t) => (t.id === item.id ? { ...t, infracao: e.target.value } : t)))}
+                      />
+                    </td>
+                    <td style={{ padding: "12px", fontSize: "12px", textAlign: "center" }}>
+                      <span style={{ display: "inline-block", padding: "4px 12px", borderRadius: "12px", background: GRAV_INFO[item.gravidade].fundo, color: GRAV_INFO[item.gravidade].cor, fontWeight: "600", fontFamily: "'Lora', serif", fontSize: "11px" }}>
+                        {GRAV_INFO[item.gravidade].rotulo}
+                      </span>
+                    </td>
+                    <td style={{ padding: "12px", fontSize: "13px", textAlign: "center", color: "#5C1A2B", fontFamily: "'Lora', serif" }}>
+                      {GRAV_INFO[item.gravidade].medida}
+                    </td>
+                    <td style={{ padding: "12px", fontSize: "12px", textAlign: "center" }}>
+                      <button
+                        onClick={() => onMudarTabela(tabela.filter((t) => t.id !== item.id))}
+                        style={{ color: "#8A3A2E", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", fontFamily: "'Lora', serif", fontSize: "12px" }}
+                      >
+                        Remover
+                      </button>
+                    </td>
+                  </tr>
                 ))}
-              </div>
-            ))}
+              </tbody>
+            </table>
+
             <button
               onClick={() => onMudarTabela([...tabela, { id: uid(), setor: "Geral", infracao: "", gravidade: "leve" }])}
               className="mt-2 text-sm"
-              style={{ color: CORES.dourado }}
+              style={{ color: CORES.dourado, fontFamily: "'Lora', serif" }}
             >
               + Adicionar infração
             </button>
