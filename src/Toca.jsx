@@ -2606,29 +2606,29 @@ function MagicClock() {
   );
 }
 
-function DashboardGamificado({ onNavigate }) {
+function DashboardGamificado({ onNavigate, clientes = [] }) {
   const [dados] = useState({
-    pontos: 285,
-    pontosHoje: 12,
+    pontos: Math.max(285, clientes.length * 50),
+    pontosHoje: Math.min(12, clientes.length * 3),
     proximaMeta: 300,
-    semanas: 4,
+    semanas: Math.max(1, Math.floor(clientes.length / 2)),
     ultimoDia: "Segunda",
     progressoSemanal: { seg: 70, ter: 100, qua: 85, qui: 0, sex: 60, sab: 90, dom: 40 },
-    badgesDesbloqueadas: ["Primeiro\nPasso", "Consistência", "Velocista", "Estrategista"],
+    badgesDesbloqueadas: clientes.length > 0 ? ["Primeiro\nPasso", "Consistência", "Velocista", "Estrategista"] : ["Primeiro\nPasso"],
     proximaBadge: {
       nome: "Mestre do Planejamento",
-      descricao: "Complete 10 tarefas estratégicas",
-      progresso: 6,
-      meta: 10,
+      descricao: `Complete ${Math.max(10, clientes.length * 2)} tarefas estratégicas`,
+      progresso: clientes.length,
+      meta: Math.max(10, clientes.length * 2),
     },
-    tarefasUrgentes: [
-      { id: 1, nome: "Revisão de documentos", vencimento: "Hoje às 17h", prioridade: "CRÍTICA" },
+    tarefasUrgentes: clientes.length > 0 ? [
+      { id: 1, nome: `Revisar ${clientes[0]?.nome || "cliente"}`, vencimento: "Hoje às 17h", prioridade: "CRÍTICA" },
       { id: 2, nome: "Feedback ao cliente", vencimento: "Amanhã", prioridade: "ALTA" },
-    ],
-    tarefasCompletas: [
+    ] : [],
+    tarefasCompletas: clientes.length > 0 ? [
       { id: 3, nome: "Análise de temperamento" },
       { id: 4, nome: "Planejamento estratégico" },
-    ],
+    ] : [],
   });
 
   const dias = ["seg", "ter", "qua", "qui", "sex", "sab", "dom"];
@@ -2799,11 +2799,11 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
       )}
 
       {/* Dashboard de Clientes */}
-      <div style={{ marginTop: "0", paddingTop: "32px", marginBottom: "24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div style={{ marginTop: "0", paddingTop: "32px", marginBottom: "24px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px" }}>
         <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "28px", fontWeight: "800", letterSpacing: "2px", color: "#5C1A2B", margin: "0 0 24px 0" }}>Dashboard de Clientes</h1>
-        {onVoltar && (
+        <div style={{ display: "flex", gap: "8px" }}>
           <button
-            onClick={onVoltar}
+            onClick={onNovo}
             style={{
               background: "#5C1A2B",
               color: "#FFFBF0",
@@ -2816,9 +2816,27 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
               fontFamily: "'Lora', serif",
             }}
           >
-            ← Voltar
+            ✨ Novo cliente
           </button>
-        )}
+          {onVoltar && (
+            <button
+              onClick={onVoltar}
+              style={{
+                background: "#5C1A2B",
+                color: "#FFFBF0",
+                border: "none",
+                padding: "8px 16px",
+                borderRadius: "4px",
+                fontSize: "12px",
+                fontWeight: "600",
+                cursor: "pointer",
+                fontFamily: "'Lora', serif",
+              }}
+            >
+              ← Voltar
+            </button>
+          )}
+        </div>
       </div>
 
       <div style={{ marginBottom: "24px", padding: "20px 24px", background: "linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%)", borderBottom: "1px solid rgba(60, 24, 30, 0.08)", borderRadius: "4px 4px 0 0" }}>
@@ -9836,7 +9854,7 @@ ${conteudo}
           tela.view === "clientes" ? (
             <ListaClientes clientes={clientes} gestaoPorCliente={gestaoPorCliente} fases={fasesClientes} backupPendente={backupPendente} onAplicarBackup={aplicarBackup} onCancelarBackup={() => setBackupPendente(null)} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} onExcluir={excluirCliente} onExportarBackup={exportarBackup} onImportarBackup={importarBackup} onVoltar={() => setTela({ nome: "home" })} />
           ) : (
-            <DashboardGamificado onNavigate={setTela} />
+            <DashboardGamificado onNavigate={setTela} clientes={clientes} />
           )
         ) : tela.nome === "novo" ? (
           <FormCliente onSalvar={salvarNovoCliente} onCancelar={() => setTela({ nome: "home" })} />
