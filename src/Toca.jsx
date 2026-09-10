@@ -2278,6 +2278,41 @@ const CONTEUDO_FASES = {
   }
 };
 
+// ─── Mapa de Módulos por Fase ───────────────────────────────────
+const MODULOS_POR_FASE = {
+  escuta: [
+    { id: "hub", nome: "🏢 Hub do Cliente", tipo: "entrada" },
+    { id: "diagnosticos", nome: "📋 Diagnósticos", tipo: "coleta" },
+    { id: "pessoas", nome: "👥 Pessoas", tipo: "coleta" }
+  ],
+  raioX: [
+    { id: "diagnosticos", nome: "📋 Diagnósticos", tipo: "analise" },
+    { id: "anomalias", nome: "⚠️ Anomalias", tipo: "analise" },
+    { id: "relatorios", nome: "📊 Relatórios", tipo: "relatorio" }
+  ],
+  acordo: [
+    { id: "propostas", nome: "📄 Propostas", tipo: "planejamento" },
+    { id: "campo", nome: "🎯 Plano de Campo", tipo: "planejamento" },
+    { id: "financeiro", nome: "💰 Financeiro", tipo: "planejamento" }
+  ],
+  construcao: [
+    { id: "estrutura", nome: "🏛️ Estrutura", tipo: "construcao" },
+    { id: "cargos", nome: "💼 Cargos", tipo: "construcao" },
+    { id: "gestsao", nome: "⚙️ Gestão", tipo: "construcao" },
+    { id: "treinamentos", nome: "🎓 Treinamentos", tipo: "construcao" }
+  ],
+  sustentacao: [
+    { id: "ritos", nome: "📅 Ritos", tipo: "sustentacao" },
+    { id: "indicadores", nome: "📈 Indicadores", tipo: "sustentacao" },
+    { id: "mentoria", nome: "🧑‍🏫 Mentoria", tipo: "sustentacao" }
+  ],
+  prova: [
+    { id: "relatorios", nome: "📊 Relatórios", tipo: "validacao" },
+    { id: "diagnosticos", nome: "📋 Reavaliação", tipo: "validacao" },
+    { id: "paineis", nome: "📱 Painéis", tipo: "validacao" }
+  ]
+};
+
 function NavegacaoFases({ faseAtual, onMudarFase, cliente }) {
   return (
     <nav
@@ -2384,6 +2419,39 @@ function CardFase({ fase, ativo = false, onClick }) {
   );
 }
 
+// ─── CardModulo (Exibe um módulo dentro de uma fase) ────────────
+function CardModulo({ modulo, onClick }) {
+  return (
+    <div
+      onClick={onClick}
+      style={{
+        padding: "16px",
+        background: CORES.cartao,
+        border: `1px solid ${CORES.border}`,
+        borderRadius: "8px",
+        cursor: "pointer",
+        transition: "all 0.2s ease",
+        textAlign: "center",
+        flex: "1",
+        minWidth: "140px",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = CORES.principal;
+        e.currentTarget.style.boxShadow = "0 2px 8px rgba(107, 93, 66, 0.1)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = CORES.border;
+        e.currentTarget.style.boxShadow = "none";
+      }}
+    >
+      <div style={{ fontSize: "24px", marginBottom: "8px" }}>{modulo.nome.split(" ")[0]}</div>
+      <p style={{ margin: "0", fontSize: "11px", color: CORES.textoDim, fontFamily: "'Lora', serif", fontWeight: "500" }}>
+        {modulo.nome.substring(modulo.nome.indexOf(" ") + 1)}
+      </p>
+    </div>
+  );
+}
+
 // ─── TelaDeFases (Dashboard principal com as 6 fases) ────────────
 function TelaDeFases({ faseAtual, onMudarFase }) {
   const conteudo = CONTEUDO_FASES[faseAtual] || CONTEUDO_FASES.escuta;
@@ -2448,6 +2516,20 @@ function TelaDeFases({ faseAtual, onMudarFase }) {
             </div>
           </div>
         </div>
+
+        {/* Módulos da Fase */}
+        {MODULOS_POR_FASE[faseAtual] && MODULOS_POR_FASE[faseAtual].length > 0 && (
+          <div style={{ marginBottom: "40px" }}>
+            <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>
+              Módulos Nesta Fase
+            </h3>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
+              {MODULOS_POR_FASE[faseAtual].map((modulo) => (
+                <CardModulo key={modulo.id} modulo={modulo} onClick={() => {}} />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Legenda */}
         <div style={{ background: CORES.cartao, padding: "24px", borderRadius: "12px", border: `1px solid ${CORES.border}` }}>
