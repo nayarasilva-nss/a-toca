@@ -6452,12 +6452,15 @@ function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar, onVolt
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
-        ← {cliente.negocio}
-      </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
-        <h2 className="font-serif text-lg mb-1" style={{ color: CORES.fogo }}>Financeiro do Engajamento</h2>
+    <div style={{ background: "#FFFBF0", minHeight: "100vh", paddingBottom: "64px" }}>
+      <HeaderModulo
+        titulo="Financeiro do Engajamento"
+        cliente={cliente}
+        onVoltar={onVoltar}
+        acoes={null}
+      />
+      <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
+        <div className="rounded-lg p-6 shadow-sm" className="card">
         <p className="text-xs mb-4" style={{ color: "#8A7A5C" }}>
           O cofre de Gringotes: parcelas, vencimentos e o que já entrou. Uso interno — nada disso aparece em documentos do cliente.
         </p>
@@ -6552,6 +6555,7 @@ function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar, onVolt
         >
           + Adicionar parcela
         </button>
+      </div>
       </div>
     </div>
   );
@@ -7523,14 +7527,14 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
 
   if (!t) {
     return (
-      <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-        <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
-          ← {cliente.negocio}
-        </button>
-        <div className="flex items-baseline justify-between mb-2">
-          <h2 className="font-serif text-xl" style={{ color: CORES.fogo }}>Treinamentos</h2>
-          <BotaoPrimario onClick={onNovo}>+ Novo treinamento</BotaoPrimario>
-        </div>
+      <div style={{ background: "#FFFBF0", minHeight: "100vh", paddingBottom: "64px" }}>
+        <HeaderModulo
+          titulo="Treinamentos"
+          cliente={cliente}
+          onVoltar={onVoltar}
+          acoes={<BotaoPrimario onClick={onNovo}>+ Novo treinamento</BotaoPrimario>}
+        />
+        <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
         <p className="text-xs mb-5" style={{ color: "#8A7A5C" }}>
           A Sala Precisa: cada turma encontra aqui exatamente a aula de que precisa. Dentro de uma frente da consultoria ou avulso — com a ciência dos temperamentos como marca.
         </p>
@@ -7557,6 +7561,7 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
             })}
           </div>
         )}
+        </div>
       </div>
     );
   }
