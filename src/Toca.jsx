@@ -8454,13 +8454,16 @@ function ModuloAnomalias({ cliente, anomalias, frentes, gerando, erro, onMudar, 
   anomalias.forEach((a) => { const t = (a.tag || a.local || "").trim().toLowerCase(); if (t) tags[t] = (tags[t] || 0) + 1; });
   const tratadas = anomalias.filter((a) => a.status === "tratada").length;
   return (
-    <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
-        ← {cliente.negocio}
-      </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
-        <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
-          <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Tratamento de Anomalias</h2>
+    <div style={{ background: "#FFFBF0", minHeight: "100vh", paddingBottom: "64px" }}>
+      <HeaderModulo
+        titulo="Tratamento de Anomalias"
+        cliente={cliente}
+        onVoltar={onVoltar}
+        acoes={null}
+      />
+      <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
+        <div className="rounded-lg p-6 shadow-sm" className="card">
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", gap: "12px", flexWrap: "wrap" }}>
           <div className="flex items-center gap-3">
             <span className="text-xs font-semibold" style={{ color: tratadas === anomalias.length && anomalias.length ? "#4F6B3A" : "#9A6A2F" }}>
               {tratadas}/{anomalias.length} tratadas
@@ -8533,6 +8536,7 @@ function ModuloAnomalias({ cliente, anomalias, frentes, gerando, erro, onMudar, 
           );
         })}
       </div>
+      </div>
     </div>
   );
 }
@@ -8552,12 +8556,15 @@ function ModuloPainel({ cliente, dados, painel, onMudar, onVoltar }) {
   const d = dados;
   const verificacaoDegradada = d.alertas.length > 0;
   return (
-    <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
-        ← {cliente.negocio}
-      </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
-        <h2 className="font-serif text-lg mb-1" style={{ color: CORES.fogo }}>Painel do Engajamento</h2>
+    <div style={{ background: "#FFFBF0", minHeight: "100vh", paddingBottom: "64px" }}>
+      <HeaderModulo
+        titulo="Painel do Engajamento"
+        cliente={cliente}
+        onVoltar={onVoltar}
+        acoes={null}
+      />
+      <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
+        <div className="rounded-lg p-6 shadow-sm" className="card">
         <p className="text-xs mb-4" style={{ color: "#8A7A5C" }}>
           Mede o engajamento pelo método (o cômodo Indicadores mede o negócio do cliente). Quando a verificação cai, o controle cai semanas depois.
         </p>
@@ -8604,6 +8611,7 @@ function ModuloPainel({ cliente, dados, painel, onMudar, onVoltar }) {
             <LinhaPainel label="Anomalias tratadas × relatadas" value={`${d.anomTratadas}/${d.anomTotal}`} alerta={d.anomTotal > 0 && d.anomTratadas / d.anomTotal < 0.7} />
             <LinhaPainel label="Atas registradas (última)" value={d.ultimaAta ? `${d.totalAtas} · ${d.ultimaAta}` : "nenhuma"} alerta={!d.ultimaAta} />
           </div>
+        </div>
         </div>
       </div>
     </div>
