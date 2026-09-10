@@ -1,31 +1,39 @@
 import { useState, useEffect } from "react";
 
-// ─── A Toca — Central de Governança ─────────────────────────────
-// Ferramenta interna de consultoria · Nayara Silva
-// Módulos: Tabela Disciplinar · Descrições de Cargo
-// Paleta: Toca dos Weasley (caótica, aconchegante, mágica!)
+// ─── ENRAIZAR — Sistema de Desenvolvimento Organizacional ──────
+// Ferramenta de consultoria · Nayara Silva
+// Método: Escuta · Raio-X · Acordo · Construção · Sustentação · Prova
+// Paleta: Elegante, minimalista, enraizada
 
-// Cores do Design System (Mockups A Toca - Elegante & Sofisticado)
+// Cores do Design System (Método Enraizar - Sofisticado & Intuitivo)
 const CORES = {
-  // Primárias - Vinho & Dourado
-  fogo: "#5C1A2B",           // Vinho escuro (botões primários)
-  fogoEscuro: "#3C181E",     // Vinho claro (texto principal)
-  fogoMedio: "#8A3A2E",      // Vinho médio (backgrounds alt)
-  laranja: "#D9914F",        // Cobre/laranja (inputs, borders)
-  dourado: "#D4AF37",        // Dourado (labels, ênfases)
-  douradoEscuro: "#B8860B",  // Dourado dark (hover states)
+  // Primárias - Enraizar
+  principal: "#6B5D42",      // Marrom/café (títulos, estrutura principal)
+  principalEscuro: "#4A4035", // Marrom escuro (borders, destaques)
+  principalClaro: "#8B7A6B", // Marrom claro (textos secundários)
 
-  // Neutras - Browns & Creams
-  madeira: "#8B6F47",        // Brown (texto secundário)
-  madeireaEscura: "#6B5D4F", // Brown dark (descrições)
-  cobre: "#D9914F",          // Taupe (hints, placeholders)
-  taupe: "#8A7A5C",          // Taupe (hints)
-  taupeClaroo: "#A0826D",    // Taupe light (disabled)
+  // Acentos
+  dourado: "#D4AF37",        // Dourado (labels, ênfases, árvore)
+  douradoEscuro: "#B8860B",  // Dourado dark (hover states)
+  douradoClaro: "#E8C547",   // Dourado claro (backgrounds)
 
   // Backgrounds
-  cremeClaro: "#F5EDD9",     // Cream light (backgrounds, cards)
-  cremePalido: "#FFFBF0",    // Cream pale (main background)
-  papel: "#FFFBF0",          // Papel (luz mágica)
+  fundoPrincipal: "#F5F1E8", // Bege/creme claro (main background)
+  cartao: "#FFFBF0",         // Creme branco (cards)
+  hover: "#F0EDE5",          // Bege claro (hover states)
+
+  // Neutras
+  texto: "#4A4035",          // Texto principal (escuro)
+  textoDim: "#8B7A6B",       // Texto dimmed (secundário)
+  border: "#E8DFD3",         // Borders (claro)
+
+  // Estados (mantém compatibilidade)
+  fogo: "#6B5D42",           // Para compatibilidade
+  fogoEscuro: "#4A4035",     // Para compatibilidade
+  laranja: "#D9914F",        // Para compatibilidade
+  papel: "#FFFBF0",          // Para compatibilidade
+  cremeClaro: "#F5F1E8",     // Para compatibilidade
+  cremePalido: "#FFFBF0",    // Para compatibilidade
 };
 
 const GRAVIDADES = ["leve", "media", "grave", "gravissima"];
@@ -2115,40 +2123,37 @@ function Cabecalho({ onHome, onClientes }) {
     <header
       className="px-8 py-6 flex items-baseline justify-between print:hidden"
       style={{
-        background: "linear-gradient(180deg, rgba(60, 24, 30, 0.98) 0%, rgba(75, 36, 40, 0.96) 100%)",
-        borderBottom: "5px solid #B8860B",
-        boxShadow: "0 12px 32px rgba(0,0,0,0.3)",
+        background: CORES.fundoPrincipal,
+        borderBottom: `2px solid ${CORES.dourado}`,
+        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
       }}
     >
       <button onClick={onHome} className="text-left" style={{ background: "transparent", border: "none", cursor: "pointer", padding: 0 }}>
         <div
           className="font-serif"
           style={{
-            fontSize: 34,
+            fontSize: 32,
             fontWeight: 800,
-            letterSpacing: 6,
-            background: "linear-gradient(135deg, #D4AF37 0%, #E8C547 40%, #B8860B 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
+            letterSpacing: 2,
+            color: CORES.dourado,
           }}
         >
-          A TOCA
+          ENRAIZAR
         </div>
-        <div className="fonte-corpo" style={{ fontSize: 11, letterSpacing: 3, color: "#A0826D", textTransform: "uppercase" }}>
-          Central de Governança · Nayara Silva
+        <div className="fonte-corpo" style={{ fontSize: 11, letterSpacing: 2, color: CORES.textoDim, textTransform: "uppercase" }}>
+          Desenvolvimento Organizacional
         </div>
       </button>
-      <div className="fonte-corpo italic text-sm hidden sm:block" style={{ color: "#A0826D" }}>
-        onde tudo funciona sozinho
+      <div className="fonte-corpo italic text-sm hidden sm:block" style={{ color: CORES.textoDim }}>
+        Todo crescimento começa em quem enraiza
       </div>
       {onClientes && (
         <button
           onClick={onClientes}
           style={{
             background: "transparent",
-            border: "2px solid #D4AF37",
-            color: "#D4AF37",
+            border: `2px solid ${CORES.principal}`,
+            color: CORES.principal,
             padding: "8px 16px",
             borderRadius: "4px",
             cursor: "pointer",
@@ -2162,6 +2167,62 @@ function Cabecalho({ onHome, onClientes }) {
         </button>
       )}
     </header>
+  );
+}
+
+// ─── As 6 Fases do Enraizar ─────────────────────────────────────
+const FASES_ENRAIZAR = [
+  { id: "escuta", nome: "Escuta", emoji: "👂", cor: CORES.dourado, descricao: "Conversa, visita, entrevistas" },
+  { id: "raioX", nome: "Raio-X", emoji: "📊", cor: CORES.dourado, descricao: "Diagnóstico de maturidade" },
+  { id: "acordo", nome: "Acordo", emoji: "🤝", cor: CORES.dourado, descricao: "Proposta e cronograma" },
+  { id: "construcao", nome: "Construção", emoji: "🔨", cor: CORES.dourado, descricao: "Cargos, processos, regras" },
+  { id: "sustentacao", nome: "Sustentação", emoji: "🌱", cor: CORES.dourado, descricao: "Ritos, indicadores, tracking" },
+  { id: "prova", nome: "Prova", emoji: "🏆", cor: CORES.dourado, descricao: "Reavaliação e verificação" },
+];
+
+function NavegacaoFases({ faseAtual, onMudarFase, cliente }) {
+  return (
+    <nav
+      style={{
+        background: CORES.cartao,
+        borderBottom: `1px solid ${CORES.border}`,
+        padding: "20px 32px",
+        display: "flex",
+        gap: "8px",
+        overflowX: "auto",
+        justifyContent: "center",
+      }}
+    >
+      {FASES_ENRAIZAR.map((fase, idx) => (
+        <button
+          key={fase.id}
+          onClick={() => onMudarFase(fase.id)}
+          style={{
+            flex: "0 0 auto",
+            padding: "12px 20px",
+            borderRadius: "6px",
+            border: faseAtual === fase.id ? `2px solid ${CORES.principal}` : `1px solid ${CORES.border}`,
+            background: faseAtual === fase.id ? CORES.hover : "transparent",
+            color: CORES.principal,
+            fontSize: "12px",
+            fontWeight: "600",
+            fontFamily: "'Lora', serif",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            whiteSpace: "nowrap",
+            transition: "all 0.2s ease",
+          }}
+        >
+          <span>{fase.emoji}</span>
+          <span>{fase.nome}</span>
+          {idx < FASES_ENRAIZAR.length - 1 && (
+            <span style={{ marginLeft: "8px", color: CORES.textoDim, fontSize: "10px" }}>→</span>
+          )}
+        </button>
+      ))}
+    </nav>
   );
 }
 
