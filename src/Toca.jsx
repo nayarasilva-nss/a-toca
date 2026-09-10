@@ -2226,6 +2226,66 @@ function NavegacaoFases({ faseAtual, onMudarFase, cliente }) {
   );
 }
 
+// ─── Árvore (Símbolo do Enraizar) ────────────────────────────────
+function ArvoreEnraizar({ tamanho = 140, cor = CORES.dourado }) {
+  return (
+    <svg width={tamanho} height={tamanho} viewBox="0 0 140 140" style={{ flexShrink: 0 }}>
+      {/* Raízes */}
+      <line x1="70" y1="70" x2="40" y2="120" stroke={cor} strokeWidth="2" strokeLinecap="round" />
+      <line x1="70" y1="70" x2="60" y2="125" stroke={cor} strokeWidth="2" strokeLinecap="round" />
+      <line x1="70" y1="70" x2="80" y2="125" stroke={cor} strokeWidth="2" strokeLinecap="round" />
+      <line x1="70" y1="70" x2="100" y2="120" stroke={cor} strokeWidth="2" strokeLinecap="round" />
+
+      {/* Tronco */}
+      <line x1="70" y1="70" x2="70" y2="30" stroke={cor} strokeWidth="3" strokeLinecap="round" />
+
+      {/* Galhos */}
+      <line x1="70" y1="35" x2="50" y2="15" stroke={cor} strokeWidth="2" strokeLinecap="round" />
+      <line x1="70" y1="35" x2="90" y2="15" stroke={cor} strokeWidth="2" strokeLinecap="round" />
+      <line x1="70" y1="45" x2="45" y2="25" stroke={cor} strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="70" y1="45" x2="95" y2="25" stroke={cor} strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="70" y1="50" x2="40" y2="40" stroke={cor} strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="70" y1="50" x2="100" y2="40" stroke={cor} strokeWidth="1.5" strokeLinecap="round" />
+
+      {/* Centro */}
+      <circle cx="70" cy="70" r="5" fill={cor} />
+    </svg>
+  );
+}
+
+// ─── CardFase (Visualização de cada fase do Enraizar) ────────────
+function CardFase({ fase, ativo = false, onClick }) {
+  return (
+    <div
+      onClick={onClick}
+      style={{
+        padding: "24px",
+        background: ativo ? CORES.fundoPrincipal : CORES.cartao,
+        border: `2px solid ${ativo ? CORES.principal : CORES.border}`,
+        borderRadius: "12px",
+        cursor: "pointer",
+        transition: "all 0.3s ease",
+        textAlign: "center",
+        flex: "0 0 auto",
+        minWidth: "200px",
+        boxShadow: ativo ? `0 4px 12px rgba(107, 93, 66, 0.15)` : "none",
+        transform: ativo ? "translateY(-2px)" : "none",
+      }}
+    >
+      <div style={{ fontSize: "40px", marginBottom: "12px" }}>{fase.emoji}</div>
+      <h3 style={{ margin: "0 0 8px", fontSize: "16px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif" }}>
+        {fase.nome}
+      </h3>
+      <p style={{ margin: "0", fontSize: "12px", color: CORES.textoDim, lineHeight: "1.4", fontFamily: "'Lora', serif" }}>
+        {fase.descricao}
+      </p>
+      <div style={{ marginTop: "12px", display: "flex", justifyContent: "center" }}>
+        <ArvoreEnraizar tamanho={60} cor={CORES.dourado} />
+      </div>
+    </div>
+  );
+}
+
 function CampoTexto({ rotulo, valor, onChange, area, linhas, placeholder }) {
   const base = "w-full px-3 py-2 rounded border bg-white text-sm outline-none focus:ring-2";
   const estilo = { borderColor: "#D9914F", color: CORES.fogoEscuro };
