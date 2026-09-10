@@ -3838,12 +3838,26 @@ function CartaoFrente({ frente, onMudar, onRemover }) {
 function ModuloGestao({ cliente, gestao, atas, gerando, erro, onMudar, onGerarPlano, onAtualizarPlano, onAbrirAta, onNovaAta, onVoltar }) {
   const frentes = gestao.frentes || [];
   return (
-    <div style={{ maxWidth: "1000px", margin: "0 auto", paddingTop: "16px", paddingLeft: "32px", paddingRight: "32px", paddingBottom: "64px" }}>
-      <button onClick={onVoltar} style={{ fontSize: "11px", marginBottom: "32px", textTransform: "uppercase", fontWeight: "600", background: "none", border: "none", cursor: "pointer", color: "#5C1A2B", fontFamily: "'Lora', serif", letterSpacing: "1px" }}>
-        ← {cliente.negocio}
-      </button>
+    <div style={{ background: "#FFFBF0", minHeight: "100vh", paddingBottom: "64px" }}>
+      <HeaderModulo
+        titulo="Plano de Ação"
+        cliente={cliente}
+        onVoltar={onVoltar}
+        acoes={
+          frentes.length === 0 ? (
+            <BotaoPrimario onClick={onGerarPlano} disabled={gerando || !(gestao.briefing || "").trim()}>
+              {gerando ? "Gerando..." : "Gerar plano com IA"}
+            </BotaoPrimario>
+          ) : (
+            <BotaoPrimario onClick={onAtualizarPlano} disabled={gerando}>
+              {gerando ? "Atualizando..." : "Atualizar plano"}
+            </BotaoPrimario>
+          )
+        }
+      />
 
-      <div style={{ background: "#FFFBF0", borderRadius: "4px", marginBottom: "32px", boxShadow: "0 2px 8px rgba(92, 26, 43, 0.1)" }}>
+      <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
+        <div style={{ background: "#FFFBF0", borderRadius: "4px", marginBottom: "32px", boxShadow: "0 2px 8px rgba(92, 26, 43, 0.1)" }}>
         <div style={{ padding: "32px", borderBottom: "1px solid rgba(60, 24, 30, 0.08)", background: "linear-gradient(180deg, rgba(217, 145, 79, 0.08) 0%, rgba(245, 237, 217, 0.4) 100%)" }}>
           <div style={{ fontSize: "18px", fontWeight: "600", color: "#5C1A2B", marginBottom: "4px" }}>Briefing</div>
           <div style={{ fontSize: "12px", color: "#8B6F47" }}>Registre o que saiu da reunião para que a IA gere o plano</div>
@@ -3954,6 +3968,7 @@ function ModuloGestao({ cliente, gestao, atas, gerando, erro, onMudar, onGerarPl
           )}
         </div>
       )}
+      </div>
     </div>
   );
 }
