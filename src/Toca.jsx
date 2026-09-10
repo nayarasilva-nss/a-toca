@@ -6187,6 +6187,26 @@ const STATUS_ENCONTRO = {
   cancelado: { rotulo: "Cancelado", cor: "#8A3A2E", fundo: "#F0DCD2" },
 };
 
+const STATUS_ANOMALIA_ENUM = {
+  relatada: { rotulo: "Relatada", cor: "#9A6A2F", fundo: "#F5E6C8" },
+  tratada: { rotulo: "Tratada", cor: "#4F6B3A", fundo: "#E3EBD8" },
+  reaberta: { rotulo: "Reaberta", cor: "#8A3A2E", fundo: "#F0DCD2" },
+};
+
+const STATUS_FINANCEIRO = {
+  rascunho: { rotulo: "Rascunho", cor: "#8A7A5C", fundo: "#EFE8D6" },
+  apresentada: { rotulo: "Apresentada", cor: "#9A6A2F", fundo: "#F5E6C8" },
+  aceita: { rotulo: "Aceita", cor: "#4F6B3A", fundo: "#E3EBD8" },
+  recusada: { rotulo: "Recusada", cor: "#8A3A2E", fundo: "#F0DCD2" },
+};
+
+// Cores adicionais para coerência
+const CORES_ESTENDIDAS = {
+  borderClaro: "#E0D5BC",
+  alertaFundo: "#F5DDD6",
+  sucessoFundo: "#E3EBD8",
+};
+
 function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAcordo, gerando, erro, onMudarLista, onAbrir, onGerar, onImprimir, onVoltar }) {
   if (!relAberto) {
     return (
