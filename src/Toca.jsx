@@ -2640,16 +2640,29 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
       )}
 
       <div style={{ marginBottom: "32px", padding: "24px", background: "#2C1118", borderRadius: "4px", border: "1px solid #D4AF37" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", marginBottom: "24px" }}>
-          <div>
-            <p style={{ fontSize: "11px", color: "#D4AF37", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" }}>Pontos Totais</p>
-            <div style={{ fontSize: "48px", fontWeight: "800", color: "#D4AF37", fontFamily: "'Crimson Text', serif" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px", marginBottom: "24px" }}>
+          <div style={{ padding: "12px", background: "rgba(255, 251, 240, 0.1)", borderRadius: "4px", textAlign: "center" }}>
+            <p style={{ fontSize: "9px", color: "#D4AF37", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "6px" }}>Clientes</p>
+            <div style={{ fontSize: "28px", fontWeight: "800", color: "#D4AF37", fontFamily: "'Crimson Text', serif" }}>{clientes.length}</div>
+          </div>
+          <div style={{ padding: "12px", background: "rgba(255, 251, 240, 0.1)", borderRadius: "4px", textAlign: "center" }}>
+            <p style={{ fontSize: "9px", color: "#D4AF37", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "6px" }}>Pontos</p>
+            <div style={{ fontSize: "28px", fontWeight: "800", color: "#D4AF37", fontFamily: "'Crimson Text', serif" }}>
               {clientes.reduce((sum, c) => sum + (gestaoPorCliente[c.id]?.pontos || 0), 0)}
             </div>
           </div>
-          <div>
-            <p style={{ fontSize: "11px", color: "#D4AF37", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" }}>🔥 Streak</p>
-            <div style={{ fontSize: "48px", fontWeight: "800", color: "#D4AF37", fontFamily: "'Crimson Text', serif" }}>4 semanas</div>
+          <div style={{ padding: "12px", background: "rgba(255, 251, 240, 0.1)", borderRadius: "4px", textAlign: "center" }}>
+            <p style={{ fontSize: "9px", color: "#D4AF37", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "6px" }}>Documentos</p>
+            <div style={{ fontSize: "28px", fontWeight: "800", color: "#D4AF37", fontFamily: "'Crimson Text', serif" }}>
+              {clientes.reduce((sum, c) => {
+                const g = gestaoPorCliente[c.id] || {};
+                return sum + (g.frentes?.length || 0) + (g.cargos?.length || 0) + (g.tabela?.length || 0);
+              }, 0)}
+            </div>
+          </div>
+          <div style={{ padding: "12px", background: "rgba(255, 251, 240, 0.1)", borderRadius: "4px", textAlign: "center" }}>
+            <p style={{ fontSize: "9px", color: "#D4AF37", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "6px" }}>🔥 Streak</p>
+            <div style={{ fontSize: "28px", fontWeight: "800", color: "#D4AF37", fontFamily: "'Crimson Text', serif" }}>4</div>
           </div>
         </div>
 
