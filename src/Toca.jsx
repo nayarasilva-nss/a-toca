@@ -2373,36 +2373,47 @@ const FASES_RELOGIO = [
 const CORES_PONTEIROS = ["#5C1A2B", "#B8860B", "#4A5A7A", "#4F6B3A", "#8A3A2E", "#B0652F", "#6B4A7A", "#3F6B6B", "#7A3A5A"];
 
 function RelogioWeasley({ clientes, fases, onAbrir }) {
-  const T = 280;
+  const T = 360;
   const cx = T / 2;
   const cy = T / 2;
-  const raio = T / 2 - 36;
+  const raio = T / 2 - 48;
   const n = FASES_RELOGIO.length;
   const anguloDe = (idx) => (Math.PI * 2 * idx) / n - Math.PI / 2;
   const pos = (idx, fator) => [cx + Math.cos(anguloDe(idx)) * raio * fator, cy + Math.sin(anguloDe(idx)) * raio * fator];
 
   return (
     <div className="mb-10">
-      <div className="font-serif text-2xl mb-2 font-bold" style={{ color: CORES.fogo }}>O Relógio</div>
-      <div className="text-sm mb-6" style={{ color: "#9A8B75" }}>Onde cada cliente está — de relance, como a Molly.</div>
-      <div className="card flex flex-col items-center justify-center gap-6 py-6 px-4 sm:px-8" style={{ background: "linear-gradient(135deg, #FFF8F0 0%, #FFFBF0 100%)" }}>
-        <svg width={T} height={T} viewBox={`0 0 ${T} ${T}`} className="shrink-0" style={{ maxWidth: "100%", height: "auto" }}>
+      <div style={{ fontFamily: "'Crimson Text', serif", fontSize: "28px", fontWeight: "800", letterSpacing: "2px", color: "#5C1A2B", marginBottom: "12px" }}>O Relógio</div>
+      <div style={{ fontSize: "14px", color: "#8B6F47", fontFamily: "'Lora', serif", marginBottom: "24px" }}>Jornada de cada cliente — de relance, como a Molly vê tudo.</div>
+      <div style={{ padding: "32px", background: "linear-gradient(135deg, #FFF8F0 0%, #FFFBF0 100%)", borderRadius: "8px", border: "1px solid #D9914F", display: "flex", flexDirection: "column", alignItems: "center", gap: "32px" }}>
+        <svg width={T} height={T} viewBox={`0 0 ${T} ${T}`} style={{ maxWidth: "100%", height: "auto" }}>
           <defs>
-            <radialGradient id="fundoRelogio" cx="50%" cy="42%" r="65%">
-              <stop offset="0%" stopColor="#FFFDF8" />
-              <stop offset="100%" stopColor="#F5EDD9" />
+            <radialGradient id="fundoRelogio2" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stopColor="#FFFEF9" />
+              <stop offset="100%" stopColor="#F0E6D2" />
             </radialGradient>
-            <linearGradient id="ouroRelogio" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#D4AF37" />
-              <stop offset="45%" stopColor="#E8C547" />
-              <stop offset="100%" stopColor="#B8860B" />
-            </linearGradient>
+            <filter id="sombraRelogio">
+              <feDropShadow dx="0" dy="2" stdDeviation="4" floodOpacity="0.15" />
+            </filter>
           </defs>
-          <circle cx={cx} cy={cy} r={raio + 5} fill="none" stroke="url(#ouroRelogio)" strokeWidth="1.5" opacity="0.5" />
-          <circle cx={cx} cy={cy} r={raio} fill="url(#fundoRelogio)" stroke="url(#ouroRelogio)" strokeWidth="3" />
-          <circle cx={cx} cy={cy} r={raio - 9} fill="none" stroke="#E97F3855" strokeWidth="1" />
+
+          {/* Fundo principal */}
+          <circle cx={cx} cy={cy} r={raio + 8} fill="url(#fundoRelogio2)" stroke="#D4AF37" strokeWidth="4" filter="url(#sombraRelogio)" />
+
+          {/* Anel decorativo */}
+          <circle cx={cx} cy={cy} r={raio + 3} fill="none" stroke="#D4AF37" strokeWidth="1" opacity="0.4" />
+          <circle cx={cx} cy={cy} r={raio - 4} fill="none" stroke="#D4AF37" strokeWidth="1" opacity="0.3" />
+
+          {/* Divisões das fases */}
+          {FASES_RELOGIO.map((_, i) => {
+            const [x1, y1] = pos(i, 0.92);
+            const [x2, y2] = pos(i, 1.0);
+            return <line key={`mark-${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#D4AF37" strokeWidth="2" />;
+          })}
+
+          {/* Textos das fases */}
           {FASES_RELOGIO.map((f, i) => {
-            const [tx, ty] = pos(i, 1.14);
+            const [tx, ty] = pos(i, 1.18);
             const ehPerigo = f.chave === "perigo";
             return (
               <text
@@ -2411,39 +2422,44 @@ function RelogioWeasley({ clientes, fases, onAbrir }) {
                 y={ty}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                fontSize="12"
-                fontFamily="Georgia, serif"
+                fontSize="13"
+                fontFamily="'Crimson Text', serif"
                 fontStyle={ehPerigo ? "italic" : "normal"}
-                fontWeight={ehPerigo ? "bold" : "600"}
+                fontWeight={ehPerigo ? "700" : "600"}
                 fill={ehPerigo ? "#8A3A2E" : "#5C1A2B"}
               >
                 {f.rotulo}
               </text>
             );
           })}
-          {FASES_RELOGIO.map((_, i) => {
-            const [mx, my] = pos(i, 0.94);
-            const [nx, ny] = pos(i, 1.0);
-            return <line key={i} x1={mx} y1={my} x2={nx} y2={ny} stroke="url(#ouroRelogio)" strokeWidth="2.5" />;
-          })}
+
+          {/* Ponteiros dos clientes */}
           {clientes.map((c, idx) => {
             const fase = fases[c.id] || "prospeccao";
             const fIdx = Math.max(0, FASES_RELOGIO.findIndex((f) => f.chave === fase));
             const cor = CORES_PONTEIROS[idx % CORES_PONTEIROS.length];
-            const comprimento = 0.62 + (idx % 3) * 0.09;
+            const comprimento = 0.58 + (idx % 3) * 0.1;
             const [px, py] = pos(fIdx, comprimento);
+            const angle = anguloDe(fIdx) * (180 / Math.PI) + 90;
+
             return (
               <g key={c.id} style={{ cursor: "pointer" }} onClick={() => onAbrir(c.id)}>
-                <line x1={cx} y1={cy} x2={px} y2={py} stroke={cor} strokeWidth="3" strokeLinecap="round" />
-                <circle cx={px} cy={py} r="5" fill={cor} stroke="white" strokeWidth="1.5" />
+                {/* Ponteiro */}
+                <line x1={cx} y1={cy} x2={px} y2={py} stroke={cor} strokeWidth="4" strokeLinecap="round" opacity="0.9" />
+                {/* Ponta do ponteiro */}
+                <circle cx={px} cy={py} r="6" fill={cor} stroke="white" strokeWidth="2" />
               </g>
             );
           })}
-          <circle cx={cx} cy={cy} r="8" fill={CORES.fogoEscuro} stroke="url(#ouroRelogio)" strokeWidth="2.5" />
+
+          {/* Centro do relógio */}
+          <circle cx={cx} cy={cy} r="10" fill="#D4AF37" stroke="#5C1A2B" strokeWidth="2" />
+          <circle cx={cx} cy={cy} r="5" fill="#5C1A2B" />
         </svg>
 
-        <div className="flex-1 w-full">
-          <div className="space-y-1.5 max-h-64 overflow-y-auto pr-2">
+        {/* Lista de clientes */}
+        <div style={{ width: "100%", maxHeight: "240px", overflowY: "auto", paddingRight: "12px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             {clientes.map((c, idx) => {
               const fase = fases[c.id] || "prospeccao";
               const info = FASES_RELOGIO.find((f) => f.chave === fase);
@@ -2453,14 +2469,37 @@ function RelogioWeasley({ clientes, fases, onAbrir }) {
                 <button
                   key={c.id}
                   onClick={() => onAbrir(c.id)}
-                  className="w-full text-left flex items-center gap-2.5 py-2 px-2.5 rounded transition-colors hover:bg-white/80"
-                  style={{ borderLeft: `3px solid ${cor}` }}
+                  style={{
+                    width: "100%",
+                    textAlign: "left",
+                    padding: "12px",
+                    borderLeft: `4px solid ${cor}`,
+                    borderRadius: "4px",
+                    background: "#FFFBF0",
+                    border: `1px solid ${cor}`,
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px"
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#F5EDD9"; e.currentTarget.style.boxShadow = "0 2px 6px rgba(92, 26, 43, 0.1)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "#FFFBF0"; e.currentTarget.style.boxShadow = "none"; }}
                 >
-                  <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: cor }} />
-                  <span className="font-serif text-sm truncate flex-1" style={{ color: CORES.fogo }}>{c.negocio}</span>
+                  <span style={{ width: "12px", height: "12px", borderRadius: "50%", background: cor, flexShrink: 0 }} />
+                  <span style={{ fontFamily: "'Crimson Text', serif", fontSize: "14px", fontWeight: "600", color: "#5C1A2B", flex: 1, truncate: "true" }}>{c.negocio}</span>
                   <span
-                    className="text-xs font-semibold px-1.5 py-0.5 rounded whitespace-nowrap flex-shrink-0"
-                    style={ehPerigo ? { background: "#F0DCD2", color: "#8A3A2E" } : { background: "#F5EDD9", color: "#8B3A3A" }}
+                    style={{
+                      fontSize: "11px",
+                      fontWeight: "600",
+                      padding: "4px 10px",
+                      borderRadius: "12px",
+                      background: ehPerigo ? "#F0DCD2" : "#F5EDD9",
+                      color: ehPerigo ? "#8A3A2E" : "#5C1A2B",
+                      fontFamily: "'Lora', serif",
+                      whiteSpace: "nowrap",
+                      flexShrink: 0
+                    }}
                   >
                     {info ? info.rotulo : "—"}
                   </span>
