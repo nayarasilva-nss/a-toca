@@ -2536,6 +2536,23 @@ function BadgesFrentes({ gestao }) {
   );
 }
 
+// ─── Header Padrão para Módulos ────────────────────────────────
+function HeaderModulo({ titulo, cliente, onVoltar, acoes }) {
+  return (
+    <div style={{ maxWidth: "1200px", margin: "0 auto", paddingTop: "32px", paddingLeft: "32px", paddingRight: "32px" }}>
+      <button onClick={onVoltar} style={{ fontSize: "11px", marginBottom: "24px", textTransform: "uppercase", fontWeight: "600", background: "none", border: "none", cursor: "pointer", color: "#5C1A2B", fontFamily: "'Lora', serif", letterSpacing: "1px" }}>
+        ← {cliente.negocio}
+      </button>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "32px", gap: "16px", flexWrap: "wrap" }}>
+        <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "32px", fontWeight: "800", color: "#5C1A2B", margin: "0", letterSpacing: "2px" }}>{titulo}</h1>
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+          {acoes}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function MagicClock() {
   const radiusMain = 62;
   const radiusRing1 = 58;
@@ -3302,21 +3319,21 @@ function ModuloTabela({ cliente, tabela, gerando, erro, onGerar, onMudarTabela, 
   const grupos = tabela ? agruparPorSetor(tabela) : [];
 
   return (
-    <div className="max-w-4xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
-        ← {cliente.negocio}
-      </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Tabela Disciplinar</h2>
-          <div className="flex gap-2">
+    <div style={{ background: "#FFFBF0", minHeight: "100vh", paddingBottom: "64px" }}>
+      <HeaderModulo
+        titulo="Tabela Disciplinar"
+        cliente={cliente}
+        onVoltar={onVoltar}
+        acoes={
+          <>
             <BotaoPrimario onClick={onGerar} disabled={gerando}>
               {gerando ? "Gerando..." : tabela ? "Gerar novamente" : "Gerar com IA"}
             </BotaoPrimario>
             {tabela && <BotaoContorno onClick={onImprimir}>Exportar PDF</BotaoContorno>}
-          </div>
-        </div>
-
+          </>
+        }
+      />
+      <div style={{ maxWidth: "1200px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
         <AvisoErro erro={erro} />
         {gerando && <Trabalhando />}
 
@@ -3328,25 +3345,14 @@ function ModuloTabela({ cliente, tabela, gerando, erro, onGerar, onMudarTabela, 
 
         {!gerando && tabela && (
           <>
-            <div className="flex gap-4 mb-6 flex-wrap">
-              {GRAVIDADES.map((g) => (
-                <div key={g} className="flex items-center gap-1 text-xs">
-                  <span className="w-3 h-3 rounded-full inline-block" style={{ background: GRAV_INFO[g].cor }} />
-                  <span style={{ color: "#6B5D42", fontFamily: "'Lora', serif" }}>
-                    {GRAV_INFO[g].rotulo} → {GRAV_INFO[g].medida}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <table style={{ width: "100%", borderCollapse: "collapse", background: "#FFFBF0", border: "1px solid #D9914F", marginBottom: "20px" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", background: "#FFFBF0", marginBottom: "20px" }}>
               <thead>
-                <tr style={{ borderBottom: "2px solid #D4AF37", background: "#F5EDD9" }}>
-                  <th style={{ textAlign: "left", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Setor</th>
-                  <th style={{ textAlign: "left", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Infração</th>
-                  <th style={{ textAlign: "center", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Gravidade</th>
-                  <th style={{ textAlign: "center", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Medida</th>
-                  <th style={{ textAlign: "center", padding: "12px", fontSize: "12px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Ações</th>
+                <tr style={{ borderBottom: "2px solid #D4AF37", background: "#EFE8D6" }}>
+                  <th style={{ textAlign: "left", padding: "16px", fontSize: "11px", fontWeight: "700", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Setor</th>
+                  <th style={{ textAlign: "left", padding: "16px", fontSize: "11px", fontWeight: "700", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Infração</th>
+                  <th style={{ textAlign: "center", padding: "16px", fontSize: "11px", fontWeight: "700", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Gravidade</th>
+                  <th style={{ textAlign: "center", padding: "16px", fontSize: "11px", fontWeight: "700", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Medida</th>
+                  <th style={{ textAlign: "center", padding: "16px", fontSize: "11px", fontWeight: "700", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Ações</th>
                 </tr>
               </thead>
               <tbody>
