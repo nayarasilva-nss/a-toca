@@ -41,6 +41,15 @@ const STATUS_FRENTE = {
   nao_iniciada: { rotulo: "Não iniciada", cor: "#8A7A5C", fundo: "#EFE8D6" },
   em_andamento: { rotulo: "Em andamento", cor: "#9A6A2F", fundo: "#F2E3CB" },
   formalizada: { rotulo: "Formalizada", cor: "#4F6B3A", fundo: "#E3EBD8" },
+  concluida: { rotulo: "Concluída", cor: "#3C5A2B", fundo: "#D8E5D0" },
+};
+
+const STATUS_TREINAMENTO = {
+  planejado: { rotulo: "Planejado", cor: "#9A6A2F", fundo: "#F5E6C8" },
+  confirmado: { rotulo: "Confirmado", cor: "#8A7A5C", fundo: "#EFE8D6" },
+  em_progresso: { rotulo: "Em progresso", cor: "#9A6A2F", fundo: "#F2E3CB" },
+  realizado: { rotulo: "Realizado", cor: "#4F6B3A", fundo: "#E3EBD8" },
+  avaliado: { rotulo: "Avaliado", cor: "#3C5A2B", fundo: "#D8E5D0" },
 };
 
 // Tabela-mãe — catálogo de referência (método Nayara Silva, base Kenkyo)
@@ -2388,10 +2397,7 @@ function FormCliente({ inicial, onSalvar, onCancelar, onExcluir }) {
 
   const definirTipo = (tipo) => {
     if (tipo === c.tipo) return;
-    const novosServicos = tipo === "pessoa"
-      ? { consultoria: false, mentoria: true, treinamentos: servicos.treinamentos }
-      : { consultoria: true, mentoria: servicos.mentoria, treinamentos: servicos.treinamentos };
-    setC({ ...c, tipo, servicos: inicial ? servicos : novosServicos });
+    setC({ ...c, tipo });
   };
 
   return (
@@ -7494,8 +7500,8 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
                   <span className="font-serif" style={{ color: CORES.fogo }}>{x.tema || "(sem tema)"}</span>
                   <span className="text-xs flex items-center gap-2" style={{ color: "#8A7A5C" }}>
                     {x.data || "sem data"}
-                    <span className="px-1.5 py-0.5 rounded font-semibold" style={x.status === "realizado" ? { background: "#E3EBD8", color: "#4F6B3A" } : { background: "#F5E6C8", color: "#9A6A2F" }}>
-                      {x.status === "realizado" ? "Realizado ✓" : "Planejado"}
+                    <span className="px-1.5 py-0.5 rounded font-semibold" style={{ background: STATUS_TREINAMENTO[x.status]?.fundo || "#F5E6C8", color: STATUS_TREINAMENTO[x.status]?.cor || "#9A6A2F" }}>
+                      {STATUS_TREINAMENTO[x.status]?.rotulo || "Planejado"}
                     </span>
                     <span className="italic">{frente ? `frente: ${frente.nome}` : "avulso"}</span>
                   </span>
@@ -7520,12 +7526,15 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
           <div className="flex gap-2 items-center">
             <select
               className="px-2 py-1 text-xs rounded border font-semibold"
-              style={t.status === "realizado" ? { borderColor: "#4F6B3A", background: "#E3EBD8", color: "#4F6B3A" } : { borderColor: "#9A6A2F", background: "#F5E6C8", color: "#9A6A2F" }}
+              style={{ borderColor: STATUS_TREINAMENTO[t.status]?.cor || "#9A6A2F", background: STATUS_TREINAMENTO[t.status]?.fundo || "#F5E6C8", color: STATUS_TREINAMENTO[t.status]?.cor || "#9A6A2F" }}
               value={t.status}
               onChange={(e) => onMudar({ ...t, status: e.target.value })}
             >
               <option value="planejado">Planejado</option>
-              <option value="realizado">Realizado ✓</option>
+              <option value="confirmado">Confirmado</option>
+              <option value="em_progresso">Em progresso</option>
+              <option value="realizado">Realizado</option>
+              <option value="avaliado">Avaliado</option>
             </select>
             <BotaoPrimario onClick={onGerar} disabled={gerando || !t.tema.trim()}>
               {gerando ? "Montando..." : t.blocos ? "Montar plano novamente" : "Montar plano com IA"}
