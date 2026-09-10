@@ -2118,7 +2118,7 @@ async function gerarPdfDoNo(nodeOculto) {
 
 // ─── Componentes base ───────────────────────────────────────────
 
-function Cabecalho({ onHome, onClientes }) {
+function Cabecalho({ onHome, onClientes, onFases }) {
   return (
     <header
       className="px-8 py-6 flex items-baseline justify-between print:hidden"
@@ -2147,25 +2147,47 @@ function Cabecalho({ onHome, onClientes }) {
       <div className="fonte-corpo italic text-sm hidden sm:block" style={{ color: CORES.textoDim }}>
         Todo crescimento começa em quem enraiza
       </div>
-      {onClientes && (
-        <button
-          onClick={onClientes}
-          style={{
-            background: "transparent",
-            border: `2px solid ${CORES.principal}`,
-            color: CORES.principal,
-            padding: "8px 16px",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "12px",
-            fontWeight: "600",
-            fontFamily: "'Lora', serif",
-            letterSpacing: "1px",
-          }}
-        >
-          🏢 Clientes
-        </button>
-      )}
+      <div style={{ display: "flex", gap: "12px" }}>
+        {onFases && (
+          <button
+            onClick={onFases}
+            style={{
+              background: "transparent",
+              border: `2px solid ${CORES.dourado}`,
+              color: CORES.dourado,
+              padding: "8px 16px",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "12px",
+              fontWeight: "600",
+              fontFamily: "'Lora', serif",
+              letterSpacing: "1px",
+              transition: "all 0.2s ease",
+            }}
+          >
+            🌳 Fases
+          </button>
+        )}
+        {onClientes && (
+          <button
+            onClick={onClientes}
+            style={{
+              background: "transparent",
+              border: `2px solid ${CORES.principal}`,
+              color: CORES.principal,
+              padding: "8px 16px",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "12px",
+              fontWeight: "600",
+              fontFamily: "'Lora', serif",
+              letterSpacing: "1px",
+            }}
+          >
+            🏢 Clientes
+          </button>
+        )}
+      </div>
     </header>
   );
 }
@@ -8823,6 +8845,7 @@ function ModuloPainel({ cliente, dados, painel, onMudar, onVoltar }) {
 export default function App() {
   const [clientes, setClientes] = useState([]);
   const [tela, setTela] = useState({ nome: "home" });
+  const [faseAtual, setFaseAtual] = useState("escuta"); // Fase do Enraizar
   const [tabelas, setTabelas] = useState({});
   const [cargosPorCliente, setCargosPorCliente] = useState({});
   const [gestaoPorCliente, setGestaoPorCliente] = useState({});
@@ -10110,7 +10133,7 @@ ${conteudo}
         .scale-in { animation: scaleIn 0.3s ease-out; }
         @media print { body { background: white; } .font-serif { font-family: Georgia, serif; } }
       `}</style>
-      <Cabecalho onHome={() => setTela({ nome: "home" })} onClientes={() => setTela({ nome: "home", view: "clientes" })} />
+      <Cabecalho onHome={() => setTela({ nome: "home" })} onFases={() => setTela({ nome: "home", view: "fases" })} onClientes={() => setTela({ nome: "home", view: "clientes" })} />
 
       <div className="print:hidden">
         {!pronto ? (
@@ -10118,6 +10141,8 @@ ${conteudo}
         ) : tela.nome === "home" ? (
           tela.view === "clientes" ? (
             <ListaClientes clientes={clientes} gestaoPorCliente={gestaoPorCliente} fases={fasesClientes} backupPendente={backupPendente} onAplicarBackup={aplicarBackup} onCancelarBackup={() => setBackupPendente(null)} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} onExcluir={excluirCliente} onExportarBackup={exportarBackup} onImportarBackup={importarBackup} onVoltar={() => setTela({ nome: "home" })} />
+          ) : tela.view === "fases" ? (
+            <TelaDeFases faseAtual={faseAtual} onMudarFase={(novaFase) => { setFaseAtual(novaFase); setTela({ nome: "home", view: "fases" }); }} />
           ) : (
             <DashboardGamificado onNavigate={setTela} clientes={clientes} />
           )
