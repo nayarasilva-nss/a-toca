@@ -52,6 +52,21 @@ const STATUS_TREINAMENTO = {
   avaliado: { rotulo: "Avaliado", cor: "#3C5A2B", fundo: "#D8E5D0" },
 };
 
+const PROPOSTA_CAMPOS = {
+  consultoria: {
+    base: ["duracao", "investimento", "condicoesPagamento", "validade", "apresentacao", "objetivo", "fases", "entregaveis", "metodologia", "condicoesGerais"],
+    especiais: ["frentesCoverage", "premisasDeTrabalho"]
+  },
+  treinamento: {
+    base: ["duracao", "investimento", "condicoesPagamento", "validade"],
+    especiais: ["horario", "localidade", "numeroParticipantes", "maioriaAusencia", "certificacao"]
+  },
+  mentoria: {
+    base: ["investimento", "condicoesPagamento"],
+    especiais: ["numeroEncontros", "frequencia", "cancelationPolicy", "successMetrics"]
+  }
+};
+
 // Tabela-mãe — catálogo de referência (método Nayara Silva, base Kenkyo)
 const TABELA_MAE = [
   ["Assiduidade e Ponto", "Atraso sem justificativa (acima da tolerância)", "leve"],
@@ -7480,7 +7495,23 @@ function mentoriaVazia() {
     moldagem: { virtudeCentral: { nome: "", manifesto: "", cultivo: "" }, tendencias: [], praticasSugeridas: [] },
     praticas: [],
     virtudes: [],
-    relatorio: { retrospectiva: "", evolucao: "", conquistas: "", recomendacoes: "" }
+    relatorio: { retrospectiva: "", evolucao: "", conquistas: "", recomendacoes: "" },
+    // Governança: conexão com outros serviços
+    treinamentosRelacionados: [],  // IDs de treinamentos que apoiam esta mentoria
+    acoesCCTRelacionadas: []      // IDs de anomalias/ações CCT relacionadas
+  };
+}
+
+function frenteVazia() {
+  return {
+    id: uid(),
+    nome: "",
+    status: "nao_iniciada",
+    escopo: "",
+    // Governança: conexão com outros serviços
+    treinamentosRelacionados: [],  // IDs de treinamentos que apoiam esta frente
+    mentoriasRelacionadas: [],      // IDs de mentorias relacionadas
+    acoes: []
   };
 }
 
