@@ -2639,127 +2639,13 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
         </div>
       )}
 
-      {/* Dashboard Principal */}
-      <div style={{ marginBottom: "32px" }}>
-        {/* Card Principal Grande */}
-        <div style={{ padding: "32px", background: "#2C1118", borderRadius: "4px", border: "2px solid #D4AF37", marginBottom: "24px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr auto auto", alignItems: "center", gap: "32px" }}>
-            {/* Nome do negócio */}
-            <div>
-              <h2 style={{ fontSize: "48px", fontWeight: "800", color: "#D4AF37", fontFamily: "'Crimson Text', serif", margin: "0 0 8px 0", letterSpacing: "2px" }}>A TOCA</h2>
-              <p style={{ fontSize: "12px", color: "#A0826D", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", margin: "0" }}>
-                {clientes.length > 0 ? `${clientes[0].negocio} · ${clientes[0].segmento.split("—")[0].trim()}` : "CENTRAL DE GOVERNANÇA"}
-              </p>
-            </div>
-
-            {/* Box de Pontos */}
-            <div style={{ padding: "16px 24px", border: "2px solid #D4AF37", borderRadius: "4px", textAlign: "center" }}>
-              <p style={{ fontSize: "10px", color: "#D4AF37", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", margin: "0 0 8px 0" }}>Pontos</p>
-              <div style={{ fontSize: "36px", fontWeight: "800", color: "#D4AF37", fontFamily: "'Crimson Text', serif" }}>
-                {clientes.reduce((sum, c) => sum + (gestaoPorCliente[c.id]?.pontos || 0), 0)}
-              </div>
-            </div>
-
-            {/* Streak */}
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "28px", marginBottom: "4px" }}>🔥</div>
-              <p style={{ fontSize: "12px", color: "#D4AF37", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", margin: "0 0 4px 0" }}>Streak</p>
-              <div style={{ fontSize: "24px", fontWeight: "800", color: "#D4AF37", fontFamily: "'Crimson Text', serif" }}>4 semanas</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Progresso Semanal */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px" }}>
-          {[
-            { dia: "Seg", pontos: 35, feito: true },
-            { dia: "Ter", pontos: 42, feito: true },
-            { dia: "Qua", pontos: 38, feito: true },
-            { dia: "Qui", pontos: 0, feito: false },
-            { dia: "Hoje", pontos: 0, feito: false, destaque: true }
-          ].map((item, idx) => (
-            <div
-              key={item.dia}
-              style={{
-                padding: "16px",
-                borderRadius: "4px",
-                border: "2px solid #8A7A5C",
-                textAlign: "center",
-                background: item.destaque ? "#D4AF37" : "#FFFBF0",
-                cursor: "pointer"
-              }}
-            >
-              <p style={{ fontSize: "12px", color: item.destaque ? "#2C1118" : "#5C1A2B", fontFamily: "'Lora', serif", fontWeight: "600", margin: "0 0 8px 0" }}>
-                {item.dia}
-              </p>
-              <div style={{ fontSize: "20px", color: item.destaque ? "#2C1118" : "#5C1A2B", marginBottom: "8px" }}>
-                {item.feito ? "✓" : item.destaque ? "⭕" : "—"}
-              </div>
-              {item.pontos > 0 && (
-                <p style={{ fontSize: "11px", color: "#8A7A5C", fontFamily: "'Lora', serif", margin: "0" }}>+{item.pontos} pontos</p>
-              )}
-              {item.destaque && (
-                <p style={{ fontSize: "10px", color: "#2C1118", fontFamily: "'Lora', serif", fontWeight: "600", margin: "4px 0 0 0" }}>Em andamento</p>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", marginBottom: "32px" }}>
-        <div style={{ padding: "20px", background: "#FFFBF0", borderRadius: "4px", border: "1px solid #D9914F" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
-            <span style={{ fontSize: "20px" }}>🏆</span>
-            <h3 style={{ fontSize: "16px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Crimson Text', serif" }}>Conquistas</h3>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px" }}>
-            {[
-              { icon: "📋", label: "Primeiro Cliente", desc: "Cadastrou um cliente" },
-              { icon: "✍️", label: "Gerador IA", desc: "Gerou 5 documentos" },
-              { icon: "📊", label: "Estrategista", desc: "Completou diagnóstico" },
-              { icon: "⭐", label: "Mestre", desc: "5 clientes em andamento" }
-            ].map((item, idx) => (
-              <div key={idx} style={{ textAlign: "center", padding: "12px", background: "#F5EDD9", borderRadius: "4px", opacity: idx < 2 ? 1 : 0.5 }}>
-                <div style={{ fontSize: "20px", marginBottom: "4px" }}>{item.icon}</div>
-                <div style={{ fontSize: "10px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif" }}>{item.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div style={{ padding: "20px", background: "#FFFBF0", borderRadius: "4px", border: "1px solid #D9914F" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
-            <span style={{ fontSize: "20px" }}>📋</span>
-            <h3 style={{ fontSize: "16px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Crimson Text', serif" }}>Próximas Ações</h3>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            {[
-              { icon: "🎯", text: "Gerar plano de ação para Grupo Kenkyo", priority: "alta" },
-              { icon: "📊", text: "Completar diagnóstico de maturidade", priority: "alta" },
-              { icon: "✍️", text: "Revisar tabela disciplinar", priority: "média" }
-            ].map((item, idx) => (
-              <div key={idx} style={{ padding: "10px", background: item.priority === "alta" ? "#F5E6D3" : "#E8F0DD", borderRadius: "4px", borderLeft: `3px solid ${item.priority === "alta" ? "#D84315" : "#4F6B3A"}`, display: "flex", alignItems: "flex-start", gap: "10px" }}>
-                <span style={{ fontSize: "16px", flexShrink: 0 }}>{item.icon}</span>
-                <span style={{ fontSize: "12px", color: "#5C1A2B", fontFamily: "'Lora', serif", lineHeight: "1.4" }}>{item.text}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
+      {/* Dashboard de Clientes */}
       <div style={{ marginTop: "0", paddingTop: "32px", marginBottom: "24px" }}>
-        <div style={{ display: "flex", alignItems: "baseline", gap: "16px", marginBottom: "16px" }}>
-          <span style={{ fontSize: "11px", fontWeight: "600", background: "#2C1118", color: "#D4AF37", padding: "6px 12px", borderRadius: "4px", fontFamily: "'Lora', serif" }}>12</span>
-          <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "32px", fontWeight: "800", letterSpacing: "2px", color: "#5C1A2B", margin: "0" }}>Dashboard de Clientes</h1>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "24px" }}>
-          <span style={{ fontSize: "11px", fontWeight: "600", background: "#2C1118", color: "#D4AF37", padding: "4px 10px", borderRadius: "4px", fontFamily: "'Lora', serif" }}>13a</span>
-          <h2 style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "700", color: "#5C1A2B", margin: "0" }}>Meus Engajamentos</h2>
-        </div>
+        <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "28px", fontWeight: "800", letterSpacing: "2px", color: "#5C1A2B", margin: "0 0 24px 0" }}>Dashboard de Clientes</h1>
       </div>
 
-      <div style={{ marginBottom: "16px" }}>
-        <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Crimson Text', serif", margin: "0 0 16px 0" }}>Engajamentos Ativos</h3>
+      <div style={{ marginBottom: "24px", padding: "20px 24px", background: "linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%)", borderBottom: "1px solid rgba(60, 24, 30, 0.08)", borderRadius: "4px 4px 0 0" }}>
+        <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Crimson Text', serif", margin: "0" }}>Engajamentos Ativos</h3>
       </div>
 
       {clientes.length === 0 ? (
@@ -2801,8 +2687,8 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
               <th style={{ textAlign: "left", padding: "12px", fontSize: "11px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", minWidth: "150px" }}>Cliente</th>
               <th style={{ textAlign: "left", padding: "12px", fontSize: "11px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", minWidth: "180px" }}>Segmento</th>
               <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Status</th>
-              <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Semana</th>
               <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Progresso</th>
+              <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Semana</th>
               <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Ações</th>
             </tr>
           </thead>
@@ -2852,11 +2738,11 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
                       {statusIcon} {statusBadge}
                     </span>
                   </td>
-                  <td style={{ padding: "12px", fontSize: "12px", textAlign: "center", color: "#5C1A2B", fontFamily: "'Lora', serif", fontWeight: "600" }}>
-                    S{Math.ceil(Math.random() * 12)}/12
-                  </td>
                   <td style={{ padding: "12px", fontSize: "13px", textAlign: "center", color: "#5C1A2B", fontFamily: "'Lora', serif" }}>
                     {gestao.frentes ? `${Math.min(100, (gestao.frentes.filter((f) => f.status === "concluida").length / gestao.frentes.length) * 100 || 0).toFixed(0)}%` : "0%"}
+                  </td>
+                  <td style={{ padding: "12px", fontSize: "12px", textAlign: "center", color: "#5C1A2B", fontFamily: "'Lora', serif", fontWeight: "600" }}>
+                    S{Math.ceil(Math.random() * 12)}/12
                   </td>
                   <td style={{ padding: "12px", fontSize: "12px", textAlign: "center" }}>
                     <button
@@ -2875,8 +2761,8 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
           </tbody>
         </table>
 
-        <div style={{ marginTop: "16px", padding: "12px 16px", background: "#F5EDD9", borderRadius: "4px", fontSize: "12px", color: "#5C1A2B", fontFamily: "'Lora', serif", textAlign: "center" }}>
-          {clientes.length} cliente(s) · {clientes.filter(c => gestaoPorCliente[c.id]?.frentes?.length).length} em andamento · {clientes.filter(c => c.tipo === "pessoa").length} mentorado(s)
+        <div style={{ marginTop: "0", padding: "16px 24px", background: "#F5EDD9", borderTop: "1px solid rgba(60, 24, 30, 0.08)", fontSize: "11px", color: "#6B5D4F", fontFamily: "'Lora', serif" }}>
+          {clientes.filter(c => gestaoPorCliente[c.id]?.frentes?.length).length} em andamento · {clientes.filter(c => c.tipo === "pessoa").length} mentorado(s) · Total: {clientes.length} engajamento{clientes.length !== 1 ? 's' : ''}
         </div>
 
           <div className="clientes-cards">
