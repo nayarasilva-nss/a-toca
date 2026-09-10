@@ -2628,173 +2628,116 @@ function MagicClock() {
 }
 
 function DashboardGamificado({ onNavigate, clientes = [] }) {
-  const [dados] = useState({
-    pontos: clientes.length * 50,
-    pontosHoje: clientes.length * 3,
-    proximaMeta: (clientes.length + 1) * 50,
-    semanas: Math.max(0, Math.floor(clientes.length / 2)),
-    ultimoDia: clientes.length > 0 ? "Segunda" : "-",
-    progressoSemanal: { seg: 0, ter: 0, qua: 0, qui: 0, sex: 0, sab: 0, dom: 0 },
-    badgesDesbloqueadas: [],
-    proximaBadge: {
-      nome: clientes.length > 0 ? "Primeira Conquista" : "Comece com um cliente",
-      descricao: clientes.length > 0 ? `Gerencie ${clientes.length} cliente(s) com sucesso` : "Cadastre clientes para desbloquear badges",
-      progresso: clientes.length,
-      meta: Math.max(1, clientes.length + 1),
-    },
-    tarefasUrgentes: [],
-    tarefasCompletas: [],
-  });
-
-  const dias = ["seg", "ter", "qua", "qui", "sex", "sab", "dom"];
-  const diasNomes = ["SEG", "TER", "QUA", "QUI", "SEX", "SAB", "DOM"];
+  const cliente = clientes[0] || { negocio: "Sem cliente", segmento: "" };
 
   return (
-    <div style={{ background: "#FFFBF0", minHeight: "100vh", padding: "32px" }}>
+    <div style={{ background: "#FFFBF0", minHeight: "100vh" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Lora:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700;800&family=Lora:wght@400;500;600;700&display=swap');
       `}</style>
 
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px" }}>
-        <h1 style={{ fontSize: "28px", fontWeight: "800", color: "#D4AF37", fontFamily: "'Crimson Text', serif", margin: "0" }}>A TOCA</h1>
-        {onNavigate && (
-          <button
-            onClick={() => onNavigate({ nome: "home", view: "clientes" })}
-            style={{
-              background: "#5C1A2B",
-              color: "#FFFBF0",
-              border: "none",
-              padding: "8px 16px",
-              borderRadius: "4px",
-              fontSize: "12px",
-              fontWeight: "600",
+      {/* HEADER VINHO ESCURO */}
+      <div style={{ background: "#5C1A2B", padding: "32px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "24px", flexWrap: "wrap" }}>
+        <div>
+          <h1 style={{ fontSize: "36px", fontWeight: "800", color: "#D4AF37", fontFamily: "'Crimson Text', serif", margin: "0 0 4px 0", letterSpacing: "2px" }}>A TOCA</h1>
+          <p style={{ fontSize: "13px", color: "#D4AF37", fontFamily: "'Lora', serif", margin: "0", opacity: "0.9" }}>
+            {cliente.negocio}{cliente.segmento ? ` · ${cliente.segmento}` : ""}
+          </p>
+        </div>
+
+        {/* CARDS DE PONTOS E STREAK À DIREITA */}
+        <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+          <div style={{ background: "#D4AF37", padding: "16px 24px", borderRadius: "6px", textAlign: "center", minWidth: "140px" }}>
+            <div style={{ fontSize: "32px", fontWeight: "800", color: "#5C1A2B", fontFamily: "'Crimson Text', serif" }}>285</div>
+            <div style={{ fontSize: "10px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", letterSpacing: "1px" }}>PONTOS</div>
+          </div>
+
+          <div style={{ background: "#D4AF37", padding: "16px 24px", borderRadius: "6px", textAlign: "center", minWidth: "140px" }}>
+            <div style={{ fontSize: "32px", fontWeight: "800", color: "#5C1A2B", fontFamily: "'Crimson Text', serif" }}>4 🔥</div>
+            <div style={{ fontSize: "10px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", letterSpacing: "1px" }}>SEMANAS</div>
+          </div>
+        </div>
+      </div>
+
+      {/* CONTEÚDO PRINCIPAL */}
+      <div style={{ padding: "32px", maxWidth: "1200px", margin: "0 auto" }}>
+
+        {/* 4 CARDS DE DIAS DA SEMANA */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: "16px", marginBottom: "48px" }}>
+          {["Seg", "Ter", "Qua", "Qui"].map((dia) => (
+            <div key={dia} style={{
+              border: "2px solid #4F6B3A",
+              borderRadius: "8px",
+              padding: "20px",
+              textAlign: "center",
+              background: "#FFFBF0",
               cursor: "pointer",
-              fontFamily: "'Lora', serif",
-            }}
-          >
-            📋 Clientes
-          </button>
-        )}
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "24px", marginBottom: "40px" }}>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", background: "#F5EDD9", borderRadius: "8px", padding: "24px" }}>
-          <MagicClock />
-        </div>
-
-        <div style={{ background: "linear-gradient(135deg, rgba(92, 26, 43, 0.05), rgba(217, 145, 79, 0.1))", border: "2px solid #D9914F", borderRadius: "8px", padding: "24px", textAlign: "center" }}>
-          <div style={{ fontSize: "11px", fontWeight: "600", color: "#D4AF37", uppercase: true, letterSpacing: "1px", fontFamily: "'Lora', serif", marginBottom: "8px" }}>SEUS PONTOS</div>
-          <div style={{ fontSize: "56px", fontWeight: "800", color: "#5C1A2B", fontFamily: "'Crimson Text', serif", margin: "8px 0" }}>{dados.pontos}</div>
-          <div style={{ fontSize: "12px", color: "#8B6F47", fontFamily: "'Lora', serif", marginBottom: "12px" }}>+{dados.pontosHoje} hoje</div>
-          <div style={{ fontSize: "10px", color: "#4F6B3A", fontFamily: "'Lora', serif", fontWeight: "600" }}>Próximo: {dados.proximaMeta}</div>
-        </div>
-
-        <div style={{ background: "linear-gradient(135deg, rgba(92, 26, 43, 0.05), rgba(217, 145, 79, 0.1))", border: "2px solid #D9914F", borderRadius: "8px", padding: "24px", textAlign: "center" }}>
-          <div style={{ fontSize: "11px", fontWeight: "600", color: "#D4AF37", uppercase: true, letterSpacing: "1px", fontFamily: "'Lora', serif", marginBottom: "8px" }}>SEMANAS SEGUIDAS</div>
-          <div style={{ fontSize: "56px", fontWeight: "800", color: "#5C1A2B", fontFamily: "'Crimson Text', serif", margin: "8px 0" }}>
-            {dados.semanas} 🔥
-          </div>
-          <div style={{ fontSize: "12px", color: "#8B6F47", fontFamily: "'Lora', serif", marginBottom: "12px" }}>Última: {dados.ultimoDia}</div>
-          <div style={{ width: "100%", height: "6px", background: "#E3EBD8", borderRadius: "3px", marginTop: "12px", overflow: "hidden" }}>
-            <div style={{ width: `${(dados.semanas / 8) * 100}%`, height: "100%", background: "#4F6B3A" }} />
-          </div>
-        </div>
-      </div>
-
-      <div style={{ marginBottom: "40px" }}>
-        <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#5C1A2B", fontFamily: "'Lora', serif", uppercase: true, letterSpacing: "1px", borderBottom: "2px solid #D4AF37", paddingBottom: "12px", marginBottom: "24px" }}>PROGRESSO ESTA SEMANA</h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "12px" }}>
-          {dias.map((dia, idx) => {
-            const percentual = dados.progressoSemanal[dia];
-            const corBarra = percentual === 100 ? "#4F6B3A" : percentual > 0 ? "#D9914F" : "#E3EBD8";
-            return (
-              <div key={dia} style={{ textAlign: "center" }}>
-                <div style={{ fontSize: "10px", fontWeight: "600", color: "#8B6F47", fontFamily: "'Lora', serif", marginBottom: "6px" }}>{diasNomes[idx]}</div>
-                <div style={{ width: "100%", height: "6px", background: "#E3EBD8", borderRadius: "4px", marginBottom: "6px", overflow: "hidden" }}>
-                  <div style={{ width: `${percentual}%`, height: "100%", background: corBarra }} />
-                </div>
-                <div style={{ fontSize: "10px", color: "#8B6F47", fontFamily: "'Lora', serif" }}>{percentual}%</div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      <div style={{ marginBottom: "40px" }}>
-        <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#5C1A2B", fontFamily: "'Lora', serif", uppercase: true, letterSpacing: "1px", borderBottom: "2px solid #D4AF37", paddingBottom: "12px", marginBottom: "24px" }}>CONQUISTAS DESBLOQUEADAS</h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))", gap: "16px" }}>
-          {dados.badgesDesbloqueadas.map((badge, idx) => (
-            <div
-              key={idx}
-              style={{
-                background: "#E3EBD8",
-                border: "2px solid #4F6B3A",
-                borderRadius: "8px",
-                padding: "12px",
-                textAlign: "center",
-                cursor: "pointer",
-                transition: "all 0.3s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = "#4F6B3A";
-                e.target.style.color = "#FFFBF0";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = "#E3EBD8";
-                e.target.style.color = "inherit";
-              }}
-            >
-              <div style={{ fontSize: "40px", marginBottom: "6px" }}>🏆</div>
-              <div style={{ fontSize: "10px", fontWeight: "600", fontFamily: "'Lora', serif", color: "#3C181E" }}>{badge}</div>
+              transition: "all 0.3s ease",
+            }}>
+              <div style={{ fontSize: "14px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif", marginBottom: "12px" }}>{dia}</div>
+              <div style={{ fontSize: "28px", marginBottom: "8px" }}>✓</div>
+              <div style={{ fontSize: "11px", color: "#8B6F47", fontFamily: "'Lora', serif" }}>+8 pontos</div>
             </div>
           ))}
         </div>
-      </div>
 
-      <div style={{ marginBottom: "40px", background: "linear-gradient(135deg, rgba(217, 145, 79, 0.1), rgba(212, 175, 55, 0.05))", border: "2px dashed #D9914F", borderRadius: "8px", padding: "24px", textAlign: "center" }}>
-        <div style={{ fontSize: "48px", marginBottom: "12px" }}>🔒</div>
-        <h3 style={{ fontSize: "16px", fontWeight: "700", color: "#5C1A2B", fontFamily: "'Lora', serif", margin: "12px 0" }}>{dados.proximaBadge.nome}</h3>
-        <p style={{ fontSize: "12px", color: "#8B6F47", fontFamily: "'Lora', serif", margin: "8px 0", marginBottom: "16px" }}>{dados.proximaBadge.descricao}</p>
-        <div style={{ fontSize: "11px", fontWeight: "600", color: "#4F6B3A", fontFamily: "'Lora', serif", marginBottom: "8px" }}>
-          {dados.proximaBadge.progresso} de {dados.proximaBadge.meta} completas
-        </div>
-        <div style={{ width: "100%", height: "8px", background: "#E3EBD8", borderRadius: "4px", marginBottom: "16px", overflow: "hidden" }}>
-          <div style={{ width: `${(dados.proximaBadge.progresso / dados.proximaBadge.meta) * 100}%`, height: "100%", background: "#D9914F" }} />
-        </div>
-        <button style={{ background: "#5C1A2B", color: "#FFFBF0", border: "none", padding: "8px 16px", borderRadius: "4px", fontSize: "12px", fontWeight: "600", cursor: "pointer", fontFamily: "'Lora', serif" }}>CONTINUAR ASSIM</button>
-      </div>
+        {/* SEÇÃO CONQUISTAS DESBLOQUEADAS */}
+        <div style={{ marginBottom: "48px" }}>
+          <h2 style={{ fontSize: "14px", fontWeight: "700", color: "#5C1A2B", fontFamily: "'Lora', serif", uppercase: true, letterSpacing: "2px", marginBottom: "24px", display: "flex", alignItems: "center", gap: "8px" }}>
+            🏆 CONQUISTAS DESBLOQUEADAS
+          </h2>
 
-      <div style={{ marginBottom: "40px" }}>
-        <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#8A3A2E", fontFamily: "'Lora', serif", uppercase: true, letterSpacing: "1px", marginBottom: "16px" }}>⚠️ URGENTES</h2>
-        {dados.tarefasUrgentes.map((tarefa) => (
-          <div key={tarefa.id} style={{ display: "flex", gap: "12px", padding: "16px", borderBottom: "1px solid #E3EBD8" }}>
-            <input type="checkbox" style={{ width: "24px", height: "24px", borderRadius: "4px", border: "2px solid #8A3A2E", accentColor: "#8A3A2E", cursor: "pointer" }} />
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: "13px", fontWeight: "600", color: "#3C181E", fontFamily: "'Lora', serif" }}>{tarefa.nome}</div>
-              <div style={{ fontSize: "11px", color: "#8B6F47", fontFamily: "'Lora', serif", marginTop: "4px" }}>Vencimento: {tarefa.vencimento}</div>
-              <span style={{ fontSize: "10px", fontWeight: "600", fontFamily: "'Lora', serif", color: "#8A3A2E" }}>Prioridade: {tarefa.prioridade}</span>
-            </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(90px, 1fr))", gap: "12px" }}>
+            {["Primeiro Passo", "Consistência", "Mestre do Método"].map((badge, idx) => (
+              <div key={idx} style={{
+                background: "#E3EBD8",
+                border: "2px solid #4F6B3A",
+                borderRadius: "8px",
+                padding: "16px",
+                textAlign: "center",
+                cursor: "pointer",
+              }}>
+                <div style={{ fontSize: "32px", marginBottom: "8px" }}>🎖️</div>
+                <div style={{ fontSize: "10px", fontWeight: "600", color: "#5C1A2B", fontFamily: "'Lora', serif" }}>{badge}</div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
 
-      <div style={{ marginBottom: "40px" }}>
-        <h2 style={{ fontSize: "16px", fontWeight: "700", color: "#4F6B3A", fontFamily: "'Lora', serif", uppercase: true, letterSpacing: "1px", marginBottom: "16px" }}>✓ COMPLETAS HOJE</h2>
-        {dados.tarefasCompletas.map((tarefa) => (
-          <div key={tarefa.id} style={{ display: "flex", gap: "12px", padding: "16px", borderBottom: "1px solid #E3EBD8", background: "#E3EBD8" }}>
-            <input type="checkbox" checked style={{ width: "24px", height: "24px", borderRadius: "4px", border: "2px solid #4F6B3A", accentColor: "#4F6B3A", cursor: "pointer" }} />
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: "13px", fontWeight: "600", color: "#8B6F47", fontFamily: "'Lora', serif", textDecoration: "line-through" }}>{tarefa.nome}</div>
-            </div>
+        {/* PRÓXIMA CONQUISTA */}
+        <div style={{
+          background: "linear-gradient(135deg, rgba(217, 145, 79, 0.1), rgba(212, 175, 55, 0.05))",
+          border: "2px dashed #D9914F",
+          borderRadius: "8px",
+          padding: "32px",
+          textAlign: "center",
+          marginBottom: "48px"
+        }}>
+          <div style={{ fontSize: "48px", marginBottom: "16px" }}>🔒</div>
+          <h3 style={{ fontSize: "18px", fontWeight: "700", color: "#5C1A2B", fontFamily: "'Lora', serif", margin: "0 0 8px 0" }}>
+            Mestre do Planejamento
+          </h3>
+          <p style={{ fontSize: "12px", color: "#8B6F47", fontFamily: "'Lora', serif", margin: "0 0 16px 0", lineHeight: "1.6" }}>
+            Complete 10 tarefas estratégicas
+          </p>
+          <div style={{ fontSize: "12px", fontWeight: "600", color: "#4F6B3A", fontFamily: "'Lora', serif", marginBottom: "12px" }}>
+            6 de 10 completas
           </div>
-        ))}
-      </div>
+          <div style={{ width: "100%", height: "8px", background: "#E3EBD8", borderRadius: "4px", marginBottom: "24px", overflow: "hidden" }}>
+            <div style={{ width: "60%", height: "100%", background: "#D9914F" }} />
+          </div>
+          <button style={{ background: "#5C1A2B", color: "#FFFBF0", border: "none", padding: "12px 24px", borderRadius: "4px", fontSize: "12px", fontWeight: "600", cursor: "pointer", fontFamily: "'Lora', serif" }}>
+            CONTINUAR ASSIM
+          </button>
+        </div>
 
-      <div style={{ background: "#FFFBF0", borderTop: "2px solid #D4AF37", padding: "24px", textAlign: "center" }}>
-        <div style={{ fontSize: "24px", marginBottom: "8px" }}>💡</div>
-        <p style={{ fontSize: "13px", color: "#8B6F47", fontFamily: "'Lora', serif", lineHeight: "1.6", margin: "0", maxWidth: "600px", marginLeft: "auto", marginRight: "auto" }}>
-          Dica: Quanto mais consistente, mais pontos!<br />Continue sua sequência de {dados.semanas} semanas.
-        </p>
+        {/* FOOTER COM DICA */}
+        <div style={{ textAlign: "center", padding: "24px 0", borderTop: "2px solid #D4AF37" }}>
+          <div style={{ fontSize: "20px", marginBottom: "8px" }}>💡</div>
+          <p style={{ fontSize: "13px", color: "#8B6F47", fontFamily: "'Lora', serif", lineHeight: "1.6", margin: "0", maxWidth: "600px", marginLeft: "auto", marginRight: "auto" }}>
+            Dica: Quanto mais consistente, mais pontos!<br />Continue sua sequência. Você está no caminho certo.
+          </p>
+        </div>
       </div>
     </div>
   );
