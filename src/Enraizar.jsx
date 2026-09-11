@@ -3245,6 +3245,138 @@ function DashboardGamificado({ onNavigate, clientes = [] }) {
   );
 }
 
+function DashboardInicial({ clientes, nomeUsuario, onSetNomeUsuario, onAbrir, onNovo }) {
+  const stats = {
+    total: clientes.length,
+    novosEsteMes: clientes.filter(c => new Date(c.dataCriacao || 0).getMonth() === new Date().getMonth()).length,
+  };
+
+  const kartoes = [
+    { label: "Clientes Ativos", valor: stats.total, emoji: "🏢", cor: CORES.dourado },
+    { label: "Este Mês", valor: stats.novosEsteMes, emoji: "📅", cor: CORES.principal },
+  ];
+
+  return (
+    <div style={{ maxWidth: "1200px", margin: "0 auto", paddingTop: "32px", paddingLeft: "32px", paddingRight: "32px", paddingBottom: "32px" }}>
+      {!nomeUsuario && (
+        <div style={{ marginBottom: "24px" }}>
+          <input
+            type="text"
+            placeholder="Qual é seu nome?"
+            onChange={(e) => {
+              const nome = e.target.value;
+              localStorage.setItem("enraizar:usuario:nome", nome);
+              onSetNomeUsuario?.(nome);
+            }}
+            style={{
+              fontFamily: "'Lora', serif",
+              fontSize: "14px",
+              padding: "8px 12px",
+              borderRadius: "4px",
+              border: `2px solid ${CORES.dourado}`,
+              width: "200px",
+            }}
+          />
+        </div>
+      )}
+
+      <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "28px", fontWeight: "800", letterSpacing: "2px", color: CORES.principal, margin: "0 0 24px 0" }}>
+        {nomeUsuario ? `Oi, ${nomeUsuario.split(" ")[0]}` : "Bem-vindo"}
+      </h1>
+
+      {/* KPI Cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "32px" }}>
+        {kartoes.map((k) => (
+          <div
+            key={k.label}
+            style={{
+              background: "white",
+              border: `2px solid ${k.cor}`,
+              borderRadius: "8px",
+              padding: "20px",
+              textAlign: "center",
+            }}
+          >
+            <div style={{ fontSize: "32px", marginBottom: "8px" }}>{k.emoji}</div>
+            <div style={{ fontSize: "24px", fontWeight: "800", color: k.cor, fontFamily: "'Crimson Text', serif", marginBottom: "4px" }}>
+              {k.valor}
+            </div>
+            <div style={{ fontSize: "12px", color: CORES.textoDim, fontFamily: "'Lora', serif" }}>
+              {k.label}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Botão de ação */}
+      <div style={{ marginBottom: "32px" }}>
+        <button
+          onClick={onNovo}
+          style={{
+            background: CORES.principal,
+            color: "white",
+            border: "none",
+            padding: "12px 24px",
+            borderRadius: "4px",
+            fontSize: "14px",
+            fontWeight: "600",
+            cursor: "pointer",
+            fontFamily: "'Lora', serif",
+          }}
+        >
+          ✨ Novo Cliente
+        </button>
+      </div>
+
+      {/* Lista de Clientes */}
+      <div>
+        <h2 style={{ fontSize: "16px", fontWeight: "700", color: CORES.principal, margin: "0 0 16px 0", fontFamily: "'Lora', serif", letterSpacing: "1px", textTransform: "uppercase" }}>
+          Clientes
+        </h2>
+        {clientes.length === 0 ? (
+          <div style={{ padding: "24px", textAlign: "center", borderRadius: "4px", border: `2px dashed ${CORES.border}`, color: CORES.textoDim }}>
+            Nenhum cliente ainda. Crie o primeiro! 🌱
+          </div>
+        ) : (
+          <div style={{ display: "grid", gap: "12px" }}>
+            {clientes.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => onAbrir(c.id)}
+                style={{
+                  textAlign: "left",
+                  padding: "16px",
+                  borderRadius: "4px",
+                  border: `1px solid ${CORES.border}`,
+                  background: "white",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  fontFamily: "'Lora', serif",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                <div style={{ fontSize: "14px", fontWeight: "600", color: CORES.principal, marginBottom: "4px" }}>
+                  {c.negocio}
+                </div>
+                <div style={{ fontSize: "12px", color: CORES.textoDim }}>
+                  {c.segmento}
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAplicarBackup, onCancelarBackup, onAbrir, onNovo, onExcluir, onExportarBackup, onImportarBackup, onVoltar, nomeUsuario, onSetNomeUsuario }) {
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto", paddingTop: "32px", paddingLeft: "32px", paddingRight: "32px", paddingBottom: "32px" }}>
@@ -10438,7 +10570,9 @@ ${conteudo}
       <div className="print:hidden">
         {!pronto ? (
           <div className="text-center py-20 font-serif italic" style={{ color: CORES.dourado }}>Abrindo ENRAIZAR...</div>
-        ) : tela.nome === "home" || tela.nome === "clientes" ? (
+        ) : tela.nome === "home" ? (
+          <DashboardInicial clientes={clientes} nomeUsuario={nomeUsuario} onSetNomeUsuario={setNomeUsuario} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} />
+        ) : tela.nome === "clientes" ? (
           <ListaClientes clientes={clientes} gestaoPorCliente={gestaoPorCliente} fases={fasesClientes} backupPendente={backupPendente} onAplicarBackup={aplicarBackup} onCancelarBackup={() => setBackupPendente(null)} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} onExcluir={excluirCliente} onExportarBackup={exportarBackup} onImportarBackup={importarBackup} onVoltar={() => setTela({ nome: "home" })} nomeUsuario={nomeUsuario} onSetNomeUsuario={setNomeUsuario} />
         ) : tela.nome === "novo" ? (
           <FormCliente onSalvar={salvarNovoCliente} onCancelar={() => setTela({ nome: "home" })} />
