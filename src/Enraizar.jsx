@@ -3507,7 +3507,7 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
       {clientes.length === 0 ? (
         <div style={{ textAlign: "center", paddingTop: "32px", paddingBottom: "32px", borderRadius: "4px", background: "CORES.cartao", border: "2px dashed #D4AF37" }}>
           <p style={{ fontSize: "16px", fontFamily: "'Crimson Text', serif", marginBottom: "12px", color: "CORES.principal" }}>📭 ENRAIZAR está vazio</p>
-          <p style={{ fontSize: "13px", color: "#A0826D", fontFamily: "'Lora', serif" }}>nem um gnomo no jardim</p>
+          <p style={{ fontSize: "13px", color: "#A0826D", fontFamily: "'Lora', serif" }}>nenhum cliente ainda</p>
           <p style={{ fontSize: "11px", marginTop: "16px", color: "CORES.textoDim", fontFamily: "'Lora', serif" }}>Cadastre o primeiro cliente para começar a gerar documentos.</p>
         </div>
       ) : (
@@ -3765,7 +3765,7 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
     campo: totalCampo > 0 ? `${totalCampo} registro${totalCampo > 1 ? "s" : ""} no caderno` : "O caderno está em branco",
     diagslider: totalDiagsLider > 0 ? `${totalDiagsLider} avaliaç${totalDiagsLider > 1 ? "ões" : "ão"}` : focoMentoria === "autoconhecimento" ? "Os N.I.E.M.s aguardam a pessoa" : "Os N.I.E.M.s aguardam o líder",
     relmentoria: temRelMentoria ? "Malfeito feito — pronto" : "A prova da jornada",
-    anomalias: totalAnomalias > 0 ? `${totalAnomaliasTratadas}/${totalAnomalias} tratadas` : "O bisbilhoscópio está em silêncio",
+    anomalias: totalAnomalias > 0 ? `${totalAnomaliasTratadas}/${totalAnomalias} tratadas` : "Nenhuma anomalia registrada",
     painel: "Controle e verificação do método",
     estrutura: totalPosicoes > 0 ? `Organograma com ${totalPosicoes} posiç${totalPosicoes > 1 ? "ões" : "ão"}` : "Ainda não montada",
     alcadas: totalAlcadas > 0 ? `${totalAlcadas} decisõ${totalAlcadas > 1 ? "es" : ""} com alçada definida` : "Ainda não definidas",
@@ -9178,12 +9178,12 @@ function ModuloAnomalias({ cliente, anomalias, frentes, gerando, erro, onMudar, 
           </div>
         </div>
         <p className="text-xs mb-4" style={{ color: "CORES.textoDim" }}>
-          O bisbilhoscópio apita quando algo foge do padrão: POP não seguido, checklist falho, reclamação, fornecedor. Relatar → FCA → Agir. Registros 100% internos.
+          O sistema detecta quando algo foge do padrão: POP não seguido, checklist falho, reclamação, fornecedor. Relatar → FCA → Agir. Registros 100% internos.
         </p>
         <AvisoErro erro={erro} />
         {gerando && <Trabalhando />}
         {!gerando && anomalias.length === 0 && !erro && (
-          <p className="text-sm py-6" style={{ color: "CORES.textoDim" }}>O bisbilhoscópio está em silêncio. Quando algo fugir do padrão na operação do cliente, relate aqui.</p>
+          <p className="text-sm py-6" style={{ color: "CORES.textoDim" }}>Nenhuma anomalia registrada. Quando algo fugir do padrão na operação do cliente, relate aqui.</p>
         )}
         {!gerando && anomalias.map((a) => {
           const t = (a.tag || a.local || "").trim().toLowerCase();
