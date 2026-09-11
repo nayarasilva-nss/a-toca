@@ -3093,7 +3093,7 @@ function DashboardGamificado({ onNavigate, clientes = [] }) {
       {/* HEADER VINHO ESCURO */}
       <div style={{ background: "CORES.principal", padding: "32px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "24px", flexWrap: "wrap" }}>
         <div>
-          <h1 style={{ fontSize: "36px", fontWeight: "800", color: "CORES.dourado", fontFamily: "'Crimson Text', serif", margin: "0 0 4px 0", letterSpacing: "2px" }}>A TOCA</h1>
+          <h1 style={{ fontSize: "36px", fontWeight: "800", color: CORES.dourado, fontFamily: "'Crimson Text', serif", margin: "0 0 4px 0", letterSpacing: "2px" }}>ENRAIZAR</h1>
           <p style={{ fontSize: "13px", color: "CORES.dourado", fontFamily: "'Lora', serif", margin: "0", opacity: "0.9" }}>
             {cliente.negocio}{cliente.segmento ? ` · ${cliente.segmento}` : ""}
           </p>
