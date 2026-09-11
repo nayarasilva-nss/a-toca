@@ -3245,7 +3245,7 @@ function DashboardGamificado({ onNavigate, clientes = [] }) {
   );
 }
 
-function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAplicarBackup, onCancelarBackup, onAbrir, onNovo, onExcluir, onExportarBackup, onImportarBackup, onVoltar }) {
+function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAplicarBackup, onCancelarBackup, onAbrir, onNovo, onExcluir, onExportarBackup, onImportarBackup, onVoltar, nomeUsuario, onSetNomeUsuario }) {
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto", paddingTop: "32px", paddingLeft: "32px", paddingRight: "32px", paddingBottom: "32px" }}>
       {backupPendente && (
@@ -3258,9 +3258,35 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
         </div>
       )}
 
-      {/* Dashboard de Clientes */}
-      <div style={{ marginTop: "0", paddingTop: "32px", marginBottom: "24px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px" }}>
-        <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "28px", fontWeight: "800", letterSpacing: "2px", color: "CORES.principal", margin: "0 0 24px 0" }}>Dashboard de Clientes</h1>
+      {/* Saudação do Usuário */}
+      <div style={{ marginTop: "0", paddingTop: "32px", marginBottom: "24px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+        <div style={{ flex: 1 }}>
+          {nomeUsuario ? (
+            <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "28px", fontWeight: "800", letterSpacing: "2px", color: "CORES.principal", margin: "0 0 4px 0" }}>
+              Oi, {nomeUsuario.split(" ")[0]}
+            </h1>
+          ) : (
+            <div style={{ display: "flex", gap: "8px", alignItems: "center", marginBottom: "16px" }}>
+              <input
+                type="text"
+                placeholder="Qual é seu nome?"
+                onChange={(e) => {
+                  const nome = e.target.value;
+                  localStorage.setItem("enraizar:usuario:nome", nome);
+                  onSetNomeUsuario?.(nome);
+                }}
+                style={{
+                  fontFamily: "'Lora', serif",
+                  fontSize: "14px",
+                  padding: "8px 12px",
+                  borderRadius: "4px",
+                  border: `2px solid ${CORES.dourado}`,
+                  width: "200px",
+                }}
+              />
+            </div>
+          )}
+        </div>
         <div style={{ display: "flex", gap: "8px" }}>
           <button
             onClick={onNovo}
@@ -9126,6 +9152,10 @@ function ModuloPainel({ cliente, dados, painel, onMudar, onVoltar }) {
 // ─── App ────────────────────────────────────────────────────────
 
 export default function App() {
+  const [nomeUsuario, setNomeUsuario] = useState(() => {
+    const saved = localStorage.getItem("enraizar:usuario:nome");
+    return saved || "";
+  });
   const [clientes, setClientes] = useState([]);
   const [tela, setTela] = useState({ nome: "home" });
   const [faseAtual, setFaseAtual] = useState("escuta"); // Fase do Enraizar
@@ -10409,7 +10439,7 @@ ${conteudo}
         {!pronto ? (
           <div className="text-center py-20 font-serif italic" style={{ color: CORES.dourado }}>Abrindo ENRAIZAR...</div>
         ) : tela.nome === "home" || tela.nome === "clientes" ? (
-          <ListaClientes clientes={clientes} gestaoPorCliente={gestaoPorCliente} fases={fasesClientes} backupPendente={backupPendente} onAplicarBackup={aplicarBackup} onCancelarBackup={() => setBackupPendente(null)} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} onExcluir={excluirCliente} onExportarBackup={exportarBackup} onImportarBackup={importarBackup} onVoltar={() => setTela({ nome: "home" })} />
+          <ListaClientes clientes={clientes} gestaoPorCliente={gestaoPorCliente} fases={fasesClientes} backupPendente={backupPendente} onAplicarBackup={aplicarBackup} onCancelarBackup={() => setBackupPendente(null)} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} onExcluir={excluirCliente} onExportarBackup={exportarBackup} onImportarBackup={importarBackup} onVoltar={() => setTela({ nome: "home" })} nomeUsuario={nomeUsuario} onSetNomeUsuario={setNomeUsuario} />
         ) : tela.nome === "novo" ? (
           <FormCliente onSalvar={salvarNovoCliente} onCancelar={() => setTela({ nome: "home" })} />
         ) : tela.nome === "editar" && clienteAtual ? (
