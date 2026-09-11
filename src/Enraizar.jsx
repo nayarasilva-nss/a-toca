@@ -2817,22 +2817,6 @@ function AvisoErro({ erro }) {
   );
 }
 
-// ─── O Relógio (dashboard de clientes) ──────────────────────────
-
-const FASES_RELOGIO = [
-  { chave: "prospeccao", rotulo: "Prospecção" },
-  { chave: "escuta", rotulo: "Escuta" },
-  { chave: "raiox", rotulo: "Raio-X" },
-  { chave: "acordo", rotulo: "Acordo" },
-  { chave: "construcao", rotulo: "Construção" },
-  { chave: "sustentacao", rotulo: "Sustentação" },
-  { chave: "prova", rotulo: "Prova" },
-  { chave: "encerrado", rotulo: "Encerrado" },
-  { chave: "perigo", rotulo: "Perigo Mortal" },
-];
-
-const CORES_PONTEIROS = ["CORES.principal", "#B8860B", "#4A5A7A", "#4F6B3A", "#8A3A2E", "#B0652F", "#6B4A7A", "#3F6B6B", "#7A3A5A"];
-
 // ─── Clientes ───────────────────────────────────────────────────
 
 function FormCliente({ inicial, onSalvar, onCancelar, onExcluir }) {
@@ -2987,97 +2971,6 @@ function HeaderModulo({ titulo, cliente, onVoltar, acoes }) {
         </div>
       </div>
     </div>
-  );
-}
-
-function RelogioEnraizar() {
-  const radiusMain = 62;
-  const radiusRing1 = 58;
-  const radiusRing2 = 54;
-  const cx = 70;
-  const cy = 70;
-
-  const progressPessoas = 75;
-  const progressAcao = 33;
-  const progressGeral = 12;
-  const progressDocs = 55;
-
-  const rotateP = (progressPessoas / 100) * 270;
-  const rotateA = (progressAcao / 100) * 120;
-  const rotateG = (progressGeral / 100) * 45;
-  const rotateD = (progressDocs / 100) * 200;
-
-  return (
-    <svg
-      viewBox="0 0 140 140"
-      width="140"
-      height="140"
-      xmlns="http://www.w3.org/2000/svg"
-      style={{ filter: "drop-shadow(0 8px 16px rgba(92, 26, 43, 0.2))" }}
-    >
-      <defs>
-        <radialGradient id="innerGradient" cx="50%" cy="50%">
-          <stop offset="0%" stopColor="CORES.cartao" stopOpacity="1" />
-          <stop offset="100%" stopColor="CORES.hover" stopOpacity="0.6" />
-        </radialGradient>
-      </defs>
-
-      <circle cx={cx} cy={cy} r={radiusMain} fill="CORES.cartao" stroke="#8B6F47" strokeWidth="3.5" />
-      <circle cx={cx} cy={cy} r={radiusRing1} fill="none" stroke="CORES.dourado" strokeWidth="1.5" opacity="0.8" />
-      <circle cx={cx} cy={cy} r={radiusRing2} fill="none" stroke="CORES.dourado" strokeWidth="1.5" strokeDasharray="3,3" opacity="0.5" />
-      <circle cx={cx} cy={cy} r={radiusMain} fill="url(#innerGradient)" />
-
-      <line x1={cx} y1={cy - radiusMain - 5} x2={cx} y2={cy - radiusMain + 8} stroke="#8B6F47" strokeWidth="2.5" strokeLinecap="round" />
-      <line x1={cx + radiusMain + 5} y1={cy} x2={cx + radiusMain - 8} y2={cy} stroke="#8B6F47" strokeWidth="2.5" strokeLinecap="round" />
-      <line x1={cx} y1={cy + radiusMain + 5} x2={cx} y2={cy + radiusMain - 8} stroke="#8B6F47" strokeWidth="2.5" strokeLinecap="round" />
-      <line x1={cx - radiusMain - 5} y1={cy} x2={cx - radiusMain + 8} y2={cy} stroke="#8B6F47" strokeWidth="2.5" strokeLinecap="round" />
-
-      <line x1={cx - 15} y1={cy - 15} x2={cx - 8} y2={cy - 8} stroke="CORES.laranja" strokeWidth="1" strokeDasharray="2,2" opacity="0.4" />
-      <line x1={cx + 15} y1={cy - 15} x2={cx + 8} y2={cy - 8} stroke="CORES.laranja" strokeWidth="1" strokeDasharray="2,2" opacity="0.4" />
-      <line x1={cx + 15} y1={cy + 15} x2={cx + 8} y2={cy + 8} stroke="CORES.laranja" strokeWidth="1" strokeDasharray="2,2" opacity="0.4" />
-      <line x1={cx - 15} y1={cy + 15} x2={cx - 8} y2={cy + 8} stroke="CORES.laranja" strokeWidth="1" strokeDasharray="2,2" opacity="0.4" />
-
-      <g style={{ transformOrigin: `${cx}px ${cy}px`, animation: "rotatePointer1 3s ease-in-out infinite" }}>
-        <line x1={cx} y1={cy} x2={cx} y2={28} stroke="CORES.principal" strokeWidth="4" strokeLinecap="round" />
-        <circle cx={cx} cy={28} r="2.5" fill="CORES.principal" />
-      </g>
-
-      <g style={{ transformOrigin: `${cx}px ${cy}px`, animation: "rotatePointer2 4s ease-in-out infinite" }}>
-        <line x1={cx} y1={cy} x2={122} y2={cy} stroke="CORES.laranja" strokeWidth="3.5" strokeLinecap="round" />
-        <circle cx={122} cy={cy} r="2" fill="CORES.laranja" />
-      </g>
-
-      <g style={{ transformOrigin: `${cx}px ${cy}px`, animation: "rotatePointer3 5s ease-in-out infinite" }}>
-        <line x1={cx} y1={cy} x2={cx} y2={105} stroke="#4F6B3A" strokeWidth="3" strokeLinecap="round" />
-        <circle cx={cx} cy={105} r="1.5" fill="#4F6B3A" />
-      </g>
-
-      <g style={{ transformOrigin: `${cx}px ${cy}px`, animation: "rotatePointer4 6s ease-in-out infinite" }}>
-        <line x1={cx} y1={cy} x2={18} y2={cy} stroke="CORES.dourado" strokeWidth="2.5" strokeLinecap="round" />
-        <circle cx={18} cy={cy} r="1.5" fill="CORES.dourado" />
-      </g>
-
-      <text x={cx} y={18} textAnchor="middle" fontSize="14" fontWeight="800" fill="CORES.principal" fontFamily="'Crimson Text', serif">P</text>
-      <text x={122} y={80} textAnchor="middle" fontSize="14" fontWeight="800" fill="CORES.principal" fontFamily="'Crimson Text', serif">A</text>
-      <text x={cx} y={132} textAnchor="middle" fontSize="14" fontWeight="800" fill="CORES.principal" fontFamily="'Crimson Text', serif">G</text>
-      <text x={18} y={80} textAnchor="middle" fontSize="14" fontWeight="800" fill="CORES.principal" fontFamily="'Crimson Text', serif">D</text>
-
-      <text x={cx} y={42} textAnchor="middle" fontSize="8" fontWeight="600" fill="CORES.laranja" opacity="0.7" fontFamily="'Lora', serif">{progressPessoas}%</text>
-      <text x={105} y={77} textAnchor="middle" fontSize="8" fontWeight="600" fill="CORES.laranja" opacity="0.7" fontFamily="'Lora', serif">{progressAcao}%</text>
-      <text x={cx} y={102} textAnchor="middle" fontSize="8" fontWeight="600" fill="CORES.laranja" opacity="0.7" fontFamily="'Lora', serif">{progressGeral}%</text>
-      <text x={35} y={77} textAnchor="middle" fontSize="8" fontWeight="600" fill="CORES.laranja" opacity="0.7" fontFamily="'Lora', serif">{progressDocs}%</text>
-
-      <circle cx={cx} cy={cy} r="7" fill="CORES.principal" />
-      <circle cx={cx} cy={cy} r="5" fill="CORES.dourado" />
-      <circle cx={cx} cy={cy} r="2.5" fill="CORES.cartao" />
-
-      <style>{`
-        @keyframes rotatePointer1 { 0% { transform: rotate(0deg); } 100% { transform: rotate(270deg); } }
-        @keyframes rotatePointer2 { 0% { transform: rotate(0deg); } 100% { transform: rotate(120deg); } }
-        @keyframes rotatePointer3 { 0% { transform: rotate(0deg); } 100% { transform: rotate(45deg); } }
-        @keyframes rotatePointer4 { 0% { transform: rotate(0deg); } 100% { transform: rotate(200deg); } }
-      `}</style>
-    </svg>
   );
 }
 
