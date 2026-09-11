@@ -9112,20 +9112,6 @@ export default function App() {
   useEffect(() => {
     stGet("toca:clientes").then(async (cs) => {
       cs = cs || [];
-      if (cs.length === 0) {
-        const kenkyo = {
-          id: uid(),
-          negocio: "Grupo Kenkyo",
-          segmento: "Restaurantes de cozinha japonesa/oriental — múltiplas unidades (salão, delivery e empório)",
-          setores: "Salão, Cozinha, Sushibar, Bar, Delivery, Estoque/Produção",
-          regras:
-            "Celular no armário durante o expediente (uso só com autorização do líder); uniforme completo, limpo e trocado diariamente; sem adornos e sem barba na cozinha/produção; unhas curtas sem esmalte, desodorante sem perfume; tolerância de ponto de 5 min; hora extra só com solicitação expressa do líder (máx. 2h/dia); atestado entregue em até 48h; EPIs obrigatórios; registrar ponto de outra pessoa é infração grave",
-          contexto:
-            "Governança estruturada em central própria. Escala disciplinar: feedback → advertência → suspensão → desligamento. Reincidência aumenta gravidade. Sem registro = não existe.",
-        };
-        cs = [kenkyo];
-        await stSet("toca:clientes", cs);
-      }
       setClientes(cs);
       setPronto(true);
       const mapaG = {};
