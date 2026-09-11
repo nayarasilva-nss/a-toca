@@ -2118,7 +2118,7 @@ async function gerarPdfDoNo(nodeOculto) {
 
 // ─── Componentes base ───────────────────────────────────────────
 
-function Cabecalho({ onHome, onClientes, onFases }) {
+function Cabecalho({ onHome, onClientes }) {
   return (
     <header
       className="px-8 py-6 flex items-baseline justify-between print:hidden"
@@ -2147,47 +2147,25 @@ function Cabecalho({ onHome, onClientes, onFases }) {
       <div className="fonte-corpo italic text-sm hidden sm:block" style={{ color: CORES.textoDim }}>
         Todo crescimento começa em quem enraiza
       </div>
-      <div style={{ display: "flex", gap: "12px" }}>
-        {onFases && (
-          <button
-            onClick={onFases}
-            style={{
-              background: "transparent",
-              border: `2px solid ${CORES.dourado}`,
-              color: CORES.dourado,
-              padding: "8px 16px",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontSize: "12px",
-              fontWeight: "600",
-              fontFamily: "'Lora', serif",
-              letterSpacing: "1px",
-              transition: "all 0.2s ease",
-            }}
-          >
-            🌳 Fases
-          </button>
-        )}
-        {onClientes && (
-          <button
-            onClick={onClientes}
-            style={{
-              background: "transparent",
-              border: `2px solid ${CORES.principal}`,
-              color: CORES.principal,
-              padding: "8px 16px",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontSize: "12px",
-              fontWeight: "600",
-              fontFamily: "'Lora', serif",
-              letterSpacing: "1px",
-            }}
-          >
-            🏢 Clientes
-          </button>
-        )}
-      </div>
+      {onClientes && (
+        <button
+          onClick={onClientes}
+          style={{
+            background: "transparent",
+            border: `2px solid ${CORES.principal}`,
+            color: CORES.principal,
+            padding: "8px 16px",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "12px",
+            fontWeight: "600",
+            fontFamily: "'Lora', serif",
+            letterSpacing: "1px",
+          }}
+        >
+          🏢 Clientes
+        </button>
+      )}
     </header>
   );
 }
@@ -10425,7 +10403,7 @@ ${conteudo}
         .scale-in { animation: scaleIn 0.3s ease-out; }
         @media print { body { background: white; } .font-serif { font-family: Georgia, serif; } }
       `}</style>
-      <Cabecalho onHome={() => setTela({ nome: "home" })} onFases={() => setTela({ nome: "home", view: "fases" })} onClientes={() => setTela({ nome: "home", view: "clientes" })} />
+      <Cabecalho onHome={() => setTela({ nome: "home" })} onClientes={() => setTela({ nome: "clientes" })} />
 
       <div className="print:hidden">
         {!pronto ? (
