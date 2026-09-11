@@ -10408,33 +10408,8 @@ ${conteudo}
       <div className="print:hidden">
         {!pronto ? (
           <div className="text-center py-20 font-serif italic" style={{ color: CORES.dourado }}>Abrindo ENRAIZAR...</div>
-        ) : tela.nome === "home" ? (
-          tela.view === "clientes" ? (
-            <ListaClientes clientes={clientes} gestaoPorCliente={gestaoPorCliente} fases={fasesClientes} backupPendente={backupPendente} onAplicarBackup={aplicarBackup} onCancelarBackup={() => setBackupPendente(null)} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} onExcluir={excluirCliente} onExportarBackup={exportarBackup} onImportarBackup={importarBackup} onVoltar={() => setTela({ nome: "home" })} />
-          ) : tela.view === "fases" ? (
-            <TelaDeFases
-              faseAtual={faseAtual}
-              onMudarFase={(novaFase) => { setFaseAtual(novaFase); setTela({ nome: "home", view: "fases" }); }}
-              onSelecionarModulo={(moduloId, faseId) => {
-                // Navega para o módulo clicado
-                const nomeModulo = MODULOS_POR_FASE[faseId].find(m => m.id === moduloId)?.nome || moduloId;
-
-                if (moduloId === "hub" && clientes.length > 0) {
-                  setTela({ nome: "cliente", id: clientes[0].id });
-                  setModuloSelecionado({ msg: `📂 ${nomeModulo}`, tipo: "sucesso" });
-                } else if (moduloId === "hub") {
-                  setModuloSelecionado({ msg: "Crie um cliente para acessar", tipo: "aviso" });
-                } else {
-                  setModuloSelecionado({ msg: `${nomeModulo} — Em breve!`, tipo: "info" });
-                }
-
-                // Limpa a notificação após 3 segundos
-                setTimeout(() => setModuloSelecionado(null), 3000);
-              }}
-            />
-          ) : (
-            <DashboardGamificado onNavigate={setTela} clientes={clientes} />
-          )
+        ) : tela.nome === "home" || tela.nome === "clientes" ? (
+          <ListaClientes clientes={clientes} gestaoPorCliente={gestaoPorCliente} fases={fasesClientes} backupPendente={backupPendente} onAplicarBackup={aplicarBackup} onCancelarBackup={() => setBackupPendente(null)} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} onExcluir={excluirCliente} onExportarBackup={exportarBackup} onImportarBackup={importarBackup} onVoltar={() => setTela({ nome: "home" })} />
         ) : tela.nome === "novo" ? (
           <FormCliente onSalvar={salvarNovoCliente} onCancelar={() => setTela({ nome: "home" })} />
         ) : tela.nome === "editar" && clienteAtual ? (
