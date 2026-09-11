@@ -2419,6 +2419,37 @@ function CardFase({ fase, ativo = false, onClick }) {
   );
 }
 
+// ─── Toast (Notificação) ────────────────────────────────────────
+function Toast({ mensagem, tipo = "info" }) {
+  const cores = {
+    info: { bg: "#E8DFD3", txt: "#6B5D42" },
+    sucesso: { bg: "#D8E5D0", txt: "#3C5A2B" },
+    aviso: { bg: "#F2E3CB", txt: "#9A6A2F" }
+  };
+  const cor = cores[tipo] || cores.info;
+
+  return (
+    <div style={{
+      position: "fixed",
+      bottom: "24px",
+      right: "24px",
+      background: cor.bg,
+      color: cor.txt,
+      padding: "16px 24px",
+      borderRadius: "8px",
+      border: `1px solid ${cor.txt}`,
+      fontSize: "13px",
+      fontFamily: "'Lora', serif",
+      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+      maxWidth: "300px",
+      zIndex: 999,
+      animation: "slideIn 0.3s ease-out"
+    }}>
+      {mensagem}
+    </div>
+  );
+}
+
 // ─── CardModulo (Exibe um módulo dentro de uma fase) ────────────
 function CardModulo({ modulo, onClick }) {
   return (
@@ -2453,7 +2484,7 @@ function CardModulo({ modulo, onClick }) {
 }
 
 // ─── TelaDeFases (Dashboard principal com as 6 fases) ────────────
-function TelaDeFases({ faseAtual, onMudarFase }) {
+function TelaDeFases({ faseAtual, onMudarFase, onSelecionarModulo }) {
   const conteudo = CONTEUDO_FASES[faseAtual] || CONTEUDO_FASES.escuta;
 
   return (
@@ -2525,7 +2556,11 @@ function TelaDeFases({ faseAtual, onMudarFase }) {
             </h3>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
               {MODULOS_POR_FASE[faseAtual].map((modulo) => (
-                <CardModulo key={modulo.id} modulo={modulo} onClick={() => {}} />
+                <CardModulo
+                  key={modulo.id}
+                  modulo={modulo}
+                  onClick={() => onSelecionarModulo && onSelecionarModulo(modulo.id, faseAtual)}
+                />
               ))}
             </div>
           </div>
@@ -9044,6 +9079,7 @@ export default function App() {
   const [clientes, setClientes] = useState([]);
   const [tela, setTela] = useState({ nome: "home" });
   const [faseAtual, setFaseAtual] = useState("escuta"); // Fase do Enraizar
+  const [moduloSelecionado, setModuloSelecionado] = useState(null); // Feedback de módulo
   const [tabelas, setTabelas] = useState({});
   const [cargosPorCliente, setCargosPorCliente] = useState({});
   const [gestaoPorCliente, setGestaoPorCliente] = useState({});
@@ -10340,7 +10376,26 @@ ${conteudo}
           tela.view === "clientes" ? (
             <ListaClientes clientes={clientes} gestaoPorCliente={gestaoPorCliente} fases={fasesClientes} backupPendente={backupPendente} onAplicarBackup={aplicarBackup} onCancelarBackup={() => setBackupPendente(null)} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} onExcluir={excluirCliente} onExportarBackup={exportarBackup} onImportarBackup={importarBackup} onVoltar={() => setTela({ nome: "home" })} />
           ) : tela.view === "fases" ? (
-            <TelaDeFases faseAtual={faseAtual} onMudarFase={(novaFase) => { setFaseAtual(novaFase); setTela({ nome: "home", view: "fases" }); }} />
+            <TelaDeFases
+              faseAtual={faseAtual}
+              onMudarFase={(novaFase) => { setFaseAtual(novaFase); setTela({ nome: "home", view: "fases" }); }}
+              onSelecionarModulo={(moduloId, faseId) => {
+                // Navega para o módulo clicado
+                const nomeModulo = MODULOS_POR_FASE[faseId].find(m => m.id === moduloId)?.nome || moduloId;
+
+                if (moduloId === "hub" && clientes.length > 0) {
+                  setTela({ nome: "cliente", id: clientes[0].id });
+                  setModuloSelecionado({ msg: `📂 ${nomeModulo}`, tipo: "sucesso" });
+                } else if (moduloId === "hub") {
+                  setModuloSelecionado({ msg: "Crie um cliente para acessar", tipo: "aviso" });
+                } else {
+                  setModuloSelecionado({ msg: `${nomeModulo} — Em breve!`, tipo: "info" });
+                }
+
+                // Limpa a notificação após 3 segundos
+                setTimeout(() => setModuloSelecionado(null), 3000);
+              }}
+            />
           ) : (
             <DashboardGamificado onNavigate={setTela} clientes={clientes} />
           )
@@ -11004,6 +11059,7 @@ ${conteudo}
       {tela.nome === "cargo" && clienteAtual && cargoAtual && (
         <ImpressaoCargo cliente={clienteAtual} cargo={cargoAtual} />
       )}
+      {moduloSelecionado && <Toast mensagem={moduloSelecionado.msg} tipo={moduloSelecionado.tipo} />}
     </div>
   );
 }
