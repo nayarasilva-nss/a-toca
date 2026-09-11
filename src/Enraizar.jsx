@@ -2990,7 +2990,7 @@ function HeaderModulo({ titulo, cliente, onVoltar, acoes }) {
   );
 }
 
-function MagicClock() {
+function RelogioEnraizar() {
   const radiusMain = 62;
   const radiusRing1 = 58;
   const radiusRing2 = 54;
@@ -3467,7 +3467,7 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
       )}
 
       <div style={{ marginTop: "48px", paddingTop: "24px", borderTop: "4px solid #D4AF37", display: "flex", alignItems: "center", gap: "24px", fontSize: "13px", color: "CORES.principal", fontFamily: "'Lora', serif" }}>
-        <span>O Vira-Tempo do ENRAIZAR — seus dados vivem neste app:</span>
+        <span>Seu histórico no ENRAIZAR — seus dados vivem neste app:</span>
         <button onClick={onExportarBackup} style={{ textDecoration: "underline", background: "none", border: "none", cursor: "pointer", color: "CORES.dourado", fontSize: "13px", fontFamily: "'Lora', serif" }}>
           Exportar backup (.json)
         </button>
