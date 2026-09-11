@@ -2800,7 +2800,7 @@ function Trabalhando() {
   const [frase] = useState(() => FRASES_TOCA[Math.floor(Math.random() * FRASES_TOCA.length)]);
   return (
     <div className="py-10 text-center font-serif italic" style={{ color: CORES.dourado }}>
-      A Toca está trabalhando — {frase}
+      ENRAIZAR está trabalhando — {frase}
     </div>
   );
 }
@@ -2927,7 +2927,7 @@ function FormCliente({ inicial, onSalvar, onCancelar, onExcluir }) {
           ))}
         </div>
         <p style={{ fontSize: "11px", marginBottom: "24px", color: "CORES.textoDim", fontFamily: "'Lora', serif" }}>
-          As trilhas definem quais alas aparecem na toca deste cliente. Treinamentos podem viver dentro da consultoria ou avulsos.
+          As trilhas definem quais alas aparecem no ENRAIZAR deste cliente. Treinamentos podem viver dentro da consultoria ou avulsos.
         </p>
 
         <div style={{ display: "flex", gap: "12px", marginBottom: "24px" }}>
@@ -3257,7 +3257,7 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
 
       {clientes.length === 0 ? (
         <div style={{ textAlign: "center", paddingTop: "32px", paddingBottom: "32px", borderRadius: "4px", background: "CORES.cartao", border: "2px dashed #D4AF37" }}>
-          <p style={{ fontSize: "16px", fontFamily: "'Crimson Text', serif", marginBottom: "12px", color: "CORES.principal" }}>📭 A Toca está vazia</p>
+          <p style={{ fontSize: "16px", fontFamily: "'Crimson Text', serif", marginBottom: "12px", color: "CORES.principal" }}>📭 ENRAIZAR está vazio</p>
           <p style={{ fontSize: "13px", color: "#A0826D", fontFamily: "'Lora', serif" }}>nem um gnomo no jardim</p>
           <p style={{ fontSize: "11px", marginTop: "16px", color: "CORES.textoDim", fontFamily: "'Lora', serif" }}>Cadastre o primeiro cliente para começar a gerar documentos.</p>
         </div>
@@ -3467,7 +3467,7 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
       )}
 
       <div style={{ marginTop: "48px", paddingTop: "24px", borderTop: "4px solid #D4AF37", display: "flex", alignItems: "center", gap: "24px", fontSize: "13px", color: "CORES.principal", fontFamily: "'Lora', serif" }}>
-        <span>O Vira-Tempo da Toca — seus dados vivem neste app:</span>
+        <span>O Vira-Tempo do ENRAIZAR — seus dados vivem neste app:</span>
         <button onClick={onExportarBackup} style={{ textDecoration: "underline", background: "none", border: "none", cursor: "pointer", color: "CORES.dourado", fontSize: "13px", fontFamily: "'Lora', serif" }}>
           Exportar backup (.json)
         </button>
@@ -6652,7 +6652,7 @@ function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAcordo, g
         {relatorios.length === 0 ? (
           <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #D9914F" }}>
             <p className="text-sm" style={{ color: "CORES.textoDim" }}>
-              Nenhum relatório ainda. Crie ao final do engajamento — a IA reúne tudo que aconteceu na Toca deste cliente.
+              Nenhum relatório ainda. Crie ao final do engajamento — a IA reúne tudo que aconteceu no ENRAIZAR deste cliente.
             </p>
           </div>
         ) : (
@@ -9662,7 +9662,7 @@ export default function App() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `a-toca-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `enraizar-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -10222,7 +10222,7 @@ export default function App() {
   })();
 
   const nomeDocumentoAtual = () =>
-    `${clienteAtual ? clienteAtual.negocio : "A Toca"} — ${tela.nome}`.replace(/[\\/:*?"<>|]/g, "").trim();
+    `${clienteAtual ? clienteAtual.negocio : "ENRAIZAR"} — ${tela.nome}`.replace(/[\\/:*?"<>|]/g, "").trim();
 
   // Reserva: abre/baixa versão imprimível no navegador (caso o motor próprio falhe)
   const abrirImpressaoNavegador = () => {
@@ -10357,7 +10357,7 @@ ${conteudo}
 
       <div className="print:hidden">
         {!pronto ? (
-          <div className="text-center py-20 font-serif italic" style={{ color: CORES.dourado }}>Abrindo A Toca...</div>
+          <div className="text-center py-20 font-serif italic" style={{ color: CORES.dourado }}>Abrindo ENRAIZAR...</div>
         ) : tela.nome === "home" ? (
           tela.view === "clientes" ? (
             <ListaClientes clientes={clientes} gestaoPorCliente={gestaoPorCliente} fases={fasesClientes} backupPendente={backupPendente} onAplicarBackup={aplicarBackup} onCancelarBackup={() => setBackupPendente(null)} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} onExcluir={excluirCliente} onExportarBackup={exportarBackup} onImportarBackup={importarBackup} onVoltar={() => setTela({ nome: "home" })} />
