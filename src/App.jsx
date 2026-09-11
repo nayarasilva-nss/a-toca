@@ -1,5 +1,5 @@
-import Toca from './Toca.jsx'
+import Enraizar from './Enraizar.jsx'
 
 export default function App() {
-  return <Toca />
+  return <Enraizar />
 }
