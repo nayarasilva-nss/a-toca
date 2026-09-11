@@ -3251,6 +3251,20 @@ function DashboardInicial({ clientes, nomeUsuario, onSetNomeUsuario, onAbrir, on
     novosEsteMes: clientes.filter(c => new Date(c.dataCriacao || 0).getMonth() === new Date().getMonth()).length,
   };
 
+  const FASES_INFO = [
+    { id: "escuta", nome: "Escuta", emoji: "👂", cor: "#E8D4C8" },
+    { id: "raiox", nome: "Raio-X", emoji: "📊", cor: "#D9D4C8" },
+    { id: "acordo", nome: "Acordo", emoji: "🤝", cor: "#CAD4C8" },
+    { id: "construcao", nome: "Construção", emoji: "🔨", cor: "#BED4C8" },
+    { id: "sustentacao", nome: "Sustentação", emoji: "🌱", cor: "#B2D4C8" },
+    { id: "prova", nome: "Prova", emoji: "🏆", cor: "#A6D4C8" },
+  ];
+
+  const clientesPorFase = FASES_INFO.map(f => ({
+    ...f,
+    count: clientes.filter(c => c.fase === f.id).length,
+  }));
+
   const kartoes = [
     { label: "Clientes Ativos", valor: stats.total, emoji: "🏢", cor: CORES.dourado },
     { label: "Este Mês", valor: stats.novosEsteMes, emoji: "📅", cor: CORES.principal },
@@ -3326,6 +3340,35 @@ function DashboardInicial({ clientes, nomeUsuario, onSetNomeUsuario, onAbrir, on
         >
           ✨ Novo Cliente
         </button>
+      </div>
+
+      {/* Gráfico de Clientes por Fase */}
+      <div style={{ marginBottom: "32px", padding: "24px", background: "white", borderRadius: "8px", border: `1px solid ${CORES.border}` }}>
+        <h2 style={{ fontSize: "16px", fontWeight: "700", color: CORES.principal, margin: "0 0 16px 0", fontFamily: "'Lora', serif", letterSpacing: "1px", textTransform: "uppercase" }}>
+          Clientes por Fase
+        </h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))", gap: "12px" }}>
+          {clientesPorFase.map((f) => (
+            <div
+              key={f.id}
+              style={{
+                background: f.cor,
+                borderRadius: "6px",
+                padding: "12px",
+                textAlign: "center",
+                border: `2px solid ${CORES.border}`,
+              }}
+            >
+              <div style={{ fontSize: "24px", marginBottom: "4px" }}>{f.emoji}</div>
+              <div style={{ fontSize: "20px", fontWeight: "800", color: CORES.principal, fontFamily: "'Crimson Text', serif" }}>
+                {f.count}
+              </div>
+              <div style={{ fontSize: "11px", color: CORES.textoDim, fontFamily: "'Lora', serif", marginTop: "2px" }}>
+                {f.nome}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Lista de Clientes */}
