@@ -13,13 +13,18 @@ const CORES = {
   principalClaro: "#8B7A6B", // Marrom claro (textos secundários)
 
   // Acentos
-  dourado: "CORES.dourado",        // Dourado (labels, ênfases, árvore)
+  dourado: "#D4AF37",        // Dourado (labels, ênfases, árvore)
   douradoEscuro: "#B8860B",  // Dourado dark (hover states)
   douradoClaro: "#E8C547",   // Dourado claro (backgrounds)
 
+  // Verde (nova) - Enraizar
+  verde: "#4F6B3A",          // Verde terra/sálvia (acentos, status)
+  verdeClaro: "#7BA85C",     // Verde claro (backgrounds, hovers)
+  verdeEscuro: "#3D5630",    // Verde escuro (borders, destaques)
+
   // Backgrounds
   fundoPrincipal: "#F5F1E8", // Bege/creme claro (main background)
-  cartao: "CORES.cartao",         // Creme branco (cards)
+  cartao: "#FFFBF0",         // Creme branco (cards)
   hover: "#F0EDE5",          // Bege claro (hover states)
 
   // Neutras
@@ -30,10 +35,10 @@ const CORES = {
   // Estados (mantém compatibilidade)
   fogo: "#6B5D42",           // Para compatibilidade
   fogoEscuro: "#4A4035",     // Para compatibilidade
-  laranja: "CORES.laranja",        // Para compatibilidade
-  papel: "CORES.cartao",          // Para compatibilidade
+  laranja: "#D9914F",        // Para compatibilidade
+  papel: "#FFFBF0",          // Para compatibilidade
   cremeClaro: "#F5F1E8",     // Para compatibilidade
-  cremePalido: "CORES.cartao",    // Para compatibilidade
+  cremePalido: "#FFFBF0",    // Para compatibilidade
 };
 
 const GRAVIDADES = ["leve", "media", "grave", "gravissima"];
@@ -2801,20 +2806,20 @@ function BotaoContorno({ children, onClick }) {
   );
 }
 
-function InputField({ label, placeholder, value, onChange, type = "text", required = false }) {
+function InputField({ label, placeholder, value, onChange, type = "text", required = false, color = CORES.verde }) {
   return (
-    <div style={{ marginBottom: "18px" }}>
+    <div style={{ marginBottom: "24px" }}>
       {label && (
         <label
           style={{
             display: "block",
             fontFamily: "'Lora', serif",
-            fontSize: "11px",
-            letterSpacing: "1px",
-            color: CORES.dourado,
+            fontSize: "12px",
+            letterSpacing: "2px",
+            color: color,
             textTransform: "uppercase",
-            marginBottom: "6px",
-            fontWeight: "600"
+            marginBottom: "10px",
+            fontWeight: "700"
           }}
         >
           {label}
@@ -2828,23 +2833,23 @@ function InputField({ label, placeholder, value, onChange, type = "text", requir
         required={required}
         style={{
           width: "100%",
-          padding: "10px 12px",
-          border: `1px solid ${CORES.laranja}`,
-          borderRadius: "4px",
+          padding: "14px 16px",
+          border: `2px solid ${color === CORES.verde ? CORES.verdeClaro : CORES.dourado}20`,
+          borderRadius: "8px",
           fontFamily: "'Lora', serif",
-          fontSize: "13px",
-          background: CORES.cremePalido,
-          color: CORES.fogo,
+          fontSize: "14px",
+          background: CORES.fundoPrincipal,
+          color: CORES.principal,
           outline: "none",
-          transition: "border-color 0.2s",
+          transition: "all 0.3s ease",
           boxSizing: "border-box"
         }}
         onFocus={(e) => {
           e.target.style.borderColor = CORES.dourado;
-          e.target.style.boxShadow = `0 0 0 2px rgba(212, 175, 55, 0.1)`;
+          e.target.style.boxShadow = `0 0 0 3px ${CORES.dourado}20`;
         }}
         onBlur={(e) => {
-          e.target.style.borderColor = CORES.laranja;
+          e.target.style.borderColor = color === CORES.verde ? CORES.verdeClaro : `${CORES.dourado}20`;
           e.target.style.boxShadow = "none";
         }}
       />
@@ -2992,96 +2997,223 @@ function FormCliente({ inicial, onSalvar, onCancelar, onExcluir }) {
   };
 
   return (
-    <div style={{ maxWidth: "440px", margin: "32px auto", background: "CORES.cartao", borderRadius: "4px", boxShadow: "0 2px 8px rgba(92, 26, 43, 0.1)" }}>
-      <div style={{ padding: "32px", borderBottom: "1px solid rgba(60, 24, 30, 0.08)", background: "linear-gradient(180deg, rgba(217, 145, 79, 0.08) 0%, rgba(245, 237, 217, 0.4) 100%)" }}>
-        <div style={{ fontSize: "18px", fontWeight: "600", color: "CORES.principal", marginBottom: "4px" }}>
-          {inicial ? "Editar cliente" : "Novo cliente"}
+    <div style={{ maxWidth: "500px", margin: "32px auto", background: CORES.cartao, borderRadius: "12px", boxShadow: "0 4px 20px rgba(75, 64, 53, 0.12)", overflow: "hidden" }}>
+      {/* Header com degradê bege → verde */}
+      <div style={{
+        padding: "40px 32px",
+        background: `linear-gradient(135deg, ${CORES.verdeClaro} 0%, ${CORES.verde} 50%, ${CORES.dourado}20 100%)`,
+        borderBottom: `3px solid ${CORES.dourado}`
+      }}>
+        <div style={{ fontSize: "28px", fontWeight: "700", color: CORES.cartao, marginBottom: "8px", fontFamily: "'Crimson Text', serif", letterSpacing: "1px" }}>
+          {inicial ? "✏️ Editar" : "🌱 Novo Cliente"}
         </div>
-        <div style={{ fontSize: "12px", color: "#8B6F47" }}>
-          Preencha os dados básicos
+        <div style={{ fontSize: "13px", color: CORES.cartao, opacity: "0.95", fontFamily: "'Lora', serif" }}>
+          {inicial ? "Atualize as informações" : "Bem-vindo ao ENRAIZAR"}
         </div>
       </div>
 
-      <div style={{ padding: "28px" }}>
-        <Label>Tipo de cliente</Label>
-        <div style={{ display: "flex", gap: "8px", marginBottom: "18px" }}>
-          {[["empresa", "Empresa"], ["pessoa", "Pessoa (mentorado)"]].map(([chave, rotulo]) => (
-            <button
-              key={chave}
-              onClick={() => definirTipo(chave)}
-              style={{
-                flex: 1,
-                padding: "10px 12px",
-                borderRadius: "4px",
-                border: "1px solid",
-                fontFamily: "'Lora', serif",
-                fontSize: "13px",
-                fontWeight: "600",
-                cursor: "pointer",
-                borderColor: c.tipo === chave ? "CORES.dourado" : "CORES.laranja",
-                background: c.tipo === chave ? "CORES.hover" : "CORES.cartao",
-                color: c.tipo === chave ? "CORES.principal" : "#8B6F47"
-              }}
-            >
-              {c.tipo === chave ? "✓ " : ""}{rotulo}
-            </button>
-          ))}
+      <div style={{ padding: "40px 32px" }}>
+        {/* Tipo de Cliente */}
+        <div style={{ marginBottom: "32px" }}>
+          <label style={{ display: "block", fontFamily: "'Lora', serif", fontSize: "12px", letterSpacing: "2px", color: CORES.verde, textTransform: "uppercase", marginBottom: "14px", fontWeight: "700" }}>
+            Tipo de Cliente
+          </label>
+          <div style={{ display: "flex", gap: "12px" }}>
+            {[["empresa", "🏢 Empresa"], ["pessoa", "👤 Pessoa (Mentorado)"]].map(([chave, rotulo]) => (
+              <button
+                key={chave}
+                onClick={() => definirTipo(chave)}
+                style={{
+                  flex: 1,
+                  padding: "14px 16px",
+                  borderRadius: "8px",
+                  border: `2px solid ${c.tipo === chave ? CORES.dourado : CORES.verdeClaro}`,
+                  fontFamily: "'Lora', serif",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  background: c.tipo === chave ? CORES.verde : CORES.fundoPrincipal,
+                  color: c.tipo === chave ? CORES.cartao : CORES.verde,
+                  transition: "all 0.3s ease",
+                  boxShadow: c.tipo === chave ? `0 4px 12px ${CORES.verde}40` : "none"
+                }}
+              >
+                {c.tipo === chave ? "✓ " : ""}{rotulo}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <InputField label={ehPessoa ? "Nome da pessoa" : "Nome do negócio"} value={c.negocio} onChange={set("negocio")} placeholder={ehPessoa ? "Ex.: Carlos Andrade" : "Ex.: Caverna do Cheff"} />
-        <InputField label={ehPessoa ? "Atuação (cargo e empresa/negócio)" : "Segmento"} value={c.segmento} onChange={set("segmento")} placeholder={ehPessoa ? "Ex.: Gerente geral — restaurante de médio porte" : "Ex.: Restaurante — hamburgueria artesanal"} />
-        {!ehPessoa && <InputField label="Setores / áreas" value={c.setores} onChange={set("setores")} placeholder="Ex.: Salão, Cozinha, Delivery, Estoque" />}
+        {/* Campos de Texto */}
+        <InputField label={ehPessoa ? "Nome da pessoa" : "Nome do negócio"} value={c.negocio} onChange={set("negocio")} placeholder={ehPessoa ? "Ex.: Carlos Andrade" : "Ex.: Caverna do Cheff"} color={CORES.verde} />
+        <InputField label={ehPessoa ? "Atuação (cargo e empresa)" : "Segmento"} value={c.segmento} onChange={set("segmento")} placeholder={ehPessoa ? "Ex.: Gerente geral — restaurante" : "Ex.: Restaurante — hamburgueria artesanal"} color={CORES.verde} />
+        {!ehPessoa && <InputField label="Setores / áreas" value={c.setores} onChange={set("setores")} placeholder="Ex.: Salão, Cozinha, Delivery, Estoque" color={CORES.verde} />}
+
+        {/* Regras (apenas empresas) */}
         {!ehPessoa && (
-          <div style={{ marginBottom: "18px" }}>
-            <label style={{ display: "block", fontFamily: "'Lora', serif", fontSize: "11px", letterSpacing: "1px", color: "CORES.dourado", textTransform: "uppercase", marginBottom: "6px", fontWeight: "600" }}>Regras próprias da casa</label>
-            <textarea placeholder="Ex.: celular proibido na operação; uniforme completo obrigatório" value={c.regras} onChange={(e) => set("regras")(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #D9914F", borderRadius: "4px", fontFamily: "'Lora', serif", fontSize: "13px", background: "CORES.cartao", color: "#3C181E", outline: "none", minHeight: "120px", boxSizing: "border-box", transition: "border-color 0.2s" }} onFocus={(e) => { e.target.style.borderColor = "CORES.dourado"; e.target.style.boxShadow = "0 0 0 2px rgba(212, 175, 55, 0.1)"; }} onBlur={(e) => { e.target.style.borderColor = "CORES.laranja"; e.target.style.boxShadow = "none"; }} />
+          <div style={{ marginBottom: "24px" }}>
+            <label style={{ display: "block", fontFamily: "'Lora', serif", fontSize: "12px", letterSpacing: "2px", color: CORES.verde, textTransform: "uppercase", marginBottom: "10px", fontWeight: "700" }}>
+              Regras próprias da casa
+            </label>
+            <textarea
+              placeholder="Ex.: celular proibido; uniforme completo obrigatório"
+              value={c.regras}
+              onChange={(e) => set("regras")(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "14px 16px",
+                border: `2px solid ${CORES.verdeClaro}`,
+                borderRadius: "8px",
+                fontFamily: "'Lora', serif",
+                fontSize: "14px",
+                background: CORES.fundoPrincipal,
+                color: CORES.principal,
+                outline: "none",
+                minHeight: "100px",
+                boxSizing: "border-box",
+                transition: "all 0.3s ease",
+                resize: "vertical"
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = CORES.dourado;
+                e.target.style.boxShadow = `0 0 0 3px ${CORES.dourado}20`;
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = CORES.verdeClaro;
+                e.target.style.boxShadow = "none";
+              }}
+            />
           </div>
         )}
-        <div style={{ marginBottom: "18px" }}>
-          <label style={{ display: "block", fontFamily: "'Lora', serif", fontSize: "11px", letterSpacing: "1px", color: "CORES.dourado", textTransform: "uppercase", marginBottom: "6px", fontWeight: "600" }}>{ehPessoa ? "Contexto e objetivos (por que buscou a mentoria)" : "Contexto e dores relatadas"}</label>
-          <textarea placeholder={ehPessoa ? "Ex.: liderança recém-promovida; time resiste; quer parar de apagar incêndio" : "Ex.: atrasos recorrentes, desperdício de insumos"} value={c.contexto} onChange={(e) => set("contexto")(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #D9914F", borderRadius: "4px", fontFamily: "'Lora', serif", fontSize: "13px", background: "CORES.cartao", color: "#3C181E", outline: "none", minHeight: "120px", boxSizing: "border-box", transition: "border-color 0.2s" }} onFocus={(e) => { e.target.style.borderColor = "CORES.dourado"; e.target.style.boxShadow = "0 0 0 2px rgba(212, 175, 55, 0.1)"; }} onBlur={(e) => { e.target.style.borderColor = "CORES.laranja"; e.target.style.boxShadow = "none"; }} />
+
+        {/* Contexto e Objetivos */}
+        <div style={{ marginBottom: "32px" }}>
+          <label style={{ display: "block", fontFamily: "'Lora', serif", fontSize: "12px", letterSpacing: "2px", color: CORES.verde, textTransform: "uppercase", marginBottom: "10px", fontWeight: "700" }}>
+            {ehPessoa ? "Contexto e Objetivos" : "Contexto e Dores"}
+          </label>
+          <textarea
+            placeholder={ehPessoa ? "Ex.: liderança recém-promovida; resistência do time" : "Ex.: atrasos recorrentes, desperdício"}
+            value={c.contexto}
+            onChange={(e) => set("contexto")(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "14px 16px",
+              border: `2px solid ${CORES.verdeClaro}`,
+              borderRadius: "8px",
+              fontFamily: "'Lora', serif",
+              fontSize: "14px",
+              background: CORES.fundoPrincipal,
+              color: CORES.principal,
+              outline: "none",
+              minHeight: "100px",
+              boxSizing: "border-box",
+              transition: "all 0.3s ease",
+              resize: "vertical"
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = CORES.dourado;
+              e.target.style.boxShadow = `0 0 0 3px ${CORES.dourado}20`;
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = CORES.verdeClaro;
+              e.target.style.boxShadow = "none";
+            }}
+          />
         </div>
 
-        <Label>Trilhas contratadas</Label>
-        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "12px" }}>
-          {[["consultoria", "Consultoria"], ["mentoria", "Mentoria"], ["treinamentos", "Treinamentos"]].map(([chave, rotulo]) => (
-            <button
-              key={chave}
-              onClick={() => alternarServico(chave)}
-              style={{
-                padding: "10px 12px",
-                borderRadius: "4px",
-                border: "1px solid",
-                fontFamily: "'Lora', serif",
-                fontSize: "13px",
-                fontWeight: "600",
-                cursor: "pointer",
-                borderColor: servicos[chave] ? "CORES.dourado" : "CORES.laranja",
-                background: servicos[chave] ? "CORES.hover" : "CORES.cartao",
-                color: servicos[chave] ? "CORES.principal" : "#8B6F47"
-              }}
-            >
-              {servicos[chave] ? "✓ " : ""}{rotulo}
-            </button>
-          ))}
+        {/* Trilhas Contratadas */}
+        <div style={{ marginBottom: "32px" }}>
+          <label style={{ display: "block", fontFamily: "'Lora', serif", fontSize: "12px", letterSpacing: "2px", color: CORES.verde, textTransform: "uppercase", marginBottom: "14px", fontWeight: "700" }}>
+            Trilhas Contratadas
+          </label>
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "12px" }}>
+            {[["consultoria", "📋 Consultoria"], ["mentoria", "🎯 Mentoria"], ["treinamentos", "📚 Treinamentos"]].map(([chave, rotulo]) => (
+              <button
+                key={chave}
+                onClick={() => alternarServico(chave)}
+                style={{
+                  padding: "12px 16px",
+                  borderRadius: "8px",
+                  border: `2px solid ${servicos[chave] ? CORES.dourado : CORES.verdeClaro}`,
+                  fontFamily: "'Lora', serif",
+                  fontSize: "13px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  background: servicos[chave] ? `${CORES.dourado}15` : CORES.fundoPrincipal,
+                  color: servicos[chave] ? CORES.principal : CORES.verde,
+                  transition: "all 0.3s ease"
+                }}
+              >
+                {servicos[chave] ? "✓ " : ""}{rotulo}
+              </button>
+            ))}
+          </div>
+          <p style={{ fontSize: "12px", marginBottom: "0", color: CORES.textoDim, fontFamily: "'Lora', serif", lineHeight: "1.5" }}>
+            As trilhas definem as alas visíveis no ENRAIZAR. Treinamentos podem ser dentro da consultoria ou avulsos.
+          </p>
         </div>
-        <p style={{ fontSize: "11px", marginBottom: "24px", color: "CORES.textoDim", fontFamily: "'Lora', serif" }}>
-          As trilhas definem quais alas aparecem no ENRAIZAR deste cliente. Treinamentos podem viver dentro da consultoria ou avulsos.
-        </p>
 
+        {/* Botões de Ação */}
         <div style={{ display: "flex", gap: "12px", marginBottom: "24px" }}>
-          <BotaoPrimario onClick={() => valido && onSalvar(c)} disabled={!valido}>Salvar cliente</BotaoPrimario>
-          <button onClick={onCancelar} style={{ flex: 1, padding: "12px 16px", background: "transparent", color: "CORES.principal", border: "1px solid #5C1A2B", borderRadius: "4px", fontFamily: "'Lora', serif", fontSize: "13px", fontWeight: "600", cursor: "pointer", letterSpacing: "1px" }}>
+          <button
+            onClick={() => valido && onSalvar(c)}
+            disabled={!valido}
+            style={{
+              flex: 1,
+              padding: "16px 24px",
+              borderRadius: "8px",
+              border: "none",
+              fontFamily: "'Lora', serif",
+              fontSize: "14px",
+              fontWeight: "700",
+              cursor: valido ? "pointer" : "not-allowed",
+              background: valido ? `linear-gradient(135deg, ${CORES.verde} 0%, ${CORES.verdeEscuro} 100%)` : CORES.fundoPrincipal,
+              color: valido ? CORES.cartao : CORES.textoDim,
+              letterSpacing: "1px",
+              transition: "all 0.3s ease",
+              boxShadow: valido ? `0 4px 12px ${CORES.verde}40` : "none",
+              opacity: valido ? 1 : 0.6
+            }}
+          >
+            ✓ Salvar Cliente
+          </button>
+          <button
+            onClick={onCancelar}
+            style={{
+              flex: 1,
+              padding: "16px 24px",
+              background: CORES.fundoPrincipal,
+              color: CORES.principal,
+              border: `2px solid ${CORES.principal}`,
+              borderRadius: "8px",
+              fontFamily: "'Lora', serif",
+              fontSize: "14px",
+              fontWeight: "700",
+              cursor: "pointer",
+              letterSpacing: "1px",
+              transition: "all 0.3s ease"
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = CORES.principal;
+              e.target.style.color = CORES.cartao;
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = CORES.fundoPrincipal;
+              e.target.style.color = CORES.principal;
+            }}
+          >
             Cancelar
           </button>
         </div>
 
+        {/* Excluir */}
         {inicial && onExcluir && (
-          <div style={{ paddingTop: "24px", borderTop: "1px solid #D9914F" }}>
+          <div style={{ paddingTop: "24px", borderTop: `2px solid ${CORES.verdeClaro}` }}>
             <ConfirmarAcao
-              label="Excluir este cliente e todos os seus dados"
-              aviso="apaga documentos, planos, atas e histórico deste cliente para sempre"
+              label="Excluir este cliente"
+              aviso="apaga documentos, planos, atas e histórico"
               onConfirmar={onExcluir}
+              classe="text-xs underline"
             />
           </div>
         )}
