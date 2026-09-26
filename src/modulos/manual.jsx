@@ -15,7 +15,7 @@ export function ModuloManual({ cliente, secoes, gerando, erro, onMudar, onGerar,
         acoes={null}
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
-        <div className="rounded-lg p-6 shadow-sm card">
+        <div className="enz-card">
           <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <div className="flex gap-2">
             <BotaoPrimario onClick={onGerar} disabled={gerando}>
@@ -36,7 +36,7 @@ export function ModuloManual({ cliente, secoes, gerando, erro, onMudar, onGerar,
 
         {!gerando &&
           secoes.map((s) => (
-            <div key={s.id} className="mb-4 rounded-lg p-4" style={{ background: CORES.cartao, border: "2px solid #E97F3855" }}>
+            <div key={s.id} className="mb-4 rounded-lg p-4" style={{ background: CORES.cartao, border: "2px solid var(--linha)" }}>
               <div className="flex items-center gap-2 mb-2">
                 <input
                   className="font-serif flex-1 bg-transparent outline-none"
@@ -82,7 +82,7 @@ export function ImpressaoManual({ cliente, secoes }) {
   return (
     <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
-        <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Documento interno</div>
+        <div className="enz-rotulo">Documento interno</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>Manual do Colaborador</div>
         <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{cliente.negocio} · {cliente.segmento}</div>
       </div>

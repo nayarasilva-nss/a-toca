@@ -54,19 +54,19 @@ export const CAMPOS_PROPOSTA_GERADOS = [
 export function ListaPropostas({ cliente, propostas, onAbrir, onNova, onVoltar }) {
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+      <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>
         ← {cliente.negocio}
       </button>
-      <div className="flex items-baseline justify-between mb-2">
-        <h2 className="font-serif text-xl" style={{ color: CORES.fogo }}>Propostas Comerciais</h2>
+      <div className="flex items-start justify-between gap-4 flex-wrap mb-3">
+        <h2 className="enz-titulo is-2">Propostas Comerciais</h2>
         <BotaoPrimario onClick={onNova}>+ Nova proposta</BotaoPrimario>
       </div>
-      <p className="text-xs mb-5" style={{ color: CORES.textoDim }}>
+      <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
         A proposta é o convite que muda tudo. Nasce do briefing e do diagnóstico — e o tom se ajusta ao temperamento do contratante, se mapeado.
       </p>
       {propostas.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed var(--linha-forte)" }}>
-          <p className="text-sm" style={{ color: CORES.textoDim }}>
+        <div className="enz-card enz-card-vazado" style={{ padding: "28px 0" }}>
+          <p className="enz-nota" style={{ fontSize: 14 }}>
             Nenhuma proposta ainda. Preencha os parâmetros (duração, investimento, condições) e gere — o texto vem pronto para sua revisão.
           </p>
         </div>
@@ -77,7 +77,7 @@ export function ListaPropostas({ cliente, propostas, onAbrir, onNova, onVoltar }
               key={p.id}
               onClick={() => onAbrir(p.id)}
               className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between"
-              className="card"
+              className="enz-card"
             >
               <span className="font-serif" style={{ color: CORES.fogo }}>
                 {p.rotulo || `Proposta de ${p.data}`}
@@ -125,12 +125,12 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
   const setP = (campo) => (e) => onMudarPrecificacao({ ...precificacao, [campo]: e.target.value });
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+      <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>
         ← Propostas · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm card">
+      <div className="enz-card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
-          <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>
+          <h2 className="enz-titulo is-3">
             {prop.rotulo || `Proposta de ${prop.data}`}
           </h2>
           <div className="flex gap-2 items-center">
@@ -161,8 +161,8 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
 
         {!gerando && (
           <>
-            <div className="mb-4 rounded-lg p-4" style={{ background: CORES.cartao, border: "1px dashed #E97F3855" }}>
-              <div className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: CORES.dourado }}>
+            <div className="mb-4 rounded-lg p-4" style={{ background: CORES.cartao, border: "1px solid var(--linha)" }}>
+              <div className="enz-rotulo mb-1">
                 Precificação automática
               </div>
               <p className="text-xs mb-3" style={{ color: CORES.textoDim }}>
@@ -226,12 +226,12 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
 
             <div className="grid sm:grid-cols-2 gap-x-4">
               {(
-                <div className="mb-4 p-3 rounded-lg" style={{ background: CORES.hover, border: "2px solid #D4AF37AA" }}>
+                <div className="mb-4 p-3 rounded-lg" style={{ background: CORES.hover, border: "2px solid var(--ouro)" }}>
                   <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
                     <div className="label" style={{ color: "var(--alerta)" }}>
                       {ehPessoaProp ? "Metas do mentorado (fase Acordo)" : "Metas do engajamento (fase Acordo)"}
                     </div>
-                    <button onClick={onGerarMetas} className="text-xs underline" style={{ color: CORES.dourado }} disabled={gerando}>
+                    <button onClick={onGerarMetas} className="enz-link" style={{ textTransform: "none", letterSpacing: 0, fontSize: 12 }} style={{ color: CORES.dourado }} disabled={gerando}>
                       Sugerir metas com IA
                     </button>
                   </div>
@@ -286,7 +286,7 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
             {CAMPOS_PROPOSTA_GERADOS.map(([campo, rotulo, linhas]) => (
               <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={prop[campo] || ""} onChange={(e) => set(campo)(e.target.value)} /></label>
             ))}
-            <button onClick={onExcluir} className="text-xs underline" style={{ color: "var(--erro)" }}>
+            <button onClick={onExcluir} className="enz-confirmar">
               Excluir proposta
             </button>
           </>
@@ -303,7 +303,7 @@ export function ImpressaoProposta({ cliente, prop }) {
   return (
     <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
-        <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Proposta de Consultoria em Governança</div>
+        <div className="enz-rotulo">Proposta de Consultoria em Governança</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{cliente.negocio}</div>
         <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{prop.data}{prop.validade ? ` · Válida por ${prop.validade}` : ""}</div>
       </div>

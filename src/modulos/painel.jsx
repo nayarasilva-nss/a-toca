@@ -24,8 +24,8 @@ export function ModuloPainel({ cliente, dados, painel, onMudar, onVoltar }) {
         acoes={null}
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
-        <div className="rounded-lg p-6 shadow-sm card">
-        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
+        <div className="enz-card">
+        <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
           Mede o engajamento pelo método (o cômodo Indicadores mede o negócio do cliente). Quando a verificação cai, o controle cai semanas depois.
         </p>
         {verificacaoDegradada && (
@@ -34,7 +34,7 @@ export function ModuloPainel({ cliente, dados, painel, onMudar, onVoltar }) {
           </div>
         )}
         <div className="mb-5">
-          <div className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: CORES.dourado }}>Itens de controle (resultado)</div>
+          <div className="enz-rotulo mb-1">Itens de controle (resultado)</div>
           <LinhaPainel label="Índice de formalização" value={`${d.formalizacao}%`} alerta={d.formalizacao < 60} dica="% dos tipos de documento das frentes já gerados" />
           <LinhaPainel label="Pendências de conformidade resolvidas" value={`${d.cctResolvidos}/${d.cctTotal}`} alerta={d.cctTotal > 0 && d.cctResolvidos < d.cctTotal} />
           <div className="mt-2">
@@ -46,7 +46,7 @@ export function ModuloPainel({ cliente, dados, painel, onMudar, onVoltar }) {
           </div>
         </div>
         <div>
-          <div className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: CORES.dourado }}>Itens de verificação (causa — acompanhe nos ritos)</div>
+          <div className="enz-rotulo mb-1">Itens de verificação (causa — acompanhe nos ritos)</div>
           <div className="grid sm:grid-cols-2 gap-x-6">
             <div>
               <div className="text-xs mt-1 mb-0.5" style={{ color: "var(--tinta)" }}>Checklists preenchidos na semana</div>

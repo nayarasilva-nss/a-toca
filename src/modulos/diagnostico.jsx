@@ -84,19 +84,19 @@ export function ListaDiagnosticos({ cliente, diagnosticos, titulo, subtitulo, fr
   const FR = fw || FRAMEWORK_DIAG;
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+      <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>
         ← {cliente.negocio}
       </button>
-      <div className="flex items-baseline justify-between mb-2">
-        <h2 className="font-serif text-xl" style={{ color: CORES.fogo }}>{titulo || "Diagnóstico de Maturidade"}</h2>
+      <div className="flex items-start justify-between gap-4 flex-wrap mb-3">
+        <h2 className="enz-titulo is-2">{titulo || "Diagnóstico de Maturidade"}</h2>
         <BotaoPrimario onClick={onNovo}>+ Novo diagnóstico</BotaoPrimario>
       </div>
-      <p className="text-xs mb-5" style={{ color: CORES.textoDim }}>
+      <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
         {subtitulo || "Nível de maturidade do negócio em cada área. Avalie 6 áreas e 24 critérios; refaça ao longo do engajamento — cada diagnóstico fica datado e a comparação vira o antes/depois da consultoria."}
       </p>
       {diagnosticos.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed var(--linha-forte)" }}>
-          <p className="text-sm" style={{ color: CORES.textoDim }}>
+        <div className="enz-card enz-card-vazado" style={{ padding: "28px 0" }}>
+          <p className="enz-nota" style={{ fontSize: 14 }}>
             Nenhum diagnóstico ainda. Faça o primeiro na fase de briefing — ele justifica a proposta e vira a régua de resultado no encerramento.
           </p>
         </div>
@@ -110,7 +110,7 @@ export function ListaDiagnosticos({ cliente, diagnosticos, titulo, subtitulo, fr
                 key={d.id}
                 onClick={() => onAbrir(d.id)}
                 className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between"
-                className="card"
+                className="enz-card"
               >
                 <span className="font-serif" style={{ color: CORES.fogo }}>
                   {d.rotulo || `Diagnóstico de ${d.data}`}
@@ -149,12 +149,12 @@ export function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerand
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+      <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>
         ← Diagnósticos · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm card">
+      <div className="enz-card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
-          <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>
+          <h2 className="enz-titulo is-3">
             {diag.rotulo || `Diagnóstico de ${diag.data}`}
           </h2>
           <div className="flex gap-2 flex-wrap">
@@ -244,7 +244,7 @@ export function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerand
               </>
             )}
 
-            <button onClick={onExcluir} className="text-xs underline" style={{ color: "var(--erro)" }}>
+            <button onClick={onExcluir} className="enz-confirmar">
               Excluir diagnóstico
             </button>
           </>
@@ -264,7 +264,7 @@ export function ImpressaoDiagnostico({ cliente, diag, titulo, framework: fw }) {
   return (
     <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
-        <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>{titulo || "Diagnóstico de Maturidade"}</div>
+        <div className="enz-rotulo">{titulo || "Diagnóstico de Maturidade"}</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{diag.rotulo || cliente.negocio}</div>
         <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{cliente.negocio} · {diag.data}</div>
       </div>

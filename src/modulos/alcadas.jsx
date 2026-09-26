@@ -19,12 +19,12 @@ export function ModuloAlcadas({ cliente, alcadas, gerando, erro, onMudar, onGera
 
   return (
     <div className="max-w-4xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+      <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm card">
+      <div className="enz-card">
         <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
-          <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Alçadas de Decisão</h2>
+          <h2 className="enz-titulo is-3">Alçadas de Decisão</h2>
           <div className="flex gap-2">
             <BotaoPrimario onClick={onGerar} disabled={gerando}>
               {gerando ? "Gerando..." : itens.length ? "Gerar novamente" : "Gerar com IA"}
@@ -32,7 +32,7 @@ export function ModuloAlcadas({ cliente, alcadas, gerando, erro, onMudar, onGera
             {itens.length > 0 && <BotaoContorno onClick={onImprimir}>Exportar PDF</BotaoContorno>}
           </div>
         </div>
-        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
+        <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
           A Seção Restrita: quem pode decidir o quê sem pedir licença, até que limite, e para quem escala. O documento que liberta o dono do operacional.
         </p>
 
@@ -50,7 +50,7 @@ export function ModuloAlcadas({ cliente, alcadas, gerando, erro, onMudar, onGera
         {!gerando &&
           grupos.map((g) => (
             <div key={g.categoria} className="mb-5">
-              <div className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: CORES.dourado }}>
+              <div className="enz-rotulo mb-1">
                 {g.categoria}
               </div>
               <div className="hidden sm:flex gap-2 text-xs pb-1" style={{ color: "var(--tinta-musgo)" }}>
@@ -124,7 +124,7 @@ export function ImpressaoAlcadas({ cliente, alcadas }) {
   return (
     <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
-        <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Matriz de Alçadas de Decisão</div>
+        <div className="enz-rotulo">Matriz de Alçadas de Decisão</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{cliente.negocio}</div>
         <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{cliente.segmento}</div>
       </div>

@@ -35,8 +35,8 @@ export function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar,
         acoes={null}
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
-        <div className="rounded-lg p-6 shadow-sm card">
-        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
+        <div className="enz-card">
+        <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
           Controle financeiro: parcelas, vencimentos e o que já entrou. Uso interno — nada disso aparece em documentos do cliente.
         </p>
 
@@ -57,7 +57,7 @@ export function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar,
               })
             }
             className="mb-4 px-4 py-2 rounded text-sm font-semibold"
-            style={{ background: "var(--sucesso-fundo)", color: "var(--sucesso)", border: "1px solid #4F6B3A55" }}
+            style={{ background: "var(--sucesso-fundo)", color: "var(--sucesso)", border: "1px solid var(--linha-forte)" }}
           >
             Puxar da proposta aceita ({propostaAceita.investimento || "valor a definir"}) — cria a primeira parcela para você dividir
           </button>

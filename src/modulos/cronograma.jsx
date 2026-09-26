@@ -31,12 +31,12 @@ export function ModuloCronograma({ cliente, gestao, gerando, erro, onMudar, onDi
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+      <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm card">
+      <div className="enz-card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
-          <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Cronograma</h2>
+          <h2 className="enz-titulo is-3">Cronograma</h2>
           <div className="flex gap-2 flex-wrap">
             <BotaoPrimario onClick={onDistribuir} disabled={gerando || todas.length === 0}>
               {gerando ? "Distribuindo..." : "Distribuir ações com IA"}
@@ -44,7 +44,7 @@ export function ModuloCronograma({ cliente, gestao, gerando, erro, onMudar, onDi
             {comSemana.length > 0 && <BotaoContorno onClick={onImprimir}>Exportar PDF</BotaoContorno>}
           </div>
         </div>
-        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
+        <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
           Linha do tempo do engajamento: onde cada ação está no tempo — e a semana em que os pés deveriam estar agora.
         </p>
 
@@ -113,7 +113,7 @@ export function ModuloCronograma({ cliente, gestao, gerando, erro, onMudar, onDi
                   border: `1px solid ${ehAtual ? CORES.dourado : "var(--linha)"}`,
                 }}
               >
-                <div className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: ehAtual ? CORES.dourado : "var(--tinta-musgo)" }}>
+                <div className="enz-rotulo mb-1" style={{ color: ehAtual ? CORES.dourado : "var(--tinta-musgo)" }}>
                   Semana {w}{intervaloSemana(gestao.inicio, w) ? ` · ${intervaloSemana(gestao.inicio, w)}` : ""}{ehAtual ? " · atual" : ""}
                 </div>
                 {doW.length === 0 ? (
@@ -161,7 +161,7 @@ export function ImpressaoCronograma({ cliente, gestao }) {
   return (
     <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
-        <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Cronograma do Engajamento</div>
+        <div className="enz-rotulo">Cronograma do Engajamento</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{cliente.negocio}</div>
         <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>
           {gestao.inicio ? `Início: ${gestao.inicio}` : ""}

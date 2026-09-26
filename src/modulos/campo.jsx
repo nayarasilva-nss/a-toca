@@ -8,23 +8,23 @@ import { CORES, uid } from "../nucleo/base.jsx";
 export function ListaCampo({ cliente, registros, onAbrir, onNovo, onVoltar }) {
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+      <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>
         ← {cliente.negocio}
       </button>
       <div className="flex items-baseline justify-between mb-2 gap-2 flex-wrap">
-        <h2 className="font-serif text-xl" style={{ color: CORES.fogo }}>Trabalho de Campo</h2>
+        <h2 className="enz-titulo is-2">Trabalho de Campo</h2>
         <div className="flex gap-2 flex-wrap">
           <BotaoPrimario onClick={() => onNovo("visita")}>+ Visita</BotaoPrimario>
           <BotaoPrimario onClick={() => onNovo("entrevista")}>+ Entrevista</BotaoPrimario>
           <BotaoPrimario onClick={() => onNovo("turno")}>+ Turno</BotaoPrimario>
         </div>
       </div>
-      <p className="text-xs mb-5" style={{ color: CORES.textoDim }}>
+      <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
         O caderno de campo: observar as criaturas no habitat delas. O que você registra aqui vira fonte primária — alimenta cargos, processos, plano e diagnóstico. 100% interno: nada disso sai em documento de cliente.
       </p>
       {registros.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed var(--linha-forte)" }}>
-          <p className="text-sm" style={{ color: CORES.textoDim }}>
+        <div className="enz-card enz-card-vazado" style={{ padding: "28px 0" }}>
+          <p className="enz-nota" style={{ fontSize: 14 }}>
             O caderno está em branco. Antes de ir a campo, crie uma visita ou entrevista — a IA prepara o roteiro com base no briefing, nas frentes e na CCT.
           </p>
         </div>
@@ -35,10 +35,10 @@ export function ListaCampo({ cliente, registros, onAbrir, onNovo, onVoltar }) {
               key={r.id}
               onClick={() => onAbrir(r.id)}
               className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between gap-2 flex-wrap"
-              className="card"
+              className="enz-card"
             >
               <span className="font-serif" style={{ color: CORES.fogo }}>
-                <span className="text-xs uppercase tracking-widest mr-2" style={{ color: CORES.dourado }}>{TIPOS_CAMPO[r.tipo].curto}</span>
+                <span className="enz-rotulo mr-2">{TIPOS_CAMPO[r.tipo].curto}</span>
                 {r.tipo === "entrevista" ? (r.entrevistado || r.funcao || "(sem nome)") : (r.titulo || r.setor || "(sem título)")}
               </span>
               <span className="text-xs" style={{ color: CORES.textoDim }}>{r.data}</span>
@@ -59,19 +59,19 @@ export function EditorCampo({ cliente, reg, pessoas, gerando, erro, onMudar, onG
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+      <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>
         ← Trabalho de Campo · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm card">
+      <div className="enz-card">
         <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
-          <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>{TIPOS_CAMPO[reg.tipo].rotulo}</h2>
+          <h2 className="enz-titulo is-3">{TIPOS_CAMPO[reg.tipo].rotulo}</h2>
           {(reg.tipo === "visita" || reg.tipo === "entrevista") && (
             <BotaoPrimario onClick={onGerarRoteiro} disabled={gerando}>
               {gerando ? "Preparando..." : reg.roteiro ? "Refazer roteiro com IA" : "Preparar roteiro com IA"}
             </BotaoPrimario>
           )}
         </div>
-        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
+        <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
           {reg.tipo === "visita" && "Roteiro antes, olhos abertos durante, registro logo depois — memória de campo evapora em horas."}
           {reg.tipo === "entrevista" && "O que a pessoa realmente faz, na voz dela. Papel se confronta depois; agora é escuta."}
           {reg.tipo === "turno" && "Linha do tempo do turno: hora, o que viu, e a marca do que é (processo, pessoa, risco, oportunidade)."}
@@ -143,7 +143,7 @@ export function EditorCampo({ cliente, reg, pessoas, gerando, erro, onMudar, onG
 
             {reg.tipo === "turno" && (
               <>
-                <div className="text-xs uppercase tracking-widest font-semibold mb-2" style={{ color: CORES.dourado }}>Linha do tempo</div>
+                <div className="enz-rotulo mb-2">Linha do tempo</div>
                 {(reg.linhas || []).map((l) => (
                   <div key={l.id} className="flex items-center gap-2 py-1.5 border-b flex-wrap sm:flex-nowrap" style={{ borderColor: "var(--fundo-recuo)" }}>
                     <input

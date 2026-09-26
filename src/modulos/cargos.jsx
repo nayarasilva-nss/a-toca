@@ -42,8 +42,8 @@ export function ListaCargos({ cliente, cargos, onAbrirCargo, onNovoCargo, onVolt
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
       {cargos.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed var(--linha-forte)" }}>
-          <p className="text-sm" style={{ color: CORES.textoDim }}>
+        <div className="enz-card enz-card-vazado" style={{ padding: "28px 0" }}>
+          <p className="enz-nota" style={{ fontSize: 14 }}>
             Nenhum cargo cadastrado. Crie o primeiro — informe nome e setor, e a IA escreve a descrição completa para sua revisão.
           </p>
         </div>
@@ -54,7 +54,7 @@ export function ListaCargos({ cliente, cargos, onAbrirCargo, onNovoCargo, onVolt
               key={cg.id}
               onClick={() => onAbrirCargo(cg.id)}
               className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between"
-              className="card"
+              className="enz-card"
             >
               <span className="font-serif" style={{ color: CORES.fogo }}>{cg.nome || "(sem nome)"}</span>
               <span className="text-xs" style={{ color: CORES.textoDim }}>
@@ -73,12 +73,12 @@ export function EditorCargo({ cliente, cargo, gerando, erro, onMudar, onGerar, o
   const set = (campo) => (v) => onMudar({ ...cargo, [campo]: v });
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+      <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>
         ← Descrições de Cargo · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm card">
+      <div className="enz-card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
-          <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>
+          <h2 className="enz-titulo is-3">
             {cargo.nome || "Novo cargo"}
           </h2>
           <div className="flex gap-2">
@@ -102,7 +102,7 @@ export function EditorCargo({ cliente, cargo, gerando, erro, onMudar, onGerar, o
             {CAMPOS_CARGO.map(([campo, rotulo, linhas]) => (
               <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={cargo[campo]} onChange={(e) => set(campo)(e.target.value)} /></label>
             ))}
-            <button onClick={onExcluir} className="text-xs underline" style={{ color: "var(--erro)" }}>
+            <button onClick={onExcluir} className="enz-confirmar">
               Excluir cargo
             </button>
           </>
@@ -127,7 +127,7 @@ export function ImpressaoCargo({ cliente, cargo }) {
   return (
     <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
-        <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Descrição de Cargo</div>
+        <div className="enz-rotulo">Descrição de Cargo</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{cargo.nome}</div>
         <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>
           {cliente.negocio}{cargo.setor ? ` · Setor: ${cargo.setor}` : ""}

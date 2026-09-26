@@ -38,11 +38,11 @@ export function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAc
   if (!relAberto) {
     return (
       <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-        <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+        <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>
           ← {cliente.negocio}
         </button>
-        <div className="flex items-baseline justify-between mb-2">
-          <h2 className="font-serif text-xl" style={{ color: CORES.fogo }}>Relatório de Encerramento</h2>
+        <div className="flex items-start justify-between gap-4 flex-wrap mb-3">
+          <h2 className="enz-titulo is-2">Relatório de Encerramento</h2>
           <BotaoPrimario
             onClick={() => {
               const novo = relatorioVazio();
@@ -53,12 +53,12 @@ export function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAc
             + Novo relatório
           </BotaoPrimario>
         </div>
-        <p className="text-xs mb-5" style={{ color: CORES.textoDim }}>
+        <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
           Malfeito feito: o fechamento do ciclo. Antes/depois do diagnóstico, frentes concluídas, entregas e recomendações — o documento que renova contrato e gera indicação.
         </p>
         {relatorios.length === 0 ? (
-          <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed var(--linha-forte)" }}>
-            <p className="text-sm" style={{ color: CORES.textoDim }}>
+          <div className="enz-card enz-card-vazado" style={{ padding: "28px 0" }}>
+            <p className="enz-nota" style={{ fontSize: 14 }}>
               Nenhum relatório ainda. Crie ao final do engajamento — a IA reúne tudo que aconteceu no ENRAIZAR deste cliente.
             </p>
           </div>
@@ -69,7 +69,7 @@ export function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAc
                 key={r.id}
                 onClick={() => onAbrir(r.id)}
                 className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between"
-                className="card"
+                className="enz-card"
               >
                 <span className="font-serif" style={{ color: CORES.fogo }}>Relatório de {r.data}</span>
                 <span className="text-xs" style={{ color: CORES.textoDim }}>{r.retrospectiva ? "" : "rascunho vazio"}</span>
@@ -87,12 +87,12 @@ export function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAc
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={() => onAbrir(null)} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+      <button onClick={() => onAbrir(null)} className="enz-link" style={{ marginBottom: 20 }}>
         ← Relatórios · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm card">
+      <div className="enz-card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
-          <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Relatório de {relAberto.data}</h2>
+          <h2 className="enz-titulo is-3">Relatório de {relAberto.data}</h2>
           <div className="flex gap-2">
             <BotaoPrimario onClick={onGerar} disabled={gerando}>
               {gerando ? "Gerando..." : relAberto.retrospectiva ? "Gerar novamente" : "Gerar com IA"}
@@ -101,7 +101,7 @@ export function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAc
           </div>
         </div>
 
-        <div className="mb-4 p-3 rounded-lg" style={{ background: CORES.hover, border: "2px solid #D4AF37AA" }}>
+        <div className="mb-4 p-3 rounded-lg" style={{ background: CORES.hover, border: "2px solid var(--ouro)" }}>
           <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
             <div className="label" style={{ color: "var(--alerta)" }}>
               Verificação das metas pactuadas (fase Prova)
@@ -109,7 +109,7 @@ export function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAc
             {(metasAcordo || []).length > 0 && (relAberto.metasVerificadas || []).length === 0 && (
               <button
                 onClick={() => set("metasVerificadas")((metasAcordo || []).map((m) => ({ id: uid(), objetivo: m.objetivo, prazo: m.prazo, status: "parcial", porque: "" })))}
-                className="text-xs underline"
+                className="enz-link" style={{ textTransform: "none", letterSpacing: 0, fontSize: 12 }}
                 style={{ color: CORES.dourado }}
               >
                 Puxar metas do Acordo
@@ -154,13 +154,13 @@ export function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAc
         {primeiroDiag && ultimoDiag && (
           <div className="flex gap-4 justify-center flex-wrap mb-4">
             <div className="text-center">
-              <div className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: "var(--tinta-musgo)" }}>
+              <div className="enz-rotulo mb-1" style={{ color: "var(--tinta-musgo)" }}>
                 Antes ({primeiroDiag.data})
               </div>
               <RadarMaturidade notas={primeiroDiag.notas} tamanho={240} />
             </div>
             <div className="text-center">
-              <div className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: CORES.dourado }}>
+              <div className="enz-rotulo mb-1">
                 Depois ({ultimoDiag.data})
               </div>
               <RadarMaturidade notas={ultimoDiag.notas} tamanho={240} />
@@ -182,7 +182,7 @@ export function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAc
                 onMudarLista(relatorios.filter((r) => r.id !== relAberto.id));
                 onAbrir(null);
               }}
-              className="text-xs underline"
+              className="enz-link" style={{ textTransform: "none", letterSpacing: 0, fontSize: 12 }}
               style={{ color: "var(--erro)" }}
             >
               Excluir relatório
@@ -205,7 +205,7 @@ export function ImpressaoRelatorio({ cliente, rel, diags, dadosPainel }) {
   return (
     <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
-        <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Relatório de Encerramento</div>
+        <div className="enz-rotulo">Relatório de Encerramento</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{cliente.negocio}</div>
         <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{rel.data}</div>
       </div>

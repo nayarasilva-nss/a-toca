@@ -24,7 +24,7 @@ export function ModuloPenseira({ cliente, mensagens, gerando, erro, onEnviar, on
         acoes={null}
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
-        <div className="rounded-lg shadow-sm flex flex-col" style={{ background: CORES.papel, border: "2px solid #E97F3855", minHeight: "60vh" }}>
+        <div className="rounded-lg shadow-sm flex flex-col" style={{ background: CORES.papel, border: "2px solid var(--linha)", minHeight: "60vh" }}>
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: "var(--fundo-recuo)" }}>
           <div>
             <p className="text-xs" style={{ color: CORES.textoDim }}>
@@ -32,7 +32,7 @@ export function ModuloPenseira({ cliente, mensagens, gerando, erro, onEnviar, on
             </p>
           </div>
           {mensagens.length > 0 && (
-            <button onClick={onLimpar} className="text-xs underline" style={{ color: "var(--ouro-texto)" }}>
+            <button onClick={onLimpar} className="enz-link" style={{ textTransform: "none", letterSpacing: 0, fontSize: 12 }} style={{ color: "var(--ouro-texto)" }}>
               Limpar conversa
             </button>
           )}
@@ -51,7 +51,7 @@ export function ModuloPenseira({ cliente, mensagens, gerando, erro, onEnviar, on
                 style={
                   m.role === "user"
                     ? { background: CORES.fogo, color: "var(--fundo-elevado)" }
-                    : { background: CORES.cartao, border: "2px solid #E97F3855", color: CORES.fogoEscuro }
+                    : { background: CORES.cartao, border: "2px solid var(--linha)", color: CORES.fogoEscuro }
                 }
               >
                 {m.content}
@@ -60,7 +60,7 @@ export function ModuloPenseira({ cliente, mensagens, gerando, erro, onEnviar, on
           ))}
           {gerando && (
             <div className="flex justify-start mb-3">
-              <div className="px-4 py-2.5 rounded-lg text-sm font-serif italic" style={{ background: CORES.cartao, border: "2px solid #E97F3855", color: CORES.dourado }}>
+              <div className="px-4 py-2.5 rounded-lg text-sm font-serif italic" style={{ background: CORES.cartao, border: "2px solid var(--linha)", color: CORES.dourado }}>
                 Pensando...
               </div>
             </div>

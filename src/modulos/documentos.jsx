@@ -18,8 +18,8 @@ export function ListaDocs({ cliente, tipo, docs, onAbrir, onNovo, onVoltar }) {
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
       {docs.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed var(--linha-forte)" }}>
-          <p className="text-sm" style={{ color: CORES.textoDim }}>
+        <div className="enz-card enz-card-vazado" style={{ padding: "28px 0" }}>
+          <p className="enz-nota" style={{ fontSize: 14 }}>
             Nenhum{cfg.singular === "ata" || cfg.singular === "política" ? "a" : ""} {cfg.singular} ainda. Crie e deixe a IA escrever a primeira versão para sua revisão.
           </p>
         </div>
@@ -30,7 +30,7 @@ export function ListaDocs({ cliente, tipo, docs, onAbrir, onNovo, onVoltar }) {
               key={d.id}
               onClick={() => onAbrir(d.id)}
               className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between"
-              className="card"
+              className="enz-card"
             >
               <span className="font-serif" style={{ color: CORES.fogo }}>{d.nome || "(sem nome)"}</span>
               <span className="text-xs" style={{ color: CORES.textoDim }}>{cfg.subtituloLista(d)}</span>
@@ -49,12 +49,12 @@ export function EditorDoc({ cliente, tipo, doc, rotuloVoltar, gerando, erro, onM
   const temConteudo = !!(doc[cfg.campoIndicador] || "").trim();
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+      <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>
         ← {rotuloVoltar}
       </button>
-      <div className="rounded-lg p-6 shadow-sm card">
+      <div className="enz-card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
-          <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>
+          <h2 className="enz-titulo is-3">
             {doc.nome || `Nov${cfg.singular === "checklist" ? "o" : "a"} ${cfg.singular}`}
           </h2>
           <div className="flex gap-2">
@@ -84,7 +84,7 @@ export function EditorDoc({ cliente, tipo, doc, rotuloVoltar, gerando, erro, onM
                 <InputField key={campo} label={rotulo} value={doc[campo] || ""} onChange={set(campo)} />
               )
             ))}
-            <button onClick={onExcluir} className="text-xs underline" style={{ color: "var(--erro)" }}>
+            <button onClick={onExcluir} className="enz-confirmar">
               Excluir {cfg.singular}
             </button>
           </>
@@ -102,7 +102,7 @@ export function ImpressaoPolitica({ cliente, doc }) {
   return (
     <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
-        <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Política interna</div>
+        <div className="enz-rotulo">Política interna</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{doc.nome}</div>
         <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{cliente.negocio} · {cliente.segmento}</div>
       </div>
@@ -141,7 +141,7 @@ export function ImpressaoChecklist({ cliente, doc }) {
   return (
     <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
-        <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Checklist</div>
+        <div className="enz-rotulo">Checklist</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{doc.nome}</div>
         <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>
           {cliente.negocio}
@@ -177,7 +177,7 @@ export function ImpressaoAta({ cliente, doc }) {
   return (
     <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
-        <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Ata de reunião</div>
+        <div className="enz-rotulo">Ata de reunião</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{doc.nome}</div>
         <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>
           {cliente.negocio}

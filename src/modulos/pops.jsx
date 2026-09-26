@@ -40,8 +40,8 @@ export function ListaPops({ cliente, pops, onAbrirPop, onNovoPop, onVoltar }) {
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
         {pops.length === 0 ? (
-          <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed var(--linha-forte)" }}>
-            <p className="text-sm" style={{ color: CORES.textoDim }}>
+          <div className="enz-card enz-card-vazado" style={{ padding: "28px 0" }}>
+            <p className="enz-nota" style={{ fontSize: 14 }}>
               Nenhum processo documentado ainda. Crie o primeiro — informe o nome do processo e o setor, e a IA escreve o passo a passo para sua revisão.
             </p>
           </div>
@@ -52,7 +52,7 @@ export function ListaPops({ cliente, pops, onAbrirPop, onNovoPop, onVoltar }) {
                 key={p.id}
                 onClick={() => onAbrirPop(p.id)}
                 className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between"
-                className="card"
+                className="enz-card"
               >
                 <span className="font-serif" style={{ color: CORES.fogo }}>{p.nome || "(sem nome)"}</span>
                 <span className="text-xs" style={{ color: CORES.textoDim }}>
@@ -71,12 +71,12 @@ export function EditorPop({ cliente, pop, gerando, erro, onMudar, onGerar, onImp
   const set = (campo) => (v) => onMudar({ ...pop, [campo]: v });
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+      <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>
         ← POPs · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm card">
+      <div className="enz-card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
-          <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>
+          <h2 className="enz-titulo is-3">
             {pop.nome || "Novo POP"}
           </h2>
           <div className="flex gap-2">
@@ -100,7 +100,7 @@ export function EditorPop({ cliente, pop, gerando, erro, onMudar, onGerar, onImp
             {CAMPOS_POP.map(([campo, rotulo, linhas]) => (
               <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={pop[campo]} onChange={(e) => set(campo)(e.target.value)} /></label>
             ))}
-            <button onClick={onExcluir} className="text-xs underline" style={{ color: "var(--erro)" }}>
+            <button onClick={onExcluir} className="enz-confirmar">
               Excluir POP
             </button>
           </>
@@ -120,7 +120,7 @@ export function ImpressaoPop({ cliente, pop }) {
   return (
     <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
-        <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Procedimento Operacional Padrão</div>
+        <div className="enz-rotulo">Procedimento Operacional Padrão</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{pop.nome}</div>
         <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>
           {cliente.negocio}{pop.setor ? ` · Setor: ${pop.setor}` : ""}

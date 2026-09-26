@@ -25,7 +25,7 @@ export function CartaoFrente({ frente, onMudar, onRemover }) {
   const mudarEtapas = (acaoId, novasEtapas) => mudarAcao(acaoId, "etapas", novasEtapas);
 
   return (
-    <div className="rounded-lg p-4 mb-3" style={{ background: CORES.cartao, border: "2px solid #E97F3855" }}>
+    <div className="rounded-lg p-4 mb-3" style={{ background: CORES.cartao, border: "2px solid var(--linha)" }}>
       <div className="flex items-center gap-2 mb-2 flex-wrap">
         <input
           className="font-serif text-base flex-1 min-w-40 bg-transparent outline-none"

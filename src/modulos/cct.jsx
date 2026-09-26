@@ -35,8 +35,8 @@ export function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, on
         acoes={null}
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
-        <div className="rounded-lg p-6 shadow-sm card">
-          <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
+        <div className="enz-card">
+          <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
             As leis do Ministério: suba o PDF da convenção coletiva do setor — e depois os termos aditivos, um a um. A cada documento, a IA atualiza a análise: remove o que foi superado, ajusta o que mudou e soma o que é novo. Todas as gerações deste cliente respeitam o resultado. Os arquivos não ficam armazenados; só a análise.
           </p>
 

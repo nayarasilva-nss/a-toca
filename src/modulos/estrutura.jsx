@@ -28,7 +28,7 @@ export function NoArvore({ posicao, filhosDe, visitados, impressao }) {
     <div className="ml-0">
       <div
         className={impressao ? "inline-block px-3 py-1.5 rounded mb-1" : "inline-block px-3 py-1.5 rounded mb-1 shadow-sm"}
-        style={{ background: impressao ? "white" : CORES.papel, border: `2px solid #D4AF37AA` }}
+        style={{ background: impressao ? "white" : CORES.papel, border: `2px solid var(--ouro)` }}
       >
         <span className="font-serif text-sm" style={{ color: CORES.fogo }}>{posicao.nome}</span>
         {posicao.setor && (
@@ -75,7 +75,7 @@ export function ModuloEstrutura({ cliente, posicoes, cargos, gerando, erro, onMu
         acoes={null}
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
-        <div className="rounded-lg p-6 shadow-sm card">
+        <div className="enz-card">
           <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <div className="flex gap-2 flex-wrap">
             <BotaoPrimario onClick={onGerar} disabled={gerando}>
@@ -153,7 +153,7 @@ export function ModuloEstrutura({ cliente, posicoes, cargos, gerando, erro, onMu
               </button>
             </div>
 
-            <div className="text-xs uppercase tracking-widest font-semibold mb-2" style={{ color: CORES.dourado }}>
+            <div className="enz-rotulo mb-2">
               Pré-visualização do organograma
             </div>
             <Organograma posicoes={posicoes} />
@@ -170,7 +170,7 @@ export function ImpressaoEstrutura({ cliente, posicoes }) {
   return (
     <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
-        <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Estrutura de Governança</div>
+        <div className="enz-rotulo">Estrutura de Governança</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>Organograma</div>
         <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{cliente.negocio} · {cliente.segmento}</div>
       </div>

@@ -21,7 +21,7 @@ export function ModuloAnomalias({ cliente, anomalias, frentes, gerando, erro, on
         acoes={null}
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
-        <div className="rounded-lg p-6 shadow-sm card">
+        <div className="enz-card">
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", gap: "12px", flexWrap: "wrap" }}>
           <div className="flex items-center gap-3">
             <span className="text-xs font-semibold" style={{ color: tratadas === anomalias.length && anomalias.length ? "var(--sucesso)" : "var(--alerta)" }}>
@@ -30,7 +30,7 @@ export function ModuloAnomalias({ cliente, anomalias, frentes, gerando, erro, on
             <BotaoPrimario onClick={() => onMudar([anomaliaVazia(), ...anomalias])}>+ Relatar anomalia</BotaoPrimario>
           </div>
         </div>
-        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
+        <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
           O sistema detecta quando algo foge do padrão: POP não seguido, checklist falho, reclamação, fornecedor. Relatar → FCA → Agir. Registros 100% internos.
         </p>
         <AvisoErro erro={erro} />
@@ -42,7 +42,7 @@ export function ModuloAnomalias({ cliente, anomalias, frentes, gerando, erro, on
           const t = (a.tag || a.local || "").trim().toLowerCase();
           const recorrencia = t ? tags[t] : 0;
           return (
-            <div key={a.id} className="mb-3 rounded-lg p-4" style={{ background: CORES.cartao, border: a.status === "tratada" ? "2px solid #4F6B3A55" : "2px solid #E97F3855" }}>
+            <div key={a.id} className="mb-3 rounded-lg p-4" style={{ background: CORES.cartao, border: a.status === "tratada" ? "2px solid var(--linha-forte)" : "2px solid var(--linha)" }}>
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <span className="text-xs" style={{ color: "var(--tinta-musgo)" }}>{a.data}</span>
                 <select

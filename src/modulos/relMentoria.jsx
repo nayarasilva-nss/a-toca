@@ -13,12 +13,12 @@ export function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, frame
   const tem = rel.retrospectiva || rel.evolucao;
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+      <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm card">
+      <div className="enz-card">
         <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
-          <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Relatório de Evolução</h2>
+          <h2 className="enz-titulo is-3">Relatório de Evolução</h2>
           <div className="flex gap-2">
             <BotaoPrimario onClick={onGerar} disabled={gerando}>
               {gerando ? "Escrevendo..." : tem ? "Gerar novamente" : "Gerar com IA"}
@@ -26,7 +26,7 @@ export function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, frame
             {tem && <BotaoContorno onClick={onImprimir}>Exportar PDF</BotaoContorno>}
           </div>
         </div>
-        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
+        <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
           Malfeito feito, versão pessoal: a prova da jornada — encontros, pra casa cumprido e o radar do líder antes/depois. O documento que renova a mentoria.
         </p>
         <AvisoErro erro={erro} />
@@ -37,7 +37,7 @@ export function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, frame
           </p>
         )}
         {!gerando && (
-          <div className="mb-4 p-3 rounded-lg" style={{ background: CORES.hover, border: "2px solid #D4AF37AA" }}>
+          <div className="mb-4 p-3 rounded-lg" style={{ background: CORES.hover, border: "2px solid var(--ouro)" }}>
             <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
               <div className="label" style={{ color: "var(--alerta)" }}>
                 Verificação das metas do mentorado (fase Prova)
@@ -45,7 +45,7 @@ export function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, frame
               {(metasAcordo || []).length > 0 && (rel.metasVerificadas || []).length === 0 && (
                 <button
                   onClick={() => onMudar({ ...rel, metasVerificadas: (metasAcordo || []).map((m) => ({ id: uid(), objetivo: m.objetivo, prazo: m.prazo, status: "parcial", porque: "" })) })}
-                  className="text-xs underline"
+                  className="enz-link" style={{ textTransform: "none", letterSpacing: 0, fontSize: 12 }}
                   style={{ color: CORES.dourado }}
                 >
                   Puxar metas do Acordo
@@ -125,7 +125,7 @@ export function ImpressaoRelMentoria({ cliente, rel, diagsLider, framework: fwRe
   return (
     <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
-        <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Relatório de Evolução — Mentoria</div>
+        <div className="enz-rotulo">Relatório de Evolução — Mentoria</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{cliente.negocio}</div>
         <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{cliente.segmento}</div>
       </div>

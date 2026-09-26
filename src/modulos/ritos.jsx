@@ -12,12 +12,12 @@ export function ModuloRitos({ cliente, ritos, gerando, erro, onMudar, onGerar, o
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+      <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm card">
+      <div className="enz-card">
         <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
-          <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Ritos de Gestão</h2>
+          <h2 className="enz-titulo is-3">Ritos de Gestão</h2>
           <div className="flex gap-2">
             <BotaoPrimario onClick={onGerar} disabled={gerando}>
               {gerando ? "Gerando..." : itens.length ? "Gerar novamente" : "Gerar com IA"}
@@ -25,7 +25,7 @@ export function ModuloRitos({ cliente, ritos, gerando, erro, onMudar, onGerar, o
             {itens.length > 0 && <BotaoContorno onClick={onImprimir}>Exportar PDF</BotaoContorno>}
           </div>
         </div>
-        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
+        <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
           Os banquetes do Salão Principal: encontros fixos que ninguém cancela. Cada rito com pauta padrão fixa, pra virar hábito — a gestão acontece sem depender do dono lembrar.
         </p>
 
@@ -42,7 +42,7 @@ export function ModuloRitos({ cliente, ritos, gerando, erro, onMudar, onGerar, o
 
         {!gerando &&
           itens.map((r) => (
-            <div key={r.id} className="mb-4 rounded-lg p-4" style={{ background: CORES.cartao, border: "2px solid #E97F3855" }}>
+            <div key={r.id} className="mb-4 rounded-lg p-4" style={{ background: CORES.cartao, border: "2px solid var(--linha)" }}>
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <input
                   className="font-serif text-base flex-1 min-w-40 bg-transparent outline-none"
@@ -114,7 +114,7 @@ export function ImpressaoRitos({ cliente, ritos }) {
   return (
     <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
-        <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Ritos de Gestão</div>
+        <div className="enz-rotulo">Ritos de Gestão</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{cliente.negocio}</div>
         <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{cliente.segmento}</div>
       </div>

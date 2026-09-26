@@ -45,14 +45,14 @@ export function ListaPessoas({ cliente, pessoas, onAbrir, onNova, onVoltar }) {
   }
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+      <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>
         ← {cliente.negocio}
       </button>
-      <div className="flex items-baseline justify-between mb-2">
-        <h2 className="font-serif text-xl" style={{ color: CORES.fogo }}>Temperamentos</h2>
+      <div className="flex items-start justify-between gap-4 flex-wrap mb-3">
+        <h2 className="enz-titulo is-2">Temperamentos</h2>
         <BotaoPrimario onClick={onNova}>+ Nova pessoa</BotaoPrimario>
       </div>
-      <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
+      <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
         Mapa das pessoas-chave pela ciência dos temperamentos — classificação, leitura pessoa × cargo e orientação de liderança.
       </p>
 
@@ -67,8 +67,8 @@ export function ListaPessoas({ cliente, pessoas, onAbrir, onNova, onVoltar }) {
       )}
 
       {pessoas.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed var(--linha-forte)" }}>
-          <p className="text-sm" style={{ color: CORES.textoDim }}>
+        <div className="enz-card enz-card-vazado" style={{ padding: "28px 0" }}>
+          <p className="enz-nota" style={{ fontSize: 14 }}>
             Ninguém mapeado ainda. Adicione uma pessoa-chave, descreva o que você observou dela, e classifique — ou deixe a IA sugerir a partir das suas observações.
           </p>
         </div>
@@ -79,7 +79,7 @@ export function ListaPessoas({ cliente, pessoas, onAbrir, onNova, onVoltar }) {
               key={p.id}
               onClick={() => onAbrir(p.id)}
               className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-center justify-between gap-2 flex-wrap"
-              className="card"
+              className="enz-card"
             >
               <span>
                 <span className="font-serif" style={{ color: CORES.fogo }}>{p.nome || "(sem nome)"}</span>
@@ -134,10 +134,10 @@ export function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar,
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+      <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>
         ← Temperamentos · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm card">
+      <div className="enz-card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg flex items-center gap-2" style={{ color: CORES.fogo }}>
             {pessoa.nome || "Nova pessoa"} <SeloTemperamento chave={pessoa.dominante} pequeno />
@@ -161,7 +161,7 @@ export function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar,
             </div>
             <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações — comportamentos, reações, padrões</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder="Ex.: fala rápido e alto, resolve conflito na hora mas atropela; detesta rotina de fechamento; o time gosta dele mas reclama de instabilidade" value={pessoa.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
 
-            <div className="mb-4 rounded-lg p-4" style={{ background: CORES.cartao, border: "1px dashed #E97F3855" }}>
+            <div className="mb-4 rounded-lg p-4" style={{ background: CORES.cartao, border: "1px solid var(--linha)" }}>
               <div className="flex items-baseline justify-between mb-1">
                 <div className="label" style={{ color: CORES.dourado }}>
                   Formulário de observação (opcional)
@@ -240,7 +240,7 @@ export function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar,
             {CAMPOS_PESSOA_GERADOS.map(([campo, rotulo, linhas]) => (
               <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={pessoa[campo]} onChange={(e) => set(campo)(e.target.value)} /></label>
             ))}
-            <button onClick={onExcluir} className="text-xs underline" style={{ color: "var(--erro)" }}>
+            <button onClick={onExcluir} className="enz-confirmar">
               Excluir pessoa
             </button>
           </>
@@ -257,7 +257,7 @@ export function ImpressaoPessoa({ cliente, pessoa }) {
   return (
     <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
-        <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Ficha de Temperamento · Confidencial — uso da liderança</div>
+        <div className="enz-rotulo">Ficha de Temperamento · Confidencial — uso da liderança</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{pessoa.nome}</div>
         <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>
           {cliente.negocio}{pessoa.cargo ? ` · ${pessoa.cargo}` : ""}
