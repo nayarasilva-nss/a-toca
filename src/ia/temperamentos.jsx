@@ -7,12 +7,11 @@ export async function gerarAnaliseTemperamento(cliente, pessoa, cargos) {
   const cargoDesc = cargos.find((c) => c.nome.toLowerCase() === (pessoa.cargo || "").toLowerCase());
   const jaDefinido = pessoa.dominante && TEMPERAMENTOS[pessoa.dominante];
 
-  const prompt = `Você é especialista em ciência dos temperamentos (sanguíneo, colérico, melancólico, fleumático) aplicada à gestão de pessoas em pequenas e médias empresas brasileiras, no método da consultora Nayara Silva.
+  const prompt = `Você é especialista em ciência dos temperamentos (sanguíneo, colérico, melancólico, fleumático) aplicada ${cliente.tipo === "pessoa" ? "à mentoria de desenvolvimento humano e liderança" : "à gestão de pessoas em pequenas e médias empresas brasileiras"}, no Método Enraizar da consultora Nayara Silva.
 ${ESCOLA_TEMPERAMENTOS}
 ${ESCOLA_LIDERANCA}
 
-CLIENTE
-Negócio: ${cliente.negocio} (${cliente.segmento})
+${cliente.tipo === "pessoa" ? `JORNADA DE MENTORIA\nMentorado: ${cliente.negocio} (${cliente.segmento})\nA pessoa analisada abaixo é o próprio mentorado ou alguém do entorno que ele lidera.` : `CLIENTE\nNegócio: ${cliente.negocio} (${cliente.segmento})`}
 
 PESSOA ANALISADA
 Nome/apelido: ${pessoa.nome}
@@ -25,7 +24,7 @@ ${Object.keys(pessoa.respostas || {}).length ? `Formulário de observação pree
     const op = q.opcoes.find((o) => o[1] === r);
     return `- ${q.pergunta}: ${op ? op[0] : r}`;
   }).filter(Boolean).join("\n")}` : ""}
-${pessoa.contratante ? "ATENÇÃO: esta pessoa é o CONTRATANTE/DONO — quem contratou a consultoria. Além da análise padrão, oriente a própria consultora sobre como conduzir a consultoria com essa pessoa." : ""}
+${pessoa.contratante ? (cliente.tipo === "pessoa" ? "ATENÇÃO: esta pessoa é o MENTORADO — quem contratou a mentoria. Além da análise padrão, oriente a mentora sobre como conduzir a jornada com essa pessoa: ritmo dos encontros, tipo de provocação que funciona, o que evitar." : "ATENÇÃO: esta pessoa é o CONTRATANTE/DONO — quem contratou a consultoria. Além da análise padrão, oriente a própria consultora sobre como conduzir o projeto com essa pessoa.") : ""}
 ${jaDefinido ? `Temperamento JÁ CLASSIFICADO pela consultora: dominante ${TEMPERAMENTOS[pessoa.dominante].rotulo}${pessoa.secundario && TEMPERAMENTOS[pessoa.secundario] ? `, secundário ${TEMPERAMENTOS[pessoa.secundario].rotulo}` : ""} — NÃO reclassifique; use esta classificação.` : "Temperamento ainda não classificado: sugira dominante e secundário a partir das observações. Se as observações forem insuficientes para classificar com confiança, diga isso na justificativa e indique o que a consultora deveria observar."}
 
 Responda APENAS com JSON compacto de uma linha:

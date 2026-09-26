@@ -17,10 +17,7 @@ ${ESCOLA_TEMPERAMENTOS}
 ${ESCOLA_LIDERANCA}
 Monte o plano do treinamento abaixo - pratico, aplicavel no chao da operacao, com a marca metodologica da consultora (temperamentos como lente de autoconhecimento e lideranca).
 
-CLIENTE
-Negocio: ${cliente.negocio} (${cliente.segmento})
-Contexto: ${cliente.contexto || "nao informado"}
-${frente ? `Frente da consultoria a que este treinamento pertence: ${frente.nome} - ${frente.escopo || ""}` : "Treinamento avulso (fora de consultoria)."}
+${cliente.tipo === "pessoa" ? `MENTORADO QUE CONTRATOU\nNome: ${cliente.negocio} (${cliente.segmento})\nContexto: ${cliente.contexto || "nao informado"}\nTreinamento avulso para o mentorado e o time que ele lidera - nao existe projeto de consultoria; o treinamento serve a jornada de mentoria dele.` : `CLIENTE\nNegocio: ${cliente.negocio} (${cliente.segmento})\nContexto: ${cliente.contexto || "nao informado"}\n${frente ? `Frente do projeto a que este treinamento pertence: ${frente.nome} - ${frente.escopo || ""}` : "Treinamento avulso (fora do projeto de consultoria)."}`}
 ${publico ? `Temperamentos ja mapeados no time (adapte dinamicas ao perfil real): ${publico}` : ""}
 ${dores ? `Dores observadas em campo: ${dores}` : ""}
 
@@ -104,9 +101,9 @@ Responda APENAS com JSON compacto de uma linha:
 }
 
 export async function estruturarSessaoMentoria(cliente, sessao) {
-  const prompt = `Voce e mentora de empresarios. Estruture as anotacoes brutas da sessao de mentoria abaixo em registro fiel - sem inventar nada que nao esteja nas anotacoes.
+  const prompt = `Voce e mentora de desenvolvimento humano (Metodo Enraizar) - o mentorado pode ser dono, gestor, lider ou colaborador. Estruture as anotacoes brutas da sessao de mentoria abaixo em registro fiel - sem inventar nada que nao esteja nas anotacoes.
 
-Cliente: ${cliente.negocio}
+${cliente.tipo === "pessoa" ? "Mentorado" : "Cliente"}: ${cliente.negocio}
 Tema do encontro: ${sessao.tema || "nao definido"}
 Anotacoes brutas: ${sessao.anotacoes}
 
@@ -239,7 +236,7 @@ export async function gerarRelatorioTreinamento(cliente, trein) {
   const presentes = (trein.participantesLista || []).filter((p) => p.presente && p.nome.trim());
   const prompt = `Voce e especialista em treinamento de equipes com base na ciencia dos temperamentos. Escreva o RELATORIO DE REALIZACAO do treinamento abaixo, para o contratante - sobrio, factual, com valor percebido. Baseie-se APENAS nos dados fornecidos.
 
-CLIENTE: ${cliente.negocio} (${cliente.segmento})
+${cliente.tipo === "pessoa" ? `MENTORADO QUE CONTRATOU: ${cliente.negocio} (${cliente.segmento})` : `CLIENTE: ${cliente.negocio} (${cliente.segmento})`}
 TREINAMENTO: ${trein.tema}
 Publico: ${trein.publico || "nao informado"} · Carga: ${trein.cargaHoraria || "nao informada"} · Data: ${trein.data || "nao informada"}
 Programa aplicado: ${trein.blocos || "nao registrado"}
