@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
+import { COLECOES, COLECOES_INICIAIS, reduzirColecoes } from "./nucleo/estado.jsx";
 import { Cabecalho } from "./componentes/cabecalho.jsx";
 import { Toast } from "./componentes/ui.jsx";
 import { gerarAlcadas } from "./ia/alcadas.jsx";
@@ -62,33 +63,33 @@ export default function App() {
   });
   const [clientes, setClientes] = useState([]);
   const [tela, setTela] = useState({ nome: "home" });
-  const [faseAtual, setFaseAtual] = useState("escuta"); // Fase do Enraizar
-  const [moduloSelecionado, setModuloSelecionado] = useState(null); // Feedback de módulo
-  const [tabelas, setTabelas] = useState({});
-  const [cargosPorCliente, setCargosPorCliente] = useState({});
-  const [gestaoPorCliente, setGestaoPorCliente] = useState({});
-  const [estruturaPorCliente, setEstruturaPorCliente] = useState({});
-  const [manualPorCliente, setManualPorCliente] = useState({});
-  const [cctPorCliente, setCctPorCliente] = useState({});
-  const [penseiraPorCliente, setPenseiraPorCliente] = useState({});
-  const [popsPorCliente, setPopsPorCliente] = useState({});
-  const [fluxosPorCliente, setFluxosPorCliente] = useState({});
-  const [campoPorCliente, setCampoPorCliente] = useState({});
-  const [treinamentosPorCliente, setTreinamentosPorCliente] = useState({});
-  const [mentoriaPorCliente, setMentoriaPorCliente] = useState({});
-  const [diagsLiderPorCliente, setDiagsLiderPorCliente] = useState({});
+  const [colecoes, despachar] = useReducer(reduzirColecoes, COLECOES_INICIAIS);
+  const atualizar = (colecao) => (valor) => despachar({ tipo: "atualizar", colecao, valor });
+  const tabelas = colecoes.tabelas, setTabelas = atualizar("tabelas");
+  const cargosPorCliente = colecoes.cargos, setCargosPorCliente = atualizar("cargos");
+  const gestaoPorCliente = colecoes.gestao, setGestaoPorCliente = atualizar("gestao");
+  const estruturaPorCliente = colecoes.estrutura, setEstruturaPorCliente = atualizar("estrutura");
+  const manualPorCliente = colecoes.manual, setManualPorCliente = atualizar("manual");
+  const cctPorCliente = colecoes.cct, setCctPorCliente = atualizar("cct");
+  const penseiraPorCliente = colecoes.penseira, setPenseiraPorCliente = atualizar("penseira");
+  const popsPorCliente = colecoes.pops, setPopsPorCliente = atualizar("pops");
+  const fluxosPorCliente = colecoes.fluxos, setFluxosPorCliente = atualizar("fluxos");
+  const campoPorCliente = colecoes.campo, setCampoPorCliente = atualizar("campo");
+  const treinamentosPorCliente = colecoes.treinamentos, setTreinamentosPorCliente = atualizar("treinamentos");
+  const mentoriaPorCliente = colecoes.mentoria, setMentoriaPorCliente = atualizar("mentoria");
+  const diagsLiderPorCliente = colecoes.diagsLider, setDiagsLiderPorCliente = atualizar("diagsLider");
   // RelMentoria agora é integrado em mentoriaPorCliente[id].relatorio
-  const [anomaliasPorCliente, setAnomaliasPorCliente] = useState({});
-  const [painelPorCliente, setPainelPorCliente] = useState({});
-  const [alcadasPorCliente, setAlcadasPorCliente] = useState({});
-  const [ritosPorCliente, setRitosPorCliente] = useState({});
-  const [indicadoresPorCliente, setIndicadoresPorCliente] = useState({});
+  const anomaliasPorCliente = colecoes.anomalias, setAnomaliasPorCliente = atualizar("anomalias");
+  const painelPorCliente = colecoes.painel, setPainelPorCliente = atualizar("painel");
+  const alcadasPorCliente = colecoes.alcadas, setAlcadasPorCliente = atualizar("alcadas");
+  const ritosPorCliente = colecoes.ritos, setRitosPorCliente = atualizar("ritos");
+  const indicadoresPorCliente = colecoes.indicadores, setIndicadoresPorCliente = atualizar("indicadores");
   const [docsExtras, setDocsExtras] = useState({ politicas: {}, checklists: {}, atas: {} });
-  const [pessoasPorCliente, setPessoasPorCliente] = useState({});
-  const [diagsPorCliente, setDiagsPorCliente] = useState({});
-  const [propostasPorCliente, setPropostasPorCliente] = useState({});
-  const [relatoriosPorCliente, setRelatoriosPorCliente] = useState({});
-  const [financeiroPorCliente, setFinanceiroPorCliente] = useState({});
+  const pessoasPorCliente = colecoes.pessoas, setPessoasPorCliente = atualizar("pessoas");
+  const diagsPorCliente = colecoes.diags, setDiagsPorCliente = atualizar("diags");
+  const propostasPorCliente = colecoes.propostas, setPropostasPorCliente = atualizar("propostas");
+  const relatoriosPorCliente = colecoes.relatorios, setRelatoriosPorCliente = atualizar("relatorios");
+  const financeiroPorCliente = colecoes.financeiro, setFinanceiroPorCliente = atualizar("financeiro");
   const [gerando, setGerando] = useState(false);
   const [erro, setErro] = useState(null);
   const [pronto, setPronto] = useState(false);
@@ -119,105 +120,21 @@ export default function App() {
   }, []);
 
   const carregarDadosCliente = async (id) => {
-    if (tabelas[id] === undefined) {
-      const t = await stGet(`toca:tabela:${id}`);
-      setTabelas((prev) => ({ ...prev, [id]: t }));
-    }
-    if (cargosPorCliente[id] === undefined) {
-      const cg = await stGet(`toca:cargos:${id}`);
-      setCargosPorCliente((prev) => ({ ...prev, [id]: cg || [] }));
-    }
-    if (estruturaPorCliente[id] === undefined) {
-      const es = await stGet(`toca:estrutura:${id}`);
-      setEstruturaPorCliente((prev) => ({ ...prev, [id]: es || [] }));
-    }
-    if (manualPorCliente[id] === undefined) {
-      const mn = await stGet(`toca:manual:${id}`);
-      setManualPorCliente((prev) => ({ ...prev, [id]: mn || [] }));
-    }
-    if (cctPorCliente[id] === undefined) {
-      const ct = await stGet(`toca:cct:${id}`);
-      setCctPorCliente((prev) => ({ ...prev, [id]: ct || { nomeArquivo: "", dataAnalise: "", pontos: [] } }));
-    }
-    if (penseiraPorCliente[id] === undefined) {
-      const pn = await stGet(`toca:penseira:${id}`);
-      setPenseiraPorCliente((prev) => ({ ...prev, [id]: pn || [] }));
-    }
-    if (popsPorCliente[id] === undefined) {
-      const pp = await stGet(`toca:pops:${id}`);
-      setPopsPorCliente((prev) => ({ ...prev, [id]: pp || [] }));
-    }
-    if (fluxosPorCliente[id] === undefined) {
-      const fl = await stGet(`toca:fluxos:${id}`);
-      setFluxosPorCliente((prev) => ({ ...prev, [id]: fl || [] }));
-    }
-    if (campoPorCliente[id] === undefined) {
-      const cp = await stGet(`toca:campo:${id}`);
-      setCampoPorCliente((prev) => ({ ...prev, [id]: cp || [] }));
-    }
-    if (treinamentosPorCliente[id] === undefined) {
-      const tr = await stGet(`toca:treinamentos:${id}`);
-      setTreinamentosPorCliente((prev) => ({ ...prev, [id]: tr || [] }));
-    }
-    if (mentoriaPorCliente[id] === undefined) {
-      const mt = await stGet(`toca:mentoria:${id}`);
-      const normalizarMentoria = (m) => ({ ...mentoriaVazia(), ...(m || {}) });
-      setMentoriaPorCliente((prev) => ({ ...prev, [id]: normalizarMentoria(mt) }));
-    }
-    if (diagsLiderPorCliente[id] === undefined) {
-      const dl = await stGet(`toca:diagslider:${id}`);
-      setDiagsLiderPorCliente((prev) => ({ ...prev, [id]: dl || [] }));
-    }
-    // RelMentoria carregada como parte de mentoriaPorCliente.relatorio
-    const relMentoriaCarregada = await stGet(`toca:relmentoria:${id}`);
-    if (relMentoriaCarregada && mentoriaPorCliente[id]) {
-      setMentoriaPorCliente((prev) => ({ ...prev, [id]: { ...prev[id], relatorio: relMentoriaCarregada } }));
-    }
-    if (anomaliasPorCliente[id] === undefined) {
-      const an = await stGet(`toca:anomalias:${id}`);
-      setAnomaliasPorCliente((prev) => ({ ...prev, [id]: an || [] }));
-    }
-    if (painelPorCliente[id] === undefined) {
-      const pn = await stGet(`toca:painel:${id}`);
-      setPainelPorCliente((prev) => ({ ...prev, [id]: pn || {} }));
-    }
-    if (alcadasPorCliente[id] === undefined) {
-      const al = await stGet(`toca:alcadas:${id}`);
-      setAlcadasPorCliente((prev) => ({ ...prev, [id]: al || { obs: "", itens: [] } }));
-    }
-    if (ritosPorCliente[id] === undefined) {
-      const rt = await stGet(`toca:ritos:${id}`);
-      setRitosPorCliente((prev) => ({ ...prev, [id]: rt || { obs: "", itens: [] } }));
-    }
-    if (indicadoresPorCliente[id] === undefined) {
-      const ind = await stGet(`toca:indicadores:${id}`);
-      setIndicadoresPorCliente((prev) => ({ ...prev, [id]: ind || { obs: "", itens: [] } }));
+    for (const [colecao, def] of Object.entries(COLECOES)) {
+      if (colecoes[colecao][id] !== undefined) continue;
+      const lido = await stGet(`toca:${def.chave}:${id}`);
+      let valor = def.normalizar ? def.normalizar(lido) : lido || def.padrao();
+      if (colecao === "mentoria") {
+        const relatorio = await stGet(`toca:relmentoria:${id}`);
+        if (relatorio) valor = { ...valor, relatorio };
+      }
+      despachar({ tipo: "atualizar", colecao, valor: (prev) => ({ ...prev, [id]: valor }) });
     }
     for (const tipo of ["politicas", "checklists", "atas"]) {
       if (docsExtras[tipo][id] === undefined) {
         const dd = await stGet(`toca:${tipo}:${id}`);
         setDocsExtras((prev) => ({ ...prev, [tipo]: { ...prev[tipo], [id]: dd || [] } }));
       }
-    }
-    if (pessoasPorCliente[id] === undefined) {
-      const ps = await stGet(`toca:temperamentos:${id}`);
-      setPessoasPorCliente((prev) => ({ ...prev, [id]: ps || [] }));
-    }
-    if (diagsPorCliente[id] === undefined) {
-      const dg = await stGet(`toca:diagnosticos:${id}`);
-      setDiagsPorCliente((prev) => ({ ...prev, [id]: dg || [] }));
-    }
-    if (propostasPorCliente[id] === undefined) {
-      const pr = await stGet(`toca:propostas:${id}`);
-      setPropostasPorCliente((prev) => ({ ...prev, [id]: pr || [] }));
-    }
-    if (relatoriosPorCliente[id] === undefined) {
-      const rl = await stGet(`toca:relatorios:${id}`);
-      setRelatoriosPorCliente((prev) => ({ ...prev, [id]: rl || [] }));
-    }
-    if (financeiroPorCliente[id] === undefined) {
-      const fn = await stGet(`toca:financeiro:${id}`);
-      setFinanceiroPorCliente((prev) => ({ ...prev, [id]: fn || { parcelas: [] } }));
     }
   };
 
@@ -695,6 +612,7 @@ export default function App() {
   };
 
   const excluirCliente = async (clienteId) => {
+    despachar({ tipo: "removerCliente", clienteId });
     const lista = clientes.filter((c) => c.id !== clienteId);
     setClientes(lista);
     await stSet("toca:clientes", lista);
@@ -2006,7 +1924,6 @@ ${conteudo}
       {tela.nome === "cargo" && clienteAtual && cargoAtual && (
         <ImpressaoCargo cliente={clienteAtual} cargo={cargoAtual} />
       )}
-      {moduloSelecionado && <Toast mensagem={moduloSelecionado.msg} tipo={moduloSelecionado.tipo} />}
     </div>
   );
 }
