@@ -27,7 +27,7 @@ Ferramenta de consultoria para estruturação organizacional de pequenas e médi
 ## Tecnologia
 
 - **Frontend**: React 19 + Vite
-- **Storage**: localStorage (dados ficam no navegador)
+- **Banco**: Neon Postgres (Vercel Marketplace) via `api/storage.js` — tabela chave-valor `kv`; o navegador mantém um espelho em localStorage e, se o banco estiver indisponível, segue funcionando localmente. Dados antigos do localStorage migram sozinhos para o banco na primeira abertura.
 - **IA**: Anthropic Claude via `api/ia.js` (Vercel Function — a chave nunca vai ao navegador)
 - **Deploy**: Vercel
 
@@ -37,13 +37,13 @@ Ferramenta de consultoria para estruturação organizacional de pequenas e médi
 
 ```bash
 npm install
-npm run dev
+vercel env pull   # traz DATABASE_URL e ANTHROPIC_API_KEY para .env.local
+vercel dev        # front + funções api/ (IA e banco) em http://localhost:3000
+npm run dev       # só o front (sem IA e sem banco — usa localStorage)
 npm run build
 npm run lint
 ```
 
-Variável de ambiente (Vercel e `.env.local`):
+Variáveis de ambiente (Vercel): `ANTHROPIC_API_KEY` e as do Neon (`DATABASE_URL` etc., criadas pela integração).
 
-```
-ANTHROPIC_API_KEY=...
-```
+Acesso: o projeto usa a proteção de deploy da Vercel — só quem está logado na conta abre o app e a API.
