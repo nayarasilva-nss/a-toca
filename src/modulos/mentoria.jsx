@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FOCOS_MENTORIA, focoDe } from "../nucleo/focos.jsx";
 import { AvisoErro, BotaoPrimario, Trabalhando } from "../componentes/ui.jsx";
 import { GUIA_MOLDAGEM, TEMPERAMENTOS } from "../ia/documentos.jsx";
 import { CORES, uid } from "../nucleo/base.jsx";
@@ -238,7 +239,7 @@ export function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAco
       <div className="enz-card">
         <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
           <h2 className="enz-titulo is-3">Mentoria</h2>
-          <BotaoPrimario onClick={onGerarJornada} disabled={gerando}>
+          <BotaoPrimario onClick={onGerarJornada} disabled={gerando || !focoDe(mentoria)}>
             {gerando ? "Desenhando..." : encontros.length ? "Redesenhar jornada com IA" : "Desenhar jornada com IA"}
           </BotaoPrimario>
         </div>
@@ -249,22 +250,22 @@ export function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAco
         <ReguaMetodoMentoria mentoria={mentoria} temRaioX={temRaioX} statusAcordo={statusAcordo} temProva={temProva} />
 
         <div className="mb-3 flex items-center gap-2 flex-wrap">
-          <span className="label" style={{ color: CORES.dourado }}>Foco da mentoria:</span>
-          {[["lideranca", "Liderança"], ["autoconhecimento", "Autoconhecimento"]].map(([ch, rot]) => (
+          <span className="enz-rotulo">Foco da jornada</span>
+          {Object.entries(FOCOS_MENTORIA).map(([ch, meta]) => [ch, meta.rotulo]).map(([ch, rot]) => (
             <button
               key={ch}
               onClick={() => onMudar({ ...mentoria, foco: ch })}
               className="px-3 py-1 text-xs rounded border font-semibold"
               style={
-                (mentoria.foco || "lideranca") === ch
+                focoDe(mentoria) === ch
                   ? { background: CORES.hover, borderColor: CORES.dourado, color: CORES.fogo }
                   : { background: CORES.cartao, borderColor: "var(--linha)", color: "var(--tinta-musgo)" }
               }
             >
-              {(mentoria.foco || "lideranca") === ch ? "✓ " : ""}{rot}
+              {focoDe(mentoria) === ch ? "✓ " : ""}{rot}
             </button>
           ))}
-          <span className="text-xs" style={{ color: CORES.textoDim }}>Liderança é o caminho natural, não requisito.</span>
+          <span className="enz-nota">{focoDe(mentoria) ? FOCOS_MENTORIA[focoDe(mentoria)].nota : "escolha com o mentorado antes de desenhar a jornada — nenhum foco é padrão."}</span>
         </div>
 
         <div className="grid sm:grid-cols-2 gap-x-4">

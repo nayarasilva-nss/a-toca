@@ -1,4 +1,5 @@
 import { chamarIA, extrairJSON } from "./base.jsx";
+import { metaFoco, PROMPT_SEM_FOCO } from "../nucleo/focos.jsx";
 import { resumoCampo } from "./campo.jsx";
 import { FRAMEWORK_DIAG, percentualArea } from "./diagnostico.jsx";
 import { TEMPERAMENTOS } from "./documentos.jsx";
@@ -11,8 +12,9 @@ export async function gerarProposta(cliente, prop, gestao, diags, pessoas, regis
   if (cliente.tipo === "pessoa") {
     const mentorado = (pessoas || []).find((p) => p.contratante && p.dominante && TEMPERAMENTOS[p.dominante]);
     const jornada = ((mentoria && mentoria.encontros) || []).map((e, i) => `${i + 1}. ${e.tema}${e.objetivo ? ` - ${e.objetivo}` : ""}`).join("\n");
-    const focoAutoP = mentoria && (mentoria.foco || "lideranca") === "autoconhecimento";
-    const promptMentoria = `Voce e mentora de desenvolvimento humano, especialista em temperamentos${focoAutoP ? " e autoconhecimento" : ", governanca e lideranca"}. Escreva a PROPOSTA DE MENTORIA INDIVIDUAL abaixo - calorosa, profissional e direta, falando COM a pessoa (nao sobre uma empresa). Adapte o conteudo ao PAPEL REAL do mentorado - nunca presuma que e dono nem que almeja lideranca.${focoAutoP ? " FOCO DA MENTORIA: autoconhecimento e crescimento pessoal - a promessa e uma pessoa que se sustenta sem o mentor." : ""}
+    const focoP = metaFoco(mentoria);
+    const promptMentoria = `Voce e mentora de desenvolvimento humano, especialista em temperamentos e ${focoP ? focoP.especialidade : "crescimento pessoal"}.
+${focoP ? focoP.prompt : PROMPT_SEM_FOCO} Escreva a PROPOSTA DE MENTORIA INDIVIDUAL abaixo - calorosa, profissional e direta, falando COM a pessoa (nao sobre uma empresa). Adapte o conteudo ao PAPEL REAL do mentorado - nunca presuma que e dono nem que almeja lideranca.${focoAutoP ? " FOCO DA MENTORIA: autoconhecimento e crescimento pessoal - a promessa e uma pessoa que se sustenta sem o mentor." : ""}
 
 MENTORADO
 Nome: ${cliente.negocio}

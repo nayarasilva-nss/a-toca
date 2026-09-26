@@ -1,5 +1,7 @@
 import { useState, useEffect, useReducer } from "react";
 import { COLECOES, COLECOES_INICIAIS, reduzirColecoes } from "./nucleo/estado.jsx";
+import { FOCOS_MENTORIA, focoDe } from "./nucleo/focos.jsx";
+import { frameworkMentorado as frameworkDoMentorado } from "./ia/diagnostico.jsx";
 import { lerTema, aplicarTema } from "./nucleo/tema.js";
 import { TelaLogin, chamarAuth } from "./telas/login.jsx";
 import { AreaMentorado } from "./telas/mentorado.jsx";
@@ -198,6 +200,7 @@ export default function App() {
     const lista = [...clientes, novo];
     setClientes(lista);
     await stSet("toca:clientes", lista);
+    if (novo.tipo === "pessoa" && novo.focoMentoria) await salvarColecao("mentoria", novo.id, { ...mentoriaVazia(), foco: novo.focoMentoria });
     abrirCliente(novo.id);
   };
 
@@ -411,9 +414,10 @@ export default function App() {
   const treinamentoAtual = treinamentosAtuais.find((t) => t.id === tela.treinoId);
   const mentoriaAtual = clienteAtual ? mentoriaPorCliente[clienteAtual.id] || mentoriaVazia() : mentoriaVazia();
   const diagsLiderAtuais = clienteAtual ? diagsLiderPorCliente[clienteAtual.id] || [] : [];
-  const focoMentoriaAtual = (mentoriaPorCliente[clienteAtual ? clienteAtual.id : ""] || {}).foco || "lideranca";
-  const frameworkMentorado = focoMentoriaAtual === "autoconhecimento" ? FRAMEWORK_PESSOAL : FRAMEWORK_LIDER;
-  const tituloDiagMentorado = focoMentoriaAtual === "autoconhecimento" ? "Diagnóstico Pessoal" : "Diagnóstico de Liderança";
+  const mentoriaAtualFoco = mentoriaPorCliente[clienteAtual ? clienteAtual.id : ""] || {};
+  const focoMentoriaAtual = focoDe(mentoriaAtualFoco);
+  const frameworkMentorado = frameworkDoMentorado(mentoriaAtualFoco);
+  const tituloDiagMentorado = focoMentoriaAtual ? FOCOS_MENTORIA[focoMentoriaAtual].diagnostico : "Diagnóstico do Mentorado";
   const diagLiderAtual = diagsLiderAtuais.find((d) => d.id === tela.diagId);
   const relMentoriaAtual = clienteAtual ? (mentoriaPorCliente[clienteAtual.id]?.relatorio || {}) : {};
   const alcadasAtuais = clienteAtual ? alcadasPorCliente[clienteAtual.id] || { obs: "", itens: [] } : { obs: "", itens: [] };

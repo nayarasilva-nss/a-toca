@@ -1,6 +1,7 @@
 import { chamarIA, extrairJSON } from "./base.jsx";
+import { metaFoco, PROMPT_SEM_FOCO } from "../nucleo/focos.jsx";
 import { resumoCampo } from "./campo.jsx";
-import { FRAMEWORK_DIAG, FRAMEWORK_LIDER, FRAMEWORK_PESSOAL, percentualArea } from "./diagnostico.jsx";
+import { FRAMEWORK_DIAG, FRAMEWORK_LIDER, FRAMEWORK_PESSOAL, percentualArea, frameworkMentorado } from "./diagnostico.jsx";
 import { ESCOLA_LIDERANCA, ESCOLA_TEMPERAMENTOS, GUIA_MOLDAGEM, TEMPERAMENTOS } from "./documentos.jsx";
 import { uid } from "../nucleo/base.jsx";
 
@@ -41,7 +42,8 @@ Responda APENAS com JSON compacto de uma linha:
 }
 
 export async function gerarJornadaMentoria(cliente, mentoria, mentorado, ultimoDiag, entorno, diagLider) {
-  const FRJ = (mentoria.foco || "lideranca") === "autoconhecimento" ? FRAMEWORK_PESSOAL : FRAMEWORK_LIDER;
+  const FRJ = frameworkMentorado(mentoria);
+  const focoJ = metaFoco(mentoria);
   const areasFracasLider = diagLider
     ? FRJ.map((a, i) => {
         const p = percentualArea(diagLider.notas, i, FRJ);
@@ -59,11 +61,10 @@ export async function gerarJornadaMentoria(cliente, mentoria, mentorado, ultimoD
     ? `Maturidade do negocio (areas fracas orientam temas): ${FRAMEWORK_DIAG.map((a, i) => { const p = percentualArea(ultimoDiag.notas, i); return p !== null ? `${a.area} ${p}%` : null; }).filter(Boolean).join(", ")}`
     : "";
   const papel = cliente.tipo === "pessoa" ? cliente.segmento : (mentorado && mentorado.cargo) || "nao informado";
-  const focoAuto = (mentoria.foco || "lideranca") === "autoconhecimento";
-  const prompt = `Voce e mentora de desenvolvimento humano em PMEs brasileiras - o mentorado pode ser dono, gestor, lider, colaborador ou uma pessoa que simplesmente quer crescer. Sua especialidade: temperamentos, virtude e ${focoAuto ? "autoconhecimento" : "lideranca"}.
-${focoAuto ? "FOCO DESTA MENTORIA: AUTOCONHECIMENTO E CRESCIMENTO PESSOAL - o mentorado NAO busca lideranca. Temas orbitam a vida dele como um todo (habitos, relacoes, dominio de si, direcao), nao gestao de time. A promessa e uma pessoa que se sustenta sem o mentor." : "FOCO DESTA MENTORIA: LIDERANCA."}
+  const prompt = `Voce e mentora de desenvolvimento humano em PMEs brasileiras - o mentorado pode ser dono, gestor, lider, colaborador ou uma pessoa que simplesmente quer crescer. Sua especialidade: temperamentos, virtude e ${focoJ ? focoJ.especialidade : "crescimento pessoal"}.
+${focoJ ? focoJ.prompt : PROMPT_SEM_FOCO}
 ${ESCOLA_TEMPERAMENTOS}
-${ESCOLA_LIDERANCA} Desenhe a JORNADA DE MENTORIA: encontros com tema, objetivo e provocacao de cada um.
+${focoJ && focoJ.entorno ? ESCOLA_LIDERANCA : ""} Desenhe a JORNADA DE MENTORIA: encontros com tema, objetivo e provocacao de cada um.
 
 REGRA CENTRAL: adapte TODOS os temas ao PAPEL REAL do mentorado (informado abaixo) e ao FOCO declarado. NUNCA presuma que ele e dono da empresa nem que almeja lideranca. Um lider de equipe trabalha influencia, gestao do time e relacao com o proprio chefe; um dono trabalha autonomia do negocio; um colaborador em desenvolvimento trabalha preparacao para liderar; uma pessoa em autoconhecimento trabalha a si mesma - habitos, emocoes, relacoes e direcao de vida.
 
@@ -78,7 +79,7 @@ Briefing da conversa inicial: ${mentoria.briefing || "nao registrado"}
 ${areasFracasLider ? `DIAGNOSTICO DE LIDERANCA - areas fracas (dedique encontros a elas): ${areasFracasLider}` : ""}
 ${(mentoria.praticas || []).filter((p) => p.status === "ativa").length ? `PRATICAS MOLDADORAS JA ATIVAS (nao repita como atividade; os encontros devem COBRA-LAS e aprofundar o que elas revelam): ${(mentoria.praticas || []).filter((p) => p.status === "ativa").map((p) => p.texto).join("; ")}` : ""}
 ${mentoria.moldagem && mentoria.moldagem.virtudeCentral && mentoria.moldagem.virtudeCentral.nome ? `VIRTUDE CENTRAL DA JORNADA: ${mentoria.moldagem.virtudeCentral.nome} - toda a jornada orbita o cultivo dela de forma SUBJETIVA (nunca cite a palavra virtude nem o nome dela nos titulos dos encontros; ela e a bussola interna, nao o discurso)` : ""}
-${blocoEntorno ? `Entorno liderado pelo mentorado (temperamentos mapeados - a mentoria de lideranca trabalha a relacao dele com estas pessoas): ${blocoEntorno}` : ""}
+${blocoEntorno ? `Entorno do mentorado (temperamentos mapeados${focoJ && focoJ.entorno ? " - a mentoria de lideranca trabalha a relacao dele com estas pessoas" : " - use so quando o tema pedir; nao e o centro desta jornada"}): ${blocoEntorno}` : ""}
 
 Responda APENAS com JSON compacto de uma linha:
 {"j":[{"t":"tema do encontro","o":"objetivo em 1 frase","p":"provocacao reflexiva do encontro","at":["1 a 3 atividades PRA CASA concretas e verificaveis (ex.: observar e anotar 3 situacoes X; aplicar a ferramenta Y com o time; conversa dificil Z)"]}]}
@@ -120,18 +121,19 @@ Sem markdown, sem texto fora do JSON.`;
 }
 
 export async function gerarFichaMoldagem(cliente, mentoria, mentorado, diagsLider) {
-  const focoAutoF = mentoria && (mentoria.foco || "lideranca") === "autoconhecimento";
+  const focoF = metaFoco(mentoria);
   const guia = mentorado && mentorado.dominante && GUIA_MOLDAGEM[mentorado.dominante] ? GUIA_MOLDAGEM[mentorado.dominante] : null;
   const guiaSec = mentorado && mentorado.secundario && GUIA_MOLDAGEM[mentorado.secundario] ? GUIA_MOLDAGEM[mentorado.secundario] : null;
-  const FRF = focoAutoF ? FRAMEWORK_PESSOAL : FRAMEWORK_LIDER;
+  const FRF = frameworkMentorado(mentoria);
   const ultimo = diagsLider && diagsLider.length ? diagsLider[diagsLider.length - 1] : null;
   const areasFracas = ultimo
     ? FRF.map((a, i) => { const p = percentualArea(ultimo.notas, i, FRF); return p !== null && p < 60 ? `${a.area} (${p}%)` : null; }).filter(Boolean).join(", ") || "nenhuma abaixo de 60%"
     : "diagnostico nao realizado";
   const prompt = `Voce e mentora de desenvolvimento humano especialista na ciencia dos temperamentos. Gere a FICHA DE MOLDAGEM do mentorado: orientacoes PRECISAS e praticas moldadoras no estilo da mentora.
-${focoAutoF ? "FOCO: AUTOCONHECIMENTO - o mentorado nao busca lideranca; as praticas moldam a vida pessoal dele (habitos, corpo, relacoes, dominio de si), nao a gestao de equipe." : "FOCO: LIDERANCA."}
+${focoF ? focoF.prompt : PROMPT_SEM_FOCO}
+As praticas moldam o que ESTE foco pede - nao presuma gestao de equipe quando o foco nao e lideranca.
 ${ESCOLA_TEMPERAMENTOS}
-${ESCOLA_LIDERANCA}
+${focoF && focoF.entorno ? ESCOLA_LIDERANCA : ""}
 
 O ESTILO DA MENTORA (siga-o rigorosamente): prescricoes concretas, muitas vezes fisicas ou aparentemente futeis, cirurgicamente escolhidas para CONTRABALANCAR a tendencia do temperamento. Exemplo real dela: a uma mentorada fleumatica, prescreveu USAR SALTO ALTO TODOS OS DIAS - parece futil, mas impede o conforto excessivo e molda postura de presenca. A pratica certa incomoda na medida e molda pelo corpo e pela repeticao, nao pelo discurso.
 
@@ -141,7 +143,7 @@ Papel: ${cliente.tipo === "pessoa" ? cliente.segmento : (mentorado && mentorado.
 Contexto: ${cliente.contexto || "nao informado"}
 Temperamento dominante: ${mentorado && mentorado.dominante ? TEMPERAMENTOS[mentorado.dominante].rotulo : "nao classificado"}${mentorado && mentorado.secundario && TEMPERAMENTOS[mentorado.secundario] ? ` · Secundario: ${TEMPERAMENTOS[mentorado.secundario].rotulo}` : ""}
 Observacoes da mentora sobre a pessoa: ${(mentorado && mentorado.observacoes) || "nenhuma"}
-Areas fracas do diagnostico de lideranca: ${areasFracas}
+Areas fracas do diagnostico: ${areasFracas}
 Objetivos da mentoria: ${(mentoria && mentoria.objetivos) || "nao declarados"}
 ${guia ? `
 GUIA DE MOLDAGEM DO TEMPERAMENTO DOMINANTE (base da mentora - individualize, nao copie):
@@ -168,17 +170,19 @@ Sem markdown, sem texto fora do JSON.`;
 }
 
 export async function gerarMetasMentorado(cliente, mentoria, diagsLider) {
+  const FRM = frameworkMentorado(mentoria);
   const ultimo = diagsLider && diagsLider.length ? diagsLider[diagsLider.length - 1] : null;
   const areasFracas = ultimo
-    ? FRAMEWORK_LIDER.map((a, i) => { const p = percentualArea(ultimo.notas, i, FRAMEWORK_LIDER); return p !== null && p < 60 ? `${a.area} (${p}%)` : null; }).filter(Boolean).join(", ")
-    : "diagnostico de lideranca nao realizado";
-  const focoAutoM = mentoria && (mentoria.foco || "lideranca") === "autoconhecimento";
-  const prompt = `Voce e mentora de desenvolvimento humano (Metodo Enraizar)${focoAutoM ? ", com foco em AUTOCONHECIMENTO (metas sobre a vida da pessoa - habitos, relacoes, dominio de si - nao sobre gestao de time)" : ", com foco em lideranca"}. Sugira 2 a 3 METAS DO MENTORADO para a jornada de mentoria. Cada meta DEVE ser verificavel, com comportamento observavel + prazo. Nunca desejo vago ("melhorar a comunicacao"); sempre meta observavel ("delegar as decisoes de compra ate outubro"; "realizar 1 conversa dificil pendente ate o encontro 4").
+    ? FRM.map((a, i) => { const p = percentualArea(ultimo.notas, i, FRM); return p !== null && p < 60 ? `${a.area} (${p}%)` : null; }).filter(Boolean).join(", ")
+    : "diagnostico nao realizado";
+  const focoM = metaFoco(mentoria);
+  const prompt = `Voce e mentora de desenvolvimento humano (Metodo Enraizar).
+${focoM ? focoM.prompt : PROMPT_SEM_FOCO} Sugira 2 a 3 METAS DO MENTORADO para a jornada de mentoria. Cada meta DEVE ser verificavel, com comportamento observavel + prazo. Nunca desejo vago ("melhorar a comunicacao"); sempre meta observavel ("delegar as decisoes de compra ate outubro"; "realizar 1 conversa dificil pendente ate o encontro 4").
 
 MENTORADO: ${cliente.negocio} — ${cliente.segmento}
 Contexto: ${cliente.contexto || "nao informado"}
 Objetivos declarados: ${(mentoria && mentoria.objetivos) || "nao declarados"}
-Areas fracas do diagnostico de lideranca: ${areasFracas}
+Areas fracas do diagnostico: ${areasFracas}
 
 Responda APENAS com JSON compacto de uma linha:
 {"m":[{"o":"meta observavel","p":"prazo"}]}
@@ -264,11 +268,14 @@ export async function gerarRelatorioEvolucao(cliente, mentoria, mentorado, diags
   const temasRealizados = realizados.map((e) => e.tema).join("; ") || "nenhum";
   const primeiroD = diagsLider && diagsLider.length ? diagsLider[0] : null;
   const ultimoD = diagsLider && diagsLider.length > 1 ? diagsLider[diagsLider.length - 1] : null;
-  const FRR = (mentoria.foco || "lideranca") === "autoconhecimento" ? FRAMEWORK_PESSOAL : FRAMEWORK_LIDER;
+  const FRR = frameworkMentorado(mentoria);
+  const focoR = metaFoco(mentoria);
   const linhaDiag = (d, rot) => d
     ? `${rot}: ${FRR.map((a, i) => { const p = percentualArea(d.notas, i, FRR); return p !== null ? `${a.area} ${p}%` : null; }).filter(Boolean).join(", ")}`
     : null;
-  const prompt = `Voce e mentora de liderancas. Escreva o RELATORIO DE EVOLUCAO da mentoria abaixo - honesto, baseado APENAS nos dados reais fornecidos, com numeros acima de adjetivos. E o documento que o mentorado (e quem paga a mentoria) recebe.
+  const prompt = `Voce e mentora de desenvolvimento humano (Metodo Enraizar).
+${focoR ? focoR.prompt : PROMPT_SEM_FOCO}
+Escreva o RELATORIO DE EVOLUCAO da mentoria abaixo - honesto, baseado APENAS nos dados reais fornecidos, com numeros acima de adjetivos. E o documento que o mentorado (e quem paga a mentoria) recebe.
 
 MENTORADO
 Nome: ${cliente.tipo === "pessoa" ? cliente.negocio : (mentorado && mentorado.nome) || "nao informado"}

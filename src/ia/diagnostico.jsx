@@ -1,4 +1,5 @@
 import { chamarIA, extrairJSON } from "./base.jsx";
+import { metaFoco, PROMPT_SEM_FOCO } from "../nucleo/focos.jsx";
 import { resumoCampo } from "./campo.jsx";
 import { ESCOLA_LIDERANCA, ESCOLA_TEMPERAMENTOS, TEMPERAMENTOS } from "./documentos.jsx";
 
@@ -76,6 +77,15 @@ export const FRAMEWORK_PESSOAL = [
   { area: "Coragem de Agir", criterios: ["Age antes de se sentir totalmente pronto", "Enfrenta conversas e decisões difíceis", "Assume erros sem se destruir", "Pede ajuda quando precisa"] },
 ];
 
+export const FRAMEWORK_VOCACAO = [
+  { area: "Autoconhecimento", criterios: ["Nomeia o que o energiza e o que o drena", "Reconhece as próprias forças com evidências", "Conhece os limites e as tendências do temperamento", "Lê a própria história de trabalho sem se enganar"] },
+  { area: "Valores e Sentido", criterios: ["Sabe o que não abre mão numa vida de trabalho", "Distingue o que quer do que esperam dele", "Percebe quando uma atividade tem sentido", "Decide coerente com os próprios valores"] },
+  { area: "Talentos e Competências", criterios: ["Nomeia talentos com exemplos concretos", "Sabe o que aprende com facilidade", "Enxerga as lacunas para o caminho que quer", "Aprende de forma deliberada"] },
+  { area: "Exploração de Caminhos", criterios: ["Conhece opções reais além da atual", "Conversou com quem já faz o que considera", "Experimentou algo do caminho em pequena escala", "Compara caminhos com critérios claros"] },
+  { area: "Decisão", criterios: ["Tem critérios explícitos para decidir", "Lida com o medo sem paralisar", "Coloca prazo para decidir", "Comunica a decisão a quem é afetado"] },
+  { area: "Ação e Sustentação", criterios: ["Dá primeiros passos concretos", "Mantém rotina que sustenta a mudança", "Tem rede de apoio para o caminho", "Revisa o plano com regularidade"] },
+];
+
 export const FRAMEWORK_LIDER = [
   { area: "Autoconsciência", criterios: ["Conhece as próprias forças e limites", "Busca e recebe feedback sem se defender", "Regula as emoções sob pressão", "Age coerente com o que cobra dos outros"] },
   { area: "Comunicação", criterios: ["Comunica expectativas com clareza", "Escuta antes de responder", "Dá feedback frequente e específico ao time", "Conduz conversas difíceis sem adiar"] },
@@ -100,9 +110,15 @@ export function percentualArea(notas, aIdx, framework) {
   return Math.round((soma / (respondidos * 3)) * 100);
 }
 
+export function frameworkMentorado(mentoria) {
+  const meta = metaFoco(mentoria);
+  const chave = meta ? meta.framework : "pessoal";
+  return chave === "lider" ? FRAMEWORK_LIDER : chave === "vocacao" ? FRAMEWORK_VOCACAO : FRAMEWORK_PESSOAL;
+}
+
 export async function gerarLeituraDiagLider(cliente, notas, mentoria, mentorado) {
-  const FRD = (mentoria && (mentoria.foco || "lideranca") === "autoconhecimento") ? FRAMEWORK_PESSOAL : FRAMEWORK_LIDER;
-  const focoAutoL = mentoria && (mentoria.foco || "lideranca") === "autoconhecimento";
+  const FRD = frameworkMentorado(mentoria);
+  const foco = metaFoco(mentoria);
   const linhas = FRD.map((a, aIdx) => {
     const detalhe = a.criterios
       .map((cr, cIdx) => {
@@ -114,10 +130,11 @@ export async function gerarLeituraDiagLider(cliente, notas, mentoria, mentorado)
     const p = percentualArea(notas, aIdx, FRD);
     return `${a.area}${p !== null ? ` (${p}%)` : ""}: ${detalhe || "nao avaliada"}`;
   }).join("\n");
-  const prompt = `Voce e mentora de desenvolvimento humano, especialista em ${focoAutoL ? "autoconhecimento" : "governanca e lideranca"} e ciencia dos temperamentos.
+  const prompt = `Voce e mentora de desenvolvimento humano, especialista em ${foco ? foco.especialidade : "crescimento pessoal"} e ciencia dos temperamentos.
+${foco ? foco.prompt : PROMPT_SEM_FOCO}
 ${ESCOLA_TEMPERAMENTOS}
-${ESCOLA_LIDERANCA}
-A consultora avaliou a maturidade ${focoAutoL ? "pessoal" : "de lideranca"} do mentorado abaixo (0=inexistente, 1=inicial, 2=em desenvolvimento, 3=consolidado). Escreva a leitura para uso da mentora.
+${foco && foco.entorno ? ESCOLA_LIDERANCA : ""}
+A mentora avaliou a maturidade ${foco ? foco.diagnosticoNota : "pessoal"} do mentorado abaixo (0=inexistente, 1=inicial, 2=em desenvolvimento, 3=consolidado). Escreva a leitura para uso da mentora.
 
 MENTORADO
 Nome: ${cliente.tipo === "pessoa" ? cliente.negocio : (mentorado && mentorado.nome) || "nao informado"}
@@ -130,7 +147,7 @@ AVALIACAO
 ${linhas}
 
 Responda APENAS com JSON compacto de uma linha:
-{"l":"leitura geral em 4-6 frases: o padrao de lideranca que as notas revelam, conectado ao temperamento quando mapeado","f":["2-3 forcas a alavancar"],"d":["2-4 areas prioritarias de desenvolvimento, da mais critica"],"r":["2-3 recomendacoes praticas de foco para os proximos encontros"]}
+{"l":"leitura geral em 4-6 frases: o padrao que as notas revelam neste foco, conectado ao temperamento quando mapeado","f":["2-3 forcas a alavancar"],"d":["2-4 areas prioritarias de desenvolvimento, da mais critica"],"r":["2-3 recomendacoes praticas de foco para os proximos encontros"]}
 Sem markdown, sem texto fora do JSON.`;
   const texto = await chamarIA(prompt);
   const obj = extrairJSON(texto, "{", "}");

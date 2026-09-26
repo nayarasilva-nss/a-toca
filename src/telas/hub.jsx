@@ -1,4 +1,5 @@
 import { TituloSecao, Card, FasesEnraizar, FASES } from "../componentes/enraizar.jsx";
+import { FOCOS_MENTORIA } from "../nucleo/focos.jsx";
 import { ArvoreEnraizar } from "../componentes/arvore.jsx";
 import { BotaoPrimario, ConfirmarAcao } from "../componentes/ui.jsx";
 import { acoesNumeradas, semanaAtualDe } from "../ia/cronograma.jsx";
@@ -155,7 +156,7 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
           : `Semana ${semCrono}${gestao.duracaoSemanas ? ` de ${gestao.duracaoSemanas}` : ""}${atrasadasCrono ? ` · ${atrasadasCrono} atrasada${atrasadasCrono > 1 ? "s" : ""}` : ""}`,
     diagnosticos: totalDiagnosticos > 0 ? `${totalDiagnosticos} diagnóstico${totalDiagnosticos > 1 ? "s" : ""}` : "Ainda não avaliado",
     propostas: totalPropostas > 0 ? `${totalPropostas} proposta${totalPropostas > 1 ? "s" : ""}` : "Nenhuma proposta ainda",
-    temperamentos: totalPessoas > 0 ? `${totalPessoas} pessoa${totalPessoas > 1 ? "s" : ""} mapeada${totalPessoas > 1 ? "s" : ""}` : ehPessoa ? "Mapeie o mentorado e quem ele lidera" : "Ninguém mapeado ainda",
+    temperamentos: totalPessoas > 0 ? `${totalPessoas} pessoa${totalPessoas > 1 ? "s" : ""} mapeada${totalPessoas > 1 ? "s" : ""}` : ehPessoa ? "Mapeie o mentorado e o entorno dele" : "Ninguém mapeado ainda",
     cct: totalPontosCCT > 0 ? `${totalPontosCCT} ponto${totalPontosCCT > 1 ? "s" : ""} obrigatório${totalPontosCCT > 1 ? "s" : ""}` : "CCT ainda não analisada",
     campo: totalCampo > 0 ? `${totalCampo} registro${totalCampo > 1 ? "s" : ""} no caderno` : "O caderno está em branco",
     diagslider: totalDiagsLider > 0 ? `${totalDiagsLider} avaliaç${totalDiagsLider > 1 ? "ões" : "ão"}` : "Ainda não avaliado",
@@ -181,7 +182,7 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
     gestao: "Briefing & Plano de Ação",
     cronograma: "Cronograma",
     diagnosticos: "Diagnóstico de Maturidade",
-    diagslider: focoMentoria === "autoconhecimento" ? "Diagnóstico Pessoal" : "Diagnóstico de Liderança",
+    diagslider: focoMentoria && FOCOS_MENTORIA[focoMentoria] ? FOCOS_MENTORIA[focoMentoria].diagnostico : "Diagnóstico do Mentorado",
     relmentoria: "Relatório de Evolução",
     anomalias: "Tratamento de Anomalias",
     painel: "Painel do Projeto",
@@ -251,7 +252,7 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" style={{ marginTop: 32 }}>
         {servicosCliente.mentoria && (
-          <Card onClick={() => onModulo("mentoria")} rotulo="Jornada" titulo="Mentoria" subtitulo={totalEncontros > 0 ? `${totalEncontrosRealizados}/${totalEncontros} encontros realizados` : "jornada ainda não desenhada"} />
+          <Card onClick={() => onModulo("mentoria")} rotulo="Jornada" titulo="Mentoria" subtitulo={totalEncontros > 0 ? `${totalEncontrosRealizados}/${totalEncontros} encontros realizados` : focoMentoria ? "jornada ainda não desenhada" : "defina o foco da jornada"} />
         )}
         {servicosCliente.treinamentos && (
           <Card onClick={() => onModulo("treinamentos")} rotulo="Turmas" titulo="Treinamentos" subtitulo={totalTreinamentos > 0 ? `${totalTreinamentosRealizados}/${totalTreinamentos} realizados` : "nenhum treinamento ainda"} />
@@ -265,7 +266,7 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
             nivel={2}
             rotulo={ehPessoa ? "O mentorado" : "O contratante"}
             titulo={ehPessoa ? "A pessoa, o combinado e o entorno." : "A pessoa e a relação."}
-            descricao={ehPessoa ? "Mapeie também quem ela lidera." : "De quem contrata ao que foi combinado."}
+            descricao={ehPessoa ? "Mapeie também as pessoas do entorno dela." : "De quem contrata ao que foi combinado."}
           />
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" style={{ marginTop: 24 }}>
             {alaContratante.map((chave) => <Cartao key={chave} chave={chave} />)}

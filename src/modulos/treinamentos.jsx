@@ -14,7 +14,7 @@ export function mentoriaVazia() {
   return {
     mentoradoId: "",
     objetivos: "",
-    foco: "lideranca",
+    foco: "",
     encontros: [],
     moldagem: { virtudeCentral: { nome: "", manifesto: "", cultivo: "" }, tendencias: [], praticasSugeridas: [] },
     praticas: [],

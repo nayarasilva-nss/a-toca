@@ -53,7 +53,7 @@ export function ListaPessoas({ cliente, pessoas, onAbrir, onNova, onVoltar }) {
         <BotaoPrimario onClick={onNova}>+ Nova pessoa</BotaoPrimario>
       </div>
       <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
-        {cliente.tipo === "pessoa" ? "O mentorado e quem ele lidera, pela ciência dos temperamentos. Classificação, leitura pessoa × cargo e orientação de liderança." : "O mapa das pessoas-chave pela ciência dos temperamentos. Classificação, leitura pessoa × cargo e orientação de liderança."}
+        {cliente.tipo === "pessoa" ? "O mentorado e as pessoas do entorno dele, pela ciência dos temperamentos. Classificação, leitura pessoa × cargo e orientação de liderança." : "O mapa das pessoas-chave pela ciência dos temperamentos. Classificação, leitura pessoa × cargo e orientação de liderança."}
       </p>
 
       {pessoas.length > 0 && (

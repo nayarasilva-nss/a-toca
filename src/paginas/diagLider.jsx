@@ -1,4 +1,5 @@
 import { comRetentativa } from "../ia/base.jsx";
+import { FOCOS_MENTORIA } from "../nucleo/focos.jsx";
 import { gerarLeituraDiagLider } from "../ia/diagnostico.jsx";
 import { EditorDiagnostico, ListaDiagnosticos, diagVazio } from "../modulos/diagnostico.jsx";
 
@@ -23,9 +24,7 @@ export function TelaDiagLider({ app }) {
         cliente={clienteAtual}
         diagnosticos={diagsLiderAtuais}
         titulo={tituloDiagMentorado}
-        subtitulo={focoMentoriaAtual === "autoconhecimento"
-          ? "Maturidade pessoal em 6 áreas e 24 critérios. Reavalie ao longo da jornada — o antes e depois é a prova da evolução."
-          : "Maturidade de liderança em 6 áreas e 24 critérios. Reavalie ao longo da jornada — o antes e depois é a prova da evolução."}
+        subtitulo={focoMentoriaAtual && FOCOS_MENTORIA[focoMentoriaAtual] ? FOCOS_MENTORIA[focoMentoriaAtual].diagnosticoDescricao : "Defina o foco da jornada em Mentoria para escolher o diagnóstico certo. Enquanto isso, a régua é a de maturidade pessoal."}
         framework={frameworkMentorado}
         onAbrir={(diagId) => {
           setErro(null);

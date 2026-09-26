@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { TituloSecao } from "../componentes/enraizar.jsx";
 import { InputField, BotaoPrimario, BotaoContorno, ConfirmarAcao } from "../componentes/ui.jsx";
+import { FOCOS_MENTORIA } from "../nucleo/focos.jsx";
 
 const SERVICOS_PADRAO = { empresa: { consultoria: true, mentoria: false, treinamentos: false }, pessoa: { consultoria: false, mentoria: true, treinamentos: false } };
 
@@ -66,6 +67,18 @@ export function FormCliente({ inicial, onSalvar, onCancelar, onExcluir }) {
         placeholder={ehPessoa ? "liderança recém-promovida; o time resiste; quer parar de apagar incêndio" : "atrasos recorrentes, desperdício de insumos"}
         ajuda={ehPessoa ? "por que buscou a mentoria." : undefined}
       />
+
+      {ehPessoa && !inicial && (
+        <div className="enz-campo">
+          <span className="enz-rotulo" style={{ marginBottom: 12 }}>Foco da jornada</span>
+          <div className="flex gap-3 flex-wrap">
+            {Object.entries(FOCOS_MENTORIA).map(([chave, meta]) => (
+              <BotaoContorno key={chave} ativo={c.focoMentoria === chave} onClick={() => setC({ ...c, focoMentoria: c.focoMentoria === chave ? "" : chave })}>{meta.rotulo}</BotaoContorno>
+            ))}
+          </div>
+          <div className="enz-ajuda">{c.focoMentoria ? FOCOS_MENTORIA[c.focoMentoria].nota : "opcional agora: dá para definir depois, em Mentoria. nenhum foco é padrão."}</div>
+        </div>
+      )}
 
       <div className="enz-campo">
         <span className="enz-rotulo" style={{ marginBottom: 12 }}>Trilhas contratadas</span>

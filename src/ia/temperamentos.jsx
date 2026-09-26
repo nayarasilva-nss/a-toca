@@ -11,7 +11,7 @@ export async function gerarAnaliseTemperamento(cliente, pessoa, cargos) {
 ${ESCOLA_TEMPERAMENTOS}
 ${ESCOLA_LIDERANCA}
 
-${cliente.tipo === "pessoa" ? `JORNADA DE MENTORIA\nMentorado: ${cliente.negocio} (${cliente.segmento})\nA pessoa analisada abaixo é o próprio mentorado ou alguém do entorno que ele lidera.` : `CLIENTE\nNegócio: ${cliente.negocio} (${cliente.segmento})`}
+${cliente.tipo === "pessoa" ? `JORNADA DE MENTORIA\nMentorado: ${cliente.negocio} (${cliente.segmento})\nA pessoa analisada abaixo é o próprio mentorado ou alguém do entorno dele.` : `CLIENTE\nNegócio: ${cliente.negocio} (${cliente.segmento})`}
 
 PESSOA ANALISADA
 Nome/apelido: ${pessoa.nome}
