@@ -1,7 +1,6 @@
 import { NavegacaoModulos } from "../componentes/navegacao.jsx";
 import { BotaoPrimario, ConfirmarAcao } from "../componentes/ui.jsx";
 import { acoesNumeradas, semanaAtualDe } from "../ia/cronograma.jsx";
-import { Organograma } from "../modulos/estrutura.jsx";
 import { CORES } from "../nucleo/base.jsx";
 
 // ─── Header Padrão para Módulos ────────────────────────────────

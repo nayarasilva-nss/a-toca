@@ -1,6 +1,5 @@
 import { LIMITES_LEGAIS, chamarIA, extrairJSON } from "./base.jsx";
 import { blocoCCT } from "./cct.jsx";
-import { Organograma } from "../modulos/estrutura.jsx";
 
 // ─── IA: Descrição de Cargo ─────────────────────────────────────
 

@@ -1,7 +1,6 @@
 import { chamarIA, extrairJSON } from "./base.jsx";
 import { resumoCampo } from "./campo.jsx";
 import { ESCOLA_LIDERANCA, ESCOLA_TEMPERAMENTOS, TEMPERAMENTOS } from "./documentos.jsx";
-import { Organograma } from "../modulos/estrutura.jsx";
 
 // ─── Diagnóstico de Maturidade ──────────────────────────────────
 

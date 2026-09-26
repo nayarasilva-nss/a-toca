@@ -1,58 +1,57 @@
 import { useState, useEffect, useReducer } from "react";
 import { COLECOES, COLECOES_INICIAIS, reduzirColecoes } from "./nucleo/estado.jsx";
 import { Cabecalho } from "./componentes/cabecalho.jsx";
-import { Toast } from "./componentes/ui.jsx";
-import { gerarAlcadas } from "./ia/alcadas.jsx";
-import { comRetentativa } from "./ia/base.jsx";
-import { campoVazio, gerarPlanoAcao, gerarRoteiroEntrevista, gerarRoteiroVisita, resumoCampo } from "./ia/campo.jsx";
-import { gerarDescricaoCargo } from "./ia/cargos.jsx";
-import { analisarCCT } from "./ia/cct.jsx";
-import { conversarPenseira } from "./ia/conselheira.jsx";
-import { acoesNumeradas, distribuirCronograma, parseDataBR, semanaAtualDe } from "./ia/cronograma.jsx";
-import { FRAMEWORK_DIAG, FRAMEWORK_LIDER, FRAMEWORK_PESSOAL, gerarLeituraDiagLider, gerarLeituraDiagnostico, percentualArea } from "./ia/diagnostico.jsx";
-import { CONFIG_DOCS, TEMPERAMENTOS, docVazio } from "./ia/documentos.jsx";
-import { gerarEstrutura } from "./ia/estrutura.jsx";
-import { formatarBR, parseValorBR } from "./ia/financeiro.jsx";
-import { gerarFluxo } from "./ia/fluxo.jsx";
-import { gerarIndicadores } from "./ia/indicadores.jsx";
-import { gerarManual } from "./ia/manual.jsx";
-import { gerarPOP } from "./ia/pop.jsx";
-import { gerarProposta } from "./ia/proposta.jsx";
-import { gerarRelatorio } from "./ia/relatorio.jsx";
-import { gerarAtualizacaoPlano, gerarRitos } from "./ia/ritos.jsx";
-import { gerarInfracoes } from "./ia/tabela.jsx";
-import { gerarAnaliseTemperamento } from "./ia/temperamentos.jsx";
-import { analisarAnomalia, estruturarSessaoMentoria, gerarFichaMoldagem, gerarJornadaMentoria, gerarMetasEngajamento, gerarMetasMentorado, gerarPlanoTreinamento, gerarRelatorioEvolucao, gerarRelatorioTreinamento } from "./ia/treinamentos.jsx";
-import { ImpressaoAlcadas, ModuloAlcadas } from "./modulos/alcadas.jsx";
-import { ModuloAnomalias } from "./modulos/anomalias.jsx";
-import { EditorCampo, ListaCampo } from "./modulos/campo.jsx";
-import { EditorCargo, ImpressaoCargo, ListaCargos, cargoVazio } from "./modulos/cargos.jsx";
-import { ModuloCCT } from "./modulos/cct.jsx";
-import { ModuloPenseira } from "./modulos/conselheira.jsx";
-import { ImpressaoCronograma, ModuloCronograma } from "./modulos/cronograma.jsx";
-import { EditorDiagnostico, ImpressaoDiagnostico, ListaDiagnosticos, diagVazio } from "./modulos/diagnostico.jsx";
-import { EditorDoc, ImpressaoAta, ImpressaoChecklist, ImpressaoPolitica, ListaDocs } from "./modulos/documentos.jsx";
-import { ImpressaoEstrutura, ModuloEstrutura } from "./modulos/estrutura.jsx";
-import { ModuloFinanceiro } from "./modulos/financeiro.jsx";
-import { EditorFluxo, ImpressaoFluxo, ListaFluxos, fluxoVazio } from "./modulos/fluxos.jsx";
-import { ModuloGestao } from "./modulos/gestao.jsx";
-import { ImpressaoIndicadores, ModuloIndicadores } from "./modulos/indicadores.jsx";
-import { ImpressaoManual, ModuloManual } from "./modulos/manual.jsx";
-import { ModuloMentoria } from "./modulos/mentoria.jsx";
-import { ModuloPainel } from "./modulos/painel.jsx";
-import { EditorPop, ImpressaoPop, ListaPops, popVazio } from "./modulos/pops.jsx";
-import { EditorProposta, ImpressaoProposta, ListaPropostas, propostaVazia } from "./modulos/propostas.jsx";
-import { ImpressaoRelMentoria, ModuloRelMentoria } from "./modulos/relMentoria.jsx";
-import { ImpressaoRelatorio, ModuloRelatorio } from "./modulos/relatorio.jsx";
-import { ImpressaoRitos, ModuloRitos } from "./modulos/ritos.jsx";
-import { ImpressaoTabela, ModuloTabela } from "./modulos/tabela.jsx";
-import { EditorPessoa, ImpressaoPessoa, ListaPessoas, pessoaVazia } from "./modulos/temperamentos.jsx";
-import { ImpressaoCertificados, ImpressaoRelTreinamento, ImpressaoTreinamento, ModuloTreinamentos, mentoriaVazia, treinamentoVazio } from "./modulos/treinamentos.jsx";
-import { CORES, STATUS_FRENTE, uid } from "./nucleo/base.jsx";
+import { acoesNumeradas, parseDataBR, semanaAtualDe } from "./ia/cronograma.jsx";
+import { FRAMEWORK_LIDER, FRAMEWORK_PESSOAL } from "./ia/diagnostico.jsx";
+import { ImpressaoAlcadas } from "./modulos/alcadas.jsx";
+import { ImpressaoCargo } from "./modulos/cargos.jsx";
+import { ImpressaoCronograma } from "./modulos/cronograma.jsx";
+import { ImpressaoDiagnostico } from "./modulos/diagnostico.jsx";
+import { ImpressaoAta, ImpressaoChecklist, ImpressaoPolitica } from "./modulos/documentos.jsx";
+import { ImpressaoEstrutura } from "./modulos/estrutura.jsx";
+import { ImpressaoFluxo } from "./modulos/fluxos.jsx";
+import { ImpressaoIndicadores } from "./modulos/indicadores.jsx";
+import { ImpressaoManual } from "./modulos/manual.jsx";
+import { ImpressaoPop } from "./modulos/pops.jsx";
+import { ImpressaoProposta } from "./modulos/propostas.jsx";
+import { ImpressaoRelMentoria } from "./modulos/relMentoria.jsx";
+import { ImpressaoRelatorio } from "./modulos/relatorio.jsx";
+import { ImpressaoRitos } from "./modulos/ritos.jsx";
+import { ImpressaoTabela } from "./modulos/tabela.jsx";
+import { ImpressaoPessoa } from "./modulos/temperamentos.jsx";
+import { ImpressaoCertificados, ImpressaoRelTreinamento, ImpressaoTreinamento, mentoriaVazia } from "./modulos/treinamentos.jsx";
+import { CORES, uid } from "./nucleo/base.jsx";
 import { stGet, stSet } from "./nucleo/persistencia.jsx";
 import { gerarPdfDoNo } from "./pdf/motor.jsx";
 import { FormCliente } from "./telas/clientes.jsx";
-import { DashboardInicial, HubCliente, ListaClientes } from "./telas/hub.jsx";
+import { DashboardInicial, ListaClientes } from "./telas/hub.jsx";
+import { TelaHub } from "./paginas/hub.jsx";
+import { TelaGestao } from "./paginas/gestao.jsx";
+import { TelaConselheira } from "./paginas/conselheira.jsx";
+import { TelaCct } from "./paginas/cct.jsx";
+import { TelaEstrutura } from "./paginas/estrutura.jsx";
+import { TelaManual } from "./paginas/manual.jsx";
+import { TelaPops } from "./paginas/pops.jsx";
+import { TelaRelatorio } from "./paginas/relatorio.jsx";
+import { TelaFinanceiro } from "./paginas/financeiro.jsx";
+import { TelaCronograma } from "./paginas/cronograma.jsx";
+import { TelaPropostas } from "./paginas/propostas.jsx";
+import { TelaDiagnostico } from "./paginas/diagnostico.jsx";
+import { TelaTemperamentos } from "./paginas/temperamentos.jsx";
+import { TelaDocumentos } from "./paginas/documentos.jsx";
+import { TelaRitos } from "./paginas/ritos.jsx";
+import { TelaIndicadores } from "./paginas/indicadores.jsx";
+import { TelaAlcadas } from "./paginas/alcadas.jsx";
+import { TelaAnomalias } from "./paginas/anomalias.jsx";
+import { TelaPainel } from "./paginas/painel.jsx";
+import { TelaRelMentoria } from "./paginas/relMentoria.jsx";
+import { TelaDiagLider } from "./paginas/diagLider.jsx";
+import { TelaTreinamentos } from "./paginas/treinamentos.jsx";
+import { TelaMentoria } from "./paginas/mentoria.jsx";
+import { TelaCampo } from "./paginas/campo.jsx";
+import { TelaFluxos } from "./paginas/fluxos.jsx";
+import { TelaTabela } from "./paginas/tabela.jsx";
+import { TelaCargos } from "./paginas/cargos.jsx";
 
 // ─── App ────────────────────────────────────────────────────────
 
@@ -66,26 +65,26 @@ export default function App() {
   const [colecoes, despachar] = useReducer(reduzirColecoes, COLECOES_INICIAIS);
   const atualizar = (colecao) => (valor) => despachar({ tipo: "atualizar", colecao, valor });
   const tabelas = colecoes.tabelas, setTabelas = atualizar("tabelas");
-  const cargosPorCliente = colecoes.cargos, setCargosPorCliente = atualizar("cargos");
+  const cargosPorCliente = colecoes.cargos;
   const gestaoPorCliente = colecoes.gestao, setGestaoPorCliente = atualizar("gestao");
-  const estruturaPorCliente = colecoes.estrutura, setEstruturaPorCliente = atualizar("estrutura");
-  const manualPorCliente = colecoes.manual, setManualPorCliente = atualizar("manual");
-  const cctPorCliente = colecoes.cct, setCctPorCliente = atualizar("cct");
+  const estruturaPorCliente = colecoes.estrutura;
+  const manualPorCliente = colecoes.manual;
+  const cctPorCliente = colecoes.cct;
   const penseiraPorCliente = colecoes.penseira, setPenseiraPorCliente = atualizar("penseira");
-  const popsPorCliente = colecoes.pops, setPopsPorCliente = atualizar("pops");
-  const fluxosPorCliente = colecoes.fluxos, setFluxosPorCliente = atualizar("fluxos");
-  const campoPorCliente = colecoes.campo, setCampoPorCliente = atualizar("campo");
-  const treinamentosPorCliente = colecoes.treinamentos, setTreinamentosPorCliente = atualizar("treinamentos");
+  const popsPorCliente = colecoes.pops;
+  const fluxosPorCliente = colecoes.fluxos;
+  const campoPorCliente = colecoes.campo;
+  const treinamentosPorCliente = colecoes.treinamentos;
   const mentoriaPorCliente = colecoes.mentoria, setMentoriaPorCliente = atualizar("mentoria");
-  const diagsLiderPorCliente = colecoes.diagsLider, setDiagsLiderPorCliente = atualizar("diagsLider");
+  const diagsLiderPorCliente = colecoes.diagsLider;
   // RelMentoria agora é integrado em mentoriaPorCliente[id].relatorio
-  const anomaliasPorCliente = colecoes.anomalias, setAnomaliasPorCliente = atualizar("anomalias");
-  const painelPorCliente = colecoes.painel, setPainelPorCliente = atualizar("painel");
-  const alcadasPorCliente = colecoes.alcadas, setAlcadasPorCliente = atualizar("alcadas");
-  const ritosPorCliente = colecoes.ritos, setRitosPorCliente = atualizar("ritos");
-  const indicadoresPorCliente = colecoes.indicadores, setIndicadoresPorCliente = atualizar("indicadores");
+  const anomaliasPorCliente = colecoes.anomalias;
+  const painelPorCliente = colecoes.painel;
+  const alcadasPorCliente = colecoes.alcadas;
+  const ritosPorCliente = colecoes.ritos;
+  const indicadoresPorCliente = colecoes.indicadores;
   const [docsExtras, setDocsExtras] = useState({ politicas: {}, checklists: {}, atas: {} });
-  const pessoasPorCliente = colecoes.pessoas, setPessoasPorCliente = atualizar("pessoas");
+  const pessoasPorCliente = colecoes.pessoas;
   const diagsPorCliente = colecoes.diags, setDiagsPorCliente = atualizar("diags");
   const propostasPorCliente = colecoes.propostas, setPropostasPorCliente = atualizar("propostas");
   const relatoriosPorCliente = colecoes.relatorios, setRelatoriosPorCliente = atualizar("relatorios");
@@ -138,6 +137,23 @@ export default function App() {
     }
   };
 
+  const salvarColecao = async (colecao, clienteId, valor) => {
+    despachar({ tipo: "atualizar", colecao, valor: (prev) => ({ ...prev, [clienteId]: valor }) });
+    await stSet(`toca:${COLECOES[colecao].chave}:${clienteId}`, valor);
+  };
+
+  const executarGeracao = async (fn) => {
+    setGerando(true);
+    setErro(null);
+    try {
+      return await fn();
+    } catch (e) {
+      setErro(e.message || "erro desconhecido");
+    } finally {
+      setGerando(false);
+    }
+  };
+
   const abrirCliente = async (id) => {
     await carregarDadosCliente(id);
     setErro(null);
@@ -159,216 +175,9 @@ export default function App() {
     setTela({ nome: "cliente", id: tela.id });
   };
 
-  const gerarTabela = async (cliente) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const itens = await comRetentativa(() => gerarInfracoes(cliente, pontosCCTDe(cliente.id), campoPorCliente[cliente.id] || []));
-      setTabelas((prev) => ({ ...prev, [cliente.id]: itens }));
-      await stSet(`toca:tabela:${cliente.id}`, itens);
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const mudarTabela = async (clienteId, nova) => {
-    setTabelas((prev) => ({ ...prev, [clienteId]: nova }));
-    await stSet(`toca:tabela:${clienteId}`, nova);
-  };
-
-  const mudarCargos = async (clienteId, novos) => {
-    setCargosPorCliente((prev) => ({ ...prev, [clienteId]: novos }));
-    await stSet(`toca:cargos:${clienteId}`, novos);
-  };
-
-  const gerarCargo = async (cliente, cargo) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const cargos = cargosPorCliente[cliente.id] || [];
-      const gerado = await comRetentativa(() => gerarDescricaoCargo(cliente, cargo, cargos.filter((c) => c.id !== cargo.id), pontosCCTDe(cliente.id), estruturaPorCliente[cliente.id] || [], (campoPorCliente[cliente.id] || []).filter((r) => r.tipo === "entrevista")));
-      const atualizado = { ...cargo, ...gerado };
-      await mudarCargos(cliente.id, cargos.map((c) => (c.id === cargo.id ? atualizado : c)));
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const mudarGestao = async (clienteId, nova) => {
-    setGestaoPorCliente((prev) => ({ ...prev, [clienteId]: nova }));
-    await stSet(`toca:gestao:${clienteId}`, nova);
-  };
-
-  const gerarPlano = async (cliente) => {
-    const gestao = gestaoPorCliente[cliente.id] || { briefing: "", frentes: [] };
-    setGerando(true);
-    setErro(null);
-    try {
-      const frentes = await comRetentativa(() => gerarPlanoAcao(cliente, gestao.briefing, pessoasPorCliente[cliente.id] || [], resumoCampo(campoPorCliente[cliente.id] || [], "riscos")));
-      await mudarGestao(cliente.id, { ...gestao, frentes });
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const mudarEstrutura = async (clienteId, novas) => {
-    setEstruturaPorCliente((prev) => ({ ...prev, [clienteId]: novas }));
-    await stSet(`toca:estrutura:${clienteId}`, novas);
-  };
-
-  const gerarOrganograma = async (cliente) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const posicoes = await comRetentativa(() => gerarEstrutura(cliente, cargosPorCliente[cliente.id] || [], (campoPorCliente[cliente.id] || []).filter((r) => r.tipo === "entrevista")));
-      await mudarEstrutura(cliente.id, posicoes);
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const mudarManual = async (clienteId, novas) => {
-    setManualPorCliente((prev) => ({ ...prev, [clienteId]: novas }));
-    await stSet(`toca:manual:${clienteId}`, novas);
-  };
-
-  const gerarManualCliente = async (cliente) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const secoes = await comRetentativa(() => gerarManual(cliente, pontosCCTDe(cliente.id), docsDe("politicas", cliente.id), estruturaPorCliente[cliente.id] || [], campoPorCliente[cliente.id] || []));
-      await mudarManual(cliente.id, secoes);
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const mudarCCT = async (clienteId, nova) => {
-    setCctPorCliente((prev) => ({ ...prev, [clienteId]: nova }));
-    await stSet(`toca:cct:${clienteId}`, nova);
-  };
-
-  const analisarCCTCliente = async (cliente, nomeArquivo, base64) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const atual = cctPorCliente[cliente.id] || { nomeArquivo: "", dataAnalise: "", documentos: [], pontos: [] };
-      const pontos = await analisarCCT(cliente, base64, atual.pontos || []);
-      const hoje = new Date().toLocaleDateString("pt-BR");
-      const documentos = [...(atual.documentos || []), { id: uid(), nomeArquivo, dataAnalise: hoje }];
-      await mudarCCT(cliente.id, { nomeArquivo, dataAnalise: hoje, documentos, pontos });
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
+  const mudarGestao = (clienteId, nova) => salvarColecao("gestao", clienteId, nova);
 
   const pontosCCTDe = (clienteId) => (cctPorCliente[clienteId] && cctPorCliente[clienteId].pontos) || [];
-
-  const enviarPenseira = async (cliente, textoUsuario) => {
-    const historicoAtual = penseiraPorCliente[cliente.id] || [];
-    const comPergunta = [...historicoAtual, { role: "user", content: textoUsuario }];
-    setPenseiraPorCliente((prev) => ({ ...prev, [cliente.id]: comPergunta }));
-    setGerando(true);
-    setErro(null);
-    try {
-      const gestao = gestaoPorCliente[cliente.id] || { frentes: [] };
-      const diags = diagsPorCliente[cliente.id] || [];
-      const ultimoDiag = diags.length ? diags[diags.length - 1] : null;
-      const linhaDiagPan = ultimoDiag
-        ? `Diagnóstico (${ultimoDiag.data}): ${FRAMEWORK_DIAG.map((a, i) => {
-            const p = percentualArea(ultimoDiag.notas, i);
-            return p === null ? null : `${a.area} ${p}%`;
-          }).filter(Boolean).join(", ")}${ultimoDiag.criticos ? ` | críticos: ${ultimoDiag.criticos.split("\n").join("; ")}` : ""}`
-        : "Diagnóstico: não realizado";
-      const semPan = semanaAtualDe(gestao.inicio, Number(gestao.duracaoSemanas) || 0);
-      const atrasadasPan = semPan
-        ? acoesNumeradas(gestao.frentes || []).filter((x) => x.acao.semana && !x.acao.feita && x.acao.semana < semPan)
-        : [];
-      const linhaCrono = semPan
-        ? `Cronograma: semana ${semPan}${gestao.duracaoSemanas ? ` de ${gestao.duracaoSemanas}` : ""}${atrasadasPan.length ? ` | atrasadas: ${atrasadasPan.map((x) => x.acao.texto).join("; ")}` : " | sem atrasos"}`
-        : "Cronograma: não iniciado";
-      const inv = [
-        tabelas[cliente.id] ? `tabela disciplinar (${tabelas[cliente.id].length})` : null,
-        (cargosPorCliente[cliente.id] || []).length ? `${cargosPorCliente[cliente.id].length} cargos` : null,
-        (estruturaPorCliente[cliente.id] || []).length ? `organograma (${estruturaPorCliente[cliente.id].length} posições)` : null,
-        (manualPorCliente[cliente.id] || []).length ? `manual (${manualPorCliente[cliente.id].length} seções)` : null,
-        (popsPorCliente[cliente.id] || []).length ? `${popsPorCliente[cliente.id].length} POPs` : null,
-        (fluxosPorCliente[cliente.id] || []).length ? `${fluxosPorCliente[cliente.id].length} fluxos` : null,
-        ((alcadasPorCliente[cliente.id] || {}).itens || []).length ? `alçadas (${alcadasPorCliente[cliente.id].itens.length})` : null,
-        ((ritosPorCliente[cliente.id] || {}).itens || []).length ? `ritos (${ritosPorCliente[cliente.id].itens.length})` : null,
-        ((indicadoresPorCliente[cliente.id] || {}).itens || []).length ? `indicadores (${indicadoresPorCliente[cliente.id].itens.length})` : null,
-        docsDe("politicas", cliente.id).length ? `políticas (${docsDe("politicas", cliente.id).length})` : null,
-        docsDe("checklists", cliente.id).length ? `checklists (${docsDe("checklists", cliente.id).length})` : null,
-        docsDe("atas", cliente.id).length ? `atas (${docsDe("atas", cliente.id).length})` : null,
-        (campoPorCliente[cliente.id] || []).length ? `trabalho de campo (${(campoPorCliente[cliente.id] || []).filter((r) => r.tipo === "visita").length} visitas, ${(campoPorCliente[cliente.id] || []).filter((r) => r.tipo === "entrevista").length} entrevistas, ${(campoPorCliente[cliente.id] || []).filter((r) => r.tipo === "turno").length} turnos)` : null,
-        (treinamentosPorCliente[cliente.id] || []).length ? `treinamentos (${(treinamentosPorCliente[cliente.id] || []).filter((t) => t.status === "realizado").length} realizados de ${(treinamentosPorCliente[cliente.id] || []).length})` : null,
-        ((mentoriaPorCliente[cliente.id] || {}).encontros || []).length ? `mentoria (${((mentoriaPorCliente[cliente.id] || {}).encontros || []).filter((e) => e.realizada).length}/${((mentoriaPorCliente[cliente.id] || {}).encontros || []).length} encontros)` : null,
-      ].filter(Boolean).join(", ") || "nenhum documento produzido ainda";
-      const riscosCampoPan = resumoCampo(campoPorCliente[cliente.id] || [], "riscos");
-      const linhaTime = (pessoasPorCliente[cliente.id] || [])
-        .filter((p) => p.nome)
-        .map((p) => `${p.nome}${p.cargo ? ` (${p.cargo})` : ""}${p.dominante && TEMPERAMENTOS[p.dominante] ? ` — ${TEMPERAMENTOS[p.dominante].rotulo}` : ""}${p.contratante ? " [contratante]" : ""}`)
-        .join("; ");
-      const linhaMentoria = (mentoriaPorCliente[cliente.id] && (mentoriaPorCliente[cliente.id].encontros || []).length)
-        ? `Mentoria: ${(mentoriaPorCliente[cliente.id].encontros || []).filter((e) => e.realizada).length}/${mentoriaPorCliente[cliente.id].encontros.length} encontros; objetivos: ${mentoriaPorCliente[cliente.id].objetivos || "nao declarados"}; proximos temas: ${(mentoriaPorCliente[cliente.id].encontros || []).filter((e) => !e.realizada).slice(0, 3).map((e) => e.tema).join(", ") || "nenhum"}; atividades pra casa pendentes: ${(mentoriaPorCliente[cliente.id].encontros || []).filter((e) => e.realizada).flatMap((e) => (e.atividades || []).filter((a) => !a.feita)).map((a) => a.texto).join("; ") || "nenhuma"}; praticas moldadoras: ${((mentoriaPorCliente[cliente.id].praticas || []).map((p) => `${p.texto} (${p.status})`).join("; ")) || "nenhuma prescrita"}; virtude central: ${(mentoriaPorCliente[cliente.id].moldagem && mentoriaPorCliente[cliente.id].moldagem.virtudeCentral && mentoriaPorCliente[cliente.id].moldagem.virtudeCentral.nome) || "nao definida"}; diario da virtude: ${((mentoriaPorCliente[cliente.id].virtudes || []).filter((v) => v.nota).slice(0, 5).map((v) => `${v.data}: ${v.nota}`).join("; ")) || "sem registros"}`
-        : null;
-      const panorama = [
-        cliente.tipo === "pessoa" ? `ATENCAO: este cliente e uma PESSOA FISICA (mentorado de lideranca), nao uma empresa. Trate as perguntas no contexto de mentoria individual.` : null,
-        linhaMentoria,
-        linhaDiagPan,
-        linhaCrono,
-        `Documentos produzidos: ${inv}`,
-        linhaTime ? `Time mapeado: ${linhaTime}` : null,
-        riscosCampoPan ? `Riscos observados em campo: ${riscosCampoPan.slice(0, 500)}` : null,
-      ].filter(Boolean).join("\n");
-      const resposta = await conversarPenseira(cliente, pontosCCTDe(cliente.id), gestao.frentes, comPergunta, pessoasPorCliente[cliente.id] || [], panorama);
-      const completo = [...comPergunta, { role: "assistant", content: resposta }];
-      setPenseiraPorCliente((prev) => ({ ...prev, [cliente.id]: completo }));
-      await stSet(`toca:penseira:${cliente.id}`, completo);
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-      await stSet(`toca:penseira:${cliente.id}`, comPergunta);
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const limparPenseira = async (clienteId) => {
-    setPenseiraPorCliente((prev) => ({ ...prev, [clienteId]: [] }));
-    await stSet(`toca:penseira:${clienteId}`, []);
-  };
-
-  const mudarPops = async (clienteId, novos) => {
-    setPopsPorCliente((prev) => ({ ...prev, [clienteId]: novos }));
-    await stSet(`toca:pops:${clienteId}`, novos);
-  };
-
-  const gerarPopCliente = async (cliente, pop) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const pops = popsPorCliente[cliente.id] || [];
-      const gerado = await comRetentativa(() => gerarPOP(cliente, pop, cargosPorCliente[cliente.id] || [], pontosCCTDe(cliente.id), fluxosPorCliente[cliente.id] || [], campoPorCliente[cliente.id] || []));
-      const atualizado = { ...pop, ...gerado };
-      await mudarPops(cliente.id, pops.map((p) => (p.id === pop.id ? atualizado : p)));
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
 
   const docsDe = (tipo, clienteId) => docsExtras[tipo][clienteId] || [];
 
@@ -377,177 +186,7 @@ export default function App() {
     await stSet(`toca:${tipo}:${clienteId}`, novos);
   };
 
-  const gerarDocCliente = async (tipo, cliente, doc) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const gerado = await CONFIG_DOCS[tipo].gerar(cliente, doc, pontosCCTDe(cliente.id), { pops: popsPorCliente[cliente.id] || [], campo: campoPorCliente[cliente.id] || [] });
-      const docs = docsDe(tipo, cliente.id);
-      await mudarDocs(tipo, cliente.id, docs.map((d) => (d.id === doc.id ? { ...doc, ...gerado } : d)));
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const mudarPessoas = async (clienteId, novas) => {
-    setPessoasPorCliente((prev) => ({ ...prev, [clienteId]: novas }));
-    await stSet(`toca:temperamentos:${clienteId}`, novas);
-  };
-
-  const analisarPessoa = async (cliente, pessoa) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const pessoas = pessoasPorCliente[cliente.id] || [];
-      const gerado = await gerarAnaliseTemperamento(cliente, pessoa, cargosPorCliente[cliente.id] || []);
-      const atualizada = { ...pessoa, ...gerado };
-      await mudarPessoas(cliente.id, pessoas.map((p) => (p.id === pessoa.id ? atualizada : p)));
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const mudarDiags = async (clienteId, novos) => {
-    setDiagsPorCliente((prev) => ({ ...prev, [clienteId]: novos }));
-    await stSet(`toca:diagnosticos:${clienteId}`, novos);
-  };
-
-  const gerarLeituraDiag = async (cliente, diag) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const gerado = await gerarLeituraDiagnostico(cliente, diag.notas, gestaoPorCliente[cliente.id], campoPorCliente[cliente.id] || []);
-      const diags = diagsPorCliente[cliente.id] || [];
-      await mudarDiags(cliente.id, diags.map((d) => (d.id === diag.id ? { ...diag, ...gerado } : d)));
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const criarFrentesDeAreas = async (cliente, areas) => {
-    const gestao = gestaoPorCliente[cliente.id] || { briefing: "", frentes: [] };
-    const existentes = new Set((gestao.frentes || []).map((f) => f.nome.toLowerCase()));
-    const novas = areas
-      .filter((a) => !existentes.has(a.toLowerCase()))
-      .map((a) => ({ id: uid(), nome: a, status: "nao_iniciada", escopo: "Origem: diagnóstico de maturidade (área abaixo de 50%)", acoes: [] }));
-    if (novas.length > 0) {
-      await mudarGestao(cliente.id, { ...gestao, frentes: [...(gestao.frentes || []), ...novas] });
-    }
-    setTela({ nome: "gestao", id: cliente.id });
-  };
-
-  const mudarPropostas = async (clienteId, novas) => {
-    setPropostasPorCliente((prev) => ({ ...prev, [clienteId]: novas }));
-    await stSet(`toca:propostas:${clienteId}`, novas);
-  };
-
-  const gerarPropostaCliente = async (cliente, prop) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const gerado = await comRetentativa(() => gerarProposta(
-        cliente,
-        prop,
-        gestaoPorCliente[cliente.id] || { briefing: "", frentes: [] },
-        diagsPorCliente[cliente.id] || [],
-        pessoasPorCliente[cliente.id] || [],
-        campoPorCliente[cliente.id] || [],
-        mentoriaPorCliente[cliente.id] || null
-      ));
-      const props = propostasPorCliente[cliente.id] || [];
-      await mudarPropostas(cliente.id, props.map((p) => (p.id === prop.id ? { ...prop, ...gerado } : p)));
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const distribuirCronogramaCliente = async (cliente) => {
-    const gestao = gestaoPorCliente[cliente.id] || { briefing: "", frentes: [] };
-    setGerando(true);
-    setErro(null);
-    try {
-      const mapa = await distribuirCronograma(cliente, gestao);
-      const novasFrentes = (gestao.frentes || []).map((f) => ({
-        ...f,
-        acoes: (f.acoes || []).map((a) => (mapa[a.id] ? { ...a, semana: mapa[a.id] } : a)),
-      }));
-      await mudarGestao(cliente.id, { ...gestao, frentes: novasFrentes });
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const mudarRelatorios = async (clienteId, novos) => {
-    setRelatoriosPorCliente((prev) => ({ ...prev, [clienteId]: novos }));
-    await stSet(`toca:relatorios:${clienteId}`, novos);
-  };
-
-  const gerarRelatorioCliente = async (cliente, rel) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const gestao = gestaoPorCliente[cliente.id] || { briefing: "", frentes: [] };
-      const frentes = gestao.frentes || [];
-      const diags = diagsPorCliente[cliente.id] || [];
-      const primeiro = diags.length > 1 ? diags[0] : null;
-      const ultimo = diags.length ? diags[diags.length - 1] : null;
-      const linhaDiag = (d) =>
-        FRAMEWORK_DIAG.map((a, i) => {
-          const p = percentualArea(d.notas, i);
-          return p === null ? null : `${a.area} ${p}%`;
-        }).filter(Boolean).join(", ");
-      const acoes = acoesNumeradas(frentes);
-      const feitas = acoes.filter((x) => x.acao.feita).length;
-      const docsContagem = [
-        tabelas[cliente.id] ? `tabela disciplinar (${tabelas[cliente.id].length} infrações)` : null,
-        (cargosPorCliente[cliente.id] || []).length ? `${cargosPorCliente[cliente.id].length} descrições de cargo` : null,
-        (estruturaPorCliente[cliente.id] || []).length ? `organograma (${estruturaPorCliente[cliente.id].length} posições)` : null,
-        (manualPorCliente[cliente.id] || []).length ? `manual do colaborador (${manualPorCliente[cliente.id].length} seções)` : null,
-        (popsPorCliente[cliente.id] || []).length ? `${popsPorCliente[cliente.id].length} POPs` : null,
-        docsDe("politicas", cliente.id).length ? `${docsDe("politicas", cliente.id).length} políticas internas` : null,
-        docsDe("checklists", cliente.id).length ? `${docsDe("checklists", cliente.id).length} checklists` : null,
-        (fluxosPorCliente[cliente.id] || []).length ? `${fluxosPorCliente[cliente.id].length} desenhos de processo` : null,
-        ((alcadasPorCliente[cliente.id] || {}).itens || []).length ? `matriz de alçadas (${alcadasPorCliente[cliente.id].itens.length} decisões)` : null,
-        ((ritosPorCliente[cliente.id] || {}).itens || []).length ? `${ritosPorCliente[cliente.id].itens.length} ritos de gestão` : null,
-        ((indicadoresPorCliente[cliente.id] || {}).itens || []).length ? `painel com ${indicadoresPorCliente[cliente.id].itens.length} indicadores` : null,
-        (campoPorCliente[cliente.id] || []).length ? `trabalho de campo: ${(campoPorCliente[cliente.id] || []).filter((r) => r.tipo === "visita").length} visita(s) técnica(s), ${(campoPorCliente[cliente.id] || []).filter((r) => r.tipo === "entrevista").length} entrevista(s) de função, ${(campoPorCliente[cliente.id] || []).filter((r) => r.tipo === "turno").length} turno(s) acompanhado(s)` : null,
-        (treinamentosPorCliente[cliente.id] || []).filter((t) => t.status === "realizado").length ? `${(treinamentosPorCliente[cliente.id] || []).filter((t) => t.status === "realizado").length} treinamento(s) realizado(s): ${(treinamentosPorCliente[cliente.id] || []).filter((t) => t.status === "realizado").map((t) => t.tema).join(", ")}` : null,
-        (pessoasPorCliente[cliente.id] || []).length ? `${pessoasPorCliente[cliente.id].length} pessoas mapeadas por temperamento` : null,
-      ].filter(Boolean).join("; ") || "nenhum documento registrado";
-
-      const resumo = [
-        `Frentes: ${frentes.map((f) => `${f.nome} (${STATUS_FRENTE[f.status] ? STATUS_FRENTE[f.status].rotulo : f.status})`).join("; ") || "nenhuma"}`,
-        `Ações do plano: ${feitas}/${acoes.length} concluídas`,
-        primeiro ? `Diagnóstico inicial (${primeiro.data}): ${linhaDiag(primeiro)}` : null,
-        ultimo ? `Diagnóstico ${primeiro ? "final" : "único"} (${ultimo.data}): ${linhaDiag(ultimo)}` : "Diagnóstico: não realizado",
-        `Documentos produzidos: ${docsContagem}`,
-        `Atas de reunião registradas: ${docsDe("atas", cliente.id).length}`,
-      ].filter(Boolean).join("\n");
-
-      const gerado = await comRetentativa(() => gerarRelatorio(cliente, rel, resumo));
-      const rels = relatoriosPorCliente[cliente.id] || [];
-      await mudarRelatorios(cliente.id, rels.map((r) => (r.id === rel.id ? { ...rel, ...gerado } : r)));
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const mudarFinanceiro = async (clienteId, novo) => {
-    setFinanceiroPorCliente((prev) => ({ ...prev, [clienteId]: novo }));
-    await stSet(`toca:financeiro:${clienteId}`, novo);
-  };
+  const mudarPessoas = (clienteId, novas) => salvarColecao("pessoas", clienteId, novas);
 
   const TIPOS_BACKUP = ["tabela", "cargos", "gestao", "estrutura", "manual", "cct", "penseira", "pops", "fluxos", "alcadas", "ritos", "indicadores", "politicas", "checklists", "atas", "temperamentos", "diagnosticos", "propostas", "relatorios", "financeiro", "campo", "treinamentos", "mentoria", "diagslider", "relmentoria", "anomalias", "painel"];
 
@@ -578,11 +217,6 @@ export default function App() {
       if (p) setPrecificacao(p);
     })();
   }, []);
-
-  const mudarPrecificacao = async (nova) => {
-    setPrecificacao(nova);
-    await stSet("toca:precificacao", nova);
-  };
 
   const importarBackup = async (arquivo) => {
     try {
@@ -622,82 +256,6 @@ export default function App() {
       } catch {}
     }
     if (tela.id === clienteId) setTela({ nome: "home" });
-  };
-
-  const mudarTreinamentos = async (clienteId, novos) => {
-    setTreinamentosPorCliente((prev) => ({ ...prev, [clienteId]: novos }));
-    await stSet(`toca:treinamentos:${clienteId}`, novos);
-  };
-
-  const gerarTreinamentoCliente = async (cliente, trein) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const frente = ((gestaoPorCliente[cliente.id] || {}).frentes || []).find((f) => f.id === trein.frenteId) || null;
-      const gerado = await comRetentativa(() => gerarPlanoTreinamento(cliente, trein, frente, pessoasPorCliente[cliente.id] || [], campoPorCliente[cliente.id] || []));
-      const lista = treinamentosPorCliente[cliente.id] || [];
-      await mudarTreinamentos(cliente.id, lista.map((t) => (t.id === trein.id ? { ...trein, ...gerado } : t)));
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const mudarDiagsLider = async (clienteId, novos) => {
-    setDiagsLiderPorCliente((prev) => ({ ...prev, [clienteId]: novos }));
-    await stSet(`toca:diagslider:${clienteId}`, novos);
-  };
-
-  const gerarLeituraLiderCliente = async (cliente, diag) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const mentoria = mentoriaPorCliente[cliente.id] || {};
-      const mentorado = (pessoasPorCliente[cliente.id] || []).find((p) => p.id === mentoria.mentoradoId) || (pessoasPorCliente[cliente.id] || []).find((p) => p.contratante) || null;
-      const gerado = await comRetentativa(() => gerarLeituraDiagLider(cliente, diag.notas, mentoria, mentorado));
-      const lista = diagsLiderPorCliente[cliente.id] || [];
-      await mudarDiagsLider(cliente.id, lista.map((d) => (d.id === diag.id ? { ...diag, ...gerado } : d)));
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const mudarAnomalias = async (clienteId, novas) => {
-    setAnomaliasPorCliente((prev) => ({ ...prev, [clienteId]: novas }));
-    await stSet(`toca:anomalias:${clienteId}`, novas);
-  };
-
-  const analisarAnomaliaCliente = async (cliente, anomalia) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const r = await comRetentativa(() => analisarAnomalia(cliente, anomalia, popsPorCliente[cliente.id] || [], fluxosPorCliente[cliente.id] || []));
-      await mudarAnomalias(cliente.id, (anomaliasPorCliente[cliente.id] || []).map((a) => (a.id === anomalia.id ? { ...a, ...r } : a)));
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const enviarAcaoAnomalia = async (cliente, anomalia) => {
-    const g = gestaoPorCliente[cliente.id];
-    if (!g || !anomalia.frenteDestino || !anomalia.acao) return;
-    const novasFrentes = (g.frentes || []).map((f) =>
-      f.id === anomalia.frenteDestino
-        ? { ...f, acoes: [...(f.acoes || []), { id: uid(), texto: anomalia.acao, porque: `Anomalia de ${anomalia.data}: ${anomalia.fato}`.slice(0, 120), responsavel: anomalia.responsavelSugerido || "", feita: false }] }
-        : f
-    );
-    await mudarGestao(cliente.id, { ...g, frentes: novasFrentes });
-    await mudarAnomalias(cliente.id, (anomaliasPorCliente[cliente.id] || []).map((a) => (a.id === anomalia.id ? { ...a, status: "tratada" } : a)));
-  };
-
-  const mudarPainel = async (clienteId, novo) => {
-    setPainelPorCliente((prev) => ({ ...prev, [clienteId]: novo }));
-    await stSet(`toca:painel:${clienteId}`, novo);
   };
 
   const dadosPainelDe = (clienteId) => {
@@ -744,238 +302,6 @@ export default function App() {
       ultimaAta: atas.length ? atas[atas.length - 1].data : null,
       alertas,
     };
-  };
-
-  const mudarRelMentoria = async (clienteId, novo) => {
-    setMentoriaPorCliente((prev) => ({ ...prev, [clienteId]: { ...(prev[clienteId] || mentoriaVazia()), relatorio: novo } }));
-    await stSet(`toca:relmentoria:${clienteId}`, novo);
-  };
-
-  const gerarRelMentoriaCliente = async (cliente) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const mentoria = mentoriaPorCliente[cliente.id] || { encontros: [] };
-      const mentorado = (pessoasPorCliente[cliente.id] || []).find((p) => p.id === mentoria.mentoradoId) || null;
-      const gerado = await comRetentativa(() => gerarRelatorioEvolucao(cliente, mentoria, mentorado, diagsLiderPorCliente[cliente.id] || []));
-      await mudarRelMentoria(cliente.id, { ...(mentoriaPorCliente[cliente.id]?.relatorio || {}), ...gerado });
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const gerarMetasCliente = async (cliente, prop) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const metas = cliente.tipo === "pessoa"
-        ? await comRetentativa(() => gerarMetasMentorado(cliente, mentoriaPorCliente[cliente.id], diagsLiderPorCliente[cliente.id] || []))
-        : await comRetentativa(() => gerarMetasEngajamento(cliente, diagsPorCliente[cliente.id] || [], resumoCampo(campoPorCliente[cliente.id] || [], "riscos"), pontosCCTDe(cliente.id)));
-      const lista = propostasPorCliente[cliente.id] || [];
-      const existentes = (prop.metas || []).filter((m) => m.objetivo);
-      await mudarPropostas(cliente.id, lista.map((p) => (p.id === prop.id ? { ...prop, metas: [...existentes, ...metas] } : p)));
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const gerarRelTreinamentoCliente = async (cliente, trein) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const gerado = await comRetentativa(() => gerarRelatorioTreinamento(cliente, trein));
-      const lista = treinamentosPorCliente[cliente.id] || [];
-      await mudarTreinamentos(cliente.id, lista.map((t) => (t.id === trein.id ? { ...trein, ...gerado } : t)));
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const mudarMentoria = async (clienteId, nova) => {
-    setMentoriaPorCliente((prev) => ({ ...prev, [clienteId]: nova }));
-    await stSet(`toca:mentoria:${clienteId}`, nova);
-  };
-
-  const gerarJornadaCliente = async (cliente) => {
-    const mentoria = mentoriaPorCliente[cliente.id] || mentoriaVazia();
-    setGerando(true);
-    setErro(null);
-    try {
-      const mentorado = (pessoasPorCliente[cliente.id] || []).find((p) => p.id === mentoria.mentoradoId) || null;
-      const diags = diagsPorCliente[cliente.id] || [];
-      const diagsL = diagsLiderPorCliente[cliente.id] || [];
-      const encontros = await comRetentativa(() => gerarJornadaMentoria(cliente, mentoria, mentorado, diags.length ? diags[diags.length - 1] : null, pessoasPorCliente[cliente.id] || [], diagsL.length ? diagsL[diagsL.length - 1] : null));
-      // preserva encontros já realizados/anotados no topo
-      const preservados = (mentoria.encontros || []).filter((e) => e.realizada || e.anotacoes);
-      await mudarMentoria(cliente.id, { ...mentoria, encontros: [...preservados, ...encontros] });
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const gerarFichaMoldagemCliente = async (cliente) => {
-    const mentoria = mentoriaPorCliente[cliente.id] || {};
-    setGerando(true);
-    setErro(null);
-    try {
-      const mentorado = (pessoasPorCliente[cliente.id] || []).find((p) => p.id === mentoria.mentoradoId) || null;
-      const ficha = await comRetentativa(() => gerarFichaMoldagem(cliente, mentoria, mentorado, diagsLiderPorCliente[cliente.id] || []));
-      await mudarMentoria(cliente.id, { ...mentoria, moldagem: { ...ficha, praticasSugeridas: ficha.praticasSugeridas } });
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const estruturarSessaoCliente = async (cliente, sessao) => {
-    const mentoria = mentoriaPorCliente[cliente.id];
-    setGerando(true);
-    setErro(null);
-    try {
-      const r = await comRetentativa(() => estruturarSessaoMentoria(cliente, sessao));
-      const existentes = new Set((sessao.atividades || []).map((a) => a.texto.trim().toLowerCase()));
-      const novas = (r.novasAtividades || [])
-        .filter((t) => !existentes.has(String(t).trim().toLowerCase()))
-        .map((t) => ({ id: uid(), texto: t, feita: false }));
-      await mudarMentoria(cliente.id, {
-        ...mentoria,
-        encontros: mentoria.encontros.map((e) =>
-          e.id === sessao.id
-            ? { ...e, anotacoes: r.anotacoes, acoes: r.acoes, atividades: [...(e.atividades || []), ...novas] }
-            : e
-        ),
-      });
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const mudarCampo = async (clienteId, novos) => {
-    setCampoPorCliente((prev) => ({ ...prev, [clienteId]: novos }));
-    await stSet(`toca:campo:${clienteId}`, novos);
-  };
-
-  const gerarRoteiroCampo = async (cliente, reg) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const roteiro =
-        reg.tipo === "visita"
-          ? await comRetentativa(() => gerarRoteiroVisita(cliente, (gestaoPorCliente[cliente.id] || {}).frentes || [], pontosCCTDe(cliente.id), reg, campoPorCliente[cliente.id] || []))
-          : await comRetentativa(() => gerarRoteiroEntrevista(cliente, reg, cargosPorCliente[cliente.id] || []));
-      const registros = campoPorCliente[cliente.id] || [];
-      await mudarCampo(cliente.id, registros.map((r) => (r.id === reg.id ? { ...reg, roteiro } : r)));
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const mudarFluxos = async (clienteId, novos) => {
-    setFluxosPorCliente((prev) => ({ ...prev, [clienteId]: novos }));
-    await stSet(`toca:fluxos:${clienteId}`, novos);
-  };
-
-  const gerarFluxoCliente = async (cliente, fluxo) => {
-    setGerando(true);
-    setErro(null);
-    try {
-      const gerado = await gerarFluxo(cliente, fluxo, cargosPorCliente[cliente.id] || [], popsPorCliente[cliente.id] || [], campoPorCliente[cliente.id] || []);
-      const fluxos = fluxosPorCliente[cliente.id] || [];
-      await mudarFluxos(cliente.id, fluxos.map((f) => (f.id === fluxo.id ? { ...fluxo, ...gerado } : f)));
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const mudarAlcadas = async (clienteId, novas) => {
-    setAlcadasPorCliente((prev) => ({ ...prev, [clienteId]: novas }));
-    await stSet(`toca:alcadas:${clienteId}`, novas);
-  };
-
-  const gerarAlcadasCliente = async (cliente) => {
-    const alcadas = alcadasPorCliente[cliente.id] || { obs: "", itens: [] };
-    setGerando(true);
-    setErro(null);
-    try {
-      const itens = await gerarAlcadas(cliente, alcadas.obs, cargosPorCliente[cliente.id] || [], estruturaPorCliente[cliente.id] || [], (campoPorCliente[cliente.id] || []).filter((r) => r.tipo === "entrevista"));
-      await mudarAlcadas(cliente.id, { ...alcadas, itens });
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const mudarRitos = async (clienteId, novos) => {
-    setRitosPorCliente((prev) => ({ ...prev, [clienteId]: novos }));
-    await stSet(`toca:ritos:${clienteId}`, novos);
-  };
-
-  const gerarRitosCliente = async (cliente) => {
-    const ritos = ritosPorCliente[cliente.id] || { obs: "", itens: [] };
-    const painel = indicadoresPorCliente[cliente.id] || { obs: "", itens: [] };
-    setGerando(true);
-    setErro(null);
-    try {
-      const itens = await gerarRitos(cliente, ritos.obs, cargosPorCliente[cliente.id] || [], painel.itens || []);
-      await mudarRitos(cliente.id, { ...ritos, itens });
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const mudarIndicadores = async (clienteId, novos) => {
-    setIndicadoresPorCliente((prev) => ({ ...prev, [clienteId]: novos }));
-    await stSet(`toca:indicadores:${clienteId}`, novos);
-  };
-
-  const gerarIndicadoresCliente = async (cliente) => {
-    const painel = indicadoresPorCliente[cliente.id] || { obs: "", itens: [] };
-    setGerando(true);
-    setErro(null);
-    try {
-      const diags = diagsPorCliente[cliente.id] || [];
-      const itens = await gerarIndicadores(cliente, painel.obs, cargosPorCliente[cliente.id] || [], diags.length ? diags[diags.length - 1] : null);
-      await mudarIndicadores(cliente.id, { ...painel, itens });
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
-  };
-
-  const atualizarPlano = async (cliente) => {
-    const gestao = gestaoPorCliente[cliente.id] || { briefing: "", frentes: [] };
-    const atas = docsDe("atas", cliente.id);
-    const comConteudo = atas.filter((a) => a.resumo);
-    const ultimaAta = comConteudo.length ? comConteudo[comConteudo.length - 1] : null;
-    setGerando(true);
-    setErro(null);
-    try {
-      const frentes = await comRetentativa(() => gerarAtualizacaoPlano(cliente, gestao, ultimaAta, pessoasPorCliente[cliente.id] || [], resumoCampo(campoPorCliente[cliente.id] || [], "riscos")));
-      await mudarGestao(cliente.id, { ...gestao, frentes });
-    } catch (e) {
-      setErro(e.message || "erro desconhecido");
-    } finally {
-      setGerando(false);
-    }
   };
 
   const faseDoCliente = (c) => {
@@ -1032,44 +358,6 @@ export default function App() {
     return "prospeccao";
   };
 
-  const proximoPassoDe = (c) => {
-    const fase = faseDoCliente(c);
-    const g = gestaoPorCliente[c.id] || { briefing: "", frentes: [] };
-    const fin = financeiroPorCliente[c.id] || { parcelas: [] };
-    const props = propostasPorCliente[c.id] || [];
-    if (fase === "encerrado") return null;
-    if (fase === "perigo") {
-      const hoje = new Date();
-      hoje.setHours(0, 0, 0, 0);
-      const temVencida = (fin.parcelas || []).some((p) => {
-        if (p.pago) return false;
-        const v = parseDataBR(p.vencimento);
-        return v && v < hoje;
-      });
-      return temVencida
-        ? { texto: "Há parcela vencida no cofre — cobre ou renegocie antes que vire ruído na relação", modulo: "financeiro" }
-        : { texto: "Há ações atrasadas no cronograma — resolva ou realoque as semanas", modulo: "cronograma" };
-    }
-    if (fase === "prospeccao") return { texto: "Escuta: registre o briefing da primeira conversa — é dele que tudo nasce", modulo: "gestao" };
-    if (fase === "escuta") {
-      if (!(campoPorCliente[c.id] || []).length)
-        return { texto: "Vá a campo antes do Raio-X — uma visita técnica transforma impressão em evidência", modulo: "campo" };
-      return { texto: "Raio-X: faça o diagnóstico de maturidade — os números vendem o Acordo", modulo: "diagnosticos" };
-    }
-    if (fase === "raiox") return { texto: "Acordo: gere a proposta com as metas pactuadas — a proposta está pronta", modulo: "propostas" };
-    if (fase === "acordo") return { texto: "Acordo na rua — quando o cliente fechar, marque a proposta como Aceita para a Construção começar", modulo: "propostas" };
-    if (fase === "construcao") {
-      if (!parseDataBR(g.inicio)) return { texto: "Construção: defina o início e a duração no Cronograma", modulo: "cronograma" };
-      if (!(g.frentes || []).length) return { texto: "Construção: gere o plano de ação a partir do briefing", modulo: "gestao" };
-      if (!(fin.parcelas || []).length) return { texto: "Registre as parcelas no Financeiro", modulo: "financeiro" };
-      if (!((ritosPorCliente[c.id] || {}).itens || []).length) return { texto: "Rumo à Sustentação: crie os Ritos de Gestão — é a cadência que sustenta sem você", modulo: "ritos" };
-      return null;
-    }
-    if (fase === "sustentacao") return { texto: "Sustentação: os ritos rodam — acompanhe anomalias e o Painel do Engajamento", modulo: "painel" };
-    if (fase === "prova") return { texto: "Prova: reavalie o diagnóstico, verifique as metas e prepare o Malfeito feito", modulo: "relatorios" };
-    return null;
-  };
-
   const clienteAtual = clientes.find((c) => c.id === tela.id);
 
   const fasesClientes = Object.fromEntries(clientes.map((c) => [c.id, faseDoCliente(c)]));
@@ -1109,19 +397,6 @@ export default function App() {
   const atasAtuais = clienteAtual ? docsDe("atas", clienteAtual.id) : [];
   const docsAtuais = clienteAtual && tela.tipo ? docsDe(tela.tipo, clienteAtual.id) : [];
   const docAtual = docsAtuais.find((d) => d.id === tela.docId);
-
-  const resumoFin = (() => {
-    const parcelas = financeiroAtual.parcelas || [];
-    if (!parcelas.length) return null;
-    let recebido = 0;
-    let total = 0;
-    for (const p of parcelas) {
-      const v = parseValorBR(p.valor);
-      total += v;
-      if (p.pago) recebido += v;
-    }
-    return total > 0 ? `${formatarBR(recebido)} recebido de ${formatarBR(total)}` : null;
-  })();
 
   const nomeDocumentoAtual = () =>
     `${clienteAtual ? clienteAtual.negocio : "ENRAIZAR"} — ${tela.nome}`.replace(/[\\/:*?"<>|]/g, "").trim();
@@ -1203,6 +478,10 @@ ${conteudo}
     }
   };
 
+  const app = {
+    alcadasAtuais, alcadasPorCliente, anomaliasPorCliente, atasAtuais, campoAtuais, campoAtual, campoPorCliente, cargoAtual, cargosAtuais, cargosPorCliente, cctPorCliente, clienteAtual, dadosPainelDe, diagAtual, diagLiderAtual, diagsAtuais, diagsLiderAtuais, diagsLiderPorCliente, diagsPorCliente, docAtual, docsAtuais, docsDe, erro, estruturaAtual, estruturaPorCliente, executarGeracao, exportarImpressao, faseDoCliente, financeiroAtual, financeiroPorCliente, fluxoAtual, fluxosAtuais, fluxosPorCliente, focoMentoriaAtual, frameworkMentorado, gerando, gestaoPorCliente, indicadoresAtuais, indicadoresPorCliente, manualAtual, manualPorCliente, mentoriaAtual, mentoriaPorCliente, mudarDocs, mudarGestao, mudarPessoas, painelPorCliente, penseiraPorCliente, pessoaAtual, pessoasAtuais, pessoasPorCliente, pontosCCTDe, popAtual, popsAtuais, popsPorCliente, precificacao, propostaAtual, propostasAtuais, propostasPorCliente, relMentoriaAtual, relatorioAtual, relatoriosAtuais, relatoriosPorCliente, ritosAtuais, ritosPorCliente, salvarColecao, setErro, setGerando, setMentoriaPorCliente, setPenseiraPorCliente, setPrecificacao, setTabelas, setTela, tabelas, tela, tituloDiagMentorado, treinamentoAtual, treinamentosAtuais, treinamentosPorCliente,
+  };
+
   return (
     <div className="min-h-screen fonte-corpo" style={{ background: "linear-gradient(135deg, #FAF6EE 0%, #F5EDD9 100%)", fontFamily: "'Crimson Text', Georgia, serif", position: "relative" }}>
       <div
@@ -1220,9 +499,9 @@ ${conteudo}
       {gerandoPdf && (
         <div
           className="print:hidden"
-          style={{ position: "fixed", bottom: 20, right: 20, zIndex: 50, background: "#3F1220", color: "#E8C547", padding: "10px 18px", borderRadius: 8, border: "1px solid #B8860B", fontSize: 13, boxShadow: "0 8px 20px rgba(0,0,0,0.3)" }}
+          style={{ position: "fixed", bottom: 20, right: 20, zIndex: 50, background: CORES.principal, color: CORES.cartao, padding: "10px 18px", borderRadius: 8, border: "1px solid #B8860B", fontSize: 13, boxShadow: "0 8px 20px rgba(0,0,0,0.3)" }}
         >
-          A pena está copiando o documento... gerando PDF
+          Gerando PDF...
         </div>
       )}
       <style>{`
@@ -1268,595 +547,60 @@ ${conteudo}
           <FormCliente onSalvar={salvarNovoCliente} onCancelar={() => setTela({ nome: "home" })} />
         ) : tela.nome === "editar" && clienteAtual ? (
           <FormCliente inicial={clienteAtual} onSalvar={salvarEdicaoCliente} onCancelar={() => setTela({ nome: "cliente", id: tela.id })} onExcluir={() => excluirCliente(clienteAtual.id)} />
-        ) : tela.nome === "cliente" && clienteAtual ? (
-          <HubCliente
-            cliente={clienteAtual}
-            proximoPasso={proximoPassoDe(clienteAtual)}
-            totalCampo={campoAtuais.length}
-            totalDiagsLider={diagsLiderAtuais.length}
-            temRelMentoria={!!(relMentoriaAtual.retrospectiva || relMentoriaAtual.evolucao)}
-            metasAceitas={((propostasPorCliente[clienteAtual.id] || []).find((p) => p.status === "aceita") || {}).metas || []}
-            focoMentoria={focoMentoriaAtual}
-            totalAnomalias={(anomaliasPorCliente[clienteAtual.id] || []).length}
-            totalAnomaliasTratadas={(anomaliasPorCliente[clienteAtual.id] || []).filter((a) => a.status === "tratada").length}
-            totalTreinamentos={treinamentosAtuais.length}
-            totalTreinamentosRealizados={treinamentosAtuais.filter((t) => t.status === "realizado").length}
-            totalEncontros={(mentoriaAtual.encontros || []).length}
-            totalEncontrosRealizados={(mentoriaAtual.encontros || []).filter((e) => e.realizada).length}
-            totalCargos={cargosAtuais.length}
-            temTabela={!!tabelas[clienteAtual.id]}
-            gestao={gestaoPorCliente[clienteAtual.id]}
-            totalPosicoes={estruturaAtual.length}
-            totalAlcadas={(alcadasAtuais.itens || []).length}
-            totalRitos={(ritosAtuais.itens || []).length}
-            totalIndicadores={(indicadoresAtuais.itens || []).length}
-            totalSecoesManual={manualAtual.length}
-            totalPontosCCT={pontosCCTDe(clienteAtual.id).length}
-            totalPops={popsAtuais.length}
-            totalFluxos={fluxosAtuais.length}
-            totalPoliticas={docsDe("politicas", clienteAtual.id).length}
-            totalChecklists={docsDe("checklists", clienteAtual.id).length}
-            totalPessoas={pessoasAtuais.length}
-            totalDiagnosticos={diagsAtuais.length}
-            totalPropostas={propostasAtuais.length}
-            totalRelatorios={relatoriosAtuais.length}
-            resumoFinanceiro={resumoFin}
-            onModulo={(m) => {
-              setErro(null);
-              if (m.startsWith("docs-")) {
-                setTela({ nome: "docs", tipo: m.slice(5), id: tela.id });
-              } else {
-                setTela({ nome: m, id: tela.id });
-              }
-            }}
-            onEditarCliente={() => setTela({ nome: "editar", id: tela.id })}
-            onVoltar={() => setTela({ nome: "home" })}
-          />
-        ) : tela.nome === "gestao" && clienteAtual ? (
-          <ModuloGestao
-            cliente={clienteAtual}
-            gestao={gestaoPorCliente[clienteAtual.id] || { briefing: "", frentes: [] }}
-            atas={atasAtuais}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(nova) => mudarGestao(clienteAtual.id, nova)}
-            onGerarPlano={() => gerarPlano(clienteAtual)}
-            onAtualizarPlano={() => atualizarPlano(clienteAtual)}
-            onAbrirAta={(docId) => {
-              setErro(null);
-              setTela({ nome: "doc", tipo: "atas", id: tela.id, docId, origem: "gestao" });
-            }}
-            onNovaAta={async () => {
-              const novo = docVazio("atas");
-              await mudarDocs("atas", clienteAtual.id, [...atasAtuais, novo]);
-              setErro(null);
-              setTela({ nome: "doc", tipo: "atas", id: tela.id, docId: novo.id, origem: "gestao" });
-            }}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "penseira" && clienteAtual ? (
-          <ModuloPenseira
-            cliente={clienteAtual}
-            mensagens={penseiraPorCliente[clienteAtual.id] || []}
-            gerando={gerando}
-            erro={erro}
-            onEnviar={(t) => enviarPenseira(clienteAtual, t)}
-            onLimpar={() => limparPenseira(clienteAtual.id)}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "cct" && clienteAtual ? (
-          <ModuloCCT
-            cliente={clienteAtual}
-            cct={cctPorCliente[clienteAtual.id] || { nomeArquivo: "", dataAnalise: "", pontos: [] }}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(nova) => mudarCCT(clienteAtual.id, nova)}
-            onAnalisar={(nome, base64) => analisarCCTCliente(clienteAtual, nome, base64)}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "estrutura" && clienteAtual ? (
-          <ModuloEstrutura
-            cliente={clienteAtual}
-            posicoes={estruturaAtual}
-            cargos={cargosAtuais}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(novas) => mudarEstrutura(clienteAtual.id, novas)}
-            onGerar={() => gerarOrganograma(clienteAtual)}
-            onImprimir={exportarImpressao}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "manual" && clienteAtual ? (
-          <ModuloManual
-            cliente={clienteAtual}
-            secoes={manualAtual}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(novas) => mudarManual(clienteAtual.id, novas)}
-            onGerar={() => gerarManualCliente(clienteAtual)}
-            onImprimir={exportarImpressao}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "pops" && clienteAtual ? (
-          <ListaPops
-            cliente={clienteAtual}
-            pops={popsAtuais}
-            onAbrirPop={(popId) => {
-              setErro(null);
-              setTela({ nome: "pop", id: tela.id, popId });
-            }}
-            onNovoPop={async () => {
-              const novo = popVazio();
-              await mudarPops(clienteAtual.id, [...popsAtuais, novo]);
-              setErro(null);
-              setTela({ nome: "pop", id: tela.id, popId: novo.id });
-            }}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "pop" && clienteAtual && popAtual ? (
-          <EditorPop
-            cliente={clienteAtual}
-            pop={popAtual}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(novo) => mudarPops(clienteAtual.id, popsAtuais.map((p) => (p.id === novo.id ? novo : p)))}
-            onGerar={() => gerarPopCliente(clienteAtual, popAtual)}
-            onImprimir={exportarImpressao}
-            onExcluir={async () => {
-              await mudarPops(clienteAtual.id, popsAtuais.filter((p) => p.id !== popAtual.id));
-              setTela({ nome: "pops", id: tela.id });
-            }}
-            onVoltar={() => setTela({ nome: "pops", id: tela.id })}
-          />
-        ) : tela.nome === "relatorios" && clienteAtual ? (
-          <ModuloRelatorio
-            cliente={clienteAtual}
-            metasAcordo={((propostasPorCliente[clienteAtual.id] || []).find((p) => p.status === "aceita") || {}).metas || []}
-            relatorios={relatoriosAtuais}
-            relAberto={relatorioAtual || null}
-            diags={diagsAtuais}
-            gerando={gerando}
-            erro={erro}
-            onMudarLista={(novos) => mudarRelatorios(clienteAtual.id, novos)}
-            onAbrir={(relId) => {
-              setErro(null);
-              setTela({ nome: "relatorios", id: tela.id, relId: relId || undefined });
-            }}
-            onGerar={() => relatorioAtual && gerarRelatorioCliente(clienteAtual, relatorioAtual)}
-            onImprimir={exportarImpressao}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "financeiro" && clienteAtual ? (
-          <ModuloFinanceiro
-            cliente={clienteAtual}
-            financeiro={financeiroAtual}
-            propostaAceita={(propostasPorCliente[clienteAtual.id] || []).find((p) => p.status === "aceita") || null}
-            onMudar={(novo) => mudarFinanceiro(clienteAtual.id, novo)}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "cronograma" && clienteAtual ? (
-          <ModuloCronograma
-            cliente={clienteAtual}
-            gestao={gestaoPorCliente[clienteAtual.id] || { briefing: "", frentes: [] }}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(nova) => mudarGestao(clienteAtual.id, nova)}
-            onDistribuir={() => distribuirCronogramaCliente(clienteAtual)}
-            onImprimir={exportarImpressao}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "propostas" && clienteAtual ? (
-          <ListaPropostas
-            cliente={clienteAtual}
-            propostas={propostasAtuais}
-            onAbrir={(propostaId) => {
-              setErro(null);
-              setTela({ nome: "proposta", id: tela.id, propostaId });
-            }}
-            onNova={async () => {
-              const nova = propostaVazia();
-              await mudarPropostas(clienteAtual.id, [...propostasAtuais, nova]);
-              setErro(null);
-              setTela({ nome: "proposta", id: tela.id, propostaId: nova.id });
-            }}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "proposta" && clienteAtual && propostaAtual ? (
-          <EditorProposta
-            cliente={clienteAtual}
-            prop={propostaAtual}
-            gerando={gerando}
-            erro={erro}
-            frentes={(gestaoPorCliente[clienteAtual.id] || { frentes: [] }).frentes || []}
-            semanasPadrao={(gestaoPorCliente[clienteAtual.id] || {}).duracaoSemanas}
-            numEncontros={(mentoriaAtual.encontros || []).length}
-            precificacao={precificacao}
-            onMudarPrecificacao={mudarPrecificacao}
-            onMudar={(nova) => mudarPropostas(clienteAtual.id, propostasAtuais.map((p) => (p.id === nova.id ? nova : p)))}
-            onGerar={() => gerarPropostaCliente(clienteAtual, propostaAtual)}
-            onGerarMetas={() => gerarMetasCliente(clienteAtual, propostaAtual)}
-            onImprimir={exportarImpressao}
-            onExcluir={async () => {
-              await mudarPropostas(clienteAtual.id, propostasAtuais.filter((p) => p.id !== propostaAtual.id));
-              setTela({ nome: "propostas", id: tela.id });
-            }}
-            onVoltar={() => setTela({ nome: "propostas", id: tela.id })}
-          />
-        ) : tela.nome === "diagnosticos" && clienteAtual ? (
-          <ListaDiagnosticos
-            cliente={clienteAtual}
-            diagnosticos={diagsAtuais}
-            onAbrir={(diagId) => {
-              setErro(null);
-              setTela({ nome: "diagnostico", id: tela.id, diagId });
-            }}
-            onNovo={async () => {
-              const novo = diagVazio();
-              await mudarDiags(clienteAtual.id, [...diagsAtuais, novo]);
-              setErro(null);
-              setTela({ nome: "diagnostico", id: tela.id, diagId: novo.id });
-            }}
-            onReavaliar={async (base) => {
-              const novo = { ...diagVazio(), notas: { ...base.notas }, rotulo: `Reavaliação de ${base.rotulo || base.data}` };
-              await mudarDiags(clienteAtual.id, [...diagsAtuais, novo]);
-              setErro(null);
-              setTela({ nome: "diagnostico", id: tela.id, diagId: novo.id });
-            }}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "diagnostico" && clienteAtual && diagAtual ? (
-          <EditorDiagnostico
-            cliente={clienteAtual}
-            diag={diagAtual}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(novo) => mudarDiags(clienteAtual.id, diagsAtuais.map((d) => (d.id === novo.id ? novo : d)))}
-            onGerarLeitura={() => gerarLeituraDiag(clienteAtual, diagAtual)}
-            onCriarFrentes={(areas) => criarFrentesDeAreas(clienteAtual, areas)}
-            onImprimir={exportarImpressao}
-            onExcluir={async () => {
-              await mudarDiags(clienteAtual.id, diagsAtuais.filter((d) => d.id !== diagAtual.id));
-              setTela({ nome: "diagnosticos", id: tela.id });
-            }}
-            onVoltar={() => setTela({ nome: "diagnosticos", id: tela.id })}
-          />
-        ) : tela.nome === "temperamentos" && clienteAtual ? (
-          <ListaPessoas
-            cliente={clienteAtual}
-            pessoas={pessoasAtuais}
-            onAbrir={(pessoaId) => {
-              setErro(null);
-              setTela({ nome: "pessoa", id: tela.id, pessoaId });
-            }}
-            onNova={async () => {
-              const nova = pessoaVazia();
-              await mudarPessoas(clienteAtual.id, [...pessoasAtuais, nova]);
-              setErro(null);
-              setTela({ nome: "pessoa", id: tela.id, pessoaId: nova.id });
-            }}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "pessoa" && clienteAtual && pessoaAtual ? (
-          <EditorPessoa
-            cliente={clienteAtual}
-            pessoa={pessoaAtual}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(nova) => mudarPessoas(clienteAtual.id, pessoasAtuais.map((p) => (p.id === nova.id ? nova : p)))}
-            onGerar={() => analisarPessoa(clienteAtual, pessoaAtual)}
-            onImprimir={exportarImpressao}
-            onExcluir={async () => {
-              await mudarPessoas(clienteAtual.id, pessoasAtuais.filter((p) => p.id !== pessoaAtual.id));
-              setTela({ nome: "temperamentos", id: tela.id });
-            }}
-            onVoltar={() => setTela({ nome: "temperamentos", id: tela.id })}
-          />
-        ) : tela.nome === "docs" && clienteAtual ? (
-          <ListaDocs
-            cliente={clienteAtual}
-            tipo={tela.tipo}
-            docs={docsAtuais}
-            onAbrir={(docId) => {
-              setErro(null);
-              setTela({ nome: "doc", tipo: tela.tipo, id: tela.id, docId });
-            }}
-            onNovo={async () => {
-              const novo = docVazio(tela.tipo);
-              await mudarDocs(tela.tipo, clienteAtual.id, [...docsAtuais, novo]);
-              setErro(null);
-              setTela({ nome: "doc", tipo: tela.tipo, id: tela.id, docId: novo.id });
-            }}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "doc" && clienteAtual && docAtual ? (
-          <EditorDoc
-            cliente={clienteAtual}
-            tipo={tela.tipo}
-            doc={docAtual}
-            rotuloVoltar={tela.origem === "gestao" ? `Briefing & Plano de Ação · ${clienteAtual.negocio}` : `${CONFIG_DOCS[tela.tipo].tituloModulo} · ${clienteAtual.negocio}`}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(novo) => mudarDocs(tela.tipo, clienteAtual.id, docsAtuais.map((d) => (d.id === novo.id ? novo : d)))}
-            onGerar={() => gerarDocCliente(tela.tipo, clienteAtual, docAtual)}
-            onImprimir={exportarImpressao}
-            onExcluir={async () => {
-              await mudarDocs(tela.tipo, clienteAtual.id, docsAtuais.filter((d) => d.id !== docAtual.id));
-              setTela(tela.origem === "gestao" ? { nome: "gestao", id: tela.id } : { nome: "docs", tipo: tela.tipo, id: tela.id });
-            }}
-            onVoltar={() => setTela(tela.origem === "gestao" ? { nome: "gestao", id: tela.id } : { nome: "docs", tipo: tela.tipo, id: tela.id })}
-          />
-        ) : tela.nome === "ritos" && clienteAtual ? (
-          <ModuloRitos
-            cliente={clienteAtual}
-            ritos={ritosAtuais}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(novos) => mudarRitos(clienteAtual.id, novos)}
-            onGerar={() => gerarRitosCliente(clienteAtual)}
-            onImprimir={exportarImpressao}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "indicadores" && clienteAtual ? (
-          <ModuloIndicadores
-            cliente={clienteAtual}
-            painel={indicadoresAtuais}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(novos) => mudarIndicadores(clienteAtual.id, novos)}
-            onGerar={() => gerarIndicadoresCliente(clienteAtual)}
-            onImprimir={exportarImpressao}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "alcadas" && clienteAtual ? (
-          <ModuloAlcadas
-            cliente={clienteAtual}
-            alcadas={alcadasAtuais}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(novas) => mudarAlcadas(clienteAtual.id, novas)}
-            onGerar={() => gerarAlcadasCliente(clienteAtual)}
-            onImprimir={exportarImpressao}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "anomalias" && clienteAtual ? (
-          <ModuloAnomalias
-            cliente={clienteAtual}
-            anomalias={anomaliasPorCliente[clienteAtual.id] || []}
-            frentes={(gestaoPorCliente[clienteAtual.id] || { frentes: [] }).frentes || []}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(novas) => mudarAnomalias(clienteAtual.id, novas)}
-            onAnalisar={(a) => analisarAnomaliaCliente(clienteAtual, a)}
-            onEnviarAcao={(a) => enviarAcaoAnomalia(clienteAtual, a)}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "painel" && clienteAtual ? (
-          <ModuloPainel
-            cliente={clienteAtual}
-            dados={dadosPainelDe(clienteAtual.id)}
-            painel={painelPorCliente[clienteAtual.id] || {}}
-            onMudar={(novo) => mudarPainel(clienteAtual.id, novo)}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "relmentoria" && clienteAtual ? (
-          <ModuloRelMentoria
-            cliente={clienteAtual}
-            rel={relMentoriaAtual}
-            diagsLider={diagsLiderAtuais}
-            metasAcordo={((propostasPorCliente[clienteAtual.id] || []).find((p) => p.status === "aceita") || {}).metas || []}
-            framework={frameworkMentorado}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(novo) => mudarRelMentoria(clienteAtual.id, novo)}
-            onGerar={() => gerarRelMentoriaCliente(clienteAtual)}
-            onImprimir={exportarImpressao}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "diagslider" && clienteAtual ? (
-          <ListaDiagnosticos
-            cliente={clienteAtual}
-            diagnosticos={diagsLiderAtuais}
-            titulo={tituloDiagMentorado}
-            subtitulo={focoMentoriaAtual === "autoconhecimento"
-              ? "Os N.I.E.M.s da pessoa: avalie a maturidade pessoal em 6 áreas e 24 critérios. Reavalie ao longo da mentoria — o antes/depois é a prova da evolução."
-              : "Os N.I.E.M.s do líder: avalie a maturidade de liderança em 6 áreas e 24 critérios. Reavalie ao longo da mentoria — o antes/depois é a prova da evolução."}
-            framework={frameworkMentorado}
-            onAbrir={(diagId) => {
-              setErro(null);
-              setTela({ nome: "diaglider", id: tela.id, diagId });
-            }}
-            onNovo={async () => {
-              const novo = diagVazio();
-              await mudarDiagsLider(clienteAtual.id, [...diagsLiderAtuais, novo]);
-              setErro(null);
-              setTela({ nome: "diaglider", id: tela.id, diagId: novo.id });
-            }}
-            onReavaliar={async (base) => {
-              const novo = { ...diagVazio(), notas: { ...base.notas }, rotulo: `Reavaliação de ${base.rotulo || base.data}` };
-              await mudarDiagsLider(clienteAtual.id, [...diagsLiderAtuais, novo]);
-              setErro(null);
-              setTela({ nome: "diaglider", id: tela.id, diagId: novo.id });
-            }}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "diaglider" && clienteAtual && diagLiderAtual ? (
-          <EditorDiagnostico
-            cliente={clienteAtual}
-            diag={diagLiderAtual}
-            titulo={tituloDiagMentorado}
-            framework={frameworkMentorado}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(novo) => mudarDiagsLider(clienteAtual.id, diagsLiderAtuais.map((d) => (d.id === novo.id ? novo : d)))}
-            onGerarLeitura={() => gerarLeituraLiderCliente(clienteAtual, diagLiderAtual)}
-            onCriarFrentes={null}
-            onImprimir={exportarImpressao}
-            onExcluir={async () => {
-              await mudarDiagsLider(clienteAtual.id, diagsLiderAtuais.filter((d) => d.id !== diagLiderAtual.id));
-              setTela({ nome: "diagslider", id: tela.id });
-            }}
-            onVoltar={() => setTela({ nome: "diagslider", id: tela.id })}
-          />
-        ) : tela.nome === "treinamentos" && clienteAtual ? (
-          <ModuloTreinamentos
-            cliente={clienteAtual}
-            treinamentos={treinamentosAtuais}
-            frentes={(gestaoPorCliente[clienteAtual.id] || { frentes: [] }).frentes || []}
-            pessoas={pessoasAtuais}
-            gerando={gerando}
-            erro={erro}
-            aberto={tela.treinoId}
-            onAbrir={(treinoId) => {
-              setErro(null);
-              setTela({ nome: "treinamentos", id: tela.id, treinoId: treinoId || undefined });
-            }}
-            onNovo={async () => {
-              const novo = treinamentoVazio();
-              await mudarTreinamentos(clienteAtual.id, [...treinamentosAtuais, novo]);
-              setErro(null);
-              setTela({ nome: "treinamentos", id: tela.id, treinoId: novo.id });
-            }}
-            onMudar={(novo) => mudarTreinamentos(clienteAtual.id, treinamentosAtuais.map((t) => (t.id === novo.id ? novo : t)))}
-            onGerar={() => treinamentoAtual && gerarTreinamentoCliente(clienteAtual, treinamentoAtual)}
-            onGerarRelatorio={() => treinamentoAtual && gerarRelTreinamentoCliente(clienteAtual, treinamentoAtual)}
-            onImprimir={exportarImpressao}
-            onExcluir={async () => {
-              await mudarTreinamentos(clienteAtual.id, treinamentosAtuais.filter((t) => t.id !== treinamentoAtual.id));
-              setTela({ nome: "treinamentos", id: tela.id });
-            }}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "mentoria" && clienteAtual ? (
-          <ModuloMentoria
-            cliente={clienteAtual}
-            mentoria={mentoriaAtual}
-            pessoas={pessoasAtuais}
-            temRaioX={diagsLiderAtuais.length > 0}
-            statusAcordo={(propostasPorCliente[clienteAtual.id] || []).some((p) => p.status === "aceita") ? "aceita" : (propostasPorCliente[clienteAtual.id] || []).some((p) => p.apresentacao) ? "gerada" : "nenhum"}
-            temProva={!!(relMentoriaAtual.retrospectiva || relMentoriaAtual.evolucao)}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(nova) => mudarMentoria(clienteAtual.id, nova)}
-            onGerarJornada={() => gerarJornadaCliente(clienteAtual)}
-            onEstruturarSessao={(sessao) => estruturarSessaoCliente(clienteAtual, sessao)}
-            onGerarFicha={() => gerarFichaMoldagemCliente(clienteAtual)}
-            onCriarMentorado={async () => {
-              const nova = { ...pessoaVazia(), nome: clienteAtual.negocio, cargo: clienteAtual.segmento, contratante: true };
-              await mudarPessoas(clienteAtual.id, [...pessoasAtuais, nova]);
-              await mudarMentoria(clienteAtual.id, { ...mentoriaAtual, mentoradoId: nova.id });
-            }}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "campo" && clienteAtual ? (
-          <ListaCampo
-            cliente={clienteAtual}
-            registros={campoAtuais}
-            onAbrir={(regId) => {
-              setErro(null);
-              setTela({ nome: "campo-reg", id: tela.id, regId });
-            }}
-            onNovo={async (tipo) => {
-              const novo = campoVazio(tipo);
-              await mudarCampo(clienteAtual.id, [...campoAtuais, novo]);
-              setErro(null);
-              setTela({ nome: "campo-reg", id: tela.id, regId: novo.id });
-            }}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "campo-reg" && clienteAtual && campoAtual ? (
-          <EditorCampo
-            cliente={clienteAtual}
-            reg={campoAtual}
-            pessoas={pessoasAtuais}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(novo) => mudarCampo(clienteAtual.id, campoAtuais.map((r) => (r.id === novo.id ? novo : r)))}
-            onGerarRoteiro={() => gerarRoteiroCampo(clienteAtual, campoAtual)}
-            onAbrirPessoa={(pessoaId) => setTela({ nome: "pessoa", id: tela.id, pessoaId })}
-            onCriarPessoa={async () => {
-              const nova = { ...pessoaVazia(), nome: campoAtual.entrevistado, cargo: campoAtual.funcao };
-              await mudarPessoas(clienteAtual.id, [...pessoasAtuais, nova]);
-              setTela({ nome: "pessoa", id: tela.id, pessoaId: nova.id });
-            }}
-            onExcluir={async () => {
-              await mudarCampo(clienteAtual.id, campoAtuais.filter((r) => r.id !== campoAtual.id));
-              setTela({ nome: "campo", id: tela.id });
-            }}
-            onVoltar={() => setTela({ nome: "campo", id: tela.id })}
-          />
-        ) : tela.nome === "fluxos" && clienteAtual ? (
-          <ListaFluxos
-            cliente={clienteAtual}
-            fluxos={fluxosAtuais}
-            onAbrir={(fluxoId) => {
-              setErro(null);
-              setTela({ nome: "fluxo", id: tela.id, fluxoId });
-            }}
-            onNovo={async () => {
-              const novo = fluxoVazio();
-              await mudarFluxos(clienteAtual.id, [...fluxosAtuais, novo]);
-              setErro(null);
-              setTela({ nome: "fluxo", id: tela.id, fluxoId: novo.id });
-            }}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "fluxo" && clienteAtual && fluxoAtual ? (
-          <EditorFluxo
-            cliente={clienteAtual}
-            fluxo={fluxoAtual}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(novo) => mudarFluxos(clienteAtual.id, fluxosAtuais.map((f) => (f.id === novo.id ? novo : f)))}
-            onGerar={() => gerarFluxoCliente(clienteAtual, fluxoAtual)}
-            onImprimir={exportarImpressao}
-            onExcluir={async () => {
-              await mudarFluxos(clienteAtual.id, fluxosAtuais.filter((f) => f.id !== fluxoAtual.id));
-              setTela({ nome: "fluxos", id: tela.id });
-            }}
-            onVoltar={() => setTela({ nome: "fluxos", id: tela.id })}
-          />
-        ) : tela.nome === "tabela" && clienteAtual ? (
-          <ModuloTabela
-            cliente={clienteAtual}
-            tabela={tabelas[clienteAtual.id] || null}
-            gerando={gerando}
-            erro={erro}
-            onGerar={() => gerarTabela(clienteAtual)}
-            onMudarTabela={(nova) => mudarTabela(clienteAtual.id, nova)}
-            onImprimir={exportarImpressao}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "cargos" && clienteAtual ? (
-          <ListaCargos
-            cliente={clienteAtual}
-            cargos={cargosAtuais}
-            onAbrirCargo={(cargoId) => {
-              setErro(null);
-              setTela({ nome: "cargo", id: tela.id, cargoId });
-            }}
-            onNovoCargo={async () => {
-              const novo = cargoVazio();
-              await mudarCargos(clienteAtual.id, [...cargosAtuais, novo]);
-              setErro(null);
-              setTela({ nome: "cargo", id: tela.id, cargoId: novo.id });
-            }}
-            onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
-          />
-        ) : tela.nome === "cargo" && clienteAtual && cargoAtual ? (
-          <EditorCargo
-            cliente={clienteAtual}
-            cargo={cargoAtual}
-            gerando={gerando}
-            erro={erro}
-            onMudar={(novo) => mudarCargos(clienteAtual.id, cargosAtuais.map((c) => (c.id === novo.id ? novo : c)))}
-            onGerar={() => gerarCargo(clienteAtual, cargoAtual)}
-            onImprimir={exportarImpressao}
-            onExcluir={async () => {
-              await mudarCargos(clienteAtual.id, cargosAtuais.filter((c) => c.id !== cargoAtual.id));
-              setTela({ nome: "cargos", id: tela.id });
-            }}
-            onVoltar={() => setTela({ nome: "cargos", id: tela.id })}
-          />
+        ) : ["cliente"].includes(tela.nome) ? (
+          <TelaHub app={app} />
+        ) : ["gestao"].includes(tela.nome) ? (
+          <TelaGestao app={app} />
+        ) : ["penseira"].includes(tela.nome) ? (
+          <TelaConselheira app={app} />
+        ) : ["cct"].includes(tela.nome) ? (
+          <TelaCct app={app} />
+        ) : ["estrutura"].includes(tela.nome) ? (
+          <TelaEstrutura app={app} />
+        ) : ["manual"].includes(tela.nome) ? (
+          <TelaManual app={app} />
+        ) : ["pops", "pop"].includes(tela.nome) ? (
+          <TelaPops app={app} />
+        ) : ["relatorios"].includes(tela.nome) ? (
+          <TelaRelatorio app={app} />
+        ) : ["financeiro"].includes(tela.nome) ? (
+          <TelaFinanceiro app={app} />
+        ) : ["cronograma"].includes(tela.nome) ? (
+          <TelaCronograma app={app} />
+        ) : ["propostas", "proposta"].includes(tela.nome) ? (
+          <TelaPropostas app={app} />
+        ) : ["diagnosticos", "diagnostico"].includes(tela.nome) ? (
+          <TelaDiagnostico app={app} />
+        ) : ["temperamentos", "pessoa"].includes(tela.nome) ? (
+          <TelaTemperamentos app={app} />
+        ) : ["docs", "doc"].includes(tela.nome) ? (
+          <TelaDocumentos app={app} />
+        ) : ["ritos"].includes(tela.nome) ? (
+          <TelaRitos app={app} />
+        ) : ["indicadores"].includes(tela.nome) ? (
+          <TelaIndicadores app={app} />
+        ) : ["alcadas"].includes(tela.nome) ? (
+          <TelaAlcadas app={app} />
+        ) : ["anomalias"].includes(tela.nome) ? (
+          <TelaAnomalias app={app} />
+        ) : ["painel"].includes(tela.nome) ? (
+          <TelaPainel app={app} />
+        ) : ["relmentoria"].includes(tela.nome) ? (
+          <TelaRelMentoria app={app} />
+        ) : ["diagslider", "diaglider"].includes(tela.nome) ? (
+          <TelaDiagLider app={app} />
+        ) : ["treinamentos"].includes(tela.nome) ? (
+          <TelaTreinamentos app={app} />
+        ) : ["mentoria"].includes(tela.nome) ? (
+          <TelaMentoria app={app} />
+        ) : ["campo", "campo-reg"].includes(tela.nome) ? (
+          <TelaCampo app={app} />
+        ) : ["fluxos", "fluxo"].includes(tela.nome) ? (
+          <TelaFluxos app={app} />
+        ) : ["tabela"].includes(tela.nome) ? (
+          <TelaTabela app={app} />
+        ) : ["cargos", "cargo"].includes(tela.nome) ? (
+          <TelaCargos app={app} />
         ) : null}
       </div>
 

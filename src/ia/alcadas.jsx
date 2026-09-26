@@ -1,5 +1,4 @@
 import { chamarIA, extrairJSON } from "./base.jsx";
-import { Organograma } from "../modulos/estrutura.jsx";
 import { uid } from "../nucleo/base.jsx";
 
 // ─── IA: Alçadas de Decisão ─────────────────────────────────────

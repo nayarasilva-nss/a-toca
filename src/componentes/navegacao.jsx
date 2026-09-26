@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Organograma } from "../modulos/estrutura.jsx";
 import { CORES } from "../nucleo/base.jsx";
 
 // ─── Categorias de Módulos (Navegação Principal) ──────────────────
