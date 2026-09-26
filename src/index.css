@@ -1,7 +1,19 @@
-/* 🏠 A Toca — Design System (Mockups Completos) */
-/* Tema: Elegant & Sophisticated (Toca dos Weasley Design) */
+/* ENRAIZAR — Design System */
+/* Paleta: bege · verde · dourado · marrom */
 
 @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Lora:wght@400;600&display=swap');
+
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@theme {
+  --color-creme: #FFFBF0;
+  --color-bege: #F5F1E8;
+  --color-marrom: #6B5D42;
+  --color-verde: #4F6B3A;
+  --color-dourado: #D4AF37;
+}
 
 * {
   box-sizing: border-box;

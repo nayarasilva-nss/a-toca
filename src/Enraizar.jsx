@@ -3781,7 +3781,7 @@ function EditorCargo({ cliente, cargo, gerando, erro, onMudar, onGerar, onImprim
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← Descrições de Cargo · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
+      <div className="rounded-lg p-6 shadow-sm card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>
             {cargo.nome || "Novo cargo"}
@@ -4270,7 +4270,7 @@ function ModuloEstrutura({ cliente, posicoes, cargos, gerando, erro, onMudar, on
         acoes={null}
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
-        <div className="rounded-lg p-6 shadow-sm" className="card">
+        <div className="rounded-lg p-6 shadow-sm card">
           <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <div className="flex gap-2 flex-wrap">
             <BotaoPrimario onClick={onGerar} disabled={gerando}>
@@ -4390,7 +4390,7 @@ function ModuloManual({ cliente, secoes, gerando, erro, onMudar, onGerar, onImpr
         acoes={null}
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
-        <div className="rounded-lg p-6 shadow-sm" className="card">
+        <div className="rounded-lg p-6 shadow-sm card">
           <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <div className="flex gap-2">
             <BotaoPrimario onClick={onGerar} disabled={gerando}>
@@ -4507,7 +4507,7 @@ function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, onVoltar 
         acoes={null}
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
-        <div className="rounded-lg p-6 shadow-sm" className="card">
+        <div className="rounded-lg p-6 shadow-sm card">
           <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
             As leis do Ministério: suba o PDF da convenção coletiva do setor — e depois os termos aditivos, um a um. A cada documento, a IA atualiza a análise: remove o que foi superado, ajusta o que mudou e soma o que é novo. Todas as gerações deste cliente respeitam o resultado. Os arquivos não ficam armazenados; só a análise.
           </p>
@@ -4802,7 +4802,7 @@ function EditorPop({ cliente, pop, gerando, erro, onMudar, onGerar, onImprimir, 
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← POPs · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
+      <div className="rounded-lg p-6 shadow-sm card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>
             {pop.nome || "Novo POP"}
@@ -4959,7 +4959,7 @@ function EditorDoc({ cliente, tipo, doc, rotuloVoltar, gerando, erro, onMudar, o
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {rotuloVoltar}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
+      <div className="rounded-lg p-6 shadow-sm card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>
             {doc.nome || `Nov${cfg.singular === "checklist" ? "o" : "a"} ${cfg.singular}`}
@@ -5252,7 +5252,7 @@ function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar, onImpr
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← Temperamentos · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
+      <div className="rounded-lg p-6 shadow-sm card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg flex items-center gap-2" style={{ color: CORES.fogo }}>
             {pessoa.nome || "Nova pessoa"} <SeloTemperamento chave={pessoa.dominante} pequeno />
@@ -5575,7 +5575,7 @@ function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerando, erro
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← Diagnósticos · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
+      <div className="rounded-lg p-6 shadow-sm card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>
             {diag.rotulo || `Diagnóstico de ${diag.data}`}
@@ -5876,7 +5876,7 @@ function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, 
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← Propostas · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
+      <div className="rounded-lg p-6 shadow-sm card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>
             {prop.rotulo || `Proposta de ${prop.data}`}
@@ -6187,7 +6187,7 @@ function ModuloCronograma({ cliente, gestao, gerando, erro, onMudar, onDistribui
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
+      <div className="rounded-lg p-6 shadow-sm card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Cronograma</h2>
           <div className="flex gap-2 flex-wrap">
@@ -6437,7 +6437,7 @@ function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAcordo, g
       <button onClick={() => onAbrir(null)} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← Relatórios · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
+      <div className="rounded-lg p-6 shadow-sm card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Relatório de {relAberto.data}</h2>
           <div className="flex gap-2">
@@ -6669,7 +6669,7 @@ function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar, onVolt
         acoes={null}
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
-        <div className="rounded-lg p-6 shadow-sm" className="card">
+        <div className="rounded-lg p-6 shadow-sm card">
         <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
           Controle financeiro: parcelas, vencimentos e o que já entrou. Uso interno — nada disso aparece em documentos do cliente.
         </p>
@@ -6888,7 +6888,7 @@ function EditorFluxo({ cliente, fluxo, gerando, erro, onMudar, onGerar, onImprim
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← Desenho de Processos · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
+      <div className="rounded-lg p-6 shadow-sm card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>{fluxo.nome || "Novo processo"}</h2>
           <div className="flex gap-2">
@@ -7041,7 +7041,7 @@ function ModuloAlcadas({ cliente, alcadas, gerando, erro, onMudar, onGerar, onIm
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
+      <div className="rounded-lg p-6 shadow-sm card">
         <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Alçadas de Decisão</h2>
           <div className="flex gap-2">
@@ -7193,7 +7193,7 @@ function ModuloIndicadores({ cliente, painel, gerando, erro, onMudar, onGerar, o
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
+      <div className="rounded-lg p-6 shadow-sm card">
         <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Indicadores</h2>
           <div className="flex gap-2">
@@ -7355,7 +7355,7 @@ function ModuloRitos({ cliente, ritos, gerando, erro, onMudar, onGerar, onImprim
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
+      <div className="rounded-lg p-6 shadow-sm card">
         <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Ritos de Gestão</h2>
           <div className="flex gap-2">
@@ -7555,7 +7555,7 @@ function EditorCampo({ cliente, reg, pessoas, gerando, erro, onMudar, onGerarRot
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← Trabalho de Campo · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
+      <div className="rounded-lg p-6 shadow-sm card">
         <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>{TIPOS_CAMPO[reg.tipo].rotulo}</h2>
           {(reg.tipo === "visita" || reg.tipo === "entrevista") && (
@@ -7744,7 +7744,7 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
             {treinamentos.map((x) => {
               const frente = frentes.find((f) => f.id === x.frenteId);
               return (
-                <button key={x.id} onClick={() => onAbrir(x.id)} className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between gap-2 flex-wrap" className="card">
+                <button key={x.id} onClick={() => onAbrir(x.id)} className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between gap-2 flex-wrap card">
                   <span className="font-serif" style={{ color: CORES.fogo }}>{x.tema || "(sem tema)"}</span>
                   <span className="text-xs flex items-center gap-2" style={{ color: CORES.textoDim }}>
                     {x.data || "sem data"}
@@ -7769,7 +7769,7 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
       <button onClick={() => onAbrir(null)} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← Treinamentos · {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
+      <div className="rounded-lg p-6 shadow-sm card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>{t.tema || "Novo treinamento"}</h2>
           <div className="flex gap-2 items-center">
@@ -8258,7 +8258,7 @@ function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAcordo, te
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
+      <div className="rounded-lg p-6 shadow-sm card">
         <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Mentoria</h2>
           <BotaoPrimario onClick={onGerarJornada} disabled={gerando}>
@@ -8470,7 +8470,7 @@ function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, framework: f
       <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
         ← {cliente.negocio}
       </button>
-      <div className="rounded-lg p-6 shadow-sm" className="card">
+      <div className="rounded-lg p-6 shadow-sm card">
         <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
           <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Relatório de Evolução</h2>
           <div className="flex gap-2">
@@ -8659,7 +8659,7 @@ function ModuloAnomalias({ cliente, anomalias, frentes, gerando, erro, onMudar, 
         acoes={null}
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
-        <div className="rounded-lg p-6 shadow-sm" className="card">
+        <div className="rounded-lg p-6 shadow-sm card">
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", gap: "12px", flexWrap: "wrap" }}>
           <div className="flex items-center gap-3">
             <span className="text-xs font-semibold" style={{ color: tratadas === anomalias.length && anomalias.length ? "#4F6B3A" : "#9A6A2F" }}>
@@ -8761,7 +8761,7 @@ function ModuloPainel({ cliente, dados, painel, onMudar, onVoltar }) {
         acoes={null}
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
-        <div className="rounded-lg p-6 shadow-sm" className="card">
+        <div className="rounded-lg p-6 shadow-sm card">
         <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
           Mede o engajamento pelo método (o cômodo Indicadores mede o negócio do cliente). Quando a verificação cai, o controle cai semanas depois.
         </p>
