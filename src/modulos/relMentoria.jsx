@@ -1,0 +1,187 @@
+import { AvisoErro, BotaoContorno, BotaoPrimario, Trabalhando } from "../componentes/ui.jsx";
+import { FRAMEWORK_LIDER } from "../ia/diagnostico.jsx";
+import { RadarMaturidade } from "./diagnostico.jsx";
+import { emLinhasDoc } from "./documentos.jsx";
+import { RodapeImpressao } from "./tabela.jsx";
+import { CORES, uid } from "../nucleo/base.jsx";
+
+// ─── Módulo: Relatório de Evolução (mentoria) ───────────────────
+
+export function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, framework: fwRel, gerando, erro, onMudar, onGerar, onImprimir, onVoltar }) {
+  const FRM = fwRel || FRAMEWORK_LIDER;
+  const set = (campo) => (v) => onMudar({ ...rel, [campo]: v });
+  const tem = rel.retrospectiva || rel.evolucao;
+  return (
+    <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+        ← {cliente.negocio}
+      </button>
+      <div className="rounded-lg p-6 shadow-sm card">
+        <div className="flex items-center justify-between mb-1 gap-2 flex-wrap">
+          <h2 className="font-serif text-lg" style={{ color: CORES.fogo }}>Relatório de Evolução</h2>
+          <div className="flex gap-2">
+            <BotaoPrimario onClick={onGerar} disabled={gerando}>
+              {gerando ? "Escrevendo..." : tem ? "Gerar novamente" : "Gerar com IA"}
+            </BotaoPrimario>
+            {tem && <BotaoContorno onClick={onImprimir}>Exportar PDF</BotaoContorno>}
+          </div>
+        </div>
+        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
+          Malfeito feito, versão pessoal: a prova da jornada — encontros, pra casa cumprido e o radar do líder antes/depois. O documento que renova a mentoria.
+        </p>
+        <AvisoErro erro={erro} />
+        {gerando && <Trabalhando />}
+        {!gerando && !tem && !erro && (
+          <p className="text-sm py-4" style={{ color: CORES.textoDim }}>
+            Gere quando houver jornada caminhada — a IA escreve só com os dados reais: encontros realizados, atividades feitas e diagnósticos do líder.
+          </p>
+        )}
+        {!gerando && (
+          <div className="mb-4 p-3 rounded-lg" style={{ background: CORES.hover, border: "2px solid #D4AF37AA" }}>
+            <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
+              <div className="label" style={{ color: "#9A6A2F" }}>
+                Verificação das metas do mentorado (fase Prova)
+              </div>
+              {(metasAcordo || []).length > 0 && (rel.metasVerificadas || []).length === 0 && (
+                <button
+                  onClick={() => onMudar({ ...rel, metasVerificadas: (metasAcordo || []).map((m) => ({ id: uid(), objetivo: m.objetivo, prazo: m.prazo, status: "parcial", porque: "" })) })}
+                  className="text-xs underline"
+                  style={{ color: CORES.dourado }}
+                >
+                  Puxar metas do Acordo
+                </button>
+              )}
+            </div>
+            {(rel.metasVerificadas || []).length === 0 && (
+              <p className="text-xs" style={{ color: CORES.textoDim }}>
+                {(metasAcordo || []).length ? "Puxe as metas da proposta aceita e registre: batida, parcial ou não batida — com o porquê." : "Nenhuma meta na proposta aceita deste mentorado."}
+              </p>
+            )}
+            {(rel.metasVerificadas || []).map((m) => (
+              <div key={m.id} className="py-1.5 border-b" style={{ borderColor: "#EFE8D6" }}>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="flex-1 text-sm" style={{ color: CORES.fogoEscuro }}>{m.objetivo}{m.prazo ? ` — até ${m.prazo}` : ""}</span>
+                  <select
+                    className="px-2 py-0.5 text-xs rounded border font-semibold"
+                    style={
+                      m.status === "batida"
+                        ? { borderColor: "#4F6B3A", background: "#E3EBD8", color: "#4F6B3A" }
+                        : m.status === "nao"
+                        ? { borderColor: "#C77", background: "#F5DDD6", color: "#8A3A2E" }
+                        : { borderColor: "#9A6A2F", background: "#F5E6C8", color: "#9A6A2F" }
+                    }
+                    value={m.status}
+                    onChange={(e) => onMudar({ ...rel, metasVerificadas: rel.metasVerificadas.map((x) => (x.id === m.id ? { ...x, status: e.target.value } : x)) })}
+                  >
+                    <option value="batida">Batida ✓</option>
+                    <option value="parcial">Parcial</option>
+                    <option value="nao">Não batida</option>
+                  </select>
+                </div>
+                <input
+                  className="w-full mt-1 px-2 py-1 text-xs rounded border bg-creme"
+                  style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
+                  placeholder="Por quê"
+                  value={m.porque}
+                  onChange={(e) => onMudar({ ...rel, metasVerificadas: rel.metasVerificadas.map((x) => (x.id === m.id ? { ...x, porque: e.target.value } : x)) })}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+        {!gerando && tem && (
+          <>
+            {diagsLider.length > 0 && (
+              <div className="flex justify-center gap-8 my-4 flex-wrap">
+                <div className="text-center">
+                  <div className="text-xs mb-1" style={{ color: CORES.textoDim }}>Início ({diagsLider[0].data})</div>
+                  <RadarMaturidade notas={diagsLider[0].notas} tamanho={220} framework={FRM} />
+                </div>
+                {diagsLider.length > 1 && (
+                  <div className="text-center">
+                    <div className="text-xs mb-1" style={{ color: CORES.textoDim }}>Atual ({diagsLider[diagsLider.length - 1].data})</div>
+                    <RadarMaturidade notas={diagsLider[diagsLider.length - 1].notas} tamanho={220} framework={FRM} />
+                  </div>
+                )}
+              </div>
+            )}
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Retrospectiva da jornada</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={rel.retrospectiva} onChange={(e) => set("retrospectiva")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Evolução observada</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={rel.evolucao} onChange={(e) => set("evolucao")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Conquistas (uma por linha)</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={rel.conquistas} onChange={(e) => set("conquistas")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Recomendações de continuidade (uma por linha)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={rel.recomendacoes} onChange={(e) => set("recomendacoes")(e.target.value)} /></label>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function ImpressaoRelMentoria({ cliente, rel, diagsLider, framework: fwRel }) {
+  const FRM = fwRel || FRAMEWORK_LIDER;
+  if (!rel || !(rel.retrospectiva || rel.evolucao)) return null;
+  const ROT_META_M = { batida: "Batida", parcial: "Parcial", nao: "Não batida" };
+  const conquistas = emLinhasDoc(rel.conquistas);
+  const recomendacoes = emLinhasDoc(rel.recomendacoes);
+  return (
+    <div className="area-impressao hidden print:block p-10" style={{ color: "#2A1218" }}>
+      <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
+        <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Relatório de Evolução — Mentoria</div>
+        <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{cliente.negocio}</div>
+        <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>{cliente.segmento}</div>
+      </div>
+      {rel.retrospectiva && (
+        <div className="mb-5">
+          <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.dourado }}>Retrospectiva</div>
+          <p className="text-sm">{rel.retrospectiva}</p>
+        </div>
+      )}
+      {(rel.metasVerificadas || []).length > 0 && (
+        <div className="mb-5 p-3" style={{ border: "1px solid #7BA85C" }}>
+          <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.dourado }}>Metas do mentorado — verificação</div>
+          {(rel.metasVerificadas || []).map((m) => (
+            <div key={m.id} className="text-sm mb-1">
+              <strong>{ROT_META_M[m.status] || m.status}:</strong> {m.objetivo}{m.prazo ? ` (até ${m.prazo})` : ""}
+              {m.porque && <span className="text-xs italic" style={{ color: "#6B5D42" }}> — {m.porque}</span>}
+            </div>
+          ))}
+        </div>
+      )}
+      {diagsLider.length > 0 && (
+        <div className="mb-5">
+          <div className="text-sm font-bold uppercase tracking-widest mb-2" style={{ color: CORES.dourado }}>Maturidade de liderança</div>
+          <div className="flex justify-center gap-10">
+            <div className="text-center">
+              <div className="text-xs mb-1" style={{ color: "#6B5D42" }}>Início ({diagsLider[0].data})</div>
+              <RadarMaturidade notas={diagsLider[0].notas} tamanho={250} framework={FRM} />
+            </div>
+            {diagsLider.length > 1 && (
+              <div className="text-center">
+                <div className="text-xs mb-1" style={{ color: "#6B5D42" }}>Atual ({diagsLider[diagsLider.length - 1].data})</div>
+                <RadarMaturidade notas={diagsLider[diagsLider.length - 1].notas} tamanho={250} framework={FRM} />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {rel.evolucao && (
+        <div className="mb-5">
+          <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.dourado }}>Evolução observada</div>
+          <p className="text-sm">{rel.evolucao}</p>
+        </div>
+      )}
+      {conquistas.length > 0 && (
+        <div className="mb-5">
+          <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.dourado }}>Conquistas</div>
+          <ul className="text-sm list-disc pl-5">{conquistas.map((x, i) => <li key={i} className="mb-0.5">{x}</li>)}</ul>
+        </div>
+      )}
+      {recomendacoes.length > 0 && (
+        <div className="mb-5">
+          <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.dourado }}>Recomendações de continuidade</div>
+          <ul className="text-sm list-disc pl-5">{recomendacoes.map((x, i) => <li key={i} className="mb-0.5">{x}</li>)}</ul>
+        </div>
+      )}
+      <RodapeImpressao />
+    </div>
+  );
+}
