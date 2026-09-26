@@ -2801,18 +2801,19 @@ function FormCliente({ inicial, onSalvar, onCancelar, onExcluir }) {
 }
 
 // ─── Header Padrão para Módulos ────────────────────────────────
-function HeaderModulo({ titulo, cliente, onVoltar, acoes }) {
+function HeaderModulo({ titulo, subtitulo, cliente, onVoltar, acoes }) {
   return (
-    <div style={{ maxWidth: "1200px", margin: "0 auto", paddingTop: "32px", paddingLeft: "32px", paddingRight: "32px" }}>
-      <button onClick={onVoltar} style={{ fontSize: "11px", marginBottom: "24px", textTransform: "uppercase", fontWeight: "600", background: "none", border: "none", cursor: "pointer", color: CORES.principal, fontFamily: "'Lora', serif", letterSpacing: "1px" }}>
+    <div style={{ maxWidth: "1000px", margin: "32px auto 0", padding: "0 32px" }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "'Lora', serif" }}>
         ← {cliente.negocio}
       </button>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "32px", gap: "16px", flexWrap: "wrap" }}>
-        <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "32px", fontWeight: "800", color: CORES.principal, margin: "0", letterSpacing: "2px" }}>{titulo}</h1>
-        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-          {acoes}
-        </div>
+      <div className="flex items-center justify-between mb-2 gap-4 flex-wrap">
+        <h2 className="font-serif text-xl" style={{ color: CORES.principal }}>{titulo}</h2>
+        {acoes && <div className="flex gap-2 flex-wrap">{acoes}</div>}
       </div>
+      {subtitulo && (
+        <p className="text-xs mb-5" style={{ color: CORES.textoDim }}>{subtitulo}</p>
+      )}
     </div>
   );
 }
@@ -3543,7 +3544,7 @@ function ModuloTabela({ cliente, tabela, gerando, erro, onGerar, onMudarTabela, 
   const grupos = tabela ? agruparPorSetor(tabela) : [];
 
   return (
-    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
+    <div className="pb-16">
       <HeaderModulo
         titulo="Tabela Disciplinar"
         cliente={cliente}
@@ -3738,7 +3739,7 @@ function cargoVazio() {
 
 function ListaCargos({ cliente, cargos, onAbrirCargo, onNovoCargo, onVoltar }) {
   return (
-    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
+    <div className="pb-16">
       <HeaderModulo
         titulo="Descrições de Cargo"
         cliente={cliente}
@@ -4063,7 +4064,7 @@ function CartaoFrente({ frente, onMudar, onRemover }) {
 function ModuloGestao({ cliente, gestao, atas, gerando, erro, onMudar, onGerarPlano, onAtualizarPlano, onAbrirAta, onNovaAta, onVoltar }) {
   const frentes = gestao.frentes || [];
   return (
-    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
+    <div className="pb-16">
       <HeaderModulo
         titulo="Plano de Ação"
         cliente={cliente}
@@ -4262,7 +4263,7 @@ function ModuloEstrutura({ cliente, posicoes, cargos, gerando, erro, onMudar, on
   };
 
   return (
-    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
+    <div className="pb-16">
       <HeaderModulo
         titulo="Estrutura de Governança"
         cliente={cliente}
@@ -4382,7 +4383,7 @@ function ImpressaoEstrutura({ cliente, posicoes }) {
 
 function ModuloManual({ cliente, secoes, gerando, erro, onMudar, onGerar, onImprimir, onVoltar }) {
   return (
-    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
+    <div className="pb-16">
       <HeaderModulo
         titulo="Manual do Colaborador"
         cliente={cliente}
@@ -4499,7 +4500,7 @@ function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, onVoltar 
   };
 
   return (
-    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
+    <div className="pb-16">
       <HeaderModulo
         titulo="CCT & Conformidade"
         cliente={cliente}
@@ -4654,7 +4655,7 @@ function ModuloPenseira({ cliente, mensagens, gerando, erro, onEnviar, onLimpar,
   };
 
   return (
-    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
+    <div className="pb-16">
       <HeaderModulo
         titulo="Conselheira"
         cliente={cliente}
@@ -4759,7 +4760,7 @@ function popVazio() {
 
 function ListaPops({ cliente, pops, onAbrirPop, onNovoPop, onVoltar }) {
   return (
-    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
+    <div className="pb-16">
       <HeaderModulo
         titulo="POPs — Processos Operacionais"
         cliente={cliente}
@@ -4916,7 +4917,7 @@ function ImpressaoPop({ cliente, pop }) {
 function ListaDocs({ cliente, tipo, docs, onAbrir, onNovo, onVoltar }) {
   const cfg = CONFIG_DOCS[tipo];
   return (
-    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
+    <div className="pb-16">
       <HeaderModulo
         titulo={cfg.tituloModulo}
         cliente={cliente}
@@ -6661,7 +6662,7 @@ function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar, onVolt
   };
 
   return (
-    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
+    <div className="pb-16">
       <HeaderModulo
         titulo="Financeiro do Engajamento"
         cliente={cliente}
@@ -7724,7 +7725,7 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
 
   if (!t) {
     return (
-      <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
+      <div className="pb-16">
         <HeaderModulo
           titulo="Treinamentos"
           cliente={cliente}
@@ -8651,7 +8652,7 @@ function ModuloAnomalias({ cliente, anomalias, frentes, gerando, erro, onMudar, 
   anomalias.forEach((a) => { const t = (a.tag || a.local || "").trim().toLowerCase(); if (t) tags[t] = (tags[t] || 0) + 1; });
   const tratadas = anomalias.filter((a) => a.status === "tratada").length;
   return (
-    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
+    <div className="pb-16">
       <HeaderModulo
         titulo="Tratamento de Anomalias"
         cliente={cliente}
@@ -8753,7 +8754,7 @@ function ModuloPainel({ cliente, dados, painel, onMudar, onVoltar }) {
   const d = dados;
   const verificacaoDegradada = d.alertas.length > 0;
   return (
-    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
+    <div className="pb-16">
       <HeaderModulo
         titulo="Painel do Engajamento"
         cliente={cliente}
