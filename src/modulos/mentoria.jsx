@@ -22,15 +22,15 @@ export function ReguaMetodoMentoria({ mentoria, temRaioX, statusAcordo, temProva
     <div className="flex items-center gap-1 mb-4 flex-wrap">
       {fases.map((f, i) => (
         <span key={f.rotulo} className="flex items-center gap-1">
-          {i > 0 && <span style={{ color: "#C0B091" }}>→</span>}
+          {i > 0 && <span style={{ color: "var(--linha-forte)" }}>→</span>}
           <span
             className="text-xs px-2 py-0.5 rounded font-semibold"
             style={
               f.ok
-                ? { background: "#E3EBD8", color: "#4F6B3A", border: "1px solid #4F6B3A55" }
+                ? { background: "var(--sucesso-fundo)", color: "var(--sucesso)", border: "1px solid #4F6B3A55" }
                 : f.meio
-                ? { background: "#F5E6C8", color: "#9A6A2F", border: "1px solid #9A6A2F55" }
-                : { background: CORES.cartao, color: "#A89878", border: "1px solid #E0D5BC" }
+                ? { background: "var(--alerta-fundo)", color: "var(--alerta)", border: "1px solid #9A6A2F55" }
+                : { background: CORES.cartao, color: "var(--tinta-musgo)", border: "1px solid var(--linha)" }
             }
           >
             {f.rotulo}
@@ -55,9 +55,9 @@ export function SecaoMoldagem({ mentoria, mentorado, gerando, onMudar, onGerarFi
     });
   };
   return (
-    <div className="mb-4 p-4 rounded-lg" style={{ background: "#FBF7EC", border: "2px solid #D4AF3777" }}>
+    <div className="mb-4 p-4 rounded-lg" style={{ background: "var(--fundo-elevado)", border: "2px solid #D4AF3777" }}>
       <div className="flex items-center justify-between flex-wrap gap-2 mb-1">
-        <div className="label" style={{ color: "#9A6A2F" }}>
+        <div className="label" style={{ color: "var(--alerta)" }}>
           Moldagem pelo temperamento
         </div>
         <div className="flex gap-3 items-center">
@@ -77,69 +77,69 @@ export function SecaoMoldagem({ mentoria, mentorado, gerando, onMudar, onGerarFi
         <p className="text-xs" style={{ color: CORES.textoDim }}>Vincule o mentorado para a moldagem — a prescrição nasce do temperamento.</p>
       )}
       {mentorado && !mentorado.dominante && (
-        <p className="text-xs" style={{ color: "#9A6A2F" }}>Classifique o temperamento no módulo Temperamentos — sem ele não há moldagem precisa.</p>
+        <p className="text-xs" style={{ color: "var(--alerta)" }}>Classifique o temperamento no módulo Temperamentos — sem ele não há moldagem precisa.</p>
       )}
 
       {guiaAberto && guia && (
-        <div className="mt-2 p-3 rounded text-xs" style={{ background: CORES.cartao, border: "1px solid #EFE8D6", color: "#4A3A2A", lineHeight: 1.6 }}>
+        <div className="mt-2 p-3 rounded text-xs" style={{ background: CORES.cartao, border: "1px solid var(--fundo-recuo)", color: "var(--tinta-areia)", lineHeight: 1.6 }}>
           <div className="mb-1"><strong style={{ color: CORES.fogo }}>Essência:</strong> {guia.essencia}</div>
-          <div className="mb-1"><strong style={{ color: "#8A3A2E" }}>Onde acomoda:</strong> {guia.acomoda}</div>
-          <div className="mb-1"><strong style={{ color: "#4F6B3A" }}>Direção da moldagem:</strong> {guia.direcao}</div>
-          <div className="mb-1"><strong style={{ color: "#6B4A7A" }}>Virtudes:</strong> {guia.virtudes}</div>
+          <div className="mb-1"><strong style={{ color: "var(--erro)" }}>Onde acomoda:</strong> {guia.acomoda}</div>
+          <div className="mb-1"><strong style={{ color: "var(--sucesso)" }}>Direção da moldagem:</strong> {guia.direcao}</div>
+          <div className="mb-1"><strong style={{ color: "var(--info)" }}>Virtudes:</strong> {guia.virtudes}</div>
           <div className="mb-1"><strong style={{ color: CORES.dourado }}>Práticas do estilo:</strong> {guia.praticas.map((p, i) => <div key={i} className="ml-2">• {p}</div>)}</div>
           <div className="mb-1"><strong style={{ color: CORES.fogo }}>Como cobrar:</strong> {guia.cobranca}</div>
-          <div><strong style={{ color: "#8A3A2E" }}>Armadilha do mentor:</strong> {guia.armadilha}</div>
+          <div><strong style={{ color: "var(--erro)" }}>Armadilha do mentor:</strong> {guia.armadilha}</div>
         </div>
       )}
 
       {temFicha && (
         <div className="mt-2">
           {m.virtudeCentral && m.virtudeCentral.nome && (
-            <div className="mb-2 p-3 rounded-lg" style={{ background: "#EFE6F2", border: "2px solid #6B4A7A55" }}>
-              <div className="label" style={{ color: "#6B4A7A" }}>
+            <div className="mb-2 p-3 rounded-lg" style={{ background: "var(--info-fundo)", border: "2px solid var(--info)55" }}>
+              <div className="label" style={{ color: "var(--info)" }}>
                 Virtude central da jornada: {m.virtudeCentral.nome}
               </div>
               {m.virtudeCentral.manifestacao && (
-                <div className="text-xs mt-1" style={{ color: "#4A3A2A" }}><strong>Como a falta aparece:</strong> {m.virtudeCentral.manifestacao}</div>
+                <div className="text-xs mt-1" style={{ color: "var(--tinta-areia)" }}><strong>Como a falta aparece:</strong> {m.virtudeCentral.manifestacao}</div>
               )}
               {m.virtudeCentral.cultivo && (
-                <div className="text-xs mt-1" style={{ color: "#4A3A2A" }}><strong>Cultivo (subjetivo, observável):</strong> {m.virtudeCentral.cultivo}</div>
+                <div className="text-xs mt-1" style={{ color: "var(--tinta-areia)" }}><strong>Cultivo (subjetivo, observável):</strong> {m.virtudeCentral.cultivo}</div>
               )}
             </div>
           )}
           {m.leitura && (
-            <textarea rows={3} className="w-full px-2 py-1 text-sm rounded border bg-creme mb-2" style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
+            <textarea rows={3} className="w-full px-2 py-1 text-sm rounded border bg-creme mb-2" style={{ borderColor: "var(--linha)", color: CORES.fogoEscuro }}
               value={m.leitura} onChange={(e) => onMudar({ ...mentoria, moldagem: { ...m, leitura: e.target.value } })} />
           )}
           {m.contrabalancos && (
-            <div className="text-xs mb-2 p-2 rounded" style={{ background: "#F0DCD2", color: "#8A3A2E" }}>
+            <div className="text-xs mb-2 p-2 rounded" style={{ background: "var(--erro-fundo)", color: "var(--erro)" }}>
               <strong>Contrabalançar:</strong> {m.contrabalancos.split("\n").join(" · ")}
             </div>
           )}
           {(m.praticasSugeridas || []).length > 0 && (
             <div className="mb-2">
-              <div className="text-xs font-semibold mb-1" style={{ color: "#6B5D42" }}>Práticas sugeridas — ative as que prescrever:</div>
+              <div className="text-xs font-semibold mb-1" style={{ color: "var(--tinta)" }}>Práticas sugeridas — ative as que prescrever:</div>
               {(m.praticasSugeridas || []).map((p) => (
-                <div key={p.id} className="flex items-start gap-2 py-1 border-b" style={{ borderColor: "#F5F0E4" }}>
+                <div key={p.id} className="flex items-start gap-2 py-1 border-b" style={{ borderColor: "var(--fundo-elevado)" }}>
                   <div className="flex-1">
                     <div className="text-sm" style={{ color: CORES.fogoEscuro }}>{p.texto}</div>
                     {p.porque && <div className="text-xs italic" style={{ color: CORES.textoDim }}>{p.porque}</div>}
                   </div>
-                  <button onClick={() => ativarPratica(p)} className="text-xs px-2 py-0.5 rounded font-semibold shrink-0" style={{ background: "#E3EBD8", color: "#4F6B3A", border: "1px solid #4F6B3A55" }}>
+                  <button onClick={() => ativarPratica(p)} className="text-xs px-2 py-0.5 rounded font-semibold shrink-0" style={{ background: "var(--sucesso-fundo)", color: "var(--sucesso)", border: "1px solid #4F6B3A55" }}>
                     Prescrever ✓
                   </button>
-                  <button onClick={() => onMudar({ ...mentoria, moldagem: { ...m, praticasSugeridas: m.praticasSugeridas.filter((x) => x.id !== p.id) } })} className="text-xs px-1" style={{ color: "#C0B091" }}>✕</button>
+                  <button onClick={() => onMudar({ ...mentoria, moldagem: { ...m, praticasSugeridas: m.praticasSugeridas.filter((x) => x.id !== p.id) } })} className="text-xs px-1" style={{ color: "var(--linha-forte)" }}>✕</button>
                 </div>
               ))}
             </div>
           )}
           {m.comoCobrar && (
-            <div className="text-xs mb-2 p-2 rounded" style={{ background: "#FDFAF3", border: "1px solid #EFE8D6", color: "#6B5D42" }}>
+            <div className="text-xs mb-2 p-2 rounded" style={{ background: "var(--fundo-elevado)", border: "1px solid var(--fundo-recuo)", color: "var(--tinta)" }}>
               <strong>Como cobrar este mentorado:</strong> {m.comoCobrar}
             </div>
           )}
           {m.sinais && (
-            <div className="text-xs mb-1" style={{ color: "#4F6B3A" }}>
+            <div className="text-xs mb-1" style={{ color: "var(--sucesso)" }}>
               <strong>Sinais de que está pegando:</strong> {m.sinais.split("\n").join(" · ")}
             </div>
           )}
@@ -152,15 +152,15 @@ export function SecaoMoldagem({ mentoria, mentorado, gerando, onMudar, onGerarFi
             Práticas moldadoras ativas · {praticas.filter((p) => p.status === "consolidada").length} consolidadas
           </div>
           {praticas.map((p) => (
-            <div key={p.id} className="flex items-start gap-2 py-1.5 border-b" style={{ borderColor: "#F5F0E4" }}>
+            <div key={p.id} className="flex items-start gap-2 py-1.5 border-b" style={{ borderColor: "var(--fundo-elevado)" }}>
               <select
                 className="px-1.5 py-0.5 text-xs rounded border font-semibold shrink-0"
                 style={
                   p.status === "consolidada"
-                    ? { borderColor: "#4F6B3A", background: "#E3EBD8", color: "#4F6B3A" }
+                    ? { borderColor: "var(--sucesso)", background: "var(--sucesso-fundo)", color: "var(--sucesso)" }
                     : p.status === "pausada"
-                    ? { borderColor: "#A89878", background: "#F5F0E4", color: "#A89878" }
-                    : { borderColor: "#9A6A2F", background: "#F5E6C8", color: "#9A6A2F" }
+                    ? { borderColor: "var(--tinta-musgo)", background: "var(--fundo-elevado)", color: "var(--tinta-musgo)" }
+                    : { borderColor: "var(--alerta)", background: "var(--alerta-fundo)", color: "var(--alerta)" }
                 }
                 value={p.status}
                 onChange={(e) => onMudar({ ...mentoria, praticas: praticas.map((x) => (x.id === p.id ? { ...x, status: e.target.value } : x)) })}
@@ -170,11 +170,11 @@ export function SecaoMoldagem({ mentoria, mentorado, gerando, onMudar, onGerarFi
                 <option value="pausada">Pausada</option>
               </select>
               <div className="flex-1">
-                <input className="w-full text-sm bg-transparent outline-none" style={{ color: p.status === "consolidada" ? "#4F6B3A" : CORES.fogoEscuro }}
+                <input className="w-full text-sm bg-transparent outline-none" style={{ color: p.status === "consolidada" ? "var(--sucesso)" : CORES.fogoEscuro }}
                   value={p.texto} onChange={(e) => onMudar({ ...mentoria, praticas: praticas.map((x) => (x.id === p.id ? { ...x, texto: e.target.value } : x)) })} />
-                <div className="text-xs" style={{ color: "#A89878" }}>{p.porque ? `${p.porque} · ` : ""}desde {p.desde}</div>
+                <div className="text-xs" style={{ color: "var(--tinta-musgo)" }}>{p.porque ? `${p.porque} · ` : ""}desde {p.desde}</div>
               </div>
-              <button onClick={() => onMudar({ ...mentoria, praticas: praticas.filter((x) => x.id !== p.id) })} className="text-xs px-1" style={{ color: "#C0B091" }}>✕</button>
+              <button onClick={() => onMudar({ ...mentoria, praticas: praticas.filter((x) => x.id !== p.id) })} className="text-xs px-1" style={{ color: "var(--linha-forte)" }}>✕</button>
             </div>
           ))}
         </div>
@@ -187,15 +187,15 @@ export function SecaoMoldagem({ mentoria, mentorado, gerando, onMudar, onGerarFi
         + Prescrever prática manualmente
       </button>
 
-      <div className="mt-4 pt-3 border-t" style={{ borderColor: "#E8D5A8" }}>
+      <div className="mt-4 pt-3 border-t" style={{ borderColor: "var(--alerta-fundo)" }}>
         <div className="flex items-center justify-between flex-wrap gap-2 mb-1">
-          <div className="label" style={{ color: "#6B4A7A" }}>
+          <div className="label" style={{ color: "var(--info)" }}>
             Diário da virtude · registros subjetivos
           </div>
           <button
             onClick={() => onMudar({ ...mentoria, virtudes: [{ id: uid(), data: new Date().toLocaleDateString("pt-BR"), nota: "" }, ...(mentoria.virtudes || [])] })}
             className="text-xs underline"
-            style={{ color: "#6B4A7A" }}
+            style={{ color: "var(--info)" }}
           >
             + Registrar observação
           </button>
@@ -207,15 +207,15 @@ export function SecaoMoldagem({ mentoria, mentorado, gerando, onMudar, onGerarFi
         )}
         {(mentoria.virtudes || []).map((v) => (
           <div key={v.id} className="flex items-start gap-2 py-1">
-            <span className="text-xs mt-1.5 shrink-0" style={{ color: "#A89878" }}>{v.data}</span>
+            <span className="text-xs mt-1.5 shrink-0" style={{ color: "var(--tinta-musgo)" }}>{v.data}</span>
             <input
               className="flex-1 px-2 py-1 text-sm rounded border bg-creme"
-              style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
+              style={{ borderColor: "var(--linha)", color: CORES.fogoEscuro }}
               placeholder="O que você observou nesta pessoa..."
               value={v.nota}
               onChange={(e) => onMudar({ ...mentoria, virtudes: mentoria.virtudes.map((x) => (x.id === v.id ? { ...x, nota: e.target.value } : x)) })}
             />
-            <button onClick={() => onMudar({ ...mentoria, virtudes: mentoria.virtudes.filter((x) => x.id !== v.id) })} className="text-xs px-1 mt-1" style={{ color: "#C0B091" }}>✕</button>
+            <button onClick={() => onMudar({ ...mentoria, virtudes: mentoria.virtudes.filter((x) => x.id !== v.id) })} className="text-xs px-1 mt-1" style={{ color: "var(--linha-forte)" }}>✕</button>
           </div>
         ))}
       </div>
@@ -232,7 +232,7 @@ export function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAco
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
         ← {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -258,7 +258,7 @@ export function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAco
               style={
                 (mentoria.foco || "lideranca") === ch
                   ? { background: CORES.hover, borderColor: CORES.dourado, color: CORES.fogo }
-                  : { background: CORES.cartao, borderColor: "#E0D5BC", color: "#A89878" }
+                  : { background: CORES.cartao, borderColor: "var(--linha)", color: "var(--tinta-musgo)" }
               }
             >
               {(mentoria.foco || "lideranca") === ch ? "✓ " : ""}{rot}
@@ -272,7 +272,7 @@ export function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAco
             <div className="text-xs uppercase tracking-widest mb-1 font-semibold" style={{ color: CORES.dourado }}>Mentorado</div>
             <select
               className="w-full px-3 py-2 rounded border text-sm bg-creme"
-              style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
+              style={{ borderColor: "var(--linha)", color: CORES.fogoEscuro }}
               value={mentoria.mentoradoId || ""}
               onChange={(e) => onMudar({ ...mentoria, mentoradoId: e.target.value })}
             >
@@ -292,7 +292,7 @@ export function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAco
               </button>
             )}
             {mentorado && !mentorado.dominante && (
-              <div className="text-xs mt-1" style={{ color: "#9A6A2F" }}>Temperamento ainda não classificado — o formulário de observação da ficha ajuda.</div>
+              <div className="text-xs mt-1" style={{ color: "var(--alerta)" }}>Temperamento ainda não classificado — o formulário de observação da ficha ajuda.</div>
             )}
           </div>
           <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Objetivos da mentoria</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder="Ex.: liderar sem centralizar; preparar o time para funcionar sem ele" value={mentoria.objetivos || ""} onChange={(v) => onMudar({ ...mentoria, objetivos: v })} /></label>
@@ -310,12 +310,12 @@ export function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAco
             .flatMap((e) => (e.atividades || []).filter((a) => !a.feita && a.texto).map((a) => ({ encontro: e, atividade: a })));
           if (!pendentes.length) return null;
           return (
-            <div className="mb-4 p-4 rounded-lg" style={{ background: "#F5E6C8", border: "2px solid #D4AF37AA" }}>
-              <div className="text-xs uppercase tracking-widest font-semibold mb-2" style={{ color: "#9A6A2F" }}>
+            <div className="mb-4 p-4 rounded-lg" style={{ background: "var(--alerta-fundo)", border: "2px solid #D4AF37AA" }}>
+              <div className="text-xs uppercase tracking-widest font-semibold mb-2" style={{ color: "var(--alerta)" }}>
                 Pra casa pendente — cobre no próximo encontro
               </div>
               {(mentoria.praticas || []).filter((p) => p.status === "ativa").length > 0 && (
-                <div className="text-xs mb-2 pb-2 border-b" style={{ color: "#6B5D42", borderColor: "#E8D5A8" }}>
+                <div className="text-xs mb-2 pb-2 border-b" style={{ color: "var(--tinta)", borderColor: "var(--alerta-fundo)" }}>
                   <strong>Práticas ativas a cobrar:</strong> {(mentoria.praticas || []).filter((p) => p.status === "ativa").map((p) => p.texto).join(" · ")}
                 </div>
               )}
@@ -352,13 +352,13 @@ export function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAco
               <input type="checkbox" checked={!!e.realizada} onChange={() => mudarEncontro(e.id, "realizada", !e.realizada)} title="Encontro realizado" />
               <span className="text-xs font-semibold" style={{ color: CORES.dourado }}>{idx + 1}.</span>
               <input className="font-serif flex-1 min-w-40 bg-transparent outline-none" style={{ color: CORES.fogo }} value={e.tema} onChange={(ev) => mudarEncontro(e.id, "tema", ev.target.value)} />
-              <input className="w-24 px-2 py-1 text-xs rounded border bg-creme text-center" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="dd/mm" value={e.data} onChange={(ev) => mudarEncontro(e.id, "data", ev.target.value)} />
-              <button onClick={() => onMudar({ ...mentoria, encontros: encontros.filter((x) => x.id !== e.id) })} className="px-1 text-xs" style={{ color: "#B8860B" }}>✕</button>
+              <input className="w-24 px-2 py-1 text-xs rounded border bg-creme text-center" style={{ borderColor: "var(--linha)", color: "var(--tinta)" }} placeholder="dd/mm" value={e.data} onChange={(ev) => mudarEncontro(e.id, "data", ev.target.value)} />
+              <button onClick={() => onMudar({ ...mentoria, encontros: encontros.filter((x) => x.id !== e.id) })} className="px-1 text-xs" style={{ color: "var(--ouro-texto)" }}>✕</button>
             </div>
-            {e.objetivo && <div className="text-xs mb-1" style={{ color: "#6B5D42" }}>{e.objetivo}</div>}
+            {e.objetivo && <div className="text-xs mb-1" style={{ color: "var(--tinta)" }}>{e.objetivo}</div>}
             {e.provocacao && <div className="text-xs italic mb-2" style={{ color: CORES.textoDim }}>Provocação: {e.provocacao}</div>}
             {(e.atividades || []).length > 0 && (
-              <div className="mb-2 p-2 rounded" style={{ background: "#FDFAF3", border: "1px solid #EFE8D6" }}>
+              <div className="mb-2 p-2 rounded" style={{ background: "var(--fundo-elevado)", border: "1px solid var(--fundo-recuo)" }}>
                 <div className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: CORES.dourado }}>
                   Pra casa · {(e.atividades || []).filter((a) => a.feita).length}/{(e.atividades || []).length}
                 </div>
@@ -371,14 +371,14 @@ export function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAco
                     />
                     <input
                       className="flex-1 text-xs bg-transparent outline-none"
-                      style={{ color: a.feita ? "#A89878" : CORES.fogoEscuro, textDecoration: a.feita ? "line-through" : "none" }}
+                      style={{ color: a.feita ? "var(--tinta-musgo)" : CORES.fogoEscuro, textDecoration: a.feita ? "line-through" : "none" }}
                       value={a.texto}
                       onChange={(ev) => mudarEncontro(e.id, "atividades", e.atividades.map((x) => (x.id === a.id ? { ...x, texto: ev.target.value } : x)))}
                     />
                     <button
                       onClick={() => mudarEncontro(e.id, "atividades", e.atividades.filter((x) => x.id !== a.id))}
                       className="text-xs px-1"
-                      style={{ color: "#C0B091" }}
+                      style={{ color: "var(--linha-forte)" }}
                     >
                       ✕
                     </button>
@@ -386,9 +386,9 @@ export function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAco
                 ))}
                 {(e.atividades || []).filter((a) => a.tipo === "fca").map((a) => (
                   <div key={`fca-${a.id}`} className="ml-5 mb-1 grid gap-1 p-2 rounded" style={{ background: CORES.cartao, border: "1px dashed #E97F3855" }}>
-                    <input className="px-2 py-0.5 text-xs rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Fato: o que aconteceu" value={a.fato || ""} onChange={(ev) => mudarEncontro(e.id, "atividades", e.atividades.map((x) => (x.id === a.id ? { ...x, fato: ev.target.value } : x)))} />
-                    <input className="px-2 py-0.5 text-xs rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Causa: por que aconteceu" value={a.causa || ""} onChange={(ev) => mudarEncontro(e.id, "atividades", e.atividades.map((x) => (x.id === a.id ? { ...x, causa: ev.target.value } : x)))} />
-                    <input className="px-2 py-0.5 text-xs rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Ação: o que farei diferente" value={a.acaoFca || ""} onChange={(ev) => mudarEncontro(e.id, "atividades", e.atividades.map((x) => (x.id === a.id ? { ...x, acaoFca: ev.target.value } : x)))} />
+                    <input className="px-2 py-0.5 text-xs rounded border bg-creme" style={{ borderColor: "var(--linha)", color: "var(--tinta)" }} placeholder="Fato: o que aconteceu" value={a.fato || ""} onChange={(ev) => mudarEncontro(e.id, "atividades", e.atividades.map((x) => (x.id === a.id ? { ...x, fato: ev.target.value } : x)))} />
+                    <input className="px-2 py-0.5 text-xs rounded border bg-creme" style={{ borderColor: "var(--linha)", color: "var(--tinta)" }} placeholder="Causa: por que aconteceu" value={a.causa || ""} onChange={(ev) => mudarEncontro(e.id, "atividades", e.atividades.map((x) => (x.id === a.id ? { ...x, causa: ev.target.value } : x)))} />
+                    <input className="px-2 py-0.5 text-xs rounded border bg-creme" style={{ borderColor: "var(--linha)", color: "var(--tinta)" }} placeholder="Ação: o que farei diferente" value={a.acaoFca || ""} onChange={(ev) => mudarEncontro(e.id, "atividades", e.atividades.map((x) => (x.id === a.id ? { ...x, acaoFca: ev.target.value } : x)))} />
                   </div>
                 ))}
               </div>
@@ -404,13 +404,13 @@ export function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAco
               <button
                 onClick={() => mudarEncontro(e.id, "atividades", [...(e.atividades || []), { id: uid(), tipo: "fca", texto: "FCA da semana: analisar uma situação difícil (Fato → Causa → Ação)", fato: "", causa: "", acaoFca: "", feita: false }])}
                 className="text-xs"
-                style={{ color: "#9A6A2F" }}
+                style={{ color: "var(--alerta)" }}
                 title="O mentorado analisa uma situação difícil da semana no formato Fato → Causa → Ação"
               >
                 + FCA pra casa
               </button>
             </span>
-            <textarea rows={2} className="w-full px-2 py-1 text-sm rounded border bg-creme outline-none mb-1" style={{ borderColor: "#EFE8D6", color: CORES.fogoEscuro }} placeholder="Anotações da sessão..." value={e.anotacoes} onChange={(ev) => mudarEncontro(e.id, "anotacoes", ev.target.value)} />
+            <textarea rows={2} className="w-full px-2 py-1 text-sm rounded border bg-creme outline-none mb-1" style={{ borderColor: "var(--fundo-recuo)", color: CORES.fogoEscuro }} placeholder="Anotações da sessão..." value={e.anotacoes} onChange={(ev) => mudarEncontro(e.id, "anotacoes", ev.target.value)} />
             {e.anotacoes && (
               <div className="flex items-center gap-3 flex-wrap">
                 <button onClick={() => onEstruturarSessao(e)} className="text-xs underline" style={{ color: CORES.dourado }} disabled={gerando}>
@@ -419,7 +419,7 @@ export function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAco
               </div>
             )}
             {e.acoes && (
-              <div className="text-xs mt-1 p-2 rounded" style={{ background: "#FDFAF3", color: "#6B5D42" }}>
+              <div className="text-xs mt-1 p-2 rounded" style={{ background: "var(--fundo-elevado)", color: "var(--tinta)" }}>
                 <strong>Ações combinadas:</strong> {e.acoes.split("\n").join(" · ")}
               </div>
             )}

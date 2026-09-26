@@ -31,7 +31,7 @@ export function ModuloCronograma({ cliente, gestao, gerando, erro, onMudar, onDi
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
         ← {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -83,12 +83,12 @@ export function ModuloCronograma({ cliente, gestao, gerando, erro, onMudar, onDi
         )}
 
         {!gerando && atrasadas.length > 0 && (
-          <div className="mb-5 p-4 rounded-lg" style={{ background: "#F0DCD2" }}>
-            <div className="text-sm font-semibold mb-2" style={{ color: "#8A3A2E" }}>
+          <div className="mb-5 p-4 rounded-lg" style={{ background: "var(--erro-fundo)" }}>
+            <div className="text-sm font-semibold mb-2" style={{ color: "var(--erro)" }}>
               Atrasadas ({atrasadas.length})
             </div>
             {atrasadas.map((x) => (
-              <label key={x.acao.id} className="flex items-start gap-2 py-1 text-sm cursor-pointer" style={{ color: "#8A3A2E" }}>
+              <label key={x.acao.id} className="flex items-start gap-2 py-1 text-sm cursor-pointer" style={{ color: "var(--erro)" }}>
                 <input type="checkbox" className="mt-1" checked={false} onChange={() => marcarFeita(x.frenteId, x.acao.id, true)} />
                 <span>
                   <span className="text-xs font-semibold uppercase tracking-wider mr-1">[sem. {x.acao.semana} · {x.frenteNome}]</span>
@@ -110,14 +110,14 @@ export function ModuloCronograma({ cliente, gestao, gerando, erro, onMudar, onDi
                 className="mb-3 p-3 rounded-lg"
                 style={{
                   background: ehAtual ? CORES.hover : "white",
-                  border: `1px solid ${ehAtual ? CORES.dourado : "#E8DFC9"}`,
+                  border: `1px solid ${ehAtual ? CORES.dourado : "var(--linha)"}`,
                 }}
               >
-                <div className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: ehAtual ? CORES.dourado : "#A89878" }}>
+                <div className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: ehAtual ? CORES.dourado : "var(--tinta-musgo)" }}>
                   Semana {w}{intervaloSemana(gestao.inicio, w) ? ` · ${intervaloSemana(gestao.inicio, w)}` : ""}{ehAtual ? " · atual" : ""}
                 </div>
                 {doW.length === 0 ? (
-                  <div className="text-xs italic" style={{ color: "#A89878" }}>Sem ações planejadas.</div>
+                  <div className="text-xs italic" style={{ color: "var(--tinta-musgo)" }}>Sem ações planejadas.</div>
                 ) : (
                   doW.map((x) => (
                     <label key={x.acao.id} className="flex items-start gap-2 py-1 text-sm cursor-pointer">
@@ -127,11 +127,11 @@ export function ModuloCronograma({ cliente, gestao, gerando, erro, onMudar, onDi
                         checked={!!x.acao.feita}
                         onChange={(e) => marcarFeita(x.frenteId, x.acao.id, e.target.checked)}
                       />
-                      <span style={{ color: x.acao.feita ? "#A89878" : CORES.fogoEscuro, textDecoration: x.acao.feita ? "line-through" : "none" }}>
+                      <span style={{ color: x.acao.feita ? "var(--tinta-musgo)" : CORES.fogoEscuro, textDecoration: x.acao.feita ? "line-through" : "none" }}>
                         <span className="text-xs font-semibold mr-1" style={{ color: CORES.dourado }}>[{x.frenteNome}]</span>
                         {x.acao.texto}
                         {x.acao.responsavel && (
-                          <span className="text-xs ml-1" style={{ color: "#A89878" }}>· @{x.acao.responsavel}</span>
+                          <span className="text-xs ml-1" style={{ color: "var(--tinta-musgo)" }}>· @{x.acao.responsavel}</span>
                         )}
                       </span>
                     </label>
@@ -142,7 +142,7 @@ export function ModuloCronograma({ cliente, gestao, gerando, erro, onMudar, onDi
           })}
 
         {!gerando && semSemana.length > 0 && (
-          <div className="mt-4 text-xs" style={{ color: "#A89878" }}>
+          <div className="mt-4 text-xs" style={{ color: "var(--tinta-musgo)" }}>
             {semSemana.length} aç{semSemana.length > 1 ? "ões" : "ão"} sem semana definida — atribua no Briefing (campo "sem.") ou use a distribuição por IA.
           </div>
         )}
@@ -159,11 +159,11 @@ export function ImpressaoCronograma({ cliente, gestao }) {
   const semanas = [];
   for (let w = 1; w <= maxSemana; w++) semanas.push(w);
   return (
-    <div className="area-impressao hidden print:block p-10" style={{ color: "#2A1218" }}>
+    <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
         <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Cronograma do Engajamento</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{cliente.negocio}</div>
-        <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>
+        <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>
           {gestao.inicio ? `Início: ${gestao.inicio}` : ""}
           {gestao.duracaoSemanas ? ` · Duração: ${gestao.duracaoSemanas} semanas` : ""}
         </div>
@@ -183,7 +183,7 @@ export function ImpressaoCronograma({ cliente, gestao }) {
                     <td className="border px-3 py-1 w-44 font-semibold" style={{ borderColor: CORES.laranja, color: CORES.dourado }}>{x.frenteNome}</td>
                     <td className="border px-3 py-1" style={{ borderColor: CORES.laranja }}>
                       {x.acao.texto}
-                      {x.acao.porque && <div className="text-xs italic" style={{ color: "#6B5D42" }}>{x.acao.porque}</div>}
+                      {x.acao.porque && <div className="text-xs italic" style={{ color: "var(--tinta)" }}>{x.acao.porque}</div>}
                     </td>
                     <td className="border px-3 py-1 w-32" style={{ borderColor: CORES.laranja }}>{x.acao.responsavel || ""}</td>
                   </tr>

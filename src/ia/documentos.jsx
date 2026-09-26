@@ -163,10 +163,10 @@ export function docVazio(tipo) {
 }
 
 export const TEMPERAMENTOS = {
-  sanguineo: { rotulo: "Sanguíneo", cor: "#B0652F", fundo: "#F5E4D3" },
-  colerico: { rotulo: "Colérico", cor: "#8A3A2E", fundo: "#F0DCD2" },
-  melancolico: { rotulo: "Melancólico", cor: "#4A5A7A", fundo: "#DFE4EF" },
-  fleumatico: { rotulo: "Fleumático", cor: "#4F6B3A", fundo: "#E3EBD8" },
+  sanguineo: { rotulo: "Sanguíneo", cor: "var(--temp-sanguineo)", fundo: "var(--temp-sanguineo-fundo)" },
+  colerico: { rotulo: "Colérico", cor: "var(--temp-colerico)", fundo: "var(--temp-colerico-fundo)" },
+  melancolico: { rotulo: "Melancólico", cor: "var(--temp-melancolico)", fundo: "var(--temp-melancolico-fundo)" },
+  fleumatico: { rotulo: "Fleumático", cor: "var(--temp-fleumatico)", fundo: "var(--temp-fleumatico-fundo)" },
 };
 
 export const ESCOLA_TEMPERAMENTOS = `REFERENCIAL TEORICO da consultora (siga esta escola, nao psicologia pop): a linha classica dos quatro temperamentos conforme Art & Laraine Bennett e Italo Marsili. Chaves da escola: (1) temperamento e o padrao INATO de REACAO - velocidade com que a pessoa reage, intensidade e duracao da reacao (sanguineo: reage rapido, esquece rapido; colerico: reage rapido, sustenta longamente; melancolico: reage devagar, guarda fundo e por muito tempo; fleumatico: reage devagar, solta rapido); (2) temperamento nao e destino nem desculpa - e materia-prima a ser trabalhada com pratica deliberada e virtude; (3) a orientacao certa e concreta e direta, mira o ponto exato onde o temperamento acomoda ou exagera; (4) nunca rotule a pessoa como limitacao - o temperamento explica a tendencia, nao autoriza o comportamento.`;

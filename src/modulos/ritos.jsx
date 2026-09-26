@@ -12,7 +12,7 @@ export function ModuloRitos({ cliente, ritos, gerando, erro, onMudar, onGerar, o
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
         ← {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -53,7 +53,7 @@ export function ModuloRitos({ cliente, ritos, gerando, erro, onMudar, onGerar, o
                 <button
                   onClick={() => onMudar({ ...ritos, itens: itens.filter((x) => x.id !== r.id) })}
                   className="px-1 text-xs"
-                  style={{ color: "#B8860B" }}
+                  style={{ color: "var(--ouro-texto)" }}
                 >
                   ✕
                 </button>
@@ -61,21 +61,21 @@ export function ModuloRitos({ cliente, ritos, gerando, erro, onMudar, onGerar, o
               <div className="grid sm:grid-cols-3 gap-2 mb-2">
                 <input
                   className="px-2 py-1 text-xs rounded border bg-creme"
-                  style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
+                  style={{ borderColor: "var(--linha)", color: "var(--tinta)" }}
                   value={r.frequencia}
                   placeholder="Frequência e momento"
                   onChange={(e) => mudarItem(r.id, "frequencia", e.target.value)}
                 />
                 <input
                   className="px-2 py-1 text-xs rounded border bg-creme"
-                  style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
+                  style={{ borderColor: "var(--linha)", color: "var(--tinta)" }}
                   value={r.duracao}
                   placeholder="Duração"
                   onChange={(e) => mudarItem(r.id, "duracao", e.target.value)}
                 />
                 <input
                   className="px-2 py-1 text-xs rounded border bg-creme"
-                  style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
+                  style={{ borderColor: "var(--linha)", color: "var(--tinta)" }}
                   value={r.participantes}
                   placeholder="Participantes"
                   onChange={(e) => mudarItem(r.id, "participantes", e.target.value)}
@@ -84,7 +84,7 @@ export function ModuloRitos({ cliente, ritos, gerando, erro, onMudar, onGerar, o
               <textarea
                 rows={4}
                 className="w-full px-2 py-1 text-sm rounded border bg-creme outline-none"
-                style={{ borderColor: "#EFE8D6", color: CORES.fogoEscuro }}
+                style={{ borderColor: "var(--fundo-recuo)", color: CORES.fogoEscuro }}
                 value={r.pauta}
                 placeholder="Pauta padrão (um item por linha)"
                 onChange={(e) => mudarItem(r.id, "pauta", e.target.value)}
@@ -112,11 +112,11 @@ export function ImpressaoRitos({ cliente, ritos }) {
   const itens = (ritos && ritos.itens) || [];
   if (itens.length === 0) return null;
   return (
-    <div className="area-impressao hidden print:block p-10" style={{ color: "#2A1218" }}>
+    <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
         <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Ritos de Gestão</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{cliente.negocio}</div>
-        <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>{cliente.segmento}</div>
+        <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{cliente.segmento}</div>
       </div>
       <p className="text-sm mb-5">
         Os ritos acontecem no dia e horário fixos, com a pauta padrão abaixo, independentemente da presença do dono. Reunião sem pauta cumprida não conta como realizada.

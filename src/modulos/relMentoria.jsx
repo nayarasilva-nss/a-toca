@@ -13,7 +13,7 @@ export function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, frame
   const tem = rel.retrospectiva || rel.evolucao;
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
         ← {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -39,7 +39,7 @@ export function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, frame
         {!gerando && (
           <div className="mb-4 p-3 rounded-lg" style={{ background: CORES.hover, border: "2px solid #D4AF37AA" }}>
             <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
-              <div className="label" style={{ color: "#9A6A2F" }}>
+              <div className="label" style={{ color: "var(--alerta)" }}>
                 Verificação das metas do mentorado (fase Prova)
               </div>
               {(metasAcordo || []).length > 0 && (rel.metasVerificadas || []).length === 0 && (
@@ -58,17 +58,17 @@ export function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, frame
               </p>
             )}
             {(rel.metasVerificadas || []).map((m) => (
-              <div key={m.id} className="py-1.5 border-b" style={{ borderColor: "#EFE8D6" }}>
+              <div key={m.id} className="py-1.5 border-b" style={{ borderColor: "var(--fundo-recuo)" }}>
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="flex-1 text-sm" style={{ color: CORES.fogoEscuro }}>{m.objetivo}{m.prazo ? ` — até ${m.prazo}` : ""}</span>
                   <select
                     className="px-2 py-0.5 text-xs rounded border font-semibold"
                     style={
                       m.status === "batida"
-                        ? { borderColor: "#4F6B3A", background: "#E3EBD8", color: "#4F6B3A" }
+                        ? { borderColor: "var(--sucesso)", background: "var(--sucesso-fundo)", color: "var(--sucesso)" }
                         : m.status === "nao"
-                        ? { borderColor: "#C77", background: "#F5DDD6", color: "#8A3A2E" }
-                        : { borderColor: "#9A6A2F", background: "#F5E6C8", color: "#9A6A2F" }
+                        ? { borderColor: "var(--erro)", background: "var(--erro-fundo)", color: "var(--erro)" }
+                        : { borderColor: "var(--alerta)", background: "var(--alerta-fundo)", color: "var(--alerta)" }
                     }
                     value={m.status}
                     onChange={(e) => onMudar({ ...rel, metasVerificadas: rel.metasVerificadas.map((x) => (x.id === m.id ? { ...x, status: e.target.value } : x)) })}
@@ -80,7 +80,7 @@ export function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, frame
                 </div>
                 <input
                   className="w-full mt-1 px-2 py-1 text-xs rounded border bg-creme"
-                  style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
+                  style={{ borderColor: "var(--linha)", color: "var(--tinta)" }}
                   placeholder="Por quê"
                   value={m.porque}
                   onChange={(e) => onMudar({ ...rel, metasVerificadas: rel.metasVerificadas.map((x) => (x.id === m.id ? { ...x, porque: e.target.value } : x)) })}
@@ -123,11 +123,11 @@ export function ImpressaoRelMentoria({ cliente, rel, diagsLider, framework: fwRe
   const conquistas = emLinhasDoc(rel.conquistas);
   const recomendacoes = emLinhasDoc(rel.recomendacoes);
   return (
-    <div className="area-impressao hidden print:block p-10" style={{ color: "#2A1218" }}>
+    <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
         <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Relatório de Evolução — Mentoria</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{cliente.negocio}</div>
-        <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>{cliente.segmento}</div>
+        <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{cliente.segmento}</div>
       </div>
       {rel.retrospectiva && (
         <div className="mb-5">
@@ -136,12 +136,12 @@ export function ImpressaoRelMentoria({ cliente, rel, diagsLider, framework: fwRe
         </div>
       )}
       {(rel.metasVerificadas || []).length > 0 && (
-        <div className="mb-5 p-3" style={{ border: "1px solid #7BA85C" }}>
+        <div className="mb-5 p-3" style={{ border: "1px solid var(--linha-forte)" }}>
           <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.dourado }}>Metas do mentorado — verificação</div>
           {(rel.metasVerificadas || []).map((m) => (
             <div key={m.id} className="text-sm mb-1">
               <strong>{ROT_META_M[m.status] || m.status}:</strong> {m.objetivo}{m.prazo ? ` (até ${m.prazo})` : ""}
-              {m.porque && <span className="text-xs italic" style={{ color: "#6B5D42" }}> — {m.porque}</span>}
+              {m.porque && <span className="text-xs italic" style={{ color: "var(--tinta)" }}> — {m.porque}</span>}
             </div>
           ))}
         </div>
@@ -151,12 +151,12 @@ export function ImpressaoRelMentoria({ cliente, rel, diagsLider, framework: fwRe
           <div className="text-sm font-bold uppercase tracking-widest mb-2" style={{ color: CORES.dourado }}>Maturidade de liderança</div>
           <div className="flex justify-center gap-10">
             <div className="text-center">
-              <div className="text-xs mb-1" style={{ color: "#6B5D42" }}>Início ({diagsLider[0].data})</div>
+              <div className="text-xs mb-1" style={{ color: "var(--tinta)" }}>Início ({diagsLider[0].data})</div>
               <RadarMaturidade notas={diagsLider[0].notas} tamanho={250} framework={FRM} />
             </div>
             {diagsLider.length > 1 && (
               <div className="text-center">
-                <div className="text-xs mb-1" style={{ color: "#6B5D42" }}>Atual ({diagsLider[diagsLider.length - 1].data})</div>
+                <div className="text-xs mb-1" style={{ color: "var(--tinta)" }}>Atual ({diagsLider[diagsLider.length - 1].data})</div>
                 <RadarMaturidade notas={diagsLider[diagsLider.length - 1].notas} tamanho={250} framework={FRM} />
               </div>
             )}

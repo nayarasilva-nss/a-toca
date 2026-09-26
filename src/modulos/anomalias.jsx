@@ -24,7 +24,7 @@ export function ModuloAnomalias({ cliente, anomalias, frentes, gerando, erro, on
         <div className="rounded-lg p-6 shadow-sm card">
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", gap: "12px", flexWrap: "wrap" }}>
           <div className="flex items-center gap-3">
-            <span className="text-xs font-semibold" style={{ color: tratadas === anomalias.length && anomalias.length ? "#4F6B3A" : "#9A6A2F" }}>
+            <span className="text-xs font-semibold" style={{ color: tratadas === anomalias.length && anomalias.length ? "var(--sucesso)" : "var(--alerta)" }}>
               {tratadas}/{anomalias.length} tratadas
             </span>
             <BotaoPrimario onClick={() => onMudar([anomaliaVazia(), ...anomalias])}>+ Relatar anomalia</BotaoPrimario>
@@ -44,10 +44,10 @@ export function ModuloAnomalias({ cliente, anomalias, frentes, gerando, erro, on
           return (
             <div key={a.id} className="mb-3 rounded-lg p-4" style={{ background: CORES.cartao, border: a.status === "tratada" ? "2px solid #4F6B3A55" : "2px solid #E97F3855" }}>
               <div className="flex items-center gap-2 mb-2 flex-wrap">
-                <span className="text-xs" style={{ color: "#A89878" }}>{a.data}</span>
+                <span className="text-xs" style={{ color: "var(--tinta-musgo)" }}>{a.data}</span>
                 <select
                   className="px-2 py-0.5 text-xs rounded border font-semibold"
-                  style={a.status === "tratada" ? { borderColor: "#4F6B3A", background: "#E3EBD8", color: "#4F6B3A" } : { borderColor: "#9A6A2F", background: "#F5E6C8", color: "#9A6A2F" }}
+                  style={a.status === "tratada" ? { borderColor: "var(--sucesso)", background: "var(--sucesso-fundo)", color: "var(--sucesso)" } : { borderColor: "var(--alerta)", background: "var(--alerta-fundo)", color: "var(--alerta)" }}
                   value={a.status}
                   onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, status: e.target.value } : x)))}
                 >
@@ -55,17 +55,17 @@ export function ModuloAnomalias({ cliente, anomalias, frentes, gerando, erro, on
                   <option value="tratada">Tratada ✓</option>
                 </select>
                 {recorrencia > 1 && (
-                  <span className="text-xs px-1.5 py-0.5 rounded font-semibold" style={{ background: "#F5DDD6", color: "#8A3A2E" }} title="Anomalia repetida sugere padrão errado ou pessoa na cadeira errada — cruze com Temperamentos (leitura interna)">
+                  <span className="text-xs px-1.5 py-0.5 rounded font-semibold" style={{ background: "var(--erro-fundo)", color: "var(--erro)" }} title="Anomalia repetida sugere padrão errado ou pessoa na cadeira errada — cruze com Temperamentos (leitura interna)">
                     recorrente ×{recorrencia}
                   </span>
                 )}
-                <button onClick={() => onMudar(anomalias.filter((x) => x.id !== a.id))} className="ml-auto text-xs px-1" style={{ color: "#C0B091" }}>✕</button>
+                <button onClick={() => onMudar(anomalias.filter((x) => x.id !== a.id))} className="ml-auto text-xs px-1" style={{ color: "var(--linha-forte)" }}>✕</button>
               </div>
               <div className="grid sm:grid-cols-3 gap-2 mb-2">
-                <input className="sm:col-span-3 px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }} placeholder="Fato: o que aconteceu" value={a.fato} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, fato: e.target.value } : x)))} />
-                <input className="px-2 py-1 text-xs rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Quando" value={a.quando} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, quando: e.target.value } : x)))} />
-                <input className="px-2 py-1 text-xs rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Onde (setor/processo)" value={a.local} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, local: e.target.value } : x)))} />
-                <input className="px-2 py-1 text-xs rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Tag p/ recorrência (ex.: estoque)" value={a.tag} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, tag: e.target.value } : x)))} />
+                <input className="sm:col-span-3 px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "var(--linha)", color: CORES.fogoEscuro }} placeholder="Fato: o que aconteceu" value={a.fato} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, fato: e.target.value } : x)))} />
+                <input className="px-2 py-1 text-xs rounded border bg-creme" style={{ borderColor: "var(--linha)", color: "var(--tinta)" }} placeholder="Quando" value={a.quando} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, quando: e.target.value } : x)))} />
+                <input className="px-2 py-1 text-xs rounded border bg-creme" style={{ borderColor: "var(--linha)", color: "var(--tinta)" }} placeholder="Onde (setor/processo)" value={a.local} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, local: e.target.value } : x)))} />
+                <input className="px-2 py-1 text-xs rounded border bg-creme" style={{ borderColor: "var(--linha)", color: "var(--tinta)" }} placeholder="Tag p/ recorrência (ex.: estoque)" value={a.tag} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, tag: e.target.value } : x)))} />
               </div>
               {a.fato && !a.causa && (
                 <button onClick={() => onAnalisar(a)} className="text-xs underline mb-2" style={{ color: CORES.dourado }} disabled={gerando}>
@@ -73,17 +73,17 @@ export function ModuloAnomalias({ cliente, anomalias, frentes, gerando, erro, on
                 </button>
               )}
               {(a.causa || a.acao) && (
-                <div className="grid gap-2 mb-2 p-2 rounded" style={{ background: "#FDFAF3", border: "1px solid #EFE8D6" }}>
-                  <textarea rows={2} className="px-2 py-1 text-xs rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Causa raiz" value={a.causa} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, causa: e.target.value } : x)))} />
-                  <input className="px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }} placeholder="Ação corretiva" value={a.acao} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, acao: e.target.value } : x)))} />
+                <div className="grid gap-2 mb-2 p-2 rounded" style={{ background: "var(--fundo-elevado)", border: "1px solid var(--fundo-recuo)" }}>
+                  <textarea rows={2} className="px-2 py-1 text-xs rounded border bg-creme" style={{ borderColor: "var(--linha)", color: "var(--tinta)" }} placeholder="Causa raiz" value={a.causa} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, causa: e.target.value } : x)))} />
+                  <input className="px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "var(--linha)", color: CORES.fogoEscuro }} placeholder="Ação corretiva" value={a.acao} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, acao: e.target.value } : x)))} />
                   {a.acao && a.status !== "tratada" && frentes.length > 0 && (
                     <div className="flex items-center gap-2 flex-wrap">
-                      <select className="px-2 py-1 text-xs rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} value={a.frenteDestino || ""} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, frenteDestino: e.target.value } : x)))}>
+                      <select className="px-2 py-1 text-xs rounded border bg-creme" style={{ borderColor: "var(--linha)", color: "var(--tinta)" }} value={a.frenteDestino || ""} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, frenteDestino: e.target.value } : x)))}>
                         <option value="">Enviar ação para a frente...</option>
                         {frentes.map((f) => <option key={f.id} value={f.id}>{f.nome}</option>)}
                       </select>
                       {a.frenteDestino && (
-                        <button onClick={() => onEnviarAcao(a)} className="text-xs underline font-semibold" style={{ color: "#4F6B3A" }}>
+                        <button onClick={() => onEnviarAcao(a)} className="text-xs underline font-semibold" style={{ color: "var(--sucesso)" }}>
                           Agir: enviar ao plano ✓
                         </button>
                       )}

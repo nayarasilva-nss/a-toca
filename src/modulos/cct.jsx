@@ -57,13 +57,13 @@ export function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, on
           </span>
         )}
         {(cct.documentos || []).length > 0 && !gerando && (
-          <div className="text-xs mt-2" style={{ color: "#A89878" }}>
+          <div className="text-xs mt-2" style={{ color: "var(--tinta-musgo)" }}>
             Documentos analisados:{" "}
             {(cct.documentos || []).map((d) => `${d.nomeArquivo} (${d.dataAnalise})`).join(" · ")}
           </div>
         )}
         {cct.nomeArquivo && !(cct.documentos || []).length && !gerando && (
-          <span className="text-xs ml-3" style={{ color: "#A89878" }}>
+          <span className="text-xs ml-3" style={{ color: "var(--tinta-musgo)" }}>
             Última análise: {cct.nomeArquivo}
             {cct.dataAnalise ? ` · ${cct.dataAnalise}` : ""}
           </span>
@@ -80,15 +80,15 @@ export function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, on
               <div className="label" style={{ color: CORES.dourado }}>
                 Pontos obrigatórios extraídos
               </div>
-              <div className="text-xs font-semibold" style={{ color: pontos.every((p) => p.statusConf === "resolvido") ? "#4F6B3A" : "#9A6A2F" }}>
+              <div className="text-xs font-semibold" style={{ color: pontos.every((p) => p.statusConf === "resolvido") ? "var(--sucesso)" : "var(--alerta)" }}>
                 {pontos.filter((p) => p.statusConf === "resolvido").length}/{pontos.length} resolvidos
               </div>
             </div>
             {pontos.map((p) => (
-              <div key={p.id} className="flex items-start gap-2 py-2 border-b" style={{ borderColor: "#EFE8D6" }}>
+              <div key={p.id} className="flex items-start gap-2 py-2 border-b" style={{ borderColor: "var(--fundo-recuo)" }}>
                 <input
                   className="w-32 shrink-0 px-2 py-1 text-xs rounded border bg-creme font-semibold"
-                  style={{ borderColor: "#E0D5BC", color: CORES.fogo }}
+                  style={{ borderColor: "var(--linha)", color: CORES.fogo }}
                   value={p.tema}
                   onChange={(e) =>
                     onMudar({ ...cct, pontos: pontos.map((x) => (x.id === p.id ? { ...x, tema: e.target.value } : x)) })
@@ -97,7 +97,7 @@ export function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, on
                 <textarea
                   rows={2}
                   className="flex-1 px-2 py-1 text-sm rounded border bg-creme"
-                  style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
+                  style={{ borderColor: "var(--linha)", color: CORES.fogoEscuro }}
                   value={p.exigencia}
                   onChange={(e) =>
                     onMudar({ ...cct, pontos: pontos.map((x) => (x.id === p.id ? { ...x, exigencia: e.target.value } : x)) })
@@ -107,10 +107,10 @@ export function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, on
                   className="px-2 py-1 text-xs rounded border bg-creme shrink-0"
                   style={
                     p.statusConf === "resolvido"
-                      ? { borderColor: "#4F6B3A", background: "#E3EBD8", color: "#4F6B3A" }
+                      ? { borderColor: "var(--sucesso)", background: "var(--sucesso-fundo)", color: "var(--sucesso)" }
                       : p.statusConf === "tratamento"
-                      ? { borderColor: "#9A6A2F", background: "#F5E6C8", color: "#9A6A2F" }
-                      : { borderColor: "#C77", background: "#F5DDD6", color: "#8A3A2E" }
+                      ? { borderColor: "var(--alerta)", background: "var(--alerta-fundo)", color: "var(--alerta)" }
+                      : { borderColor: "var(--erro)", background: "var(--erro-fundo)", color: "var(--erro)" }
                   }
                   value={p.statusConf || "pendente"}
                   onChange={(e) =>
@@ -130,7 +130,7 @@ export function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, on
                 </select>
                 <select
                   className="px-2 py-1 text-xs rounded border bg-creme"
-                  style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
+                  style={{ borderColor: "var(--linha)", color: "var(--tinta)" }}
                   value={p.destino}
                   onChange={(e) =>
                     onMudar({ ...cct, pontos: pontos.map((x) => (x.id === p.id ? { ...x, destino: e.target.value } : x)) })
@@ -143,7 +143,7 @@ export function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, on
                 <button
                   onClick={() => onMudar({ ...cct, pontos: pontos.filter((x) => x.id !== p.id) })}
                   className="px-1 text-xs"
-                  style={{ color: "#B8860B" }}
+                  style={{ color: "var(--ouro-texto)" }}
                 >
                   ✕
                 </button>
@@ -158,7 +158,7 @@ export function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, on
             >
               + Adicionar ponto manual
             </button>
-            <p className="text-xs mt-4" style={{ color: "#A89878" }}>
+            <p className="text-xs mt-4" style={{ color: "var(--tinta-musgo)" }}>
               Estes pontos são injetados automaticamente na geração da tabela disciplinar, das descrições de cargo e do manual deste cliente.
             </p>
           </div>

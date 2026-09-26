@@ -57,21 +57,21 @@ export function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar,
               })
             }
             className="mb-4 px-4 py-2 rounded text-sm font-semibold"
-            style={{ background: "#E3EBD8", color: "#4F6B3A", border: "1px solid #4F6B3A55" }}
+            style={{ background: "var(--sucesso-fundo)", color: "var(--sucesso)", border: "1px solid #4F6B3A55" }}
           >
             Puxar da proposta aceita ({propostaAceita.investimento || "valor a definir"}) — cria a primeira parcela para você dividir
           </button>
         )}
 
         <div className="flex gap-3 flex-wrap mb-5">
-          <div className="px-4 py-2 rounded-lg text-sm" style={{ background: "#E3EBD8", color: "#4F6B3A" }}>
+          <div className="px-4 py-2 rounded-lg text-sm" style={{ background: "var(--sucesso-fundo)", color: "var(--sucesso)" }}>
             Recebido: <strong>{formatarBR(recebido)}</strong>
           </div>
-          <div className="px-4 py-2 rounded-lg text-sm" style={{ background: CORES.hover, color: "#9A6A2F" }}>
+          <div className="px-4 py-2 rounded-lg text-sm" style={{ background: CORES.hover, color: "var(--alerta)" }}>
             A receber: <strong>{formatarBR(aReceber)}</strong>
           </div>
           {atrasado > 0 && (
-            <div className="px-4 py-2 rounded-lg text-sm" style={{ background: "#F0DCD2", color: "#8A3A2E" }}>
+            <div className="px-4 py-2 rounded-lg text-sm" style={{ background: "var(--erro-fundo)", color: "var(--erro)" }}>
               Vencido: <strong>{formatarBR(atrasado)}</strong>
             </div>
           )}
@@ -81,7 +81,7 @@ export function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar,
           const venc = parseDataBR(p.vencimento);
           const vencida = !p.pago && venc && venc < hoje;
           return (
-            <div key={p.id} className="flex items-center gap-2 py-1.5 border-b flex-wrap" style={{ borderColor: "#EFE8D6" }}>
+            <div key={p.id} className="flex items-center gap-2 py-1.5 border-b flex-wrap" style={{ borderColor: "var(--fundo-recuo)" }}>
               <input
                 type="checkbox"
                 checked={!!p.pago}
@@ -90,21 +90,21 @@ export function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar,
               />
               <input
                 className="flex-1 min-w-32 px-2 py-1 text-sm rounded border bg-creme"
-                style={{ borderColor: "#E0D5BC", color: p.pago ? "#A89878" : CORES.fogoEscuro, textDecoration: p.pago ? "line-through" : "none" }}
+                style={{ borderColor: "var(--linha)", color: p.pago ? "var(--tinta-musgo)" : CORES.fogoEscuro, textDecoration: p.pago ? "line-through" : "none" }}
                 placeholder="Descrição (ex.: Entrada, Parcela 1)"
                 value={p.descricao}
                 onChange={(e) => mudarParcela(p.id, "descricao", e.target.value)}
               />
               <input
                 className="w-28 px-2 py-1 text-sm rounded border bg-creme text-right"
-                style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
+                style={{ borderColor: "var(--linha)", color: CORES.fogoEscuro }}
                 placeholder="R$ 0,00"
                 value={p.valor}
                 onChange={(e) => mudarParcela(p.id, "valor", e.target.value)}
               />
               <input
                 className="w-28 px-2 py-1 text-xs rounded border bg-creme text-center"
-                style={{ borderColor: vencida ? "#8A3A2E" : "#E0D5BC", color: vencida ? "#8A3A2E" : "#6B5D42" }}
+                style={{ borderColor: vencida ? "var(--erro)" : "var(--linha)", color: vencida ? "var(--erro)" : "var(--tinta)" }}
                 placeholder="dd/mm/aaaa"
                 title="Vencimento"
                 value={p.vencimento}
@@ -113,7 +113,7 @@ export function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar,
               <button
                 onClick={() => onMudar({ ...financeiro, parcelas: parcelas.filter((x) => x.id !== p.id) })}
                 className="px-1 text-xs"
-                style={{ color: "#B8860B" }}
+                style={{ color: "var(--ouro-texto)" }}
               >
                 ✕
               </button>

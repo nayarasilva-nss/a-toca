@@ -1,147 +1,51 @@
-import { useState, useEffect } from "react";
-import { CORES } from "../nucleo/base.jsx";
+import { useEffect, useState } from "react";
+import { Ilustracao } from "./arvore.jsx";
 
-// ─── Toast (Notificação) ────────────────────────────────────────
-export function Toast({ mensagem, tipo = "info" }) {
-  const cores = {
-    info: { bg: "#E8DFD3", txt: "#6B5D42" },
-    sucesso: { bg: "#D8E5D0", txt: "#3C5A2B" },
-    aviso: { bg: "#F2E3CB", txt: "#9A6A2F" }
-  };
-  const cor = cores[tipo] || cores.info;
-
+export function BotaoPrimario({ children, onClick, disabled, type = "button", style, className = "", pequeno }) {
   return (
-    <div style={{
-      position: "fixed",
-      bottom: "24px",
-      right: "24px",
-      background: cor.bg,
-      color: cor.txt,
-      padding: "16px 24px",
-      borderRadius: "8px",
-      border: `1px solid ${cor.txt}`,
-      fontSize: "13px",
-      fontFamily: "'Lora', serif",
-      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-      maxWidth: "300px",
-      zIndex: 999,
-      animation: "slideIn 0.3s ease-out"
-    }}>
-      {mensagem}
+    <button type={type} onClick={onClick} disabled={disabled} style={style} className={`enz-botao enz-botao-primario ${pequeno ? "enz-botao-pequeno" : ""} ${className}`}>
+      {children}
+    </button>
+  );
+}
+
+export function BotaoContorno({ children, onClick, disabled, type = "button", style, className = "", pequeno, ativo }) {
+  return (
+    <button type={type} onClick={onClick} disabled={disabled} style={style} className={`enz-botao enz-botao-contorno ${pequeno ? "enz-botao-pequeno" : ""} ${ativo ? "is-ativo" : ""} ${className}`}>
+      {ativo && <span className="enz-ponto" style={{ color: "var(--ouro)" }} />}
+      {children}
+    </button>
+  );
+}
+
+export function InputField({ label, placeholder, value, onChange, type = "text", required = false, id, ajuda }) {
+  const campoId = id || (label ? "campo-" + label.toLowerCase().replace(/[^a-z0-9]+/g, "-") : undefined);
+  return (
+    <div className="enz-campo">
+      {label && <label htmlFor={campoId} className="enz-rotulo">{label}</label>}
+      <input id={campoId} className="enz-input" type={type} placeholder={placeholder} value={value} onChange={(e) => onChange(e.target.value)} required={required} />
+      {ajuda && <div className="enz-ajuda">{ajuda}</div>}
     </div>
   );
 }
 
-
-// ─── CardModulo (Exibe um módulo dentro de uma fase) ────────────
-
-
-// ─── TelaDeFases (Dashboard principal com as 6 fases) ────────────
-export function BotaoPrimario({ children, onClick, disabled, style }) {
+export function Toast({ mensagem, tipo = "info" }) {
   return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className="rounded text-white disabled:opacity-60 transition-colors hover:opacity-90"
-      style={{
-        fontFamily: "'Lora', serif",
-        fontSize: "13px",
-        fontWeight: "600",
-        letterSpacing: "1px",
-        padding: "12px 16px",
-        background: CORES.fogo,
-        color: "white",
-        border: "none",
-        cursor: disabled ? "not-allowed" : "pointer",
-        ...style
-      }}
-    >
-      {children}
-    </button>
-  );
-}
-
-export function BotaoContorno({ children, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      className="rounded transition-colors hover:opacity-80"
-      style={{
-        fontFamily: "'Lora', serif",
-        fontSize: "13px",
-        fontWeight: "600",
-        letterSpacing: "1px",
-        padding: "12px 16px",
-        border: `1px solid ${CORES.laranja}`,
-        background: "transparent",
-        color: CORES.fogo,
-        cursor: "pointer"
-      }}
-    >
-      {children}
-    </button>
-  );
-}
-
-export function InputField({ label, placeholder, value, onChange, type = "text", required = false, color = CORES.verde }) {
-  return (
-    <div style={{ marginBottom: "24px" }}>
-      {label && (
-        <label
-          style={{
-            display: "block",
-            fontFamily: "'Lora', serif",
-            fontSize: "12px",
-            letterSpacing: "2px",
-            color: color,
-            textTransform: "uppercase",
-            marginBottom: "10px",
-            fontWeight: "700"
-          }}
-        >
-          {label}
-        </label>
-      )}
-      <input
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        required={required}
-        style={{
-          width: "100%",
-          padding: "14px 16px",
-          border: `2px solid ${color === CORES.verde ? CORES.verdeClaro : CORES.dourado}20`,
-          borderRadius: "8px",
-          fontFamily: "'Lora', serif",
-          fontSize: "14px",
-          background: CORES.fundoPrincipal,
-          color: CORES.principal,
-          outline: "none",
-          transition: "all 0.3s ease",
-          boxSizing: "border-box"
-        }}
-        onFocus={(e) => {
-          e.target.style.borderColor = CORES.dourado;
-          e.target.style.boxShadow = `0 0 0 3px ${CORES.dourado}20`;
-        }}
-        onBlur={(e) => {
-          e.target.style.borderColor = color === CORES.verde ? CORES.verdeClaro : `${CORES.dourado}20`;
-          e.target.style.boxShadow = "none";
-        }}
-      />
+    <div role="status" className={`enz-toast enz-toast-${tipo}`}>
+      <span className="enz-ponto" />
+      <span>{mensagem}</span>
     </div>
   );
 }
 
 export const FRASES_TRABALHANDO = [
-  "Organizando as ideias...",
-  "Estruturando o conteúdo...",
-  "Revisando os detalhes...",
-  "Quase pronto...",
+  "organizando as ideias",
+  "estruturando o conteúdo",
+  "revisando os detalhes",
+  "quase pronto",
 ];
 
-export function ConfirmarAcao({ rotulo, aviso, onConfirmar, classe }) {
+export function ConfirmarAcao({ rotulo, label, aviso, onConfirmar, classe = "" }) {
   const [pendente, setPendente] = useState(false);
   useEffect(() => {
     if (!pendente) return;
@@ -150,6 +54,7 @@ export function ConfirmarAcao({ rotulo, aviso, onConfirmar, classe }) {
   }, [pendente]);
   return (
     <button
+      type="button"
       onClick={() => {
         if (pendente) {
           setPendente(false);
@@ -158,19 +63,20 @@ export function ConfirmarAcao({ rotulo, aviso, onConfirmar, classe }) {
           setPendente(true);
         }
       }}
-      className={classe || "text-xs underline"}
-      style={{ color: "#8A3A2E", fontWeight: pendente ? 700 : 400 }}
+      className={`enz-confirmar ${pendente ? "is-pendente" : ""} ${classe}`}
     >
-      {pendente ? `Clique de novo para confirmar — ${aviso}` : rotulo}
+      {pendente ? `Clique de novo para confirmar — ${aviso}` : rotulo || label}
     </button>
   );
 }
 
-export function Trabalhando() {
-  const [frase] = useState(() => FRASES_TRABALHANDO[Math.floor(Math.random() * FRASES_TRABALHANDO.length)]);
+export function Trabalhando({ frase }) {
+  const [escolhida] = useState(() => frase || FRASES_TRABALHANDO[Math.floor(Math.random() * FRASES_TRABALHANDO.length)]);
   return (
-    <div className="py-10 text-center font-serif italic" style={{ color: CORES.dourado }}>
-      ENRAIZAR está trabalhando — {frase}
+    <div className="enz-trabalhando" aria-live="polite">
+      <Ilustracao nome="broto-raiz" largura={56} altura={72} className="enz-trabalhando-broto" />
+      <div className="enz-trabalhando-titulo">Enraizar está trabalhando</div>
+      <div className="enz-trabalhando-frase">{escolhida}</div>
     </div>
   );
 }
@@ -179,10 +85,10 @@ export function AvisoErro({ erro }) {
   if (!erro) return null;
   const eLimite = /rate limit/i.test(erro);
   return (
-    <div className="mb-4 p-3 rounded text-sm" style={{ background: "#F0DCD2", color: "#8A3A2E" }}>
+    <div className="enz-aviso-erro" role="alert">
       {eLimite
         ? "Limite de gerações atingido por agora. Recarregue a página e tente de novo em alguns minutos; o que você digitou está salvo."
-        : `Não foi possível conectar. Verifique a conexão e tente de novo. (${erro})`}
+        : `Não foi possível conectar. Verifique a conexão e tente de novo; o que você digitou está salvo. (${erro})`}
     </div>
   );
 }

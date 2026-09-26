@@ -18,7 +18,7 @@ export function ListaDocs({ cliente, tipo, docs, onAbrir, onNovo, onVoltar }) {
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
       {docs.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #7BA85C" }}>
+        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed var(--linha-forte)" }}>
           <p className="text-sm" style={{ color: CORES.textoDim }}>
             Nenhum{cfg.singular === "ata" || cfg.singular === "política" ? "a" : ""} {cfg.singular} ainda. Crie e deixe a IA escrever a primeira versão para sua revisão.
           </p>
@@ -49,7 +49,7 @@ export function EditorDoc({ cliente, tipo, doc, rotuloVoltar, gerando, erro, onM
   const temConteudo = !!(doc[cfg.campoIndicador] || "").trim();
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
         ← {rotuloVoltar}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -84,7 +84,7 @@ export function EditorDoc({ cliente, tipo, doc, rotuloVoltar, gerando, erro, onM
                 <InputField key={campo} label={rotulo} value={doc[campo] || ""} onChange={set(campo)} />
               )
             ))}
-            <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
+            <button onClick={onExcluir} className="text-xs underline" style={{ color: "var(--erro)" }}>
               Excluir {cfg.singular}
             </button>
           </>
@@ -100,11 +100,11 @@ export function ImpressaoPolitica({ cliente, doc }) {
   if (!doc || !doc.diretrizes) return null;
   const diretrizes = emLinhasDoc(doc.diretrizes);
   return (
-    <div className="area-impressao hidden print:block p-10" style={{ color: "#2A1218" }}>
+    <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
         <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Política interna</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{doc.nome}</div>
-        <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>{cliente.negocio} · {cliente.segmento}</div>
+        <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{cliente.negocio} · {cliente.segmento}</div>
       </div>
       {doc.escopo && (
         <div className="mb-5">
@@ -139,11 +139,11 @@ export function ImpressaoChecklist({ cliente, doc }) {
   if (!doc || !doc.itens) return null;
   const itens = emLinhasDoc(doc.itens);
   return (
-    <div className="area-impressao hidden print:block p-10" style={{ color: "#2A1218" }}>
+    <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
         <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Checklist</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{doc.nome}</div>
-        <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>
+        <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>
           {cliente.negocio}
           {doc.setor ? ` · Setor: ${doc.setor}` : ""}
           {doc.frequencia ? ` · ${doc.frequencia}` : ""}
@@ -162,8 +162,8 @@ export function ImpressaoChecklist({ cliente, doc }) {
         </tbody>
       </table></div>
       <div className="flex gap-10 text-sm mb-2">
-        <div className="flex-1 border-t pt-1" style={{ borderColor: "#2A1218" }}>Executado por</div>
-        <div className="w-40 border-t pt-1" style={{ borderColor: "#2A1218" }}>Data / hora</div>
+        <div className="flex-1 border-t pt-1" style={{ borderColor: "var(--tinta)" }}>Executado por</div>
+        <div className="w-40 border-t pt-1" style={{ borderColor: "var(--tinta)" }}>Data / hora</div>
       </div>
       <RodapeImpressao />
     </div>
@@ -175,16 +175,16 @@ export function ImpressaoAta({ cliente, doc }) {
   const decisoes = emLinhasDoc(doc.decisoes);
   const acoes = emLinhasDoc(doc.acoes);
   return (
-    <div className="area-impressao hidden print:block p-10" style={{ color: "#2A1218" }}>
+    <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
         <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Ata de reunião</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{doc.nome}</div>
-        <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>
+        <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>
           {cliente.negocio}
           {doc.data ? ` · ${doc.data}` : ""}
         </div>
         {doc.participantes && (
-          <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>Participantes: {doc.participantes}</div>
+          <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>Participantes: {doc.participantes}</div>
         )}
       </div>
       <div className="mb-5">

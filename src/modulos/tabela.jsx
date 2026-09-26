@@ -45,12 +45,12 @@ export function ModuloTabela({ cliente, tabela, gerando, erro, onGerar, onMudarT
           <>
             <div className="overflow-x-auto"><table style={{ width: "100%", borderCollapse: "collapse", background: CORES.cartao, marginBottom: "20px" }}>
               <thead>
-                <tr style={{ borderBottom: "2px solid #D4AF37", background: "#EFE8D6" }}>
-                  <th style={{ textAlign: "left", padding: "16px", fontSize: "11px", fontWeight: "700", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Setor</th>
-                  <th style={{ textAlign: "left", padding: "16px", fontSize: "11px", fontWeight: "700", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Infração</th>
-                  <th style={{ textAlign: "center", padding: "16px", fontSize: "11px", fontWeight: "700", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Gravidade</th>
-                  <th style={{ textAlign: "center", padding: "16px", fontSize: "11px", fontWeight: "700", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Medida</th>
-                  <th style={{ textAlign: "center", padding: "16px", fontSize: "11px", fontWeight: "700", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Ações</th>
+                <tr style={{ borderBottom: "2px solid var(--ouro)", background: "var(--fundo-recuo)" }}>
+                  <th style={{ textAlign: "left", padding: "16px", fontSize: "11px", fontWeight: "700", color: CORES.principal, fontFamily: "var(--font-body)", textTransform: "uppercase", letterSpacing: "1px" }}>Setor</th>
+                  <th style={{ textAlign: "left", padding: "16px", fontSize: "11px", fontWeight: "700", color: CORES.principal, fontFamily: "var(--font-body)", textTransform: "uppercase", letterSpacing: "1px" }}>Infração</th>
+                  <th style={{ textAlign: "center", padding: "16px", fontSize: "11px", fontWeight: "700", color: CORES.principal, fontFamily: "var(--font-body)", textTransform: "uppercase", letterSpacing: "1px" }}>Gravidade</th>
+                  <th style={{ textAlign: "center", padding: "16px", fontSize: "11px", fontWeight: "700", color: CORES.principal, fontFamily: "var(--font-body)", textTransform: "uppercase", letterSpacing: "1px" }}>Medida</th>
+                  <th style={{ textAlign: "center", padding: "16px", fontSize: "11px", fontWeight: "700", color: CORES.principal, fontFamily: "var(--font-body)", textTransform: "uppercase", letterSpacing: "1px" }}>Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -59,35 +59,35 @@ export function ModuloTabela({ cliente, tabela, gerando, erro, onGerar, onMudarT
                     key={item.id}
                     style={{
                       borderBottom: "1px solid rgba(212, 175, 55, 0.2)",
-                      background: idx % 2 === 0 ? CORES.cartao : "#FBF9F5"
+                      background: idx % 2 === 0 ? CORES.cartao : "var(--fundo-elevado)"
                     }}
                   >
-                    <td style={{ padding: "12px", fontSize: "13px", color: CORES.principal, fontFamily: "'Lora', serif", fontWeight: "600" }}>
+                    <td style={{ padding: "12px", fontSize: "13px", color: CORES.principal, fontFamily: "var(--font-body)", fontWeight: "600" }}>
                       <input
-                        style={{ width: "100%", padding: "4px 8px", border: "1px solid #E0D5BC", borderRadius: "4px", fontSize: "12px", color: CORES.principal }}
+                        style={{ width: "100%", padding: "4px 8px", border: "1px solid var(--linha)", borderRadius: "4px", fontSize: "12px", color: CORES.principal }}
                         value={item.setor}
                         onChange={(e) => onMudarTabela(tabela.map((t) => (t.id === item.id ? { ...t, setor: e.target.value } : t)))}
                       />
                     </td>
-                    <td style={{ padding: "12px", fontSize: "13px", color: CORES.principal, fontFamily: "'Lora', serif" }}>
+                    <td style={{ padding: "12px", fontSize: "13px", color: CORES.principal, fontFamily: "var(--font-body)" }}>
                       <input
-                        style={{ width: "100%", padding: "4px 8px", border: "1px solid #E0D5BC", borderRadius: "4px", fontSize: "12px", color: CORES.principal }}
+                        style={{ width: "100%", padding: "4px 8px", border: "1px solid var(--linha)", borderRadius: "4px", fontSize: "12px", color: CORES.principal }}
                         value={item.infracao}
                         onChange={(e) => onMudarTabela(tabela.map((t) => (t.id === item.id ? { ...t, infracao: e.target.value } : t)))}
                       />
                     </td>
                     <td style={{ padding: "12px", fontSize: "12px", textAlign: "center" }}>
-                      <span style={{ display: "inline-block", padding: "4px 12px", borderRadius: "12px", background: GRAV_INFO[item.gravidade].fundo, color: GRAV_INFO[item.gravidade].cor, fontWeight: "600", fontFamily: "'Lora', serif", fontSize: "11px" }}>
+                      <span style={{ display: "inline-block", padding: "4px 12px", borderRadius: "12px", background: GRAV_INFO[item.gravidade].fundo, color: GRAV_INFO[item.gravidade].cor, fontWeight: "600", fontFamily: "var(--font-body)", fontSize: "11px" }}>
                         {GRAV_INFO[item.gravidade].rotulo}
                       </span>
                     </td>
-                    <td style={{ padding: "12px", fontSize: "13px", textAlign: "center", color: CORES.principal, fontFamily: "'Lora', serif" }}>
+                    <td style={{ padding: "12px", fontSize: "13px", textAlign: "center", color: CORES.principal, fontFamily: "var(--font-body)" }}>
                       {GRAV_INFO[item.gravidade].medida}
                     </td>
                     <td style={{ padding: "12px", fontSize: "12px", textAlign: "center" }}>
                       <button
                         onClick={() => onMudarTabela(tabela.filter((t) => t.id !== item.id))}
-                        style={{ color: "#8A3A2E", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", fontFamily: "'Lora', serif", fontSize: "12px" }}
+                        style={{ color: "var(--erro)", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-body)", fontSize: "12px" }}
                       >
                         Remover
                       </button>
@@ -100,7 +100,7 @@ export function ModuloTabela({ cliente, tabela, gerando, erro, onGerar, onMudarT
             <button
               onClick={() => onMudarTabela([...tabela, { id: uid(), setor: "Geral", infracao: "", gravidade: "leve" }])}
               className="mt-2 text-sm"
-              style={{ color: CORES.dourado, fontFamily: "'Lora', serif" }}
+              style={{ color: CORES.dourado, fontFamily: "var(--font-body)" }}
             >
               + Adicionar infração
             </button>
@@ -115,11 +115,11 @@ export function ImpressaoTabela({ cliente, tabela }) {
   if (!tabela) return null;
   const grupos = agruparPorSetor(tabela);
   return (
-    <div className="area-impressao hidden print:block p-10" style={{ color: "#2A1218" }}>
+    <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>Tabela Disciplinar</div>
         <div className="text-lg font-serif mt-1">{cliente.negocio}</div>
-        <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>{cliente.segmento}</div>
+        <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{cliente.segmento}</div>
       </div>
 
       <div className="mb-6">
@@ -138,7 +138,7 @@ export function ImpressaoTabela({ cliente, tabela }) {
             ))}
           </tbody>
         </table></div>
-        <p className="text-xs mt-2" style={{ color: "#6B5D42" }}>
+        <p className="text-xs mt-2" style={{ color: "var(--tinta)" }}>
           Reincidência no mesmo tema eleva a medida ao grau seguinte. Três feedbacks registrados sobre o mesmo tema equivalem a advertência escrita. Sem registro, a ocorrência não existe.
         </p>
       </div>
@@ -171,7 +171,7 @@ export function ImpressaoTabela({ cliente, tabela }) {
 
 export function RodapeImpressao() {
   return (
-    <div className="mt-8 pt-4 border-t text-xs" style={{ borderColor: CORES.dourado, color: "#6B5D42" }}>
+    <div className="mt-8 pt-4 border-t text-xs" style={{ borderColor: CORES.dourado, color: "var(--tinta)" }}>
       <p className="mb-1">
         * A aplicação de qualquer medida disciplinar — em especial suspensão e desligamento por justa causa (art. 482 da CLT) — deve ser validada previamente com o contador e/ou advogado trabalhista da empresa, inclusive quanto à convenção coletiva (CCT) vigente do setor.
       </p>

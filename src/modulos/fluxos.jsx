@@ -50,7 +50,7 @@ export function DiagramaFluxo({ etapas, impressao }) {
               </div>
             </div>
             {e.tipo === "decisao" && e.seNao && (
-              <div className="text-xs max-w-[140px]" style={{ color: "#8A3A2E" }}>
+              <div className="text-xs max-w-[140px]" style={{ color: "var(--erro)" }}>
                 <span className="font-semibold">Não →</span> {e.seNao}
               </div>
             )}
@@ -64,7 +64,7 @@ export function DiagramaFluxo({ etapas, impressao }) {
 export function ListaFluxos({ cliente, fluxos, onAbrir, onNovo, onVoltar }) {
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
         ← {cliente.negocio}
       </button>
       <div className="flex items-baseline justify-between mb-2">
@@ -75,7 +75,7 @@ export function ListaFluxos({ cliente, fluxos, onAbrir, onNovo, onVoltar }) {
         As passagens do castelo: por onde o trabalho realmente anda. Quem faz o quê, onde tem decisão, onde trava — o POP diz como executar; aqui você desenha o caminho.
       </p>
       {fluxos.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #7BA85C" }}>
+        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed var(--linha-forte)" }}>
           <p className="text-sm" style={{ color: CORES.textoDim }}>
             Nenhum processo desenhado. Descreva como funciona hoje (e onde dói) — a IA desenha o fluxo com responsáveis, decisões e melhorias.
           </p>
@@ -118,7 +118,7 @@ export function EditorFluxo({ cliente, fluxo, gerando, erro, onMudar, onGerar, o
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
         ← Desenho de Processos · {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -149,14 +149,14 @@ export function EditorFluxo({ cliente, fluxo, gerando, erro, onMudar, onGerar, o
                   Etapas
                 </div>
                 {etapas.map((e, idx) => (
-                  <div key={e.id} className="flex items-center gap-1.5 py-1.5 border-b flex-wrap" style={{ borderColor: "#EFE8D6" }}>
+                  <div key={e.id} className="flex items-center gap-1.5 py-1.5 border-b flex-wrap" style={{ borderColor: "var(--fundo-recuo)" }}>
                     <div className="flex flex-col">
-                      <button onClick={() => mover(idx, -1)} className="text-xs leading-3" style={{ color: "#C0B091" }}>▲</button>
-                      <button onClick={() => mover(idx, 1)} className="text-xs leading-3" style={{ color: "#C0B091" }}>▼</button>
+                      <button onClick={() => mover(idx, -1)} className="text-xs leading-3" style={{ color: "var(--linha-forte)" }}>▲</button>
+                      <button onClick={() => mover(idx, 1)} className="text-xs leading-3" style={{ color: "var(--linha-forte)" }}>▼</button>
                     </div>
                     <select
                       className="px-1.5 py-1 text-xs rounded border bg-creme"
-                      style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
+                      style={{ borderColor: "var(--linha)", color: "var(--tinta)" }}
                       value={e.tipo}
                       onChange={(ev) => mudarEtapa(e.id, "tipo", ev.target.value)}
                     >
@@ -165,14 +165,14 @@ export function EditorFluxo({ cliente, fluxo, gerando, erro, onMudar, onGerar, o
                     </select>
                     <input
                       className="flex-1 min-w-36 px-2 py-1 text-sm rounded border bg-creme"
-                      style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
+                      style={{ borderColor: "var(--linha)", color: CORES.fogoEscuro }}
                       value={e.texto}
                       placeholder="Etapa"
                       onChange={(ev) => mudarEtapa(e.id, "texto", ev.target.value)}
                     />
                     <input
                       className="w-32 px-2 py-1 text-xs rounded border bg-creme"
-                      style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
+                      style={{ borderColor: "var(--linha)", color: "var(--tinta)" }}
                       value={e.responsavel}
                       placeholder="Responsável"
                       onChange={(ev) => mudarEtapa(e.id, "responsavel", ev.target.value)}
@@ -180,7 +180,7 @@ export function EditorFluxo({ cliente, fluxo, gerando, erro, onMudar, onGerar, o
                     {e.tipo === "decisao" && (
                       <input
                         className="w-44 px-2 py-1 text-xs rounded border bg-creme"
-                        style={{ borderColor: "#E8C4B8", color: "#8A3A2E" }}
+                        style={{ borderColor: "#E8C4B8", color: "var(--erro)" }}
                         value={e.seNao}
                         placeholder="Se não → ..."
                         onChange={(ev) => mudarEtapa(e.id, "seNao", ev.target.value)}
@@ -189,7 +189,7 @@ export function EditorFluxo({ cliente, fluxo, gerando, erro, onMudar, onGerar, o
                     <button
                       onClick={() => onMudar({ ...fluxo, etapas: etapas.filter((x) => x.id !== e.id) })}
                       className="px-1 text-xs"
-                      style={{ color: "#B8860B" }}
+                      style={{ color: "var(--ouro-texto)" }}
                     >
                       ✕
                     </button>
@@ -218,7 +218,7 @@ export function EditorFluxo({ cliente, fluxo, gerando, erro, onMudar, onGerar, o
               <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Gargalos e melhorias propostas (um por linha)</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={fluxo.melhorias} onChange={(e) => set("melhorias")(e.target.value)} /></label>
             </div>
 
-            <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
+            <button onClick={onExcluir} className="text-xs underline" style={{ color: "var(--erro)" }}>
               Excluir processo
             </button>
           </>
@@ -232,11 +232,11 @@ export function ImpressaoFluxo({ cliente, fluxo }) {
   if (!fluxo || !(fluxo.etapas || []).length) return null;
   const melhorias = emLinhasDoc(fluxo.melhorias);
   return (
-    <div className="area-impressao hidden print:block p-10" style={{ color: "#2A1218" }}>
+    <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
         <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Desenho de Processo</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{fluxo.nome}</div>
-        <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>
+        <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>
           {cliente.negocio}{fluxo.setor ? ` · Setor: ${fluxo.setor}` : ""}
         </div>
       </div>

@@ -47,7 +47,7 @@ export function ModuloManual({ cliente, secoes, gerando, erro, onMudar, onGerar,
                 <button
                   onClick={() => onMudar(secoes.filter((x) => x.id !== s.id))}
                   className="px-1 text-xs"
-                  style={{ color: "#B8860B" }}
+                  style={{ color: "var(--ouro-texto)" }}
                 >
                   ✕
                 </button>
@@ -55,7 +55,7 @@ export function ModuloManual({ cliente, secoes, gerando, erro, onMudar, onGerar,
               <textarea
                 rows={4}
                 className="w-full px-2 py-1 text-sm rounded border bg-creme outline-none"
-                style={{ borderColor: "#EFE8D6", color: CORES.fogoEscuro }}
+                style={{ borderColor: "var(--fundo-recuo)", color: CORES.fogoEscuro }}
                 value={s.conteudo}
                 onChange={(e) => onMudar(secoes.map((x) => (x.id === s.id ? { ...x, conteudo: e.target.value } : x)))}
               />
@@ -80,11 +80,11 @@ export function ModuloManual({ cliente, secoes, gerando, erro, onMudar, onGerar,
 export function ImpressaoManual({ cliente, secoes }) {
   if (!secoes || secoes.length === 0) return null;
   return (
-    <div className="area-impressao hidden print:block p-10" style={{ color: "#2A1218" }}>
+    <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
         <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Documento interno</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>Manual do Colaborador</div>
-        <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>{cliente.negocio} · {cliente.segmento}</div>
+        <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{cliente.negocio} · {cliente.segmento}</div>
       </div>
       {secoes.map((s, i) => (
         <div key={s.id} className="mb-5">

@@ -44,7 +44,7 @@ export function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, ge
           Cada turma encontra aqui exatamente a aula de que precisa. Dentro de uma frente da consultoria ou avulso — com a ciência dos temperamentos como marca.
         </p>
         {treinamentos.length === 0 ? (
-          <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #7BA85C" }}>
+          <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed var(--linha-forte)" }}>
             <p className="text-sm" style={{ color: CORES.textoDim }}>Nenhum treinamento. Crie o primeiro — a IA monta objetivos, blocos e dinâmicas adaptadas ao time mapeado.</p>
           </div>
         ) : (
@@ -56,7 +56,7 @@ export function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, ge
                   <span className="font-serif" style={{ color: CORES.fogo }}>{x.tema || "(sem tema)"}</span>
                   <span className="text-xs flex items-center gap-2" style={{ color: CORES.textoDim }}>
                     {x.data || "sem data"}
-                    <span className="px-1.5 py-0.5 rounded font-semibold" style={{ background: STATUS_TREINAMENTO[x.status]?.fundo || "#F5E6C8", color: STATUS_TREINAMENTO[x.status]?.cor || "#9A6A2F" }}>
+                    <span className="px-1.5 py-0.5 rounded font-semibold" style={{ background: STATUS_TREINAMENTO[x.status]?.fundo || "var(--alerta-fundo)", color: STATUS_TREINAMENTO[x.status]?.cor || "var(--alerta)" }}>
                       {STATUS_TREINAMENTO[x.status]?.rotulo || "Planejado"}
                     </span>
                     <span className="italic">{frente ? `frente: ${frente.nome}` : "avulso"}</span>
@@ -74,7 +74,7 @@ export function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, ge
   const set = (campo) => (v) => onMudar({ ...t, [campo]: v });
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={() => onAbrir(null)} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+      <button onClick={() => onAbrir(null)} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
         ← Treinamentos · {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -83,7 +83,7 @@ export function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, ge
           <div className="flex gap-2 items-center">
             <select
               className="px-2 py-1 text-xs rounded border font-semibold"
-              style={{ borderColor: STATUS_TREINAMENTO[t.status]?.cor || "#9A6A2F", background: STATUS_TREINAMENTO[t.status]?.fundo || "#F5E6C8", color: STATUS_TREINAMENTO[t.status]?.cor || "#9A6A2F" }}
+              style={{ borderColor: STATUS_TREINAMENTO[t.status]?.cor || "var(--alerta)", background: STATUS_TREINAMENTO[t.status]?.fundo || "var(--alerta-fundo)", color: STATUS_TREINAMENTO[t.status]?.cor || "var(--alerta)" }}
               value={t.status}
               onChange={(e) => onMudar({ ...t, status: e.target.value })}
             >
@@ -115,7 +115,7 @@ export function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, ge
                 <div className="text-xs uppercase tracking-widest mb-1 font-semibold" style={{ color: CORES.dourado }}>Vínculo</div>
                 <select
                   className="w-full px-3 py-2 rounded border text-sm bg-creme"
-                  style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
+                  style={{ borderColor: "var(--linha)", color: CORES.fogoEscuro }}
                   value={t.frenteId || ""}
                   onChange={(e) => onMudar({ ...t, frenteId: e.target.value })}
                 >
@@ -131,7 +131,7 @@ export function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, ge
             <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Blocos de conteúdo (um por linha: título — duração: conteúdo)</span><textarea rows={6} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={t.blocos} onChange={(e) => set("blocos")(e.target.value)} /></label>
             <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Dinâmicas</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={t.dinamicas} onChange={(e) => set("dinamicas")(e.target.value)} /></label>
             <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Avaliação de eficácia</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={t.avaliacao} onChange={(e) => set("avaliacao")(e.target.value)} /></label>
-            <div className="mb-4 p-3 rounded-lg" style={{ background: CORES.cartao, border: "1px solid #EFE8D6" }}>
+            <div className="mb-4 p-3 rounded-lg" style={{ background: CORES.cartao, border: "1px solid var(--fundo-recuo)" }}>
               <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
                 <div className="label" style={{ color: CORES.dourado }}>
                   Participantes · {(t.participantesLista || []).filter((p) => p.presente).length}/{(t.participantesLista || []).length} presentes
@@ -162,7 +162,7 @@ export function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, ge
                 </div>
               </div>
               {(t.participantesLista || []).length === 0 && (
-                <p className="text-xs" style={{ color: "#A89878" }}>Monte a turma: importe o time mapeado ou adicione nomes. A presença alimenta certificados e relatório.</p>
+                <p className="text-xs" style={{ color: "var(--tinta-musgo)" }}>Monte a turma: importe o time mapeado ou adicione nomes. A presença alimenta certificados e relatório.</p>
               )}
               {(t.participantesLista || []).map((p) => (
                 <div key={p.id} className="flex items-center gap-2 py-0.5">
@@ -174,7 +174,7 @@ export function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, ge
                   />
                   <input
                     className="flex-1 text-sm bg-transparent outline-none"
-                    style={{ color: p.presente ? CORES.fogoEscuro : "#A89878" }}
+                    style={{ color: p.presente ? CORES.fogoEscuro : "var(--tinta-musgo)" }}
                     placeholder="Nome do participante"
                     value={p.nome}
                     onChange={(ev) => onMudar({ ...t, participantesLista: t.participantesLista.map((x) => (x.id === p.id ? { ...x, nome: ev.target.value } : x)) })}
@@ -182,7 +182,7 @@ export function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, ge
                   <button
                     onClick={() => onMudar({ ...t, participantesLista: t.participantesLista.filter((x) => x.id !== p.id) })}
                     className="text-xs px-1"
-                    style={{ color: "#C0B091" }}
+                    style={{ color: "var(--linha-forte)" }}
                   >
                     ✕
                   </button>
@@ -230,11 +230,11 @@ export function ImpressaoTreinamento({ cliente, trein }) {
   const blocos = emLinhasDoc(trein.blocos);
   const dinamicas = emLinhasDoc(trein.dinamicas);
   return (
-    <div className="area-impressao hidden print:block p-10" style={{ color: "#2A1218" }}>
+    <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
         <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Plano de Treinamento</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{trein.tema}</div>
-        <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>
+        <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>
           {cliente.negocio}{trein.publico ? ` · Público: ${trein.publico}` : ""}{trein.cargaHoraria ? ` · ${trein.cargaHoraria}` : ""}{trein.data ? ` · ${trein.data}` : ""}
         </div>
       </div>
@@ -269,7 +269,7 @@ export function ImpressaoCertificados({ cliente, trein }) {
   const presentes = (trein.participantesLista || []).filter((p) => p.presente && p.nome.trim());
   if (!presentes.length) return null;
   return (
-    <div className="area-cert hidden print:block" style={{ color: "#2A1218" }}>
+    <div className="area-cert hidden print:block" style={{ color: "var(--tinta)" }}>
       {presentes.map((p) => (
         <div key={p.id} style={{ height: "1123px", boxSizing: "border-box", padding: "60px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center" }}>
           <div style={{ border: "3px solid " + CORES.dourado, padding: "6px", width: "100%", height: "100%", boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -277,14 +277,14 @@ export function ImpressaoCertificados({ cliente, trein }) {
               <div className="text-xs uppercase" style={{ color: CORES.dourado, letterSpacing: 6 }}>Certificado</div>
               <div className="font-serif" style={{ fontSize: "30px", color: CORES.fogo, marginTop: "28px" }}>{p.nome}</div>
               <div style={{ width: "180px", borderBottom: "1px solid " + CORES.dourado, margin: "16px 0 28px" }} />
-              <div className="text-sm" style={{ color: "#4A3A2A", maxWidth: "480px", lineHeight: 1.7 }}>
+              <div className="text-sm" style={{ color: "var(--tinta-areia)", maxWidth: "480px", lineHeight: 1.7 }}>
                 participou do treinamento <strong style={{ color: CORES.fogo }}>{trein.tema}</strong>
                 {trein.cargaHoraria ? `, com carga horária de ${trein.cargaHoraria},` : ""} promovido por {cliente.negocio}
                 {trein.data ? ` em ${trein.data}` : ""}.
               </div>
               <div style={{ marginTop: "56px", textAlign: "center" }}>
-                <div style={{ width: "220px", borderBottom: "1px solid #4A3A2A", marginBottom: "6px" }} />
-                <div className="text-xs" style={{ color: "#4A3A2A" }}>Consultoria & Treinamentos</div>
+                <div style={{ width: "220px", borderBottom: "1px solid var(--tinta-areia)", marginBottom: "6px" }} />
+                <div className="text-xs" style={{ color: "var(--tinta-areia)" }}>Consultoria & Treinamentos</div>
               </div>
             </div>
           </div>
@@ -299,11 +299,11 @@ export function ImpressaoRelTreinamento({ cliente, trein }) {
   const recomendacoes = emLinhasDoc(trein.relRecomendacoes);
   const presentes = (trein.participantesLista || []).filter((p) => p.presente && p.nome.trim());
   return (
-    <div className="area-relt hidden print:block p-10" style={{ color: "#2A1218" }}>
+    <div className="area-relt hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
         <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Relatório de Realização — Treinamento</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{trein.tema}</div>
-        <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>
+        <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>
           {cliente.negocio}{trein.data ? ` · ${trein.data}` : ""}{trein.cargaHoraria ? ` · ${trein.cargaHoraria}` : ""}
         </div>
       </div>

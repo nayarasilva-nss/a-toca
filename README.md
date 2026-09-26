@@ -24,6 +24,10 @@ Ferramenta de consultoria para estruturação organizacional de pequenas e médi
 
 ---
 
+## Design
+
+A interface segue o design system **Enraizar** (Método Enraizar): tokens em `src/index.css` (temas Floresta e Papel, alternáveis no cabeçalho; impressão sempre em Papel), Cormorant Garamond + Lato, ilustrações da árvore em `public/enraizar/` e os componentes em `src/componentes/` (`enraizar.jsx`: TituloSecao, Card, Citacao, FasesEnraizar, RaizProgresso; `ui.jsx`: botões, campo, Toast, AvisoErro, Trabalhando). `CORES` em `nucleo/base.jsx` aponta para os tokens, então estilos inline antigos já mudam de tema.
+
 ## Tecnologia
 
 - **Frontend**: React 19 + Vite

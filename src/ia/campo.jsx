@@ -5,10 +5,10 @@ import { STATUS_FRENTE, uid } from "../nucleo/base.jsx";
 // ─── Trabalho de Campo: modelo e resumos ────────────────────────
 
 export const MARCAS_TURNO = {
-  processo: { rotulo: "Processo", cor: "#9A6A2F", fundo: "#F5E6C8" },
+  processo: { rotulo: "Processo", cor: "var(--alerta)", fundo: "var(--alerta-fundo)" },
   pessoa: { rotulo: "Pessoa", cor: "#4A6B8A", fundo: "#DCE8F0" },
-  risco: { rotulo: "Risco", cor: "#8A3A2E", fundo: "#F0DCD2" },
-  oportunidade: { rotulo: "Oportunidade", cor: "#4F6B3A", fundo: "#E3EBD8" },
+  risco: { rotulo: "Risco", cor: "var(--erro)", fundo: "var(--erro-fundo)" },
+  oportunidade: { rotulo: "Oportunidade", cor: "var(--sucesso)", fundo: "var(--sucesso-fundo)" },
 };
 
 export const TIPOS_CAMPO = {

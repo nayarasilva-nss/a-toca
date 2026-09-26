@@ -8,9 +8,9 @@ import { CORES, uid } from "../nucleo/base.jsx";
 
 export const STATUS_PROPOSTA = {
   rascunho: { rotulo: "Rascunho", cor: CORES.textoDim, fundo: CORES.hover },
-  enviada: { rotulo: "Enviada", cor: "#9A6A2F", fundo: "#F5E6C8" },
-  aceita: { rotulo: "Aceita ✓", cor: "#4F6B3A", fundo: "#E3EBD8" },
-  recusada: { rotulo: "Recusada", cor: "#8A3A2E", fundo: "#F0DCD2" },
+  enviada: { rotulo: "Enviada", cor: "var(--alerta)", fundo: "var(--alerta-fundo)" },
+  aceita: { rotulo: "Aceita ✓", cor: "var(--sucesso)", fundo: "var(--sucesso-fundo)" },
+  recusada: { rotulo: "Recusada", cor: "var(--erro)", fundo: "var(--erro-fundo)" },
 };
 
 export function propostaVazia() {
@@ -54,7 +54,7 @@ export const CAMPOS_PROPOSTA_GERADOS = [
 export function ListaPropostas({ cliente, propostas, onAbrir, onNova, onVoltar }) {
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
         ← {cliente.negocio}
       </button>
       <div className="flex items-baseline justify-between mb-2">
@@ -65,7 +65,7 @@ export function ListaPropostas({ cliente, propostas, onAbrir, onNova, onVoltar }
         A proposta é o convite que muda tudo. Nasce do briefing e do diagnóstico — e o tom se ajusta ao temperamento do contratante, se mapeado.
       </p>
       {propostas.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #7BA85C" }}>
+        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed var(--linha-forte)" }}>
           <p className="text-sm" style={{ color: CORES.textoDim }}>
             Nenhuma proposta ainda. Preencha os parâmetros (duração, investimento, condições) e gere — o texto vem pronto para sua revisão.
           </p>
@@ -125,7 +125,7 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
   const setP = (campo) => (e) => onMudarPrecificacao({ ...precificacao, [campo]: e.target.value });
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
         ← Propostas · {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -171,28 +171,28 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
               {ehPessoaProp ? (
                 <div className="grid sm:grid-cols-3 gap-2 mb-2">
                   <div>
-                    <div className="text-xs mb-0.5" style={{ color: "#6B5D42" }}>Valor por encontro de mentoria</div>
-                    <input className="w-full px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "#E0D5BC" }} placeholder="Ex.: 400" value={precificacao.porEncontro || ""} onChange={setP("porEncontro")} />
+                    <div className="text-xs mb-0.5" style={{ color: "var(--tinta)" }}>Valor por encontro de mentoria</div>
+                    <input className="w-full px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "var(--linha)" }} placeholder="Ex.: 400" value={precificacao.porEncontro || ""} onChange={setP("porEncontro")} />
                   </div>
                 </div>
               ) : (
               <div className="grid sm:grid-cols-3 gap-2 mb-2">
                 <div>
-                  <div className="text-xs mb-0.5" style={{ color: "#6B5D42" }}>Valor base do engajamento</div>
-                  <input className="w-full px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "#E0D5BC" }} placeholder="Ex.: 2.000" value={precificacao.base} onChange={setP("base")} />
+                  <div className="text-xs mb-0.5" style={{ color: "var(--tinta)" }}>Valor base do engajamento</div>
+                  <input className="w-full px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "var(--linha)" }} placeholder="Ex.: 2.000" value={precificacao.base} onChange={setP("base")} />
                 </div>
                 <div>
-                  <div className="text-xs mb-0.5" style={{ color: "#6B5D42" }}>Valor por frente</div>
-                  <input className="w-full px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "#E0D5BC" }} placeholder="Ex.: 1.500" value={precificacao.porFrente} onChange={setP("porFrente")} />
+                  <div className="text-xs mb-0.5" style={{ color: "var(--tinta)" }}>Valor por frente</div>
+                  <input className="w-full px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "var(--linha)" }} placeholder="Ex.: 1.500" value={precificacao.porFrente} onChange={setP("porFrente")} />
                 </div>
                 <div>
-                  <div className="text-xs mb-0.5" style={{ color: "#6B5D42" }}>Valor por semana de condução</div>
-                  <input className="w-full px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "#E0D5BC" }} placeholder="Ex.: 300" value={precificacao.porSemana} onChange={setP("porSemana")} />
+                  <div className="text-xs mb-0.5" style={{ color: "var(--tinta)" }}>Valor por semana de condução</div>
+                  <input className="w-full px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "var(--linha)" }} placeholder="Ex.: 300" value={precificacao.porSemana} onChange={setP("porSemana")} />
                 </div>
               </div>
               )}
               <div className="flex items-center gap-3 flex-wrap">
-                <span className="text-xs" style={{ color: "#6B5D42" }}>
+                <span className="text-xs" style={{ color: "var(--tinta)" }}>
                   {ehPessoaProp
                     ? <>Jornada: <strong>{numEncontros || 0}</strong> encontro{(numEncontros || 0) === 1 ? "" : "s"} desenhado{(numEncontros || 0) === 1 ? "" : "s"}</>
                     : <>Este cliente: <strong>{numFrentes}</strong> frente{numFrentes === 1 ? "" : "s"} identificada{numFrentes === 1 ? "" : "s"}{" · "}<strong>{semanasDaProposta || "?"}</strong> semana{semanasDaProposta === 1 ? "" : "s"}</>}
@@ -212,13 +212,13 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
                     Calcular investimento: {formatarBR(totalArredondado)}
                   </BotaoContorno>
                 ) : (
-                  <span className="text-xs italic" style={{ color: "#A89878" }}>
+                  <span className="text-xs italic" style={{ color: "var(--tinta-musgo)" }}>
                     {ehPessoaProp ? "Desenhe a jornada na Mentoria e preencha o valor por encontro." : `${numFrentes === 0 ? "Gere as frentes no Briefing & Plano para calcular por demanda. " : ""}Preencha seus parâmetros e a duração.`}
                   </span>
                 )}
               </div>
               {prop.memoriaCalculo && (
-                <div className="text-xs mt-2 pt-2 border-t" style={{ color: "#A89878", borderColor: "#EFE8D6" }}>
+                <div className="text-xs mt-2 pt-2 border-t" style={{ color: "var(--tinta-musgo)", borderColor: "var(--fundo-recuo)" }}>
                   Memória de cálculo (interna, não sai no PDF): {prop.memoriaCalculo}
                 </div>
               )}
@@ -228,7 +228,7 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
               {(
                 <div className="mb-4 p-3 rounded-lg" style={{ background: CORES.hover, border: "2px solid #D4AF37AA" }}>
                   <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
-                    <div className="label" style={{ color: "#9A6A2F" }}>
+                    <div className="label" style={{ color: "var(--alerta)" }}>
                       {ehPessoaProp ? "Metas do mentorado (fase Acordo)" : "Metas do engajamento (fase Acordo)"}
                     </div>
                     <button onClick={onGerarMetas} className="text-xs underline" style={{ color: CORES.dourado }} disabled={gerando}>
@@ -244,19 +244,19 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
                     <div key={m.id} className="flex items-center gap-2 py-1">
                       <input
                         className="flex-1 px-2 py-1 text-sm rounded border bg-creme"
-                        style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
+                        style={{ borderColor: "var(--linha)", color: CORES.fogoEscuro }}
                         placeholder={ehPessoaProp ? "Objetivo verificável (ex.: delegar as decisões de compra)" : "Objetivo com valor (ex.: reduzir pendências de CCT de 12 para 0)"}
                         value={m.objetivo}
                         onChange={(e) => onMudar({ ...prop, metas: prop.metas.map((x) => (x.id === m.id ? { ...x, objetivo: e.target.value } : x)) })}
                       />
                       <input
                         className="w-36 px-2 py-1 text-xs rounded border bg-creme"
-                        style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
+                        style={{ borderColor: "var(--linha)", color: "var(--tinta)" }}
                         placeholder="Prazo"
                         value={m.prazo}
                         onChange={(e) => onMudar({ ...prop, metas: prop.metas.map((x) => (x.id === m.id ? { ...x, prazo: e.target.value } : x)) })}
                       />
-                      <button onClick={() => onMudar({ ...prop, metas: prop.metas.filter((x) => x.id !== m.id) })} className="text-xs px-1" style={{ color: "#C0B091" }}>✕</button>
+                      <button onClick={() => onMudar({ ...prop, metas: prop.metas.filter((x) => x.id !== m.id) })} className="text-xs px-1" style={{ color: "var(--linha-forte)" }}>✕</button>
                     </div>
                   ))}
                   <button
@@ -286,7 +286,7 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
             {CAMPOS_PROPOSTA_GERADOS.map(([campo, rotulo, linhas]) => (
               <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={prop[campo] || ""} onChange={(e) => set(campo)(e.target.value)} /></label>
             ))}
-            <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
+            <button onClick={onExcluir} className="text-xs underline" style={{ color: "var(--erro)" }}>
               Excluir proposta
             </button>
           </>
@@ -301,11 +301,11 @@ export function ImpressaoProposta({ cliente, prop }) {
   const fases = emLinhasDoc(prop.fases);
   const entregaveis = emLinhasDoc(prop.entregaveis);
   return (
-    <div className="area-impressao hidden print:block p-10" style={{ color: "#2A1218" }}>
+    <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
         <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Proposta de Consultoria em Governança</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{cliente.negocio}</div>
-        <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>{prop.data}{prop.validade ? ` · Válida por ${prop.validade}` : ""}</div>
+        <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{prop.data}{prop.validade ? ` · Válida por ${prop.validade}` : ""}</div>
       </div>
 
       <div className="mb-5">
@@ -348,7 +348,7 @@ export function ImpressaoProposta({ cliente, prop }) {
         <div className="mb-5">
           <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.fogo }}>Metodologia</div>
           {(prop.metas || []).filter((m) => m.objetivo).length > 0 && (
-            <div className="mb-4 mt-3 p-3" style={{ border: "1px solid #7BA85C" }}>
+            <div className="mb-4 mt-3 p-3" style={{ border: "1px solid var(--linha-forte)" }}>
               <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.fogo }}>Metas pactuadas</div>
               <ul className="text-sm list-disc pl-5">
                 {(prop.metas || []).filter((m) => m.objetivo).map((m) => (
@@ -396,10 +396,10 @@ export function ImpressaoProposta({ cliente, prop }) {
         </div>
       )}
 
-      <div className="mt-10 pt-6 text-sm" style={{ color: "#2A1218" }}>
+      <div className="mt-10 pt-6 text-sm" style={{ color: "var(--tinta)" }}>
         <div className="flex gap-16">
-          <div className="flex-1 border-t pt-1 text-center" style={{ borderColor: "#2A1218" }}>Nayara Silva · Consultoria de Governança</div>
-          <div className="flex-1 border-t pt-1 text-center" style={{ borderColor: "#2A1218" }}>{cliente.negocio}</div>
+          <div className="flex-1 border-t pt-1 text-center" style={{ borderColor: "var(--tinta)" }}>Nayara Silva · Consultoria de Governança</div>
+          <div className="flex-1 border-t pt-1 text-center" style={{ borderColor: "var(--tinta)" }}>{cliente.negocio}</div>
         </div>
       </div>
 

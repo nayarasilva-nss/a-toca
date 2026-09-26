@@ -1,513 +1,132 @@
-import { NavegacaoModulos } from "../componentes/navegacao.jsx";
+import { TituloSecao, Card, FasesEnraizar, FASES } from "../componentes/enraizar.jsx";
+import { ArvoreEnraizar } from "../componentes/arvore.jsx";
 import { BotaoPrimario, ConfirmarAcao } from "../componentes/ui.jsx";
 import { acoesNumeradas, semanaAtualDe } from "../ia/cronograma.jsx";
-import { CORES } from "../nucleo/base.jsx";
 
 // ─── Header Padrão para Módulos ────────────────────────────────
 export function HeaderModulo({ titulo, subtitulo, cliente, onVoltar, acoes }) {
   return (
-    <div style={{ maxWidth: "1000px", margin: "32px auto 0", padding: "0 32px" }}>
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "'Lora', serif" }}>
-        ← {cliente.negocio}
-      </button>
-      <div className="flex items-center justify-between mb-2 gap-4 flex-wrap">
-        <h2 className="font-serif text-xl" style={{ color: CORES.principal }}>{titulo}</h2>
-        {acoes && <div className="flex gap-2 flex-wrap">{acoes}</div>}
-      </div>
-      {subtitulo && (
-        <p className="text-xs mb-5" style={{ color: CORES.textoDim }}>{subtitulo}</p>
-      )}
+    <div className="enz-container" style={{ paddingBottom: 0 }}>
+      <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>← {cliente.negocio}</button>
+      <TituloSecao nivel={2} titulo={titulo} descricao={subtitulo} acoes={acoes} />
     </div>
   );
 }
 
-export function DashboardInicial({ clientes, nomeUsuario, onSetNomeUsuario, onAbrir, onNovo }) {
-  const stats = {
-    total: clientes.length,
-    novosEsteMes: clientes.filter(c => new Date(c.dataCriacao || 0).getMonth() === new Date().getMonth()).length,
-  };
+const NOME_FASE = Object.fromEntries(FASES.map((f) => [f.id, f.nome]));
+const ROTULO_FASE = { ...NOME_FASE, perigo: "Atenção", encerrado: "Encerrado", prospeccao: "Escuta" };
 
-  const FASES_INFO = [
-    { id: "escuta", nome: "Escuta", emoji: "👂", cor: "#E8D4C8" },
-    { id: "raiox", nome: "Raio-X", emoji: "📊", cor: "#D9D4C8" },
-    { id: "acordo", nome: "Acordo", emoji: "🤝", cor: "#CAD4C8" },
-    { id: "construcao", nome: "Construção", emoji: "🔨", cor: "#BED4C8" },
-    { id: "sustentacao", nome: "Sustentação", emoji: "🌱", cor: "#B2D4C8" },
-    { id: "prova", nome: "Prova", emoji: "🏆", cor: "#A6D4C8" },
-  ];
-
-  const clientesPorFase = FASES_INFO.map(f => ({
-    ...f,
-    count: clientes.filter(c => c.fase === f.id).length,
-  }));
-
-  const kartoes = [
-    { label: "Clientes Ativos", valor: stats.total, emoji: "🏢", cor: CORES.dourado },
-    { label: "Este Mês", valor: stats.novosEsteMes, emoji: "📅", cor: CORES.principal },
-  ];
-
+function LinhaCliente({ cliente, fase, onAbrir, acoes }) {
   return (
-    <div style={{ maxWidth: "1200px", margin: "0 auto", paddingTop: "32px", paddingLeft: "32px", paddingRight: "32px", paddingBottom: "32px" }}>
-      {!nomeUsuario && (
-        <div style={{ marginBottom: "24px" }}>
-          <input
-            type="text"
-            placeholder="Qual é seu nome?"
-            onChange={(e) => {
-              const nome = e.target.value;
-              localStorage.setItem("enraizar:usuario:nome", nome);
-              onSetNomeUsuario?.(nome);
-            }}
-            style={{
-              fontFamily: "'Lora', serif",
-              fontSize: "14px",
-              padding: "8px 12px",
-              borderRadius: "4px",
-              border: `2px solid ${CORES.dourado}`,
-              width: "200px",
-            }}
-          />
-        </div>
-      )}
+    <div className="enz-card enz-card-vazado flex items-center justify-between gap-4 flex-wrap" style={{ padding: "18px 0" }}>
+      <button onClick={onAbrir} className="text-left" style={{ background: "none", border: "none", padding: 0, cursor: "pointer", color: "inherit", minWidth: 0, flex: 1 }}>
+        <div className="enz-card-titulo" style={{ fontSize: 22 }}>{cliente.negocio}</div>
+        <div className="enz-card-subtitulo">{cliente.tipo === "pessoa" ? "mentorado" : "empresa"}{cliente.segmento ? ` · ${cliente.segmento}` : ""}</div>
+      </button>
+      <div className="flex items-center gap-4 flex-wrap">
+        {fase && <span className="enz-rotulo" style={{ color: fase === "perigo" ? "var(--erro)" : "var(--ouro-texto)" }}>{ROTULO_FASE[fase] || fase}</span>}
+        {acoes}
+        <button onClick={onAbrir} className="enz-link">abrir →</button>
+      </div>
+    </div>
+  );
+}
 
-      <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "28px", fontWeight: "800", letterSpacing: "2px", color: CORES.principal, margin: "0 0 24px 0" }}>
-        {nomeUsuario ? `Oi, ${nomeUsuario.split(" ")[0]}` : "Bem-vindo"}
-      </h1>
+export function DashboardInicial({ clientes, fases = {}, nomeUsuario, onAbrir, onNovo, onClientes }) {
+  const total = clientes.length;
+  const contagens = {};
+  for (const c of clientes) { const f = fases[c.id] === "prospeccao" ? "escuta" : fases[c.id]; if (f) contagens[f] = (contagens[f] || 0) + 1; }
+  const mentorados = clientes.filter((c) => c.tipo === "pessoa").length;
+  const emAndamento = clientes.filter((c) => ["construcao", "sustentacao"].includes(fases[c.id])).length;
+  const atencao = clientes.filter((c) => fases[c.id] === "perigo").length;
+  const primeiro = (nomeUsuario || "").split(" ")[0];
+  const kpis = [["Clientes", total], ["Em construção ou sustentação", emAndamento], ["Mentorados", mentorados], ["Precisam de atenção", atencao]];
+  return (
+    <div className="enz-container">
+      <TituloSecao
+        rotulo="Painel"
+        titulo={primeiro ? `Oi, ${primeiro}.` : "Bem-vinda."}
+        virada={total ? `${total} cliente${total > 1 ? "s" : ""} em jornada.` : "Nenhum cliente ainda."}
+        acoes={<BotaoPrimario onClick={onNovo}>Novo cliente</BotaoPrimario>}
+      />
 
-      {/* KPI Cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "16px", marginBottom: "32px" }}>
-        {kartoes.map((k) => (
-          <div
-            key={k.label}
-            style={{
-              background: CORES.cartao,
-              border: `2px solid ${k.cor}`,
-              borderRadius: "8px",
-              padding: "20px",
-              textAlign: "center",
-            }}
-          >
-            <div style={{ fontSize: "32px", marginBottom: "8px" }}>{k.emoji}</div>
-            <div style={{ fontSize: "24px", fontWeight: "800", color: k.cor, fontFamily: "'Crimson Text', serif", marginBottom: "4px" }}>
-              {k.valor}
-            </div>
-            <div style={{ fontSize: "12px", color: CORES.textoDim, fontFamily: "'Lora', serif" }}>
-              {k.label}
-            </div>
+      <div className="grid grid-cols-2 md:grid-cols-4" style={{ marginTop: 40, borderTop: "1px solid var(--linha)" }}>
+        {kpis.map(([rotulo, valor]) => (
+          <div key={rotulo} style={{ padding: "20px 16px 20px 0" }}>
+            <span className="enz-rotulo">{rotulo}</span>
+            <div className="enz-numero" style={{ marginTop: 10, color: valor && rotulo === "Precisam de atenção" ? "var(--erro)" : "var(--tinta)" }}>{valor}</div>
           </div>
         ))}
       </div>
 
-      {/* Botão de ação */}
-      <div style={{ marginBottom: "32px" }}>
-        <button
-          onClick={onNovo}
-          style={{
-            background: CORES.principal,
-            color: "white",
-            border: "none",
-            padding: "12px 24px",
-            borderRadius: "4px",
-            fontSize: "14px",
-            fontWeight: "600",
-            cursor: "pointer",
-            fontFamily: "'Lora', serif",
-          }}
-        >
-          ✨ Novo Cliente
-        </button>
-      </div>
+      <section style={{ marginTop: 56 }}>
+        <TituloSecao nivel={2} rotulo="As seis fases" titulo="Onde cada cliente está." />
+        <div style={{ marginTop: 32 }}>
+          <FasesEnraizar contagens={contagens} />
+        </div>
+      </section>
 
-      {/* Gráfico de Clientes por Fase */}
-      <div style={{ marginBottom: "32px", padding: "24px", background: CORES.cartao, borderRadius: "8px", border: `1px solid ${CORES.border}` }}>
-        <h2 style={{ fontSize: "16px", fontWeight: "700", color: CORES.principal, margin: "0 0 16px 0", fontFamily: "'Lora', serif", letterSpacing: "1px", textTransform: "uppercase" }}>
-          Clientes por Fase
-        </h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))", gap: "12px" }}>
-          {clientesPorFase.map((f) => (
-            <div
-              key={f.id}
-              style={{
-                background: f.cor,
-                borderRadius: "6px",
-                padding: "12px",
-                textAlign: "center",
-                border: `2px solid ${CORES.border}`,
-              }}
-            >
-              <div style={{ fontSize: "24px", marginBottom: "4px" }}>{f.emoji}</div>
-              <div style={{ fontSize: "20px", fontWeight: "800", color: CORES.principal, fontFamily: "'Crimson Text', serif" }}>
-                {f.count}
-              </div>
-              <div style={{ fontSize: "11px", color: CORES.textoDim, fontFamily: "'Lora', serif", marginTop: "2px" }}>
-                {f.nome}
+      <section style={{ marginTop: 56 }}>
+        <TituloSecao nivel={2} rotulo="Clientes" titulo="Quem está enraizando." acoes={total > 0 ? <button className="enz-link" onClick={onClientes}>ver todos →</button> : null} />
+        <div style={{ marginTop: 24 }}>
+          {total === 0 ? (
+            <div className="enz-card enz-card-vazado flex items-center gap-6 flex-wrap">
+              <ArvoreEnraizar variante="broto" tamanho={56} />
+              <div>
+                <div className="enz-card-titulo" style={{ fontSize: 22 }}>Nenhum cliente ainda.</div>
+                <div className="enz-nota">crie o primeiro — a Escuta começa por ele.</div>
               </div>
             </div>
-          ))}
+          ) : (
+            clientes.slice(0, 8).map((c) => <LinhaCliente key={c.id} cliente={c} fase={fases[c.id]} onAbrir={() => onAbrir(c.id)} />)
+          )}
         </div>
-      </div>
-
-      {/* Lista de Clientes */}
-      <div>
-        <h2 style={{ fontSize: "16px", fontWeight: "700", color: CORES.principal, margin: "0 0 16px 0", fontFamily: "'Lora', serif", letterSpacing: "1px", textTransform: "uppercase" }}>
-          Clientes
-        </h2>
-        {clientes.length === 0 ? (
-          <div style={{ padding: "24px", textAlign: "center", borderRadius: "4px", border: `2px dashed ${CORES.border}`, color: CORES.textoDim }}>
-            Nenhum cliente ainda. Crie o primeiro! 🌱
-          </div>
-        ) : (
-          <div style={{ display: "grid", gap: "12px" }}>
-            {clientes.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => onAbrir(c.id)}
-                style={{
-                  textAlign: "left",
-                  padding: "16px",
-                  borderRadius: "4px",
-                  border: `1px solid ${CORES.border}`,
-                  background: CORES.cartao,
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                  fontFamily: "'Lora', serif",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = "none";
-                  e.currentTarget.style.transform = "translateY(0)";
-                }}
-              >
-                <div style={{ fontSize: "14px", fontWeight: "600", color: CORES.principal, marginBottom: "4px" }}>
-                  {c.negocio}
-                </div>
-                <div style={{ fontSize: "12px", color: CORES.textoDim }}>
-                  {c.segmento}
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+      </section>
     </div>
   );
 }
 
-export function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAplicarBackup, onCancelarBackup, onAbrir, onNovo, onExcluir, onExportarBackup, onImportarBackup, onVoltar, nomeUsuario, onSetNomeUsuario }) {
+export function ListaClientes({ clientes, fases = {}, backupPendente, onAplicarBackup, onCancelarBackup, onAbrir, onNovo, onExcluir, onExportarBackup, onImportarBackup }) {
+  const mentorados = clientes.filter((c) => c.tipo === "pessoa").length;
   return (
-    <div style={{ maxWidth: "1200px", margin: "0 auto", paddingTop: "32px", paddingLeft: "32px", paddingRight: "32px", paddingBottom: "32px" }}>
+    <div className="enz-container">
+      <TituloSecao
+        rotulo="Clientes"
+        titulo="Todos os clientes."
+        virada={clientes.length ? `${clientes.length - mentorados} empresa${clientes.length - mentorados === 1 ? "" : "s"} · ${mentorados} mentorado${mentorados === 1 ? "" : "s"}` : "Nenhum ainda."}
+        acoes={<BotaoPrimario onClick={onNovo}>Novo cliente</BotaoPrimario>}
+      />
+
       {backupPendente && (
-        <div style={{ marginBottom: "24px", padding: "16px", borderRadius: "4px", display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap", background: CORES.hover, border: "2px solid #D4AF37" }}>
-          <span style={{ fontSize: "13px", color: "#4A4035", fontFamily: "'Lora', serif" }}>
-            Backup lido: {backupPendente.clientes.length} cliente(s). Aplicar substitui todos os dados atuais do app.
-          </span>
-          <BotaoPrimario onClick={onAplicarBackup}>Aplicar backup</BotaoPrimario>
-          <button onClick={onCancelarBackup} style={{ fontSize: "11px", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", color: CORES.textoDim, fontFamily: "'Lora', serif" }}>Cancelar</button>
-        </div>
-      )}
-
-      {/* Saudação do Usuário */}
-      <div style={{ marginTop: "0", paddingTop: "32px", marginBottom: "24px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
-        <div style={{ flex: 1 }}>
-          {nomeUsuario ? (
-            <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "28px", fontWeight: "800", letterSpacing: "2px", color: CORES.principal, margin: "0 0 4px 0" }}>
-              Oi, {nomeUsuario.split(" ")[0]}
-            </h1>
-          ) : (
-            <div style={{ display: "flex", gap: "8px", alignItems: "center", marginBottom: "16px" }}>
-              <input
-                type="text"
-                placeholder="Qual é seu nome?"
-                onChange={(e) => {
-                  const nome = e.target.value;
-                  localStorage.setItem("enraizar:usuario:nome", nome);
-                  onSetNomeUsuario?.(nome);
-                }}
-                style={{
-                  fontFamily: "'Lora', serif",
-                  fontSize: "14px",
-                  padding: "8px 12px",
-                  borderRadius: "4px",
-                  border: `2px solid ${CORES.dourado}`,
-                  width: "200px",
-                }}
-              />
-            </div>
-          )}
-        </div>
-        <div style={{ display: "flex", gap: "8px" }}>
-          <button
-            onClick={onNovo}
-            style={{
-              background: CORES.principal,
-              color: CORES.cartao,
-              border: "none",
-              padding: "8px 16px",
-              borderRadius: "4px",
-              fontSize: "12px",
-              fontWeight: "600",
-              cursor: "pointer",
-              fontFamily: "'Lora', serif",
-            }}
-          >
-            ✨ Novo cliente
-          </button>
-          {onVoltar && (
-            <button
-              onClick={onVoltar}
-              style={{
-                background: CORES.principal,
-                color: CORES.cartao,
-                border: "none",
-                padding: "8px 16px",
-                borderRadius: "4px",
-                fontSize: "12px",
-                fontWeight: "600",
-                cursor: "pointer",
-                fontFamily: "'Lora', serif",
-              }}
-            >
-              ← Voltar
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div style={{ marginBottom: "24px", padding: "20px 24px", background: "linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%)", borderBottom: "1px solid rgba(74,64,53, 0.08)", borderRadius: "4px 4px 0 0" }}>
-        <h3 style={{ fontSize: "14px", fontWeight: "600", color: CORES.principal, fontFamily: "'Crimson Text', serif", margin: "0" }}>Engajamentos Ativos</h3>
-      </div>
-
-      {clientes.length === 0 ? (
-        <div style={{ textAlign: "center", paddingTop: "32px", paddingBottom: "32px", borderRadius: "4px", background: CORES.cartao, border: "2px dashed #D4AF37" }}>
-          <p style={{ fontSize: "16px", fontFamily: "'Crimson Text', serif", marginBottom: "12px", color: CORES.principal }}>📭 ENRAIZAR está vazio</p>
-          <p style={{ fontSize: "13px", color: "#A0826D", fontFamily: "'Lora', serif" }}>nenhum cliente ainda</p>
-          <p style={{ fontSize: "11px", marginTop: "16px", color: CORES.textoDim, fontFamily: "'Lora', serif" }}>Cadastre o primeiro cliente para começar a gerar documentos.</p>
-        </div>
-      ) : (
-        <>
-          <style>{`
-            .clientes-table {
-              margin-top: 32px;
-              width: 100%;
-              border-collapse: collapse;
-              background: #FFFBF0;
-              border: 1px solid #7BA85C;
-              font-size: 13px;
-            }
-            .clientes-cards {
-              margin-top: 32px;
-              display: grid;
-              grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-              gap: 16px;
-            }
-            @media (max-width: 768px) {
-              .clientes-table { display: none !important; }
-              .clientes-cards { display: grid !important; }
-            }
-            @media (min-width: 769px) {
-              .clientes-table { display: table !important; }
-              .clientes-cards { display: none !important; }
-            }
-          `}</style>
-
-          <div className="overflow-x-auto"><table className="clientes-table">
-          <thead>
-            <tr style={{ borderBottom: "2px solid #D4AF37", background: CORES.hover }}>
-              <th style={{ textAlign: "left", padding: "12px", fontSize: "11px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", minWidth: "150px" }}>Cliente</th>
-              <th style={{ textAlign: "left", padding: "12px", fontSize: "11px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", minWidth: "180px" }}>Segmento</th>
-              <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Status</th>
-              <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Progresso</th>
-              <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Semana</th>
-              <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {clientes.map((c, idx) => {
-              const gestao = gestaoPorCliente[c.id] || {};
-              let statusBadge, statusColor, statusBg, statusIcon;
-
-              if (c.tipo === "pessoa") {
-                statusBadge = "Mentorado";
-                statusIcon = "📌";
-                statusColor = "#4F6B3A";
-                statusBg = "#E8F0DD";
-              } else if (gestao.frentes && gestao.frentes.length > 0) {
-                statusBadge = "Em andamento";
-                statusIcon = "⚡";
-                statusColor = "#D84315";
-                statusBg = "#F5E6D3";
-              } else {
-                statusBadge = "Novo";
-                statusIcon = "✨";
-                statusColor = CORES.textoDim;
-                statusBg = "#F0DCD2";
-              }
-
-              return (
-                <tr
-                  key={c.id}
-                  style={{
-                    borderBottom: "1px solid rgba(212, 175, 55, 0.2)",
-                    background: idx % 2 === 0 ? CORES.cartao : "#FBF9F5",
-                    cursor: "pointer",
-                    transition: "background-color 0.2s ease"
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = CORES.hover}
-                  onMouseLeave={(e) => e.currentTarget.style.background = (idx % 2 === 0 ? CORES.cartao : "#FBF9F5")}
-                  onClick={() => onAbrir(c.id)}
-                >
-                  <td style={{ padding: "12px", fontSize: "13px", color: CORES.principal, fontFamily: "'Lora', serif", fontWeight: "600" }}>
-                    {c.negocio}
-                  </td>
-                  <td style={{ padding: "12px", fontSize: "13px", color: "#A0826D", fontFamily: "'Lora', serif" }}>
-                    {c.segmento}
-                  </td>
-                  <td style={{ padding: "12px", fontSize: "12px", textAlign: "center" }}>
-                    <span style={{ display: "inline-block", padding: "6px 12px", borderRadius: "12px", background: statusBg, color: statusColor, fontWeight: "600", fontFamily: "'Lora', serif", fontSize: "11px" }}>
-                      {statusIcon} {statusBadge}
-                    </span>
-                  </td>
-                  <td style={{ padding: "12px", fontSize: "13px", textAlign: "center", color: CORES.principal, fontFamily: "'Lora', serif" }}>
-                    {gestao.frentes ? `${Math.min(100, (gestao.frentes.filter((f) => f.status === "concluida").length / gestao.frentes.length) * 100 || 0).toFixed(0)}%` : "0%"}
-                  </td>
-                  <td style={{ padding: "12px", fontSize: "12px", textAlign: "center", color: CORES.principal, fontFamily: "'Lora', serif", fontWeight: "600" }}>
-                    S{Math.ceil(Math.random() * 12)}/12
-                  </td>
-                  <td style={{ padding: "12px", fontSize: "12px", textAlign: "center" }}>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onAbrir(c.id);
-                      }}
-                      style={{ color: CORES.principal, textDecoration: "underline", background: "none", border: "none", cursor: "pointer", fontFamily: "'Lora', serif", marginRight: "12px", fontSize: "12px" }}
-                    >
-                      {statusBadge === "Novo" ? "Abrir" : statusBadge === "Em andamento" ? "Ver relatório" : "Aguardando"}
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table></div>
-
-        <div style={{ marginTop: "0", padding: "16px 24px", background: CORES.hover, borderTop: "1px solid rgba(74,64,53, 0.08)", fontSize: "11px", color: "#6B5D4F", fontFamily: "'Lora', serif" }}>
-          {clientes.filter(c => gestaoPorCliente[c.id]?.frentes?.length).length} em andamento · {clientes.filter(c => c.tipo === "pessoa").length} mentorado(s) · Total: {clientes.length} engajamento{clientes.length !== 1 ? 's' : ''}
-        </div>
-
-          <div className="clientes-cards">
-            {clientes.map((c, idx) => {
-              const gestao = gestaoPorCliente[c.id] || {};
-              let statusBadge, statusColor, statusBg, statusIcon;
-
-              if (c.tipo === "pessoa") {
-                statusBadge = "Mentorado";
-                statusIcon = "📌";
-                statusColor = "#4F6B3A";
-                statusBg = "#E8F0DD";
-              } else if (gestao.frentes && gestao.frentes.length > 0) {
-                statusBadge = "Em andamento";
-                statusIcon = "⚡";
-                statusColor = "#D84315";
-                statusBg = "#F5E6D3";
-              } else {
-                statusBadge = "Novo";
-                statusIcon = "✨";
-                statusColor = CORES.textoDim;
-                statusBg = "#F0DCD2";
-              }
-
-              return (
-                <div
-                  key={c.id}
-                  onClick={() => onAbrir(c.id)}
-                  style={{
-                    padding: "16px",
-                    background: CORES.cartao,
-                    border: "1px solid #7BA85C",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    transition: "all 0.3s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(107,93,66, 0.15)";
-                    e.currentTarget.style.transform = "translateY(-2px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow = "none";
-                    e.currentTarget.style.transform = "translateY(0)";
-                  }}
-                >
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
-                    <h3 style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "800", color: CORES.principal, margin: "0" }}>
-                      {c.negocio}
-                    </h3>
-                    <span style={{ display: "inline-block", padding: "4px 8px", borderRadius: "12px", background: statusBg, color: statusColor, fontWeight: "600", fontFamily: "'Lora', serif", fontSize: "10px" }}>
-                      {statusIcon} {statusBadge}
-                    </span>
-                  </div>
-
-                  <p style={{ fontSize: "12px", color: "#A0826D", fontFamily: "'Lora', serif", margin: "8px 0" }}>
-                    {c.segmento}
-                  </p>
-
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginTop: "12px", paddingTop: "12px", borderTop: "1px solid rgba(212, 175, 55, 0.2)" }}>
-                    <div>
-                      <p style={{ fontSize: "10px", color: CORES.textoDim, fontFamily: "'Lora', serif", textTransform: "uppercase", margin: "0 0 4px 0" }}>Semana</p>
-                      <p style={{ fontSize: "14px", fontWeight: "600", color: CORES.principal, fontFamily: "'Crimson Text', serif", margin: "0" }}>S{Math.ceil(Math.random() * 12)}/12</p>
-                    </div>
-                    <div>
-                      <p style={{ fontSize: "10px", color: CORES.textoDim, fontFamily: "'Lora', serif", textTransform: "uppercase", margin: "0 0 4px 0" }}>Progresso</p>
-                      <p style={{ fontSize: "14px", fontWeight: "600", color: CORES.principal, fontFamily: "'Crimson Text', serif", margin: "0" }}>
-                        {gestao.frentes ? `${Math.min(100, (gestao.frentes.filter((f) => f.status === "concluida").length / gestao.frentes.length) * 100 || 0).toFixed(0)}%` : "0%"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div style={{ display: "flex", gap: "8px", marginTop: "12px" }}>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onAbrir(c.id);
-                      }}
-                      style={{ flex: 1, padding: "8px", background: CORES.principal, color: CORES.cartao, border: "none", borderRadius: "4px", cursor: "pointer", fontFamily: "'Lora', serif", fontSize: "12px", fontWeight: "600" }}
-                    >
-                      Abrir
-                    </button>
-                    <ConfirmarAcao
-                      label="🗑️"
-                      aviso={`apaga ${c.negocio} e TODOS os seus dados`}
-                      onConfirmar={() => onExcluir(c.id)}
-                      classe="text-xs px-2 py-1 rounded font-semibold"
-                      style={{ color: "#8A3A2E", background: "#F0DCD2", border: "1px solid #7BA85C", borderRadius: "4px", padding: "8px", flex: 0.2, cursor: "pointer" }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
+        <Card rotulo="Backup" titulo={`${backupPendente.clientes.length} cliente${backupPendente.clientes.length === 1 ? "" : "s"} no arquivo.`} subtitulo="aplicar substitui todos os dados atuais do app." style={{ marginTop: 32 }}>
+          <div className="flex gap-4 items-center flex-wrap">
+            <BotaoPrimario onClick={onAplicarBackup}>Aplicar backup</BotaoPrimario>
+            <button onClick={onCancelarBackup} className="enz-link">cancelar</button>
           </div>
-        </>
+        </Card>
       )}
 
-      <div style={{ marginTop: "48px", paddingTop: "24px", borderTop: "4px solid #D4AF37", display: "flex", alignItems: "center", gap: "24px", fontSize: "13px", color: CORES.principal, fontFamily: "'Lora', serif" }}>
-        <span>Seu histórico no ENRAIZAR — seus dados vivem neste app:</span>
-        <button onClick={onExportarBackup} style={{ textDecoration: "underline", background: "none", border: "none", cursor: "pointer", color: CORES.dourado, fontSize: "13px", fontFamily: "'Lora', serif" }}>
-          Exportar backup (.json)
-        </button>
-        <label style={{ textDecoration: "underline", cursor: "pointer", color: CORES.dourado, fontSize: "13px", fontFamily: "'Lora', serif" }}>
-          Importar backup
-          <input
-            type="file"
-            accept="application/json"
-            style={{ display: "none" }}
-            onChange={(e) => {
-              const arq = e.target.files && e.target.files[0];
-              if (arq) onImportarBackup(arq);
-              e.target.value = "";
-            }}
-          />
+      <div style={{ marginTop: 32 }}>
+        {clientes.length === 0 ? (
+          <div className="enz-card enz-card-vazado enz-nota">nenhum cliente ainda. crie o primeiro.</div>
+        ) : (
+          clientes.map((c) => (
+            <LinhaCliente
+              key={c.id}
+              cliente={c}
+              fase={fases[c.id]}
+              onAbrir={() => onAbrir(c.id)}
+              acoes={<ConfirmarAcao rotulo="excluir" aviso="isso apaga documentos, planos, atas e histórico deste cliente" onConfirmar={() => onExcluir(c.id)} />}
+            />
+          ))
+        )}
+      </div>
+
+      <div className="flex gap-6 items-center flex-wrap" style={{ marginTop: 48, paddingTop: 24, borderTop: "1px solid var(--linha)" }}>
+        <button onClick={onExportarBackup} className="enz-link">exportar backup (.json)</button>
+        <label className="enz-link" style={{ cursor: "pointer" }}>
+          importar backup
+          <input type="file" accept="application/json,.json" style={{ display: "none" }} onChange={(e) => { const arq = e.target.files && e.target.files[0]; if (arq) onImportarBackup(arq); e.target.value = ""; }} />
         </label>
       </div>
     </div>
@@ -598,135 +217,74 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
   ];
 
   const Cartao = ({ chave, compacto }) => (
-    <button
-      onClick={() => onModulo(chave)}
-      style={{
-        textAlign: "left",
-        padding: compacto ? "16px" : "20px",
-        borderRadius: "4px",
-        border: "1px solid #7BA85C",
-        background: CORES.cartao,
-        boxShadow: "0 2px 8px rgba(107,93,66, 0.1)",
-        cursor: "pointer",
-        transition: "all 0.3s ease"
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = "0 8px 16px rgba(107,93,66, 0.2)";
-        e.currentTarget.style.transform = "translateY(-2px)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = "0 2px 8px rgba(107,93,66, 0.1)";
-        e.currentTarget.style.transform = "translateY(0)";
-      }}
-    >
-      <div style={{ fontFamily: "'Crimson Text', serif", marginBottom: "4px", fontSize: compacto ? "16px" : "18px", fontWeight: "600", color: CORES.principal }}>
-        {TITULOS[chave]}
-      </div>
-      <div style={{ fontSize: "11px", color: CORES.textoDim, fontFamily: "'Lora', serif" }}>{estados[chave]}</div>
-    </button>
+    <Card onClick={() => onModulo(chave)} titulo={TITULOS[chave]} subtitulo={estados[chave]} style={compacto ? { padding: "18px 20px" } : { padding: "22px 24px" }} />
   );
   return (
-    <div style={{ maxWidth: "1000px", margin: "0 auto", paddingTop: "16px", paddingLeft: "32px", paddingRight: "32px", paddingBottom: "128px" }}>
-      <button onClick={onVoltar} style={{ fontSize: "11px", marginBottom: "32px", textTransform: "uppercase", fontWeight: "600", background: "none", border: "none", cursor: "pointer", color: CORES.principal, fontFamily: "'Lora', serif", letterSpacing: "1px" }}>
-        ← Todos os clientes
-      </button>
-
-      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "12px" }}>
-        <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "40px", fontWeight: "800", color: CORES.principal, letterSpacing: "3px" }}>{cliente.negocio}</h1>
-        <button onClick={onEditarCliente} style={{ fontSize: "11px", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", color: CORES.dourado, fontFamily: "'Lora', serif" }}>
-          Editar dados
-        </button>
-      </div>
-      <div style={{ fontSize: "13px", marginBottom: "32px", color: CORES.textoDim, fontFamily: "'Lora', serif" }}>{cliente.segmento}</div>
-
-      <NavegacaoModulos categoriaAtiva={null} onSelecionarModulo={onModulo} />
+    <div className="enz-container">
+      <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>← Todos os clientes</button>
+      <TituloSecao
+        rotulo={ehPessoa ? "Mentorado" : "Cliente"}
+        titulo={cliente.negocio}
+        virada={cliente.segmento}
+        acoes={<button onClick={onEditarCliente} className="enz-link">editar dados</button>}
+      />
 
       {(metasAceitas || []).filter((m) => m.objetivo).length > 0 && (
-        <div style={{ marginBottom: "12px", padding: "16px", borderRadius: "4px", background: CORES.hover, border: "1px solid #D4AF37" }}>
-          <div style={{ fontSize: "11px", textTransform: "uppercase", fontWeight: "600", marginBottom: "8px", color: "#9A6A2F", fontFamily: "'Lora', serif", letterSpacing: "1px" }}>Metas pactuadas</div>
+        <Card variante="vazado" rotulo="Metas pactuadas" style={{ marginTop: 40 }}>
           {(metasAceitas || []).filter((m) => m.objetivo).map((m) => (
-            <div key={m.id} style={{ fontSize: "13px", paddingTop: "3px", paddingBottom: "3px", color: "#4A4035", fontFamily: "'Lora', serif" }}>
-              • {m.objetivo}{m.prazo ? <span style={{ fontSize: "11px", color: CORES.textoDim }}> — até {m.prazo}</span> : null}
+            <div key={m.id} className="flex items-baseline gap-3" style={{ padding: "4px 0" }}>
+              <span className="enz-ponto" style={{ color: "var(--ouro)" }} />
+              <span>{m.objetivo}{m.prazo ? <span className="enz-legenda"> — até {m.prazo}</span> : null}</span>
             </div>
           ))}
-        </div>
-      )}
-
-      {(servicosCliente.treinamentos || servicosCliente.mentoria) && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "12px", marginBottom: "32px" }}>
-          {servicosCliente.treinamentos && (
-            <button onClick={() => onModulo("treinamentos")} style={{ textAlign: "left", padding: "16px", borderRadius: "4px", border: "1px solid #7BA85C", background: CORES.cartao, boxShadow: "0 2px 8px rgba(107,93,66, 0.1)", cursor: "pointer", transition: "all 0.3s ease" }} onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 16px rgba(107,93,66, 0.2)"; e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 2px 8px rgba(107,93,66, 0.1)"; e.currentTarget.style.transform = "translateY(0)"; }}>
-              <div style={{ fontFamily: "'Crimson Text', serif", color: CORES.principal, fontSize: "18px", fontWeight: "600" }}>Treinamentos</div>
-              <div style={{ fontSize: "11px", marginTop: "3px", color: CORES.textoDim, fontFamily: "'Lora', serif" }}>
-                {totalTreinamentos > 0 ? `${totalTreinamentosRealizados}/${totalTreinamentos} realizados` : "Nenhum treinamento ainda"}
-              </div>
-            </button>
-          )}
-          {servicosCliente.mentoria && (
-            <button onClick={() => onModulo("mentoria")} style={{ textAlign: "left", padding: "16px", borderRadius: "4px", border: "1px solid #7BA85C", background: CORES.cartao, boxShadow: "0 2px 8px rgba(107,93,66, 0.1)", cursor: "pointer", transition: "all 0.3s ease" }} onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 16px rgba(107,93,66, 0.2)"; e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 2px 8px rgba(107,93,66, 0.1)"; e.currentTarget.style.transform = "translateY(0)"; }}>
-              <div style={{ fontFamily: "'Crimson Text', serif", color: CORES.principal, fontSize: "18px", fontWeight: "600" }}>Mentoria</div>
-              <div style={{ fontSize: "11px", marginTop: "3px", color: CORES.textoDim, fontFamily: "'Lora', serif" }}>
-                {totalEncontros > 0 ? `${totalEncontrosRealizados}/${totalEncontros} encontros realizados` : "Jornada ainda não desenhada"}
-              </div>
-            </button>
-          )}
-        </div>
+        </Card>
       )}
 
       {proximoPasso && servicosCliente.consultoria && (
-        <button
-          onClick={() => onModulo(proximoPasso.modulo)}
-          style={{ textAlign: "left", width: "100%", padding: "16px 20px", borderRadius: "4px", marginBottom: "12px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", flexWrap: "wrap", background: CORES.hover, border: "1px solid #D4AF37", cursor: "pointer", transition: "all 0.3s ease" }}
-          onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 4px 12px rgba(212, 175, 55, 0.2)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "none"; }}
-        >
-          <span style={{ fontSize: "13px", color: "#4A4035", fontFamily: "'Lora', serif" }}>
-            <span style={{ fontWeight: "600", color: CORES.dourado }}>Próximo passo · </span>
-            {proximoPasso.texto}
-          </span>
-          <span style={{ fontSize: "11px", fontWeight: "600", color: CORES.dourado, fontFamily: "'Lora', serif" }}>abrir →</span>
-        </button>
+        <Card onClick={() => onModulo(proximoPasso.modulo)} rotulo="Próximo passo" style={{ marginTop: 32 }}>
+          <div className="flex items-baseline justify-between gap-4 flex-wrap">
+            <span style={{ fontFamily: "var(--font-display)", fontSize: 21, lineHeight: 1.3, color: "var(--tinta)" }}>{proximoPasso.texto}</span>
+            <span className="enz-legenda">abrir →</span>
+          </div>
+        </Card>
       )}
 
-      <button
-        onClick={() => onModulo("penseira")}
-        style={{ textAlign: "left", width: "100%", padding: "20px", borderRadius: "4px", marginBottom: "32px", display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "12px", flexWrap: "wrap", background: "#4A4035", border: "1px solid #8A3A2E", cursor: "pointer", transition: "all 0.3s ease" }}
-        onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 16px rgba(107,93,66, 0.3)"; }}
-        onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "none"; }}
-      >
-        <span style={{ fontFamily: "'Crimson Text', serif", fontSize: "18px", fontWeight: "600", color: CORES.dourado }}>Conselheira</span>
-        <span style={{ fontSize: "11px", color: CORES.laranja, fontFamily: "'Lora', serif" }}>Despeje um pensamento e examine-o com clareza — soluções e dúvidas com base legal, sobre qualquer cômodo</span>
-      </button>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" style={{ marginTop: 32 }}>
+        {servicosCliente.mentoria && (
+          <Card onClick={() => onModulo("mentoria")} rotulo="Jornada" titulo="Mentoria" subtitulo={totalEncontros > 0 ? `${totalEncontrosRealizados}/${totalEncontros} encontros realizados` : "jornada ainda não desenhada"} />
+        )}
+        {servicosCliente.treinamentos && (
+          <Card onClick={() => onModulo("treinamentos")} rotulo="Turmas" titulo="Treinamentos" subtitulo={totalTreinamentos > 0 ? `${totalTreinamentosRealizados}/${totalTreinamentos} realizados` : "nenhum treinamento ainda"} />
+        )}
+        <Card onClick={() => onModulo("penseira")} rotulo="IA" titulo="Conselheira" subtitulo="despeje um pensamento e examine-o com clareza — dúvidas com base legal, sobre qualquer frente" />
+      </div>
 
       {(servicosCliente.consultoria || ehPessoa) && (
-      <div style={{ marginBottom: "32px" }}>
-        <div style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "800", marginBottom: "6px", color: CORES.principal }}>{ehPessoa ? "Ala do Mentorado" : "Ala do Contratante"}</div>
-        <div style={{ fontSize: "11px", marginBottom: "16px", color: "#A89878", fontFamily: "'Lora', serif" }}>{ehPessoa ? "A pessoa, o combinado e o entorno — mapeie também quem ela lidera" : "A pessoa e a relação — de quem contrata ao que foi combinado"}</div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "12px" }}>
-          {alaContratante.map((chave) => (
-            <Cartao key={chave} chave={chave} />
-          ))}
-        </div>
-      </div>
+        <section style={{ marginTop: 56 }}>
+          <TituloSecao
+            nivel={2}
+            rotulo={ehPessoa ? "O mentorado" : "O contratante"}
+            titulo={ehPessoa ? "A pessoa, o combinado e o entorno." : "A pessoa e a relação."}
+            descricao={ehPessoa ? "Mapeie também quem ela lidera." : "De quem contrata ao que foi combinado."}
+          />
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" style={{ marginTop: 24 }}>
+            {alaContratante.map((chave) => <Cartao key={chave} chave={chave} />)}
+          </div>
+        </section>
       )}
 
       {servicosCliente.consultoria && (
-      <div style={{ marginBottom: "32px" }}>
-        <div style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "800", marginBottom: "6px", color: CORES.principal }}>Ala do Negócio</div>
-        <div style={{ fontSize: "11px", marginBottom: "16px", color: "#A89878", fontFamily: "'Lora', serif" }}>A empresa, organizada por frentes de trabalho</div>
-        {alaNegocio.map((grupo) => (
-          <div key={grupo.frente} style={{ marginBottom: "24px" }}>
-            <div style={{ fontSize: "11px", textTransform: "uppercase", fontWeight: "600", marginBottom: "12px", color: CORES.dourado, fontFamily: "'Lora', serif", letterSpacing: "1px" }}>
-              {grupo.frente}
+        <section style={{ marginTop: 56 }}>
+          <TituloSecao nivel={2} rotulo="O negócio" titulo="A empresa, por frentes de trabalho." />
+          {alaNegocio.map((grupo) => (
+            <div key={grupo.frente} style={{ marginTop: 32 }}>
+              <span className="enz-rotulo" style={{ marginBottom: 12 }}>{grupo.frente}</span>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {grupo.chaves.map((chave) => <Cartao key={chave} chave={chave} compacto />)}
+              </div>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "12px" }}>
-              {grupo.chaves.map((chave) => (
-                <Cartao key={chave} chave={chave} compacto />
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </section>
       )}
     </div>
   );

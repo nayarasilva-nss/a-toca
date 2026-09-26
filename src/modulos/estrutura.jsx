@@ -99,24 +99,24 @@ export function ModuloEstrutura({ cliente, posicoes, cargos, gerando, erro, onMu
           <>
             <div className="mb-6">
               {posicoes.map((p) => (
-                <div key={p.id} className="flex items-center gap-2 py-1.5 border-b" style={{ borderColor: "#EFE8D6" }}>
+                <div key={p.id} className="flex items-center gap-2 py-1.5 border-b" style={{ borderColor: "var(--fundo-recuo)" }}>
                   <input
                     className="flex-1 px-2 py-1 text-sm rounded border bg-creme"
-                    style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
+                    style={{ borderColor: "var(--linha)", color: CORES.fogoEscuro }}
                     value={p.nome}
                     placeholder="Nome da posição"
                     onChange={(e) => onMudar(posicoes.map((x) => (x.id === p.id ? { ...x, nome: e.target.value } : x)))}
                   />
                   <input
                     className="w-28 px-2 py-1 text-xs rounded border bg-creme"
-                    style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
+                    style={{ borderColor: "var(--linha)", color: "var(--tinta)" }}
                     value={p.setor}
                     placeholder="Setor"
                     onChange={(e) => onMudar(posicoes.map((x) => (x.id === p.id ? { ...x, setor: e.target.value } : x)))}
                   />
                   <select
                     className="w-40 px-2 py-1 text-xs rounded border bg-creme"
-                    style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
+                    style={{ borderColor: "var(--linha)", color: "var(--tinta)" }}
                     value={p.superiorId || ""}
                     onChange={(e) =>
                       onMudar(posicoes.map((x) => (x.id === p.id ? { ...x, superiorId: e.target.value || null } : x)))
@@ -138,7 +138,7 @@ export function ModuloEstrutura({ cliente, posicoes, cargos, gerando, erro, onMu
                       )
                     }
                     className="px-1 text-xs"
-                    style={{ color: "#B8860B" }}
+                    style={{ color: "var(--ouro-texto)" }}
                   >
                     ✕
                   </button>
@@ -168,14 +168,14 @@ export function ModuloEstrutura({ cliente, posicoes, cargos, gerando, erro, onMu
 export function ImpressaoEstrutura({ cliente, posicoes }) {
   if (!posicoes || posicoes.length === 0) return null;
   return (
-    <div className="area-impressao hidden print:block p-10" style={{ color: "#2A1218" }}>
+    <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
         <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Estrutura de Governança</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>Organograma</div>
-        <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>{cliente.negocio} · {cliente.segmento}</div>
+        <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{cliente.negocio} · {cliente.segmento}</div>
       </div>
       <Organograma posicoes={posicoes} impressao />
-      <p className="text-xs mt-6" style={{ color: "#6B5D42" }}>
+      <p className="text-xs mt-6" style={{ color: "var(--tinta)" }}>
         Cada posição responde à posição imediatamente acima na linha de reporte. Comunicações e decisões seguem esta estrutura.
       </p>
       <RodapeImpressao />

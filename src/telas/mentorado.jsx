@@ -1,22 +1,25 @@
-import { CORES } from "../nucleo/base.jsx";
 import { ArvoreEnraizar } from "../componentes/arvore.jsx";
+import { Cabecalho } from "../componentes/cabecalho.jsx";
+import { TituloSecao, Citacao } from "../componentes/enraizar.jsx";
 
-export function AreaMentorado({ usuario, onSair }) {
+export function AreaMentorado({ usuario, onSair, tema, onTema }) {
   const primeiroNome = (usuario.nome || "").split(" ")[0];
   return (
-    <div style={{ minHeight: "100vh", background: CORES.fundoPrincipal }}>
-      <header className="px-4 sm:px-8 py-4 sm:py-6 flex flex-wrap items-center justify-between gap-3" style={{ background: CORES.fundoPrincipal, borderBottom: `2px solid ${CORES.dourado}` }}>
-        <div className="font-serif" style={{ fontSize: 26, fontWeight: 800, letterSpacing: 2, color: CORES.dourado }}>ENRAIZAR</div>
-        <button onClick={onSair} className="text-xs uppercase font-semibold" style={{ background: "none", border: "none", cursor: "pointer", color: CORES.principal, letterSpacing: 1, fontFamily: "'Lora', serif" }}>
-          Sair
-        </button>
-      </header>
-      <main className="max-w-2xl mx-auto mt-12 px-6 pb-16 text-center">
-        <ArvoreEnraizar tamanho={90} cor={CORES.verde} />
-        <h1 className="font-serif" style={{ fontSize: "28px", color: CORES.principal, marginTop: "16px" }}>Oi, {primeiroNome}</h1>
-        <p style={{ fontSize: "15px", color: CORES.textoDim, marginTop: "12px", lineHeight: 1.7, fontFamily: "'Lora', serif" }}>
-          Sua área de mentoria está sendo preparada. Em breve você verá aqui seus encontros, metas, materiais e o registro da sua evolução.
-        </p>
+    <div className="min-h-screen">
+      <Cabecalho usuario={usuario} onSair={onSair} tema={tema} onTema={onTema} />
+      <main className="enz-container grid gap-12 items-center lg:grid-cols-[minmax(0,560px)_1fr]">
+        <div>
+          <TituloSecao rotulo="Sua jornada" titulo={`Oi, ${primeiroNome}.`} virada="Sua área está sendo preparada." />
+          <p style={{ marginTop: 24, maxWidth: 520, fontSize: 16, lineHeight: 1.6 }}>
+            Em breve você verá aqui seus encontros, o pra casa de cada etapa, as metas combinadas e o registro da sua evolução.
+          </p>
+          <div style={{ marginTop: 40 }}>
+            <Citacao>A autonomia nunca é construída diretamente.</Citacao>
+          </div>
+        </div>
+        <div className="hidden lg:flex justify-center">
+          <ArvoreEnraizar variante="inteira" tamanho={320} />
+        </div>
       </main>
     </div>
   );

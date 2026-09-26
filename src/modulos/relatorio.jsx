@@ -38,7 +38,7 @@ export function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAc
   if (!relAberto) {
     return (
       <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-        <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+        <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
           ← {cliente.negocio}
         </button>
         <div className="flex items-baseline justify-between mb-2">
@@ -57,7 +57,7 @@ export function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAc
           Malfeito feito: o fechamento do ciclo. Antes/depois do diagnóstico, frentes concluídas, entregas e recomendações — o documento que renova contrato e gera indicação.
         </p>
         {relatorios.length === 0 ? (
-          <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #7BA85C" }}>
+          <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed var(--linha-forte)" }}>
             <p className="text-sm" style={{ color: CORES.textoDim }}>
               Nenhum relatório ainda. Crie ao final do engajamento — a IA reúne tudo que aconteceu no ENRAIZAR deste cliente.
             </p>
@@ -87,7 +87,7 @@ export function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAc
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={() => onAbrir(null)} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+      <button onClick={() => onAbrir(null)} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
         ← Relatórios · {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -103,7 +103,7 @@ export function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAc
 
         <div className="mb-4 p-3 rounded-lg" style={{ background: CORES.hover, border: "2px solid #D4AF37AA" }}>
           <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
-            <div className="label" style={{ color: "#9A6A2F" }}>
+            <div className="label" style={{ color: "var(--alerta)" }}>
               Verificação das metas pactuadas (fase Prova)
             </div>
             {(metasAcordo || []).length > 0 && (relAberto.metasVerificadas || []).length === 0 && (
@@ -122,17 +122,17 @@ export function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAc
             </p>
           )}
           {(relAberto.metasVerificadas || []).map((m) => (
-            <div key={m.id} className="py-1.5 border-b" style={{ borderColor: "#EFE8D6" }}>
+            <div key={m.id} className="py-1.5 border-b" style={{ borderColor: "var(--fundo-recuo)" }}>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="flex-1 text-sm" style={{ color: CORES.fogoEscuro }}>{m.objetivo}{m.prazo ? ` — até ${m.prazo}` : ""}</span>
                 <select
                   className="px-2 py-0.5 text-xs rounded border font-semibold"
                   style={
                     m.status === "batida"
-                      ? { borderColor: "#4F6B3A", background: "#E3EBD8", color: "#4F6B3A" }
+                      ? { borderColor: "var(--sucesso)", background: "var(--sucesso-fundo)", color: "var(--sucesso)" }
                       : m.status === "nao"
-                      ? { borderColor: "#C77", background: "#F5DDD6", color: "#8A3A2E" }
-                      : { borderColor: "#9A6A2F", background: "#F5E6C8", color: "#9A6A2F" }
+                      ? { borderColor: "var(--erro)", background: "var(--erro-fundo)", color: "var(--erro)" }
+                      : { borderColor: "var(--alerta)", background: "var(--alerta-fundo)", color: "var(--alerta)" }
                   }
                   value={m.status}
                   onChange={(e) => set("metasVerificadas")(relAberto.metasVerificadas.map((x) => (x.id === m.id ? { ...x, status: e.target.value } : x)))}
@@ -142,7 +142,7 @@ export function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAc
               </div>
               <input
                 className="w-full mt-1 px-2 py-1 text-xs rounded border bg-creme"
-                style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
+                style={{ borderColor: "var(--linha)", color: "var(--tinta)" }}
                 placeholder="Por quê (o que levou a esse resultado)"
                 value={m.porque}
                 onChange={(e) => set("metasVerificadas")(relAberto.metasVerificadas.map((x) => (x.id === m.id ? { ...x, porque: e.target.value } : x)))}
@@ -154,7 +154,7 @@ export function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAc
         {primeiroDiag && ultimoDiag && (
           <div className="flex gap-4 justify-center flex-wrap mb-4">
             <div className="text-center">
-              <div className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: "#A89878" }}>
+              <div className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: "var(--tinta-musgo)" }}>
                 Antes ({primeiroDiag.data})
               </div>
               <RadarMaturidade notas={primeiroDiag.notas} tamanho={240} />
@@ -183,7 +183,7 @@ export function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAc
                 onAbrir(null);
               }}
               className="text-xs underline"
-              style={{ color: "#8A3A2E" }}
+              style={{ color: "var(--erro)" }}
             >
               Excluir relatório
             </button>
@@ -203,11 +203,11 @@ export function ImpressaoRelatorio({ cliente, rel, diags, dadosPainel }) {
   const primeiroDiag = diags.length > 1 ? diags[0] : null;
   const ultimoDiag = diags.length ? diags[diags.length - 1] : null;
   return (
-    <div className="area-impressao hidden print:block p-10" style={{ color: "#2A1218" }}>
+    <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
         <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Relatório de Encerramento</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{cliente.negocio}</div>
-        <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>{rel.data}</div>
+        <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{rel.data}</div>
       </div>
 
       <div className="mb-5">
@@ -215,18 +215,18 @@ export function ImpressaoRelatorio({ cliente, rel, diags, dadosPainel }) {
         <p className="text-sm whitespace-pre-line">{rel.retrospectiva}</p>
       </div>
       {(rel.metasVerificadas || []).length > 0 && (
-        <div className="mb-5 p-3" style={{ border: "1px solid #7BA85C" }}>
+        <div className="mb-5 p-3" style={{ border: "1px solid var(--linha-forte)" }}>
           <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.fogo }}>Metas pactuadas — verificação</div>
           {(rel.metasVerificadas || []).map((m) => (
             <div key={m.id} className="text-sm mb-1">
               <strong>{ROT_META[m.status] || m.status}:</strong> {m.objetivo}{m.prazo ? ` (até ${m.prazo})` : ""}
-              {m.porque && <span className="text-xs italic" style={{ color: "#6B5D42" }}> — {m.porque}</span>}
+              {m.porque && <span className="text-xs italic" style={{ color: "var(--tinta)" }}> — {m.porque}</span>}
             </div>
           ))}
         </div>
       )}
       {dadosPainel && (
-        <div className="mb-5 p-3" style={{ border: "1px solid #7BA85C" }}>
+        <div className="mb-5 p-3" style={{ border: "1px solid var(--linha-forte)" }}>
           <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.fogo }}>Painel do Engajamento</div>
           <div className="text-sm">
             Índice de formalização: <strong>{dadosPainel.formalizacao}%</strong> · Conformidade (CCT): <strong>{dadosPainel.cctResolvidos}/{dadosPainel.cctTotal} resolvidos</strong> · Anomalias tratadas: <strong>{dadosPainel.anomTratadas}/{dadosPainel.anomTotal}</strong> · Atas registradas: <strong>{dadosPainel.totalAtas}</strong>
@@ -240,7 +240,7 @@ export function ImpressaoRelatorio({ cliente, rel, diags, dadosPainel }) {
           <div className="text-sm font-bold uppercase tracking-widest mb-2" style={{ color: CORES.fogo }}>Evolução da maturidade</div>
           <div className="flex gap-6 justify-center">
             <div className="text-center">
-              <div className="text-xs font-semibold mb-1" style={{ color: "#6B5D42" }}>Antes · {primeiroDiag.data}</div>
+              <div className="text-xs font-semibold mb-1" style={{ color: "var(--tinta)" }}>Antes · {primeiroDiag.data}</div>
               <RadarMaturidade notas={primeiroDiag.notas} tamanho={250} />
             </div>
             <div className="text-center">

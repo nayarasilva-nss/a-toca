@@ -5,62 +5,52 @@
 
 // Cores do Design System (Método Enraizar - Sofisticado & Intuitivo)
 export const CORES = {
-  // Primárias - Enraizar
-  principal: "#6B5D42",      // Marrom/café (títulos, estrutura principal)
-  principalEscuro: "#4A4035", // Marrom escuro (borders, destaques)
-  principalClaro: "#8B7A6B", // Marrom claro (textos secundários)
-
-  // Acentos
-  dourado: "#D4AF37",        // Dourado (labels, ênfases, árvore)
-  douradoEscuro: "#B8860B",  // Dourado dark (hover states)
-  douradoClaro: "#E8C547",   // Dourado claro (backgrounds)
-
-  // Verde (nova) - Enraizar
-  verde: "#4F6B3A",          // Verde terra/sálvia (acentos, status)
-  verdeClaro: "#7BA85C",     // Verde claro (backgrounds, hovers)
-  verdeEscuro: "#3D5630",    // Verde escuro (borders, destaques)
-
-  // Backgrounds
-  fundoPrincipal: "#F5F1E8", // Bege/creme claro (main background)
-  cartao: "#FFFBF0",         // Creme branco (cards)
-  hover: "#F0EDE5",          // Bege claro (hover states)
-
-  // Neutras
-  texto: "#4A4035",          // Texto principal (escuro)
-  textoDim: "#8B7A6B",       // Texto dimmed (secundário)
-  border: "#E8DFD3",         // Borders (claro)
-
-  // Estados (mantém compatibilidade)
-  fogo: "#6B5D42",           // Para compatibilidade
-  fogoEscuro: "#4A4035",     // Para compatibilidade
-  laranja: "#7BA85C",        // Para compatibilidade
-  papel: "#FFFBF0",          // Para compatibilidade
-  cremeClaro: "#F5F1E8",     // Para compatibilidade
-  cremePalido: "#FFFBF0",    // Para compatibilidade
+  // Método Enraizar — todas as cores vêm dos tokens em index.css (temas Floresta e Papel)
+  principal: "var(--tinta)",
+  principalEscuro: "var(--tinta)",
+  principalClaro: "var(--tinta-areia)",
+  dourado: "var(--ouro)",
+  douradoEscuro: "var(--ouro-texto)",
+  douradoClaro: "var(--ouro)",
+  verde: "var(--tinta-salvia)",
+  verdeClaro: "var(--linha-forte)",
+  verdeEscuro: "var(--sucesso)",
+  fundoPrincipal: "var(--fundo)",
+  cartao: "var(--fundo-elevado)",
+  hover: "var(--fundo-destaque)",
+  texto: "var(--tinta)",
+  textoDim: "var(--tinta-musgo)",
+  border: "var(--linha)",
+  fogo: "var(--tinta)",
+  fogoEscuro: "var(--tinta)",
+  laranja: "var(--linha-forte)",
+  papel: "var(--fundo-elevado)",
+  cremeClaro: "var(--fundo)",
+  cremePalido: "var(--fundo-elevado)",
 };
 
 export const GRAVIDADES = ["leve", "media", "grave", "gravissima"];
 
 export const GRAV_INFO = {
-  leve: { rotulo: "Leve", medida: "Feedback registrado", cor: "#B8860B", fundo: CORES.hover },
-  media: { rotulo: "Média", medida: "Advertência escrita", cor: "#9A6A2F", fundo: "#F2E3CB" },
-  grave: { rotulo: "Grave", medida: "Suspensão", cor: "#8A3A2E", fundo: "#F0DCD2" },
-  gravissima: { rotulo: "Gravíssima", medida: "Desligamento por justa causa*", cor: CORES.principal, fundo: "#EBD5D8" },
+  leve: { rotulo: "Leve", medida: "Feedback registrado", cor: "var(--info)", fundo: "var(--info-fundo)" },
+  media: { rotulo: "Média", medida: "Advertência escrita", cor: "var(--alerta)", fundo: "var(--alerta-fundo)" },
+  grave: { rotulo: "Grave", medida: "Suspensão", cor: "var(--erro)", fundo: "var(--erro-fundo)" },
+  gravissima: { rotulo: "Gravíssima", medida: "Desligamento por justa causa*", cor: "var(--erro)", fundo: "var(--erro-fundo)" },
 };
 
 export const STATUS_FRENTE = {
-  nao_iniciada: { rotulo: "Não iniciada", cor: CORES.textoDim, fundo: "#EFE8D6" },
-  em_andamento: { rotulo: "Em andamento", cor: "#9A6A2F", fundo: "#F2E3CB" },
-  formalizada: { rotulo: "Formalizada", cor: "#4F6B3A", fundo: "#E3EBD8" },
-  concluida: { rotulo: "Concluída", cor: "#3C5A2B", fundo: "#D8E5D0" },
+  nao_iniciada: { rotulo: "Não iniciada", cor: "var(--tinta-musgo)", fundo: "var(--fundo-recuo)" },
+  em_andamento: { rotulo: "Em andamento", cor: "var(--alerta)", fundo: "var(--alerta-fundo)" },
+  formalizada: { rotulo: "Formalizada", cor: "var(--sucesso)", fundo: "var(--sucesso-fundo)" },
+  concluida: { rotulo: "Concluída", cor: "var(--sucesso)", fundo: "var(--sucesso-fundo)" },
 };
 
 export const STATUS_TREINAMENTO = {
-  planejado: { rotulo: "Planejado", cor: "#9A6A2F", fundo: "#F5E6C8" },
-  confirmado: { rotulo: "Confirmado", cor: CORES.textoDim, fundo: "#EFE8D6" },
-  em_progresso: { rotulo: "Em progresso", cor: "#9A6A2F", fundo: "#F2E3CB" },
-  realizado: { rotulo: "Realizado", cor: "#4F6B3A", fundo: "#E3EBD8" },
-  avaliado: { rotulo: "Avaliado", cor: "#3C5A2B", fundo: "#D8E5D0" },
+  planejado: { rotulo: "Planejado", cor: "var(--alerta)", fundo: "var(--alerta-fundo)" },
+  confirmado: { rotulo: "Confirmado", cor: "var(--info)", fundo: "var(--info-fundo)" },
+  em_progresso: { rotulo: "Em progresso", cor: "var(--alerta)", fundo: "var(--alerta-fundo)" },
+  realizado: { rotulo: "Realizado", cor: "var(--sucesso)", fundo: "var(--sucesso-fundo)" },
+  avaliado: { rotulo: "Avaliado", cor: "var(--sucesso)", fundo: "var(--sucesso-fundo)" },
 };
 
 export const TABELA_MAE = [

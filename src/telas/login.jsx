@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { CORES } from "../nucleo/base.jsx";
 import { ArvoreEnraizar } from "../componentes/arvore.jsx";
-import { InputField } from "../componentes/ui.jsx";
+import { InputField, BotaoPrimario } from "../componentes/ui.jsx";
 
 export async function chamarAuth(acao, corpo) {
   const r = await fetch(`/api/auth?acao=${acao}`, {
@@ -36,59 +35,53 @@ export function TelaLogin({ precisaConfigurar, onEntrar }) {
       const { usuario } = await chamarAuth(precisaConfigurar ? "configurar" : "entrar", precisaConfigurar ? { nome, email, senha } : { email, senha });
       onEntrar(usuario);
     } catch (err) {
-      setErro(err.message === "sem-api" ? "Servidor indisponível. Tente de novo em instantes." : err.message);
+      setErro(err.message === "sem-api" ? "Servidor indisponível. Tente de novo em instantes; nada foi perdido." : err.message);
     } finally {
       setEnviando(false);
     }
   };
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px", background: `linear-gradient(135deg, ${CORES.fundoPrincipal} 0%, ${CORES.cartao} 55%, ${CORES.hover} 100%)` }}>
-      <form onSubmit={enviar} style={{ width: "100%", maxWidth: "420px", background: CORES.cartao, borderRadius: "16px", boxShadow: "0 12px 40px rgba(75, 64, 53, 0.14)", borderTop: `4px solid ${CORES.dourado}`, padding: "40px 36px 32px", boxSizing: "border-box" }}>
-        <div style={{ textAlign: "center", marginBottom: "28px" }}>
-          <ArvoreEnraizar tamanho={72} cor={CORES.dourado} />
-          <div className="font-serif" style={{ fontSize: "30px", fontWeight: 800, letterSpacing: "3px", color: CORES.dourado, marginTop: "10px" }}>ENRAIZAR</div>
-          <div style={{ fontSize: "11px", letterSpacing: "2px", textTransform: "uppercase", color: CORES.textoDim, marginTop: "4px", fontFamily: "'Lora', serif" }}>Desenvolvimento Organizacional</div>
-          <p style={{ fontSize: "13px", fontStyle: "italic", color: CORES.principalClaro, marginTop: "14px", fontFamily: "'Lora', serif" }}>
-            {precisaConfigurar ? "Primeiro acesso: crie a conta da consultora." : "Todo crescimento começa em quem enraiza."}
-          </p>
+    <div data-theme="floresta" className="min-h-screen flex items-center" style={{ background: "var(--fundo)", color: "var(--tinta)" }}>
+      <div className="w-full max-w-5xl mx-auto px-6 py-12 sm:py-20 grid gap-12 items-center" style={{ gridTemplateColumns: "minmax(0, 1fr)" }}>
+        <div className="grid gap-12 items-center lg:grid-cols-[minmax(0,440px)_1fr]">
+          <div>
+            <span className="enz-rotulo">Método</span>
+            <h1 className="enz-titulo" style={{ fontSize: "clamp(56px, 9vw, 96px)", lineHeight: 0.95, letterSpacing: "-0.01em", marginTop: 12 }}>Enraizar</h1>
+            <p className="enz-citacao" style={{ marginTop: 14 }}>
+              <span style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: 20, color: "var(--tinta-salvia)" }}>Todo crescimento começa em quem enraíza.</span>
+            </p>
+
+            <form onSubmit={enviar} className="enz-card enz-card-vazado" style={{ marginTop: 40, paddingBottom: 0 }}>
+              <span className="enz-rotulo" style={{ marginBottom: 20 }}>{precisaConfigurar ? "Primeiro acesso" : "Entrar"}</span>
+              {precisaConfigurar && (
+                <p className="enz-nota" style={{ marginBottom: 20 }}>crie a conta da consultora. depois, quem entra aqui é você.</p>
+              )}
+              {precisaConfigurar && <InputField label="Seu nome" value={nome} onChange={setNome} placeholder="Nayara Silva" />}
+              <InputField label="E-mail" type="email" value={email} onChange={setEmail} placeholder="voce@exemplo.com" />
+              <InputField label="Senha" type="password" value={senha} onChange={setSenha} placeholder={precisaConfigurar ? "mínimo de 8 caracteres" : ""} />
+              {precisaConfigurar && (
+                <InputField
+                  label="Confirmar senha"
+                  type="password"
+                  value={confirmacao}
+                  onChange={setConfirmacao}
+                  ajuda={senha && confirmacao && senha !== confirmacao ? "as senhas não conferem." : undefined}
+                />
+              )}
+              {erro && <div className="enz-aviso-erro" role="alert">{erro}</div>}
+              <div className="flex items-center gap-4 flex-wrap" style={{ marginTop: 4 }}>
+                <BotaoPrimario type="submit" disabled={!valido || enviando}>
+                  {enviando ? "Entrando…" : precisaConfigurar ? "Criar conta e entrar" : "Entrar"}
+                </BotaoPrimario>
+              </div>
+            </form>
+          </div>
+          <div className="hidden lg:flex justify-center">
+            <ArvoreEnraizar variante="raizes" tamanho={380} alt="A árvore do Método Enraizar: raízes maiores que a copa" />
+          </div>
         </div>
-
-        {precisaConfigurar && <InputField label="Seu nome" value={nome} onChange={setNome} placeholder="Ex.: Nayara Silva" />}
-        <InputField label="E-mail" type="email" value={email} onChange={setEmail} placeholder="voce@exemplo.com" />
-        <InputField label="Senha" type="password" value={senha} onChange={setSenha} placeholder={precisaConfigurar ? "Mínimo de 8 caracteres" : "Sua senha"} />
-        {precisaConfigurar && <InputField label="Confirmar senha" type="password" value={confirmacao} onChange={setConfirmacao} placeholder="Repita a senha" />}
-
-        {precisaConfigurar && senha && confirmacao && senha !== confirmacao && (
-          <p style={{ fontSize: "12px", color: "#8A3A2E", marginTop: "-12px", marginBottom: "16px", fontFamily: "'Lora', serif" }}>As senhas não conferem.</p>
-        )}
-        {erro && (
-          <div style={{ marginBottom: "16px", padding: "12px 14px", borderRadius: "8px", background: "#F5DDD6", color: "#8A3A2E", fontSize: "13px", fontFamily: "'Lora', serif" }}>{erro}</div>
-        )}
-
-        <button
-          type="submit"
-          disabled={!valido || enviando}
-          style={{
-            width: "100%",
-            padding: "15px",
-            borderRadius: "8px",
-            border: "none",
-            fontFamily: "'Lora', serif",
-            fontSize: "14px",
-            fontWeight: 700,
-            letterSpacing: "1px",
-            cursor: valido && !enviando ? "pointer" : "not-allowed",
-            background: valido ? `linear-gradient(135deg, ${CORES.verde} 0%, ${CORES.verdeEscuro} 100%)` : CORES.fundoPrincipal,
-            color: valido ? CORES.cartao : CORES.textoDim,
-            boxShadow: valido ? `0 4px 12px ${CORES.verde}40` : "none",
-            opacity: enviando ? 0.7 : 1,
-            transition: "all 0.3s ease",
-          }}
-        >
-          {enviando ? "Entrando..." : precisaConfigurar ? "Criar conta e entrar" : "Entrar"}
-        </button>
-      </form>
+      </div>
     </div>
   );
 }

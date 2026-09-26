@@ -45,7 +45,7 @@ export function ListaPessoas({ cliente, pessoas, onAbrir, onNova, onVoltar }) {
   }
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
         ← {cliente.negocio}
       </button>
       <div className="flex items-baseline justify-between mb-2">
@@ -67,7 +67,7 @@ export function ListaPessoas({ cliente, pessoas, onAbrir, onNova, onVoltar }) {
       )}
 
       {pessoas.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #7BA85C" }}>
+        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed var(--linha-forte)" }}>
           <p className="text-sm" style={{ color: CORES.textoDim }}>
             Ninguém mapeado ainda. Adicione uma pessoa-chave, descreva o que você observou dela, e classifique — ou deixe a IA sugerir a partir das suas observações.
           </p>
@@ -92,8 +92,8 @@ export function ListaPessoas({ cliente, pessoas, onAbrir, onNova, onVoltar }) {
               </span>
               <span className="flex gap-1.5 items-center">
                 <SeloTemperamento chave={p.dominante} pequeno />
-                {p.secundario && <span className="text-xs" style={{ color: "#A89878" }}>+ <SeloTemperamento chave={p.secundario} pequeno /></span>}
-                {!p.dominante && <span className="text-xs" style={{ color: "#A89878" }}>não classificado</span>}
+                {p.secundario && <span className="text-xs" style={{ color: "var(--tinta-musgo)" }}>+ <SeloTemperamento chave={p.secundario} pequeno /></span>}
+                {!p.dominante && <span className="text-xs" style={{ color: "var(--tinta-musgo)" }}>não classificado</span>}
               </span>
             </button>
           ))}
@@ -134,7 +134,7 @@ export function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar,
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
         ← Temperamentos · {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -167,7 +167,7 @@ export function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar,
                   Formulário de observação (opcional)
                 </div>
                 {Object.keys(pessoa.respostas || {}).length > 0 && (
-                  <span className="text-xs" style={{ color: "#A89878" }}>
+                  <span className="text-xs" style={{ color: "var(--tinta-musgo)" }}>
                     {Object.keys(pessoa.respostas || {}).length}/{FORM_TEMPERAMENTO.length} respondidas
                   </span>
                 )}
@@ -179,7 +179,7 @@ export function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar,
                 const marcada = (pessoa.respostas || {})[i];
                 return (
                   <div key={i} className="mb-2">
-                    <div className="text-xs mb-1" style={{ color: "#6B5D42" }}>{q.pergunta}</div>
+                    <div className="text-xs mb-1" style={{ color: "var(--tinta)" }}>{q.pergunta}</div>
                     <div className="flex gap-1.5 flex-wrap">
                       {q.opcoes.map(([texto, chave]) => (
                         <button
@@ -194,7 +194,7 @@ export function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar,
                           style={
                             marcada === chave
                               ? { background: TEMPERAMENTOS[chave].fundo, borderColor: TEMPERAMENTOS[chave].cor, color: TEMPERAMENTOS[chave].cor, fontWeight: 600 }
-                              : { background: CORES.cartao, borderColor: "#E0D5BC", color: CORES.textoDim }
+                              : { background: CORES.cartao, borderColor: "var(--linha)", color: CORES.textoDim }
                           }
                         >
                           {texto}
@@ -207,8 +207,8 @@ export function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar,
               {Object.keys(pessoa.respostas || {}).length >= 4 && (() => {
                 const { contagem, dominante, secundario } = contarTemperamentos(pessoa.respostas);
                 return (
-                  <div className="mt-3 pt-3 border-t flex items-center gap-3 flex-wrap" style={{ borderColor: "#EFE8D6" }}>
-                    <span className="text-xs" style={{ color: "#6B5D42" }}>
+                  <div className="mt-3 pt-3 border-t flex items-center gap-3 flex-wrap" style={{ borderColor: "var(--fundo-recuo)" }}>
+                    <span className="text-xs" style={{ color: "var(--tinta)" }}>
                       Contagem:{" "}
                       {Object.entries(TEMPERAMENTOS).map(([chave, t]) => `${t.rotulo} ${contagem[chave]}`).join(" · ")}
                     </span>
@@ -240,7 +240,7 @@ export function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar,
             {CAMPOS_PESSOA_GERADOS.map(([campo, rotulo, linhas]) => (
               <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={pessoa[campo]} onChange={(e) => set(campo)(e.target.value)} /></label>
             ))}
-            <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
+            <button onClick={onExcluir} className="text-xs underline" style={{ color: "var(--erro)" }}>
               Excluir pessoa
             </button>
           </>
@@ -255,11 +255,11 @@ export function ImpressaoPessoa({ cliente, pessoa }) {
   const forcas = emLinhasDoc(pessoa.forcas);
   const riscos = emLinhasDoc(pessoa.riscos);
   return (
-    <div className="area-impressao hidden print:block p-10" style={{ color: "#2A1218" }}>
+    <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
         <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Ficha de Temperamento · Confidencial — uso da liderança</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{pessoa.nome}</div>
-        <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>
+        <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>
           {cliente.negocio}{pessoa.cargo ? ` · ${pessoa.cargo}` : ""}
         </div>
         <div className="mt-2 text-sm">

@@ -43,13 +43,13 @@ export function RadarMaturidade({ notas, tamanho, framework: fw }) {
           key={f}
           points={FR.map((_, i) => ponto(i, f).join(",")).join(" ")}
           fill="none"
-          stroke="#E0D5BC"
+          stroke="var(--linha)"
           strokeWidth="1"
         />
       ))}
       {FR.map((_, i) => {
         const [x, y] = ponto(i, 1);
-        return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="#E0D5BC" strokeWidth="1" />;
+        return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="var(--linha)" strokeWidth="1" />;
       })}
       <polygon points={poligono} fill="rgba(107,93,66,0.18)" stroke={CORES.fogo} strokeWidth="2" />
       {valores.map((v, i) => {
@@ -84,7 +84,7 @@ export function ListaDiagnosticos({ cliente, diagnosticos, titulo, subtitulo, fr
   const FR = fw || FRAMEWORK_DIAG;
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
         ← {cliente.negocio}
       </button>
       <div className="flex items-baseline justify-between mb-2">
@@ -95,7 +95,7 @@ export function ListaDiagnosticos({ cliente, diagnosticos, titulo, subtitulo, fr
         {subtitulo || "Nível de maturidade do negócio em cada área. Avalie 6 áreas e 24 critérios; refaça ao longo do engajamento — cada diagnóstico fica datado e a comparação vira o antes/depois da consultoria."}
       </p>
       {diagnosticos.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #7BA85C" }}>
+        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed var(--linha-forte)" }}>
           <p className="text-sm" style={{ color: CORES.textoDim }}>
             Nenhum diagnóstico ainda. Faça o primeiro na fase de briefing — ele justifica a proposta e vira a régua de resultado no encerramento.
           </p>
@@ -149,7 +149,7 @@ export function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerand
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
         ← Diagnósticos · {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -170,7 +170,7 @@ export function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerand
           <InputField label="Data" value={diag.data} onChange={(v) => onMudar({ ...diag, data: v })} />
         </div>
 
-        <div className="text-xs mb-3" style={{ color: "#A89878" }}>
+        <div className="text-xs mb-3" style={{ color: "var(--tinta-musgo)" }}>
           {respondidas}/{total} critérios avaliados · escala: {ESCALA_DIAG.join(" → ")}
         </div>
 
@@ -187,7 +187,7 @@ export function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerand
                     <div className="label" style={{ color: CORES.dourado }}>
                       {a.area}
                     </div>
-                    <div className="text-xs font-bold" style={{ color: pct !== null && pct < 50 ? "#8A3A2E" : CORES.fogo }}>
+                    <div className="text-xs font-bold" style={{ color: pct !== null && pct < 50 ? "var(--erro)" : CORES.fogo }}>
                       {pct === null ? "—" : `${pct}%`}
                     </div>
                   </div>
@@ -195,11 +195,11 @@ export function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerand
                     const chave = chaveNota(aIdx, cIdx);
                     const valor = diag.notas[chave];
                     return (
-                      <div key={chave} className="flex items-center gap-2 py-1.5 border-b" style={{ borderColor: "#EFE8D6" }}>
+                      <div key={chave} className="flex items-center gap-2 py-1.5 border-b" style={{ borderColor: "var(--fundo-recuo)" }}>
                         <span className="flex-1 text-sm" style={{ color: CORES.fogoEscuro }}>{crit}</span>
                         <select
                           className="px-2 py-1 text-xs rounded border bg-creme"
-                          style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
+                          style={{ borderColor: "var(--linha)", color: "var(--tinta)" }}
                           value={valor === undefined || valor === null ? "" : valor}
                           onChange={(e) =>
                             onMudar({ ...diag, notas: { ...diag.notas, [chave]: e.target.value === "" ? null : Number(e.target.value) } })
@@ -224,8 +224,8 @@ export function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerand
             )}
 
             {areasCriticas.length > 0 && (
-              <div className="mb-5 p-4 rounded-lg" style={{ background: "#F0DCD2" }}>
-                <div className="text-sm mb-2" style={{ color: "#8A3A2E" }}>
+              <div className="mb-5 p-4 rounded-lg" style={{ background: "var(--erro-fundo)" }}>
+                <div className="text-sm mb-2" style={{ color: "var(--erro)" }}>
                   Áreas abaixo de 50%: {areasCriticas.map((a) => a.area).join(", ")}.
                 </div>
                 {onCriarFrentes && (
@@ -244,7 +244,7 @@ export function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerand
               </>
             )}
 
-            <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
+            <button onClick={onExcluir} className="text-xs underline" style={{ color: "var(--erro)" }}>
               Excluir diagnóstico
             </button>
           </>
@@ -262,11 +262,11 @@ export function ImpressaoDiagnostico({ cliente, diag, titulo, framework: fw }) {
   const criticos = emLinhasDoc(diag.criticos);
   const prioridades = emLinhasDoc(diag.prioridades);
   return (
-    <div className="area-impressao hidden print:block p-10" style={{ color: "#2A1218" }}>
+    <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
         <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>{titulo || "Diagnóstico de Maturidade"}</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{diag.rotulo || cliente.negocio}</div>
-        <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>{cliente.negocio} · {diag.data}</div>
+        <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{cliente.negocio} · {diag.data}</div>
       </div>
 
       <div className="flex justify-center mb-6">
@@ -289,7 +289,7 @@ export function ImpressaoDiagnostico({ cliente, diag, titulo, framework: fw }) {
                   return (
                     <tr key={cIdx}>
                       <td className="border px-3 py-1" style={{ borderColor: CORES.laranja }}>{crit}</td>
-                      <td className="border px-3 py-1 w-32 font-semibold" style={{ borderColor: CORES.laranja, color: Number(n) < 2 ? "#8A3A2E" : "#4F6B3A" }}>
+                      <td className="border px-3 py-1 w-32 font-semibold" style={{ borderColor: CORES.laranja, color: Number(n) < 2 ? "var(--erro)" : "var(--sucesso)" }}>
                         {ESCALA_DIAG[Number(n)]}
                       </td>
                     </tr>
@@ -309,7 +309,7 @@ export function ImpressaoDiagnostico({ cliente, diag, titulo, framework: fw }) {
       )}
       {criticos.length > 0 && (
         <div className="mb-5">
-          <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: "#8A3A2E" }}>Pontos críticos</div>
+          <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: "var(--erro)" }}>Pontos críticos</div>
           <ul className="text-sm list-disc pl-5">
             {criticos.map((c, i) => <li key={i}>{c}</li>)}
           </ul>

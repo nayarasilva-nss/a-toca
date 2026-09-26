@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 140 140">
+  <line x1="70" y1="70" x2="40" y2="120" stroke="#D4AF37" stroke-width="2" stroke-linecap="round"></line>
+  <line x1="70" y1="70" x2="60" y2="125" stroke="#D4AF37" stroke-width="2" stroke-linecap="round"></line>
+  <line x1="70" y1="70" x2="80" y2="125" stroke="#D4AF37" stroke-width="2" stroke-linecap="round"></line>
+  <line x1="70" y1="70" x2="100" y2="120" stroke="#D4AF37" stroke-width="2" stroke-linecap="round"></line>
+  <line x1="70" y1="70" x2="70" y2="30" stroke="#D4AF37" stroke-width="3" stroke-linecap="round"></line>
+  <line x1="70" y1="35" x2="50" y2="15" stroke="#D4AF37" stroke-width="2" stroke-linecap="round"></line>
+  <line x1="70" y1="35" x2="90" y2="15" stroke="#D4AF37" stroke-width="2" stroke-linecap="round"></line>
+  <line x1="70" y1="45" x2="45" y2="25" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round"></line>
+  <line x1="70" y1="45" x2="95" y2="25" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round"></line>
+  <line x1="70" y1="50" x2="40" y2="40" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round"></line>
+  <line x1="70" y1="50" x2="100" y2="40" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round"></line>
+  <circle cx="70" cy="70" r="5" fill="#D4AF37"></circle>
+</svg>

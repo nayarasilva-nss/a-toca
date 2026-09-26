@@ -1,31 +1,28 @@
-import { CORES } from "../nucleo/base.jsx";
+const ARQUIVOS = {
+  raizes: "arvore-raizes-capa",
+  inteira: "arvore-inteira",
+  frutos: "arvore-frutos",
+  rasa: "arvore-rasa",
+  sustentacao: "raizes-sustentacao",
+  broto: "broto-raiz",
+};
 
-// ─── Árvore (Símbolo do Enraizar) ────────────────────────────────
-export function ArvoreEnraizar({ tamanho = 140, cor = CORES.dourado }) {
+const PROPORCAO = { raizes: 1.1, inteira: 1.1, frutos: 1.1, rasa: 1, sustentacao: 0.8, broto: 1.3 };
+
+// Ilustrações do Método Enraizar: creme sobre transparente na Floresta; no Papel viram máscara pintada em `tinta`.
+export function Ilustracao({ nome, largura, altura, className = "", alt = "", style }) {
   return (
-    <svg width={tamanho} height={tamanho} viewBox="0 0 140 140" style={{ flexShrink: 0 }}>
-      {/* Raízes */}
-      <line x1="70" y1="70" x2="40" y2="120" stroke={cor} strokeWidth="2" strokeLinecap="round" />
-      <line x1="70" y1="70" x2="60" y2="125" stroke={cor} strokeWidth="2" strokeLinecap="round" />
-      <line x1="70" y1="70" x2="80" y2="125" stroke={cor} strokeWidth="2" strokeLinecap="round" />
-      <line x1="70" y1="70" x2="100" y2="120" stroke={cor} strokeWidth="2" strokeLinecap="round" />
-
-      {/* Tronco */}
-      <line x1="70" y1="70" x2="70" y2="30" stroke={cor} strokeWidth="3" strokeLinecap="round" />
-
-      {/* Galhos */}
-      <line x1="70" y1="35" x2="50" y2="15" stroke={cor} strokeWidth="2" strokeLinecap="round" />
-      <line x1="70" y1="35" x2="90" y2="15" stroke={cor} strokeWidth="2" strokeLinecap="round" />
-      <line x1="70" y1="45" x2="45" y2="25" stroke={cor} strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="70" y1="45" x2="95" y2="25" stroke={cor} strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="70" y1="50" x2="40" y2="40" stroke={cor} strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="70" y1="50" x2="100" y2="40" stroke={cor} strokeWidth="1.5" strokeLinecap="round" />
-
-      {/* Centro */}
-      <circle cx="70" cy="70" r="5" fill={cor} />
-    </svg>
+    <span
+      role={alt ? "img" : undefined}
+      aria-label={alt || undefined}
+      aria-hidden={alt ? undefined : true}
+      className={`enz-ilustracao ${className}`}
+      style={{ "--enz-img": `url(/enraizar/${nome}.webp)`, width: largura, height: altura ?? largura, ...style }}
+    />
   );
 }
 
-
-// ─── CardFase (Visualização de cada fase do Enraizar) ────────────
+export function ArvoreEnraizar({ variante = "raizes", tamanho = 140, alt = "", className = "", style }) {
+  const nome = ARQUIVOS[variante] || ARQUIVOS.raizes;
+  return <Ilustracao nome={nome} largura={tamanho} altura={Math.round(tamanho * (PROPORCAO[variante] || 1.1))} alt={alt} className={className} style={style} />;
+}

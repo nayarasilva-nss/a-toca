@@ -1,5 +1,6 @@
 import { useState, useEffect, useReducer } from "react";
 import { COLECOES, COLECOES_INICIAIS, reduzirColecoes } from "./nucleo/estado.jsx";
+import { lerTema, aplicarTema } from "./nucleo/tema.js";
 import { TelaLogin, chamarAuth } from "./telas/login.jsx";
 import { AreaMentorado } from "./telas/mentorado.jsx";
 import { Cabecalho } from "./componentes/cabecalho.jsx";
@@ -94,6 +95,9 @@ export default function App() {
   const [gerando, setGerando] = useState(false);
   const [erro, setErro] = useState(null);
   const [pronto, setPronto] = useState(false);
+  const [tema, setTema] = useState(lerTema);
+  useEffect(() => { aplicarTema(tema); }, [tema]);
+  const mudarTema = (t) => setTema(t);
   const [auth, setAuth] = useState({ estado: "carregando", usuario: null, precisaConfigurar: false });
   const autenticado = auth.estado === "ok" || auth.estado === "local";
 
@@ -452,9 +456,9 @@ export default function App() {
 </style>
 </head>
 <body>
-<div class="aviso-topo" style="background:#6B5D42;color:#E8C547;padding:10px 16px;font-size:14px;text-align:center;font-family:sans-serif;">
+<div class="aviso-topo" style="background:var(--tinta);color:var(--ouro);padding:10px 16px;font-size:14px;text-align:center;font-family:sans-serif;">
   Escolha "Salvar como PDF" na janela de impressão.
-  <button onclick="window.print()" style="margin-left:10px;padding:4px 12px;border-radius:4px;border:1px solid #E8C547;background:transparent;color:#E8C547;cursor:pointer;">Imprimir agora</button>
+  <button onclick="window.print()" style="margin-left:10px;padding:4px 12px;border-radius:4px;border:1px solid var(--ouro);background:transparent;color:var(--ouro);cursor:pointer;">Imprimir agora</button>
 </div>
 ${conteudo}
 <script>
@@ -515,7 +519,7 @@ ${conteudo}
     return <TelaLogin precisaConfigurar={auth.precisaConfigurar} onEntrar={entrar} />;
   }
   if (auth.usuario?.papel === "mentorado") {
-    return <AreaMentorado usuario={auth.usuario} onSair={sair} />;
+    return <AreaMentorado usuario={auth.usuario} onSair={sair} tema={tema} onTema={mudarTema} />;
   }
 
   const app = {
@@ -523,64 +527,14 @@ ${conteudo}
   };
 
   return (
-    <div className="min-h-screen fonte-corpo" style={{ background: "linear-gradient(135deg, #FAF6EE 0%, #F5EDD9 100%)", fontFamily: "'Crimson Text', Georgia, serif", position: "relative" }}>
-      <div
-        className="print:hidden"
-        style={{
-          position: "fixed",
-          inset: 0,
-          pointerEvents: "none",
-          opacity: 0.02,
-          zIndex: 0,
-          backgroundImage:
-            "url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%2260%22><rect width=%22300%22 height=%2260%22 fill=%22%23D4AF37%22/><line x1=%220%22 y1=%2210%22 x2=%22300%22 y2=%2210%22 stroke=%22%23AA8C2C%22 stroke-width=%221%22 opacity=%220.3%22/><line x1=%220%22 y1=%2230%22 x2=%22300%22 y2=%2230%22 stroke=%22%23AA8C2C%22 stroke-width=%220.5%22 opacity=%220.2%22/><line x1=%220%22 y1=%2250%22 x2=%22300%22 y2=%2250%22 stroke=%22%23AA8C2C%22 stroke-width=%220.8%22 opacity=%220.25%22/></svg>')",
-        }}
-      />
-      {gerandoPdf && (
-        <div
-          className="print:hidden"
-          style={{ position: "fixed", bottom: 20, right: 20, zIndex: 50, background: CORES.principal, color: CORES.cartao, padding: "10px 18px", borderRadius: 8, border: "1px solid #B8860B", fontSize: 13, boxShadow: "0 8px 20px rgba(0,0,0,0.3)" }}
-        >
-          Gerando PDF...
-        </div>
-      )}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Playfair+Display:wght@700;800&display=swap');
-
-        * { transition-property: background-color, border-color, box-shadow, transform; transition-duration: 0.2s; transition-timing-function: ease; }
-
-        input, select, textarea, button { font-family: -apple-system, 'Segoe UI', sans-serif; }
-        .font-serif { font-family: 'Playfair Display', Georgia, serif; }
-        .fonte-corpo { font-family: 'Crimson Text', Georgia, serif; }
-
-        .objeto { transition: all 0.3s ease; }
-        .objeto:hover { border-color: #D4AF37AA !important; box-shadow: 0 8px 20px rgba(212, 175, 55, 0.15); transform: translateY(-2px); }
-
-        button, [role="button"] { transition: all 0.2s ease; }
-        button:hover:not(:disabled), [role="button"]:hover { transform: scale(1.02); }
-        button:active:not(:disabled), [role="button"]:active { transform: scale(0.98); }
-
-        table tr { transition: background-color 0.2s ease; }
-        table tr:hover { background-color: #F5EDD9 !important; }
-
-        .card, [class*="card"] { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-
-        .fade-in { animation: fadeIn 0.4s ease-out; }
-        .slide-in { animation: slideInLeft 0.4s ease-out; }
-        .scale-in { animation: scaleIn 0.3s ease-out; }
-        @media print { body { background: white; } .font-serif { font-family: Georgia, serif; } }
-      `}</style>
-      <Cabecalho onHome={() => setTela({ nome: "home" })} onClientes={() => setTela({ nome: "clientes" })} usuario={auth.usuario} onSair={auth.usuario ? sair : undefined} />
+    <div className="min-h-screen">
+      <Cabecalho onHome={() => setTela({ nome: "home" })} onClientes={() => setTela({ nome: "clientes" })} usuario={auth.usuario} onSair={auth.usuario ? sair : undefined} tema={tema} onTema={mudarTema} />
 
       <div className="print:hidden">
         {!pronto ? (
           <div className="text-center py-20 font-serif italic" style={{ color: CORES.dourado }}>Abrindo ENRAIZAR...</div>
         ) : tela.nome === "home" ? (
-          <DashboardInicial clientes={clientes} nomeUsuario={auth.usuario?.nome || nomeUsuario} onSetNomeUsuario={setNomeUsuario} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} />
+          <DashboardInicial clientes={clientes} fases={fasesClientes} nomeUsuario={auth.usuario?.nome || nomeUsuario} onSetNomeUsuario={setNomeUsuario} onClientes={() => setTela({ nome: "clientes" })} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} />
         ) : tela.nome === "clientes" ? (
           <ListaClientes clientes={clientes} gestaoPorCliente={gestaoPorCliente} fases={fasesClientes} backupPendente={backupPendente} onAplicarBackup={aplicarBackup} onCancelarBackup={() => setBackupPendente(null)} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} onExcluir={excluirCliente} onExportarBackup={exportarBackup} onImportarBackup={importarBackup} onVoltar={() => setTela({ nome: "home" })} nomeUsuario={nomeUsuario} onSetNomeUsuario={setNomeUsuario} />
         ) : tela.nome === "novo" ? (

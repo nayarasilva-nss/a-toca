@@ -12,7 +12,7 @@ export function ModuloIndicadores({ cliente, painel, gerando, erro, onMudar, onG
 
   return (
     <div className="max-w-4xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
         ← {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -46,7 +46,7 @@ export function ModuloIndicadores({ cliente, painel, gerando, erro, onMudar, onG
               <div className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: CORES.dourado }}>
                 {area}
               </div>
-              <div className="hidden sm:flex gap-2 text-xs pb-1" style={{ color: "#A89878" }}>
+              <div className="hidden sm:flex gap-2 text-xs pb-1" style={{ color: "var(--tinta-musgo)" }}>
                 <span className="w-40">Indicador</span>
                 <span className="flex-1">Como medir</span>
                 <span className="w-28">Meta</span>
@@ -57,37 +57,37 @@ export function ModuloIndicadores({ cliente, painel, gerando, erro, onMudar, onG
               {itens
                 .filter((i) => i.area === area)
                 .map((i) => (
-                  <div key={i.id} className="flex items-center gap-2 py-1.5 border-b flex-wrap sm:flex-nowrap" style={{ borderColor: "#EFE8D6" }}>
+                  <div key={i.id} className="flex items-center gap-2 py-1.5 border-b flex-wrap sm:flex-nowrap" style={{ borderColor: "var(--fundo-recuo)" }}>
                     <input
                       className="w-40 px-2 py-1 text-sm rounded border bg-creme"
-                      style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
+                      style={{ borderColor: "var(--linha)", color: CORES.fogoEscuro }}
                       value={i.nome}
                       onChange={(e) => mudarItem(i.id, "nome", e.target.value)}
                     />
                     <input
                       className="flex-1 min-w-36 px-2 py-1 text-xs rounded border bg-creme"
-                      style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
+                      style={{ borderColor: "var(--linha)", color: "var(--tinta)" }}
                       value={i.como}
                       placeholder="Como medir"
                       onChange={(e) => mudarItem(i.id, "como", e.target.value)}
                     />
                     <input
                       className="w-28 px-2 py-1 text-xs rounded border bg-creme"
-                      style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
+                      style={{ borderColor: "var(--linha)", color: "var(--tinta)" }}
                       value={i.meta}
                       placeholder="Meta"
                       onChange={(e) => mudarItem(i.id, "meta", e.target.value)}
                     />
                     <input
                       className="w-24 px-2 py-1 text-xs rounded border bg-creme"
-                      style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
+                      style={{ borderColor: "var(--linha)", color: "var(--tinta)" }}
                       value={i.frequencia}
                       placeholder="Freq."
                       onChange={(e) => mudarItem(i.id, "frequencia", e.target.value)}
                     />
                     <input
                       className="w-28 px-2 py-1 text-xs rounded border bg-creme"
-                      style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
+                      style={{ borderColor: "var(--linha)", color: "var(--tinta)" }}
                       value={i.responsavel}
                       placeholder="Responsável"
                       onChange={(e) => mudarItem(i.id, "responsavel", e.target.value)}
@@ -95,7 +95,7 @@ export function ModuloIndicadores({ cliente, painel, gerando, erro, onMudar, onG
                     <button
                       onClick={() => onMudar({ ...painel, itens: itens.filter((x) => x.id !== i.id) })}
                       className="px-1 text-xs"
-                      style={{ color: "#B8860B" }}
+                      style={{ color: "var(--ouro-texto)" }}
                     >
                       ✕
                     </button>
@@ -125,11 +125,11 @@ export function ImpressaoIndicadores({ cliente, painel }) {
   if (itens.length === 0) return null;
   const areas = [...new Set(itens.map((i) => i.area))];
   return (
-    <div className="area-impressao hidden print:block p-10" style={{ color: "#2A1218" }}>
+    <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
         <div className="text-xs uppercase tracking-widest" style={{ color: CORES.dourado }}>Painel de Indicadores</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{cliente.negocio}</div>
-        <div className="text-sm mt-1" style={{ color: "#6B5D42" }}>{cliente.segmento}</div>
+        <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>{cliente.segmento}</div>
       </div>
       {areas.map((area) => (
         <div key={area} className="mb-5">

@@ -6,7 +6,7 @@ export const CATEGORIAS_MODULOS = [
   {
     id: "dashboard",
     nome: "Dashboard",
-    emoji: "📊",
+    emoji: "",
     modulos: [
       { id: "home", nome: "Home" }
     ]
@@ -14,7 +14,7 @@ export const CATEGORIAS_MODULOS = [
   {
     id: "cliente",
     nome: "Cliente",
-    emoji: "🏢",
+    emoji: "",
     modulos: [
       { id: "cliente", nome: "Visão Geral" },
       { id: "novo", nome: "Novo Cliente" },
@@ -24,7 +24,7 @@ export const CATEGORIAS_MODULOS = [
   {
     id: "gestao",
     nome: "Gestão",
-    emoji: "⚙️",
+    emoji: "",
     modulos: [
       { id: "gestao", nome: "Frentes" },
       { id: "estrutura", nome: "Organograma" },
@@ -35,7 +35,7 @@ export const CATEGORIAS_MODULOS = [
   {
     id: "pessoas",
     nome: "Pessoas",
-    emoji: "👥",
+    emoji: "",
     modulos: [
       { id: "pessoa", nome: "Perfil" },
       { id: "temperamentos", nome: "Temperamentos" },
@@ -46,7 +46,7 @@ export const CATEGORIAS_MODULOS = [
   {
     id: "processos",
     nome: "Processos",
-    emoji: "📋",
+    emoji: "",
     modulos: [
       { id: "pops", nome: "POPs" },
       { id: "fluxos", nome: "Fluxogramas" },
@@ -57,7 +57,7 @@ export const CATEGORIAS_MODULOS = [
   {
     id: "financeiro",
     nome: "Financeiro",
-    emoji: "💰",
+    emoji: "",
     modulos: [
       { id: "propostas", nome: "Propostas" },
       { id: "cronograma", nome: "Cronograma" },
@@ -68,7 +68,7 @@ export const CATEGORIAS_MODULOS = [
   {
     id: "diagnosticos",
     nome: "Diagnósticos",
-    emoji: "🔍",
+    emoji: "",
     modulos: [
       { id: "diagnosticos", nome: "Diagnósticos" },
       { id: "anomalias", nome: "Anomalias" },
@@ -78,7 +78,7 @@ export const CATEGORIAS_MODULOS = [
   {
     id: "configuracao",
     nome: "Configuração",
-    emoji: "⚡",
+    emoji: "",
     modulos: [
       { id: "treinamentos", nome: "Treinamentos" },
       { id: "indicadores", nome: "KPIs" },
@@ -112,7 +112,7 @@ export function NavegacaoModulos({ categoriaAtiva, onSelecionarModulo, onMostrar
         gap: "8px",
         flexWrap: "wrap",
         fontSize: "13px",
-        fontFamily: "'Lora', serif",
+        fontFamily: "var(--font-body)",
       }}
     >
       {CATEGORIAS_MODULOS.map((cat) => (
@@ -126,7 +126,7 @@ export function NavegacaoModulos({ categoriaAtiva, onSelecionarModulo, onMostrar
               padding: "8px 12px",
               borderRadius: "4px",
               cursor: "pointer",
-              fontFamily: "'Lora', serif",
+              fontFamily: "var(--font-body)",
               fontSize: "13px",
               fontWeight: "600",
               transition: "all 0.2s ease",
@@ -149,7 +149,7 @@ export function NavegacaoModulos({ categoriaAtiva, onSelecionarModulo, onMostrar
                 background: CORES.cartao,
                 border: `1px solid ${CORES.border}`,
                 borderRadius: "4px",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                boxShadow: "none",
                 zIndex: 100,
                 minWidth: "160px",
                 marginTop: "4px",
@@ -172,7 +172,7 @@ export function NavegacaoModulos({ categoriaAtiva, onSelecionarModulo, onMostrar
                     cursor: "pointer",
                     color: CORES.texto,
                     fontSize: "13px",
-                    fontFamily: "'Lora', serif",
+                    fontFamily: "var(--font-body)",
                     borderBottom: `1px solid ${CORES.border}`,
                   }}
                 >

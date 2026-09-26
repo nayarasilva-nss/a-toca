@@ -25,14 +25,14 @@ export function ModuloPenseira({ cliente, mensagens, gerando, erro, onEnviar, on
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
         <div className="rounded-lg shadow-sm flex flex-col" style={{ background: CORES.papel, border: "2px solid #E97F3855", minHeight: "60vh" }}>
-        <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: "#EFE8D6" }}>
+        <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: "var(--fundo-recuo)" }}>
           <div>
             <p className="text-xs" style={{ color: CORES.textoDim }}>
               Pense em voz alta sobre {cliente.negocio}. Dúvidas trabalhistas vêm com base legal.
             </p>
           </div>
           {mensagens.length > 0 && (
-            <button onClick={onLimpar} className="text-xs underline" style={{ color: "#B8860B" }}>
+            <button onClick={onLimpar} className="text-xs underline" style={{ color: "var(--ouro-texto)" }}>
               Limpar conversa
             </button>
           )}
@@ -40,7 +40,7 @@ export function ModuloPenseira({ cliente, mensagens, gerando, erro, onEnviar, on
 
         <div className="flex-1 px-6 py-4 overflow-y-auto" style={{ maxHeight: "55vh" }}>
           {mensagens.length === 0 && !gerando && (
-            <p className="text-sm py-8 text-center font-serif italic" style={{ color: "#A89878" }}>
+            <p className="text-sm py-8 text-center font-serif italic" style={{ color: "var(--tinta-musgo)" }}>
               Despeje um pensamento — "o cliente quer proibir calça azul, pode?" — e examine-o com clareza.
             </p>
           )}
@@ -50,7 +50,7 @@ export function ModuloPenseira({ cliente, mensagens, gerando, erro, onEnviar, on
                 className="max-w-[85%] px-4 py-2.5 rounded-lg text-sm whitespace-pre-line"
                 style={
                   m.role === "user"
-                    ? { background: CORES.fogo, color: "#F5EDE0" }
+                    ? { background: CORES.fogo, color: "var(--fundo-elevado)" }
                     : { background: CORES.cartao, border: "2px solid #E97F3855", color: CORES.fogoEscuro }
                 }
               >
@@ -68,7 +68,7 @@ export function ModuloPenseira({ cliente, mensagens, gerando, erro, onEnviar, on
           <AvisoErro erro={erro} />
         </div>
 
-        <div className="px-6 py-4 border-t flex gap-2" style={{ borderColor: "#EFE8D6" }}>
+        <div className="px-6 py-4 border-t flex gap-2" style={{ borderColor: "var(--fundo-recuo)" }}>
           <textarea
             rows={2}
             className="flex-1 px-3 py-2 rounded border bg-creme text-sm outline-none resize-none"

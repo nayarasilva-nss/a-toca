@@ -8,7 +8,7 @@ import { CORES, uid } from "../nucleo/base.jsx";
 export function ListaCampo({ cliente, registros, onAbrir, onNovo, onVoltar }) {
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
         ← {cliente.negocio}
       </button>
       <div className="flex items-baseline justify-between mb-2 gap-2 flex-wrap">
@@ -23,7 +23,7 @@ export function ListaCampo({ cliente, registros, onAbrir, onNovo, onVoltar }) {
         O caderno de campo: observar as criaturas no habitat delas. O que você registra aqui vira fonte primária — alimenta cargos, processos, plano e diagnóstico. 100% interno: nada disso sai em documento de cliente.
       </p>
       {registros.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #7BA85C" }}>
+        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed var(--linha-forte)" }}>
           <p className="text-sm" style={{ color: CORES.textoDim }}>
             O caderno está em branco. Antes de ir a campo, crie uma visita ou entrevista — a IA prepara o roteiro com base no briefing, nas frentes e na CCT.
           </p>
@@ -59,7 +59,7 @@ export function EditorCampo({ cliente, reg, pessoas, gerando, erro, onMudar, onG
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-body)" }}>
         ← Trabalho de Campo · {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -145,10 +145,10 @@ export function EditorCampo({ cliente, reg, pessoas, gerando, erro, onMudar, onG
               <>
                 <div className="text-xs uppercase tracking-widest font-semibold mb-2" style={{ color: CORES.dourado }}>Linha do tempo</div>
                 {(reg.linhas || []).map((l) => (
-                  <div key={l.id} className="flex items-center gap-2 py-1.5 border-b flex-wrap sm:flex-nowrap" style={{ borderColor: "#EFE8D6" }}>
+                  <div key={l.id} className="flex items-center gap-2 py-1.5 border-b flex-wrap sm:flex-nowrap" style={{ borderColor: "var(--fundo-recuo)" }}>
                     <input
                       className="w-16 px-2 py-1 text-xs rounded border bg-creme text-center"
-                      style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
+                      style={{ borderColor: "var(--linha)", color: "var(--tinta)" }}
                       placeholder="hh:mm"
                       value={l.hora}
                       onChange={(e) => onMudar({ ...reg, linhas: reg.linhas.map((x) => (x.id === l.id ? { ...x, hora: e.target.value } : x)) })}
@@ -169,7 +169,7 @@ export function EditorCampo({ cliente, reg, pessoas, gerando, erro, onMudar, onG
                     </select>
                     <input
                       className="flex-1 min-w-40 px-2 py-1 text-sm rounded border bg-creme"
-                      style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
+                      style={{ borderColor: "var(--linha)", color: CORES.fogoEscuro }}
                       placeholder="O que você viu"
                       value={l.texto}
                       onChange={(e) => onMudar({ ...reg, linhas: reg.linhas.map((x) => (x.id === l.id ? { ...x, texto: e.target.value } : x)) })}
@@ -177,7 +177,7 @@ export function EditorCampo({ cliente, reg, pessoas, gerando, erro, onMudar, onG
                     <button
                       onClick={() => onMudar({ ...reg, linhas: reg.linhas.filter((x) => x.id !== l.id) })}
                       className="px-1 text-xs"
-                      style={{ color: "#B8860B" }}
+                      style={{ color: "var(--ouro-texto)" }}
                     >
                       ✕
                     </button>
