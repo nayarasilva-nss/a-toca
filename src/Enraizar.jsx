@@ -3779,7 +3779,7 @@ function EditorCargo({ cliente, cargo, gerando, erro, onMudar, onGerar, onImprim
   const set = (campo) => (v) => onMudar({ ...cargo, [campo]: v });
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← Descrições de Cargo · {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -4800,7 +4800,7 @@ function EditorPop({ cliente, pop, gerando, erro, onMudar, onGerar, onImprimir, 
   const set = (campo) => (v) => onMudar({ ...pop, [campo]: v });
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← POPs · {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -4957,7 +4957,7 @@ function EditorDoc({ cliente, tipo, doc, rotuloVoltar, gerando, erro, onMudar, o
   const temConteudo = !!(doc[cfg.campoIndicador] || "").trim();
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← {rotuloVoltar}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -5161,7 +5161,7 @@ function ListaPessoas({ cliente, pessoas, onAbrir, onNova, onVoltar }) {
   }
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← {cliente.negocio}
       </button>
       <div className="flex items-baseline justify-between mb-2">
@@ -5250,7 +5250,7 @@ function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar, onImpr
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← Temperamentos · {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -5508,7 +5508,7 @@ function ListaDiagnosticos({ cliente, diagnosticos, titulo, subtitulo, framework
   const FR = fw || FRAMEWORK_DIAG;
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← {cliente.negocio}
       </button>
       <div className="flex items-baseline justify-between mb-2">
@@ -5573,7 +5573,7 @@ function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerando, erro
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← Diagnósticos · {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -5803,7 +5803,7 @@ const CAMPOS_PROPOSTA_GERADOS = [
 function ListaPropostas({ cliente, propostas, onAbrir, onNova, onVoltar }) {
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← {cliente.negocio}
       </button>
       <div className="flex items-baseline justify-between mb-2">
@@ -5874,7 +5874,7 @@ function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, 
   const setP = (campo) => (e) => onMudarPrecificacao({ ...precificacao, [campo]: e.target.value });
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← Propostas · {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -6185,7 +6185,7 @@ function ModuloCronograma({ cliente, gestao, gerando, erro, onMudar, onDistribui
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -6386,7 +6386,7 @@ function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAcordo, g
   if (!relAberto) {
     return (
       <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-        <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+        <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
           ← {cliente.negocio}
         </button>
         <div className="flex items-baseline justify-between mb-2">
@@ -6435,7 +6435,7 @@ function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAcordo, g
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={() => onAbrir(null)} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={() => onAbrir(null)} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← Relatórios · {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -6832,7 +6832,7 @@ function DiagramaFluxo({ etapas, impressao }) {
 function ListaFluxos({ cliente, fluxos, onAbrir, onNovo, onVoltar }) {
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← {cliente.negocio}
       </button>
       <div className="flex items-baseline justify-between mb-2">
@@ -6886,7 +6886,7 @@ function EditorFluxo({ cliente, fluxo, gerando, erro, onMudar, onGerar, onImprim
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← Desenho de Processos · {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -7039,7 +7039,7 @@ function ModuloAlcadas({ cliente, alcadas, gerando, erro, onMudar, onGerar, onIm
 
   return (
     <div className="max-w-4xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -7191,7 +7191,7 @@ function ModuloIndicadores({ cliente, painel, gerando, erro, onMudar, onGerar, o
 
   return (
     <div className="max-w-4xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -7353,7 +7353,7 @@ function ModuloRitos({ cliente, ritos, gerando, erro, onMudar, onGerar, onImprim
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -7502,7 +7502,7 @@ function ImpressaoRitos({ cliente, ritos }) {
 function ListaCampo({ cliente, registros, onAbrir, onNovo, onVoltar }) {
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← {cliente.negocio}
       </button>
       <div className="flex items-baseline justify-between mb-2 gap-2 flex-wrap">
@@ -7553,7 +7553,7 @@ function EditorCampo({ cliente, reg, pessoas, gerando, erro, onMudar, onGerarRot
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← Trabalho de Campo · {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -7767,7 +7767,7 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
   const set = (campo) => (v) => onMudar({ ...t, [campo]: v });
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={() => onAbrir(null)} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={() => onAbrir(null)} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← Treinamentos · {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -8256,7 +8256,7 @@ function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAcordo, te
 
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
@@ -8468,7 +8468,7 @@ function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, framework: f
   const tem = rel.retrospectiva || rel.evolucao;
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
-      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: "#B8860B", letterSpacing: 1 }}>
+      <button onClick={onVoltar} className="text-xs mb-4 uppercase font-semibold" style={{ color: CORES.douradoEscuro, letterSpacing: 1, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "'Lora', serif" }}>
         ← {cliente.negocio}
       </button>
       <div className="rounded-lg p-6 shadow-sm card">
