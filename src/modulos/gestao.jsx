@@ -3,7 +3,7 @@ import { AvisoErro, BotaoPrimario, ConfirmarAcao, Trabalhando } from "../compone
 import { CORES, STATUS_FRENTE, uid } from "../nucleo/base.jsx";
 import { HeaderModulo } from "../telas/hub.jsx";
 
-// ─── Módulo: Gestão do Engajamento ──────────────────────────────
+// ─── Módulo: Gestão do Projeto ──────────────────────────────
 
 export function CartaoFrente({ frente, onMudar, onRemover }) {
   const st = STATUS_FRENTE[frente.status];

@@ -72,7 +72,7 @@ export function ListaFluxos({ cliente, fluxos, onAbrir, onNovo, onVoltar }) {
         <BotaoPrimario onClick={onNovo}>+ Novo processo</BotaoPrimario>
       </div>
       <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
-        As passagens do castelo: por onde o trabalho realmente anda. Quem faz o quê, onde tem decisão, onde trava — o POP diz como executar; aqui você desenha o caminho.
+        Por onde o trabalho realmente anda. Quem faz o quê, onde há decisão, onde trava — o POP diz como executar; aqui você desenha o caminho.
       </p>
       {fluxos.length === 0 ? (
         <div className="enz-card enz-card-vazado" style={{ padding: "28px 0" }}>

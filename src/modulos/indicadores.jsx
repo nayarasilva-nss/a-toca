@@ -26,7 +26,7 @@ export function ModuloIndicadores({ cliente, painel, gerando, erro, onMudar, onG
           </div>
         </div>
         <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
-          A Taça das Casas: os pontos que cada área acompanha — poucos, mensuráveis com o que a PME tem, com meta e dono. Sem isso, os ritos viram reunião de opinião.
+          Os números que cada área acompanha. Poucos, mensuráveis com o que a empresa tem, com meta e dono — sem isso, os ritos viram reunião de opinião.
         </p>
 
         <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder="Ex.: dor principal é desperdício e atraso no delivery; sistema de vendas é o Consumer" value={painel.obs || ""} onChange={(v) => onMudar({ ...painel, obs: v })} /></label>

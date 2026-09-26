@@ -1,4 +1,4 @@
-// ─── ENRAIZAR — Sistema de Desenvolvimento Organizacional ──────
+// ─── Enraizar — Sistema de Desenvolvimento Organizacional ──────
 // Ferramenta de consultoria · Nayara Silva
 // Método: Escuta · Raio-X · Acordo · Construção · Sustentação · Prova
 // Paleta: Elegante, minimalista, enraizada

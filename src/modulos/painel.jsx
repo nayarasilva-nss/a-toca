@@ -1,7 +1,7 @@
 import { CORES } from "../nucleo/base.jsx";
 import { HeaderModulo } from "../telas/hub.jsx";
 
-// ─── Módulo: Painel do Engajamento ──────────────────────────────
+// ─── Módulo: Painel do Projeto ──────────────────────────────
 
 export function LinhaPainel({ rotulo, valor, alerta, dica }) {
   return (
@@ -18,7 +18,7 @@ export function ModuloPainel({ cliente, dados, painel, onMudar, onVoltar }) {
   return (
     <div className="pb-16">
       <HeaderModulo
-        titulo="Painel do Engajamento"
+        titulo="Painel do Projeto"
         cliente={cliente}
         onVoltar={onVoltar}
         acoes={null}
@@ -26,7 +26,7 @@ export function ModuloPainel({ cliente, dados, painel, onMudar, onVoltar }) {
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
         <div className="enz-card">
         <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
-          Mede o engajamento pelo método (o cômodo Indicadores mede o negócio do cliente). Quando a verificação cai, o controle cai semanas depois.
+          Mede a adesão ao método — Indicadores mede o negócio do cliente. Quando a verificação cai, o controle cai semanas depois.
         </p>
         {verificacaoDegradada && (
           <div className="mb-4 p-3 rounded-lg text-sm" style={{ background: "var(--erro-fundo)", border: "2px solid var(--erro)", color: "var(--erro)" }}>

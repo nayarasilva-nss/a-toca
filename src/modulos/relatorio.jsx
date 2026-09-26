@@ -54,12 +54,12 @@ export function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAc
           </BotaoPrimario>
         </div>
         <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
-          Malfeito feito: o fechamento do ciclo. Antes/depois do diagnóstico, frentes concluídas, entregas e recomendações — o documento que renova contrato e gera indicação.
+          O fechamento do projeto. Antes e depois do diagnóstico, frentes concluídas, entregas e recomendações — o documento que renova o contrato e gera indicação.
         </p>
         {relatorios.length === 0 ? (
           <div className="enz-card enz-card-vazado" style={{ padding: "28px 0" }}>
             <p className="enz-nota" style={{ fontSize: 14 }}>
-              Nenhum relatório ainda. Crie ao final do engajamento — a IA reúne tudo que aconteceu no ENRAIZAR deste cliente.
+              Nenhum relatório ainda. Crie ao final do projeto — a IA reúne tudo que aconteceu no Enraizar deste cliente.
             </p>
           </div>
         ) : (
@@ -227,7 +227,7 @@ export function ImpressaoRelatorio({ cliente, rel, diags, dadosPainel }) {
       )}
       {dadosPainel && (
         <div className="mb-5 p-3" style={{ border: "1px solid var(--linha-forte)" }}>
-          <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.fogo }}>Painel do Engajamento</div>
+          <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.fogo }}>Painel do Projeto</div>
           <div className="text-sm">
             Índice de formalização: <strong>{dadosPainel.formalizacao}%</strong> · Conformidade (CCT): <strong>{dadosPainel.cctResolvidos}/{dadosPainel.cctTotal} resolvidos</strong> · Anomalias tratadas: <strong>{dadosPainel.anomTratadas}/{dadosPainel.anomTotal}</strong> · Atas registradas: <strong>{dadosPainel.totalAtas}</strong>
           </div>

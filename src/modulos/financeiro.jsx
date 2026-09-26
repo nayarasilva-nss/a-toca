@@ -29,7 +29,7 @@ export function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar,
   return (
     <div className="pb-16">
       <HeaderModulo
-        titulo="Financeiro do Engajamento"
+        titulo={cliente.tipo === "pessoa" ? "Financeiro da Jornada" : "Financeiro do Projeto"}
         cliente={cliente}
         onVoltar={onVoltar}
         acoes={null}
@@ -37,7 +37,7 @@ export function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar,
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
         <div className="enz-card">
         <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
-          Controle financeiro: parcelas, vencimentos e o que já entrou. Uso interno — nada disso aparece em documentos do cliente.
+          {cliente.tipo === "pessoa" ? "Parcelas da mentoria, vencimentos e o que já entrou. Uso interno — nada disso aparece para o mentorado." : "Parcelas, vencimentos e o que já entrou. Uso interno — nada disso aparece em documentos do cliente."}
         </p>
 
         {propostaAceita && parcelas.length === 0 && (

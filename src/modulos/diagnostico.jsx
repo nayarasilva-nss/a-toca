@@ -92,7 +92,7 @@ export function ListaDiagnosticos({ cliente, diagnosticos, titulo, subtitulo, fr
         <BotaoPrimario onClick={onNovo}>+ Novo diagnóstico</BotaoPrimario>
       </div>
       <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
-        {subtitulo || "Nível de maturidade do negócio em cada área. Avalie 6 áreas e 24 critérios; refaça ao longo do engajamento — cada diagnóstico fica datado e a comparação vira o antes/depois da consultoria."}
+        {subtitulo || "A maturidade do negócio em cada área. Avalie 6 áreas e 24 critérios; refaça ao longo do projeto — cada diagnóstico fica datado, e a comparação vira o antes e depois da consultoria."}
       </p>
       {diagnosticos.length === 0 ? (
         <div className="enz-card enz-card-vazado" style={{ padding: "28px 0" }}>

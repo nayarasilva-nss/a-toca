@@ -20,7 +20,7 @@ export function ListaCampo({ cliente, registros, onAbrir, onNovo, onVoltar }) {
         </div>
       </div>
       <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
-        O caderno de campo: observar as criaturas no habitat delas. O que você registra aqui vira fonte primária — alimenta cargos, processos, plano e diagnóstico. 100% interno: nada disso sai em documento de cliente.
+        O caderno de campo: observar a operação como ela é. O que você registra aqui vira fonte primária — alimenta cargos, processos, plano e diagnóstico. 100% interno: nada disso sai em documento de cliente.
       </p>
       {registros.length === 0 ? (
         <div className="enz-card enz-card-vazado" style={{ padding: "28px 0" }}>

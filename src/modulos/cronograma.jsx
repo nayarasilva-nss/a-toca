@@ -45,12 +45,12 @@ export function ModuloCronograma({ cliente, gestao, gerando, erro, onMudar, onDi
           </div>
         </div>
         <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
-          Linha do tempo do engajamento: onde cada ação está no tempo — e a semana em que os pés deveriam estar agora.
+          A linha do tempo do projeto. Onde cada ação está — e a semana em que os pés deveriam estar agora.
         </p>
 
         <div className="grid sm:grid-cols-2 gap-x-4">
           <InputField
-            label="Início do engajamento (dd/mm/aaaa)"
+            label="Início do projeto (dd/mm/aaaa)"
             value={gestao.inicio || ""}
             onChange={(v) => onMudar({ ...gestao, inicio: v })}
             placeholder="Ex.: 04/08/2026"
@@ -66,7 +66,7 @@ export function ModuloCronograma({ cliente, gestao, gerando, erro, onMudar, onDi
         {semAtual !== null && (
           <div className="mb-4 text-sm" style={{ color: CORES.fogoEscuro }}>
             {semAtual === 0
-              ? "O engajamento ainda não começou."
+              ? "O projeto ainda não começou."
               : duracao > 0 && semAtual > duracao
                 ? `Prazo original encerrado (${duracao} semanas).`
                 : <>Estamos na <strong>semana {semAtual}</strong>{duracao ? ` de ${duracao}` : ""}.</>}
@@ -161,7 +161,7 @@ export function ImpressaoCronograma({ cliente, gestao }) {
   return (
     <div className="area-impressao hidden print:block p-10" style={{ color: "var(--tinta)" }}>
       <div className="border-b-4 pb-4 mb-6" style={{ borderColor: CORES.fogo }}>
-        <div className="enz-rotulo">Cronograma do Engajamento</div>
+        <div className="enz-rotulo">Cronograma do Projeto</div>
         <div className="text-3xl font-serif" style={{ color: CORES.fogo }}>{cliente.negocio}</div>
         <div className="text-sm mt-1" style={{ color: "var(--tinta)" }}>
           {gestao.inicio ? `Início: ${gestao.inicio}` : ""}

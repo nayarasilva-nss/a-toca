@@ -33,7 +33,7 @@ export function ModuloAlcadas({ cliente, alcadas, gerando, erro, onMudar, onGera
           </div>
         </div>
         <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
-          A Seção Restrita: quem pode decidir o quê sem pedir licença, até que limite, e para quem escala. O documento que liberta o dono do operacional.
+          Quem decide o quê sem pedir licença, até que limite, e para quem escala. O documento que liberta o dono do operacional.
         </p>
 
         <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder="Ex.: dono quer aprovar toda compra acima de R$ 500; gerente pode dar até 10% de desconto" value={alcadas.obs || ""} onChange={(v) => onMudar({ ...alcadas, obs: v })} /></label>

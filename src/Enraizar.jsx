@@ -433,7 +433,7 @@ export default function App() {
   const docAtual = docsAtuais.find((d) => d.id === tela.docId);
 
   const nomeDocumentoAtual = () =>
-    `${clienteAtual ? clienteAtual.negocio : "ENRAIZAR"} — ${tela.nome}`.replace(/[\\/:*?"<>|]/g, "").trim();
+    `${clienteAtual ? clienteAtual.negocio : "Enraizar"} — ${tela.nome}`.replace(/[\\/:*?"<>|]/g, "").trim();
 
   // Reserva: abre/baixa versão imprimível no navegador (caso o motor próprio falhe)
   const abrirImpressaoNavegador = () => {
@@ -513,7 +513,7 @@ ${conteudo}
   };
 
   if (auth.estado === "carregando") {
-    return <div className="min-h-screen flex items-center justify-center font-serif italic" style={{ background: CORES.fundoPrincipal, color: CORES.dourado }}>Abrindo ENRAIZAR...</div>;
+    return <div className="min-h-screen flex items-center justify-center font-serif italic" style={{ background: CORES.fundoPrincipal, color: CORES.dourado }}>Abrindo Enraizar...</div>;
   }
   if (auth.estado === "anonimo") {
     return <TelaLogin precisaConfigurar={auth.precisaConfigurar} onEntrar={entrar} />;
@@ -532,7 +532,7 @@ ${conteudo}
 
       <div className="print:hidden">
         {!pronto ? (
-          <div className="text-center py-20 font-serif italic" style={{ color: CORES.dourado }}>Abrindo ENRAIZAR...</div>
+          <div className="text-center py-20 font-serif italic" style={{ color: CORES.dourado }}>Abrindo Enraizar...</div>
         ) : tela.nome === "home" ? (
           <DashboardInicial clientes={clientes} fases={fasesClientes} nomeUsuario={auth.usuario?.nome || nomeUsuario} onSetNomeUsuario={setNomeUsuario} onClientes={() => setTela({ nome: "clientes" })} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} />
         ) : tela.nome === "clientes" ? (

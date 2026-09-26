@@ -26,7 +26,7 @@ export function ModuloRitos({ cliente, ritos, gerando, erro, onMudar, onGerar, o
           </div>
         </div>
         <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
-          Os banquetes do Salão Principal: encontros fixos que ninguém cancela. Cada rito com pauta padrão fixa, pra virar hábito — a gestão acontece sem depender do dono lembrar.
+          Encontros fixos que ninguém cancela. Cada rito com pauta padrão, para virar hábito — a gestão acontece sem depender de o dono lembrar.
         </p>
 
         <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder="Ex.: turnos de almoço e jantar; líderes só se encontram todos às segundas" value={ritos.obs || ""} onChange={(v) => onMudar({ ...ritos, obs: v })} /></label>

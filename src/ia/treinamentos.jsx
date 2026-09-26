@@ -219,7 +219,7 @@ export async function gerarMetasEngajamento(cliente, diags, riscosCampo, cctPont
     ? FRAMEWORK_DIAG.map((a, i) => { const p = percentualArea(ultimoDiag.notas, i); return p !== null && p < 60 ? `${a.area} (${p}%)` : null; }).filter(Boolean).join(", ")
     : "diagnostico nao realizado";
   const pendCCT = (cctPontos || []).filter((p) => (p.statusConf || "pendente") !== "resolvido").length;
-  const prompt = `Voce e consultora de governanca (Metodo Enraizar). Sugira 2 a 3 METAS PACTUADAS para o engajamento abaixo. Cada meta DEVE ter objetivo + valor numerico + prazo. Nunca escreva desejo vago ("melhorar a conformidade"); sempre meta verificavel ("reduzir as pendencias de CCT de 12 para 0 ate novembro").
+  const prompt = `Voce e consultora de governanca (Metodo Enraizar). Sugira 2 a 3 METAS PACTUADAS para o projeto abaixo. Cada meta DEVE ter objetivo + valor numerico + prazo. Nunca escreva desejo vago ("melhorar a conformidade"); sempre meta verificavel ("reduzir as pendencias de CCT de 12 para 0 ate novembro").
 
 CLIENTE: ${cliente.negocio} (${cliente.segmento})
 Contexto: ${cliente.contexto || "nao informado"}

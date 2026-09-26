@@ -243,7 +243,7 @@ export function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAco
           </BotaoPrimario>
         </div>
         <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
-          Encontros com propósito, um de cada vez, até o mentorado não precisar mais de você.
+          Encontros com propósito, um de cada vez. Até o mentorado não precisar mais de você.
           {encontros.length > 0 && ` · ${realizados}/${encontros.length} realizados`}
         </p>
         <ReguaMetodoMentoria mentoria={mentoria} temRaioX={temRaioX} statusAcordo={statusAcordo} temProva={temProva} />

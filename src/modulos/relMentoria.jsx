@@ -27,7 +27,7 @@ export function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, frame
           </div>
         </div>
         <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
-          Malfeito feito, versão pessoal: a prova da jornada — encontros, pra casa cumprido e o radar do líder antes/depois. O documento que renova a mentoria.
+          A prova da jornada. Encontros realizados, pra casa cumprido e o radar antes e depois — o documento que renova a mentoria.
         </p>
         <AvisoErro erro={erro} />
         {gerando && <Trabalhando />}

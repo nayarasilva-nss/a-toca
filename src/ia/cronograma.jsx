@@ -51,7 +51,7 @@ export async function distribuirCronograma(cliente, gestao) {
   const linhas = numeradas.map((x, i) => `${i + 1}. [${x.frenteNome}] ${x.acao.texto}`).join("\n");
   const duracao = Number(gestao.duracaoSemanas) || 10;
 
-  const prompt = `Você é especialista em planejamento de consultorias para PMEs brasileiras. Distribua as ações abaixo ao longo de ${duracao} semanas de engajamento, respeitando dependências lógicas (diagnóstico/estrutura antes de documentos; documentos antes de treinamento/implantação) e equilibrando a carga semanal.
+  const prompt = `Você é especialista em planejamento de consultorias para PMEs brasileiras. Distribua as ações abaixo ao longo de ${duracao} semanas de projeto, respeitando dependências lógicas (diagnóstico/estrutura antes de documentos; documentos antes de treinamento/implantação) e equilibrando a carga semanal.
 
 CLIENTE: ${cliente.negocio} (${cliente.segmento})
 

@@ -151,15 +151,15 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
       semCrono === null
         ? "Defina início e distribua as ações"
         : semCrono === 0
-          ? "Engajamento ainda não iniciado"
+          ? "Projeto ainda não iniciado"
           : `Semana ${semCrono}${gestao.duracaoSemanas ? ` de ${gestao.duracaoSemanas}` : ""}${atrasadasCrono ? ` · ${atrasadasCrono} atrasada${atrasadasCrono > 1 ? "s" : ""}` : ""}`,
     diagnosticos: totalDiagnosticos > 0 ? `${totalDiagnosticos} diagnóstico${totalDiagnosticos > 1 ? "s" : ""}` : "Ainda não avaliado",
     propostas: totalPropostas > 0 ? `${totalPropostas} proposta${totalPropostas > 1 ? "s" : ""}` : "Nenhuma proposta ainda",
     temperamentos: totalPessoas > 0 ? `${totalPessoas} pessoa${totalPessoas > 1 ? "s" : ""} mapeada${totalPessoas > 1 ? "s" : ""}` : ehPessoa ? "Mapeie o mentorado e quem ele lidera" : "Ninguém mapeado ainda",
     cct: totalPontosCCT > 0 ? `${totalPontosCCT} ponto${totalPontosCCT > 1 ? "s" : ""} obrigatório${totalPontosCCT > 1 ? "s" : ""}` : "CCT ainda não analisada",
     campo: totalCampo > 0 ? `${totalCampo} registro${totalCampo > 1 ? "s" : ""} no caderno` : "O caderno está em branco",
-    diagslider: totalDiagsLider > 0 ? `${totalDiagsLider} avaliaç${totalDiagsLider > 1 ? "ões" : "ão"}` : focoMentoria === "autoconhecimento" ? "Os N.I.E.M.s aguardam a pessoa" : "Os N.I.E.M.s aguardam o líder",
-    relmentoria: temRelMentoria ? "Malfeito feito — pronto" : "A prova da jornada",
+    diagslider: totalDiagsLider > 0 ? `${totalDiagsLider} avaliaç${totalDiagsLider > 1 ? "ões" : "ão"}` : "Ainda não avaliado",
+    relmentoria: temRelMentoria ? "Relatório pronto" : "A prova da jornada",
     anomalias: totalAnomalias > 0 ? `${totalAnomaliasTratadas}/${totalAnomalias} tratadas` : "Nenhuma anomalia registrada",
     painel: "Controle e verificação do método",
     estrutura: totalPosicoes > 0 ? `Organograma com ${totalPosicoes} posiç${totalPosicoes > 1 ? "ões" : "ão"}` : "Ainda não montada",
@@ -173,7 +173,7 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
     fluxos: totalFluxos > 0 ? `${totalFluxos} fluxo${totalFluxos > 1 ? "s" : ""} desenhado${totalFluxos > 1 ? "s" : ""}` : "Nenhum fluxo ainda",
     "docs-politicas": totalPoliticas > 0 ? `${totalPoliticas} política${totalPoliticas > 1 ? "s" : ""}` : "Nenhuma ainda",
     "docs-checklists": totalChecklists > 0 ? `${totalChecklists} checklist${totalChecklists > 1 ? "s" : ""}` : "Nenhum ainda",
-    relatorios: totalRelatorios > 0 ? `${totalRelatorios} relatório${totalRelatorios > 1 ? "s" : ""}` : "Malfeito feito — o fechamento do ciclo",
+    relatorios: totalRelatorios > 0 ? `${totalRelatorios} relatório${totalRelatorios > 1 ? "s" : ""}` : "O fechamento do projeto",
     financeiro: resumoFinanceiro || "Nenhuma parcela registrada",
   };
 
@@ -184,7 +184,7 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
     diagslider: focoMentoria === "autoconhecimento" ? "Diagnóstico Pessoal" : "Diagnóstico de Liderança",
     relmentoria: "Relatório de Evolução",
     anomalias: "Tratamento de Anomalias",
-    painel: "Painel do Engajamento",
+    painel: "Painel do Projeto",
     propostas: "Propostas Comerciais",
     temperamentos: "Temperamentos",
     cct: "CCT & Conformidade",
@@ -256,7 +256,7 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
         {servicosCliente.treinamentos && (
           <Card onClick={() => onModulo("treinamentos")} rotulo="Turmas" titulo="Treinamentos" subtitulo={totalTreinamentos > 0 ? `${totalTreinamentosRealizados}/${totalTreinamentos} realizados` : "nenhum treinamento ainda"} />
         )}
-        <Card onClick={() => onModulo("penseira")} rotulo="IA" titulo="Conselheira" subtitulo="despeje um pensamento e examine-o com clareza — dúvidas com base legal, sobre qualquer frente" />
+        <Card onClick={() => onModulo("penseira")} rotulo="IA" titulo="Conselheira" subtitulo={ehPessoa ? "despeje um pensamento sobre a jornada e examine-o com clareza" : "despeje um pensamento e examine-o com clareza — dúvidas com base legal, sobre qualquer frente"} />
       </div>
 
       {(servicosCliente.consultoria || ehPessoa) && (

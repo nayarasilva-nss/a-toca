@@ -41,7 +41,7 @@ export function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, ge
         />
         <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
         <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
-          Cada turma encontra aqui exatamente a aula de que precisa. Dentro de uma frente da consultoria ou avulso — com a ciência dos temperamentos como marca.
+          {cliente.tipo === "pessoa" ? "Turmas avulsas para o mentorado e quem ele lidera. Com a ciência dos temperamentos como marca." : "Cada turma encontra aqui a aula de que precisa. Dentro de uma frente do projeto ou avulsa — com a ciência dos temperamentos como marca."}
         </p>
         {treinamentos.length === 0 ? (
           <div className="enz-card enz-card-vazado" style={{ padding: "28px 0" }}>

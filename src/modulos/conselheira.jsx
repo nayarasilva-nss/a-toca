@@ -41,7 +41,7 @@ export function ModuloPenseira({ cliente, mensagens, gerando, erro, onEnviar, on
         <div className="flex-1 px-6 py-4 overflow-y-auto" style={{ maxHeight: "55vh" }}>
           {mensagens.length === 0 && !gerando && (
             <p className="text-sm py-8 text-center font-serif italic" style={{ color: "var(--tinta-musgo)" }}>
-              Despeje um pensamento — "o cliente quer proibir calça azul, pode?" — e examine-o com clareza.
+              {cliente.tipo === "pessoa" ? "Despeje um pensamento — \"o mentorado evita o conflito com o sócio, como conduzir?\" — e examine-o com clareza." : "Despeje um pensamento — \"o cliente quer proibir calça azul, pode?\" — e examine-o com clareza."}
             </p>
           )}
           {mensagens.map((m, i) => (

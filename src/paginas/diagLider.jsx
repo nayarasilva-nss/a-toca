@@ -24,8 +24,8 @@ export function TelaDiagLider({ app }) {
         diagnosticos={diagsLiderAtuais}
         titulo={tituloDiagMentorado}
         subtitulo={focoMentoriaAtual === "autoconhecimento"
-          ? "Os N.I.E.M.s da pessoa: avalie a maturidade pessoal em 6 áreas e 24 critérios. Reavalie ao longo da mentoria — o antes/depois é a prova da evolução."
-          : "Os N.I.E.M.s do líder: avalie a maturidade de liderança em 6 áreas e 24 critérios. Reavalie ao longo da mentoria — o antes/depois é a prova da evolução."}
+          ? "Maturidade pessoal em 6 áreas e 24 critérios. Reavalie ao longo da jornada — o antes e depois é a prova da evolução."
+          : "Maturidade de liderança em 6 áreas e 24 critérios. Reavalie ao longo da jornada — o antes e depois é a prova da evolução."}
         framework={frameworkMentorado}
         onAbrir={(diagId) => {
           setErro(null);

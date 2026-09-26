@@ -31,7 +31,7 @@ export function ModuloAnomalias({ cliente, anomalias, frentes, gerando, erro, on
           </div>
         </div>
         <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
-          O sistema detecta quando algo foge do padrão: POP não seguido, checklist falho, reclamação, fornecedor. Relatar → FCA → Agir. Registros 100% internos.
+          Quando algo foge do padrão: POP não seguido, checklist falho, reclamação, fornecedor. Relatar, analisar, agir. Registros internos.
         </p>
         <AvisoErro erro={erro} />
         {gerando && <Trabalhando />}

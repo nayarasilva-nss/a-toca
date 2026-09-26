@@ -53,7 +53,7 @@ export function ListaPessoas({ cliente, pessoas, onAbrir, onNova, onVoltar }) {
         <BotaoPrimario onClick={onNova}>+ Nova pessoa</BotaoPrimario>
       </div>
       <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
-        Mapa das pessoas-chave pela ciência dos temperamentos — classificação, leitura pessoa × cargo e orientação de liderança.
+        {cliente.tipo === "pessoa" ? "O mentorado e quem ele lidera, pela ciência dos temperamentos. Classificação, leitura pessoa × cargo e orientação de liderança." : "O mapa das pessoas-chave pela ciência dos temperamentos. Classificação, leitura pessoa × cargo e orientação de liderança."}
       </p>
 
       {pessoas.length > 0 && (
@@ -69,7 +69,7 @@ export function ListaPessoas({ cliente, pessoas, onAbrir, onNova, onVoltar }) {
       {pessoas.length === 0 ? (
         <div className="enz-card enz-card-vazado" style={{ padding: "28px 0" }}>
           <p className="enz-nota" style={{ fontSize: 14 }}>
-            Ninguém mapeado ainda. Adicione uma pessoa-chave, descreva o que você observou dela, e classifique — ou deixe a IA sugerir a partir das suas observações.
+            {cliente.tipo === "pessoa" ? "Ninguém mapeado ainda. Comece pelo mentorado: descreva o que você observou e classifique — ou deixe a IA sugerir." : "Ninguém mapeado ainda. Adicione uma pessoa-chave, descreva o que você observou dela e classifique — ou deixe a IA sugerir a partir das suas observações."}
           </p>
         </div>
       ) : (

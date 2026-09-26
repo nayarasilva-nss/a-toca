@@ -20,10 +20,10 @@ export function TelaHub({ app }) {
         return v && v < hoje;
       });
       return temVencida
-        ? { texto: "Há parcela vencida no cofre — cobre ou renegocie antes que vire ruído na relação", modulo: "financeiro" }
+        ? { texto: "Há parcela vencida — cobre ou renegocie antes que vire ruído na relação", modulo: "financeiro" }
         : { texto: "Há ações atrasadas no cronograma — resolva ou realoque as semanas", modulo: "cronograma" };
     }
-    if (fase === "prospeccao") return { texto: "Escuta: registre o briefing da primeira conversa — é dele que tudo nasce", modulo: "gestao" };
+    if (fase === "prospeccao") return { texto: "Escuta: registre o briefing da primeira conversa. É dele que tudo nasce", modulo: "gestao" };
     if (fase === "escuta") {
       if (!(campoPorCliente[c.id] || []).length)
         return { texto: "Vá a campo antes do Raio-X — uma visita técnica transforma impressão em evidência", modulo: "campo" };
@@ -38,8 +38,8 @@ export function TelaHub({ app }) {
       if (!((ritosPorCliente[c.id] || {}).itens || []).length) return { texto: "Rumo à Sustentação: crie os Ritos de Gestão — é a cadência que sustenta sem você", modulo: "ritos" };
       return null;
     }
-    if (fase === "sustentacao") return { texto: "Sustentação: os ritos rodam — acompanhe anomalias e o Painel do Engajamento", modulo: "painel" };
-    if (fase === "prova") return { texto: "Prova: reavalie o diagnóstico, verifique as metas e prepare o Malfeito feito", modulo: "relatorios" };
+    if (fase === "sustentacao") return { texto: "Sustentação: os ritos rodam — acompanhe anomalias e o Painel do Projeto", modulo: "painel" };
+    if (fase === "prova") return { texto: "Prova: reavalie o diagnóstico, verifique as metas e prepare o Relatório de Encerramento", modulo: "relatorios" };
     return null;
   };
 

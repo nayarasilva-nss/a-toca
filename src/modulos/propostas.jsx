@@ -62,12 +62,12 @@ export function ListaPropostas({ cliente, propostas, onAbrir, onNova, onVoltar }
         <BotaoPrimario onClick={onNova}>+ Nova proposta</BotaoPrimario>
       </div>
       <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
-        A proposta é o convite que muda tudo. Nasce do briefing e do diagnóstico — e o tom se ajusta ao temperamento do contratante, se mapeado.
+        {cliente.tipo === "pessoa" ? "A proposta é o convite para a jornada. Nasce da conversa inicial e do diagnóstico; o tom se ajusta ao temperamento do mentorado, se mapeado." : "A proposta é o convite que muda tudo. Nasce da Escuta e do Raio-X; o tom se ajusta ao temperamento de quem contrata, se mapeado."}
       </p>
       {propostas.length === 0 ? (
         <div className="enz-card enz-card-vazado" style={{ padding: "28px 0" }}>
           <p className="enz-nota" style={{ fontSize: 14 }}>
-            Nenhuma proposta ainda. Preencha os parâmetros (duração, investimento, condições) e gere — o texto vem pronto para sua revisão.
+            {cliente.tipo === "pessoa" ? "Nenhuma proposta ainda. Defina os encontros e o valor por encontro e gere — o texto vem pronto para sua revisão." : "Nenhuma proposta ainda. Preencha os parâmetros (duração, investimento, condições) e gere — o texto vem pronto para sua revisão."}
           </p>
         </div>
       ) : (
@@ -178,7 +178,7 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
               ) : (
               <div className="grid sm:grid-cols-3 gap-2 mb-2">
                 <div>
-                  <div className="text-xs mb-0.5" style={{ color: "var(--tinta)" }}>Valor base do engajamento</div>
+                  <div className="text-xs mb-0.5" style={{ color: "var(--tinta)" }}>Valor base do projeto</div>
                   <input className="w-full px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "var(--linha)" }} placeholder="Ex.: 2.000" value={precificacao.base} onChange={setP("base")} />
                 </div>
                 <div>
@@ -229,7 +229,7 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
                 <div className="mb-4 p-3 rounded-lg" style={{ background: CORES.hover, border: "2px solid var(--ouro)" }}>
                   <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
                     <div className="label" style={{ color: "var(--alerta)" }}>
-                      {ehPessoaProp ? "Metas do mentorado (fase Acordo)" : "Metas do engajamento (fase Acordo)"}
+                      {ehPessoaProp ? "Metas do mentorado (fase Acordo)" : "Metas do projeto (fase Acordo)"}
                     </div>
                     <button onClick={onGerarMetas} className="enz-link" style={{ textTransform: "none", letterSpacing: 0, fontSize: 12 }} style={{ color: CORES.dourado }} disabled={gerando}>
                       Sugerir metas com IA
@@ -238,7 +238,7 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
                   <p className="text-xs mb-2" style={{ color: CORES.textoDim }}>
                     {ehPessoaProp
                       ? "2-3 metas com objetivo + valor + prazo (ex.: delegar as decisões de compra até outubro). Verificadas no Relatório de Evolução."
-                      : "2-3 metas pactuadas com objetivo + valor + prazo. Verificadas no Malfeito feito: batida, parcial ou não batida."}
+                      : "2-3 metas pactuadas com objetivo + valor + prazo. Verificadas na Prova: batida, parcial ou não batida."}
                   </p>
                   {(prop.metas || []).map((m) => (
                     <div key={m.id} className="flex items-center gap-2 py-1">
