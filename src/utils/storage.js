@@ -108,6 +108,12 @@ window.storage = {
   online() {
     return remotoOk === true;
   },
+
+  reconectar() {
+    cache = null;
+    remotoOk = null;
+    carregando = null;
+  },
 };
 
 export default window.storage;

@@ -1,4 +1,5 @@
 import { neon } from '@neondatabase/serverless';
+import { exigirSessao } from './_lib/sessao.js';
 
 const KEY_MAX = 200;
 const VALUE_MAX = 5 * 1024 * 1024;
@@ -25,6 +26,7 @@ function chaveValida(chave) {
 }
 
 export default async (req, res) => {
+  if (!exigirSessao(req, res, ['consultora'])) return;
   let db;
   try {
     db = sql();

@@ -1,4 +1,7 @@
+import { exigirSessao } from './_lib/sessao.js';
+
 export default async (req, res) => {
+  if (!exigirSessao(req, res, ['consultora'])) return;
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }

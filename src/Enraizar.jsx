@@ -1,5 +1,7 @@
 import { useState, useEffect, useReducer } from "react";
 import { COLECOES, COLECOES_INICIAIS, reduzirColecoes } from "./nucleo/estado.jsx";
+import { TelaLogin, chamarAuth } from "./telas/login.jsx";
+import { AreaMentorado } from "./telas/mentorado.jsx";
 import { Cabecalho } from "./componentes/cabecalho.jsx";
 import { acoesNumeradas, parseDataBR, semanaAtualDe } from "./ia/cronograma.jsx";
 import { FRAMEWORK_LIDER, FRAMEWORK_PESSOAL } from "./ia/diagnostico.jsx";
@@ -92,8 +94,35 @@ export default function App() {
   const [gerando, setGerando] = useState(false);
   const [erro, setErro] = useState(null);
   const [pronto, setPronto] = useState(false);
+  const [auth, setAuth] = useState({ estado: "carregando", usuario: null, precisaConfigurar: false });
+  const autenticado = auth.estado === "ok" || auth.estado === "local";
 
   useEffect(() => {
+    chamarAuth("sessao")
+      .then(({ usuario, precisaConfigurar }) => setAuth({ estado: usuario ? "ok" : "anonimo", usuario, precisaConfigurar }))
+      .catch((e) => {
+        // sem API (npm run dev): segue em modo local com localStorage
+        if (e.message === "sem-api" || e instanceof TypeError) setAuth({ estado: "local", usuario: null, precisaConfigurar: false });
+        else setAuth({ estado: "anonimo", usuario: null, precisaConfigurar: false });
+      });
+  }, []);
+
+  const entrar = (usuario) => {
+    window.storage.reconectar();
+    setAuth({ estado: "ok", usuario, precisaConfigurar: false });
+  };
+
+  const sair = async () => {
+    try { await chamarAuth("sair", {}); } catch {}
+    window.storage.reconectar();
+    setClientes([]);
+    setPronto(false);
+    setTela({ nome: "home" });
+    setAuth({ estado: "anonimo", usuario: null, precisaConfigurar: false });
+  };
+
+  useEffect(() => {
+    if (!autenticado) return;
     stGet("toca:clientes").then(async (cs) => {
       cs = cs || [];
       setClientes(cs);
@@ -116,7 +145,7 @@ export default function App() {
       setRelatoriosPorCliente(mapaR);
       setFinanceiroPorCliente(mapaF);
     });
-  }, []);
+  }, [autenticado]);
 
   const carregarDadosCliente = async (id) => {
     for (const [colecao, def] of Object.entries(COLECOES)) {
@@ -212,11 +241,12 @@ export default function App() {
   const [precificacao, setPrecificacao] = useState({ base: "", porFrente: "", porSemana: "", porEncontro: "" });
 
   useEffect(() => {
+    if (!autenticado) return;
     (async () => {
       const p = await stGet("toca:precificacao");
       if (p) setPrecificacao(p);
     })();
-  }, []);
+  }, [autenticado]);
 
   const importarBackup = async (arquivo) => {
     try {
@@ -478,6 +508,16 @@ ${conteudo}
     }
   };
 
+  if (auth.estado === "carregando") {
+    return <div className="min-h-screen flex items-center justify-center font-serif italic" style={{ background: CORES.fundoPrincipal, color: CORES.dourado }}>Abrindo ENRAIZAR...</div>;
+  }
+  if (auth.estado === "anonimo") {
+    return <TelaLogin precisaConfigurar={auth.precisaConfigurar} onEntrar={entrar} />;
+  }
+  if (auth.usuario?.papel === "mentorado") {
+    return <AreaMentorado usuario={auth.usuario} onSair={sair} />;
+  }
+
   const app = {
     alcadasAtuais, alcadasPorCliente, anomaliasPorCliente, atasAtuais, campoAtuais, campoAtual, campoPorCliente, cargoAtual, cargosAtuais, cargosPorCliente, cctPorCliente, clienteAtual, dadosPainelDe, diagAtual, diagLiderAtual, diagsAtuais, diagsLiderAtuais, diagsLiderPorCliente, diagsPorCliente, docAtual, docsAtuais, docsDe, erro, estruturaAtual, estruturaPorCliente, executarGeracao, exportarImpressao, faseDoCliente, financeiroAtual, financeiroPorCliente, fluxoAtual, fluxosAtuais, fluxosPorCliente, focoMentoriaAtual, frameworkMentorado, gerando, gestaoPorCliente, indicadoresAtuais, indicadoresPorCliente, manualAtual, manualPorCliente, mentoriaAtual, mentoriaPorCliente, mudarDocs, mudarGestao, mudarPessoas, painelPorCliente, penseiraPorCliente, pessoaAtual, pessoasAtuais, pessoasPorCliente, pontosCCTDe, popAtual, popsAtuais, popsPorCliente, precificacao, propostaAtual, propostasAtuais, propostasPorCliente, relMentoriaAtual, relatorioAtual, relatoriosAtuais, relatoriosPorCliente, ritosAtuais, ritosPorCliente, salvarColecao, setErro, setGerando, setMentoriaPorCliente, setPenseiraPorCliente, setPrecificacao, setTabelas, setTela, tabelas, tela, tituloDiagMentorado, treinamentoAtual, treinamentosAtuais, treinamentosPorCliente,
   };
@@ -534,13 +574,13 @@ ${conteudo}
         .scale-in { animation: scaleIn 0.3s ease-out; }
         @media print { body { background: white; } .font-serif { font-family: Georgia, serif; } }
       `}</style>
-      <Cabecalho onHome={() => setTela({ nome: "home" })} onClientes={() => setTela({ nome: "clientes" })} />
+      <Cabecalho onHome={() => setTela({ nome: "home" })} onClientes={() => setTela({ nome: "clientes" })} usuario={auth.usuario} onSair={auth.usuario ? sair : undefined} />
 
       <div className="print:hidden">
         {!pronto ? (
           <div className="text-center py-20 font-serif italic" style={{ color: CORES.dourado }}>Abrindo ENRAIZAR...</div>
         ) : tela.nome === "home" ? (
-          <DashboardInicial clientes={clientes} nomeUsuario={nomeUsuario} onSetNomeUsuario={setNomeUsuario} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} />
+          <DashboardInicial clientes={clientes} nomeUsuario={auth.usuario?.nome || nomeUsuario} onSetNomeUsuario={setNomeUsuario} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} />
         ) : tela.nome === "clientes" ? (
           <ListaClientes clientes={clientes} gestaoPorCliente={gestaoPorCliente} fases={fasesClientes} backupPendente={backupPendente} onAplicarBackup={aplicarBackup} onCancelarBackup={() => setBackupPendente(null)} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} onExcluir={excluirCliente} onExportarBackup={exportarBackup} onImportarBackup={importarBackup} onVoltar={() => setTela({ nome: "home" })} nomeUsuario={nomeUsuario} onSetNomeUsuario={setNomeUsuario} />
         ) : tela.nome === "novo" ? (

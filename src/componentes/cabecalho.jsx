@@ -2,7 +2,7 @@ import { CORES } from "../nucleo/base.jsx";
 
 // ─── Componentes base ───────────────────────────────────────────
 
-export function Cabecalho({ onHome, onClientes }) {
+export function Cabecalho({ onHome, onClientes, usuario, onSair }) {
   return (
     <header
       className="px-4 sm:px-8 py-4 sm:py-6 flex flex-wrap items-center justify-between gap-3 print:hidden"
@@ -30,6 +30,7 @@ export function Cabecalho({ onHome, onClientes }) {
       <div className="fonte-corpo italic text-sm hidden sm:block" style={{ color: CORES.textoDim }}>
         Todo crescimento começa em quem enraiza
       </div>
+      <div className="flex items-center gap-3 flex-wrap">
       {onClientes && (
         <button
           onClick={onClientes}
@@ -49,6 +50,12 @@ export function Cabecalho({ onHome, onClientes }) {
           🏢 Clientes
         </button>
       )}
+        {usuario && onSair && (
+          <button onClick={onSair} title={usuario.email} className="text-xs uppercase font-semibold" style={{ background: "none", border: "none", cursor: "pointer", color: CORES.textoDim, letterSpacing: 1, fontFamily: "'Lora', serif", padding: 0 }}>
+            Sair
+          </button>
+        )}
+      </div>
     </header>
   );
 }

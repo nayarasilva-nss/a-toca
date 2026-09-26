@@ -46,4 +46,4 @@ npm run lint
 
 Variáveis de ambiente (Vercel): `ANTHROPIC_API_KEY` e as do Neon (`DATABASE_URL` etc., criadas pela integração).
 
-Acesso: o projeto usa a proteção de deploy da Vercel — só quem está logado na conta abre o app e a API.
+Acesso: login próprio (`api/auth.js`) — e-mail e senha na tabela `usuarios` do Neon (hash scrypt), sessão em cookie HttpOnly assinado com `SESSAO_SEGREDO`. No primeiro acesso o app pede para criar a conta da consultora. As APIs de banco e de IA exigem sessão. Usuários têm `papel` (`consultora` | `mentorado`) — a área do mentorado está em `src/telas/mentorado.jsx`.
