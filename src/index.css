@@ -635,25 +635,6 @@ textarea {
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-.flex {
-  display: flex;
-  gap: var(--sp-md);
-}
-
-.flex-between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--sp-md);
-}
-
-.flex-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: var(--sp-md);
-}
-
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /* RESPONSIVIDADE */
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -695,7 +676,6 @@ textarea {
 
   .card {
     padding: 1.25rem;
-    border: 2px solid #6B5D42;
     border-radius: 14px;
   }
 
@@ -742,17 +722,6 @@ textarea {
   .section-title::before {
     font-size: 1.25rem;
     left: 0;
-  }
-
-  .flex {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .flex-between,
-  .flex-center {
-    flex-direction: column;
-    align-items: stretch;
   }
 
   .label {
@@ -825,109 +794,14 @@ textarea {
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 @media (max-width: 480px) {
-  /* Base text size for mobile */
   html {
     font-size: 14px;
   }
-
-  /* Todos containers em mobile recebem padding reduzido */
-  div[style*="margin: 0 auto"] {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
-  }
-
-  /* Títulos em Crimson Text reduzidos */
-  h1 {
-    font-size: 28px !important;
-    letter-spacing: 2px !important;
-  }
-
-  /* Botão voltar com tamanho menor */
-  button[style*="fontFamily: \"'Lora'"][style*="uppercase"] {
-    font-size: 10px !important;
-    margin-bottom: 16px !important;
-    letter-spacing: 0.5px !important;
-  }
-
-  /* Cards com padding reduzido */
-  div[style*="background: #FFFBF0"],
-  div[style*="background: white"],
-  div[style*="padding: 28px"],
-  div[style*="padding: 32px"] {
-    padding: 12px !important;
-  }
-
-  /* Header dos cards com padding reduzido */
-  div[style*="borderBottom: 1px solid rgba(60, 24, 30, 0.08)"] {
-    padding: 16px !important;
-  }
-
-  /* Buttons menor em mobile */
-  button[style*="fontFamily: \"'Lora'"][style*="fontWeight: 600"] {
-    font-size: 11px !important;
-    padding: 8px 12px !important;
-  }
-
-  /* Inputs/textareas em mobile: 16px minimum para evitar zoom */
+  /* 16px evita o zoom automático do iOS ao focar */
   input,
-  textarea {
+  textarea,
+  select {
     font-size: 16px !important;
-    padding: 10px !important;
-  }
-
-  /* Textarea reduzido */
-  textarea[rows="7"] {
-    min-height: 150px !important;
-  }
-
-  /* Flex stacking em mobile */
-  div[style*="display: flex"][style*="gap: 32px"],
-  div[style*="display: flex"][style*="gap: 24px"] {
-    flex-direction: column !important;
-    gap: 12px !important;
-  }
-
-  /* Grids = 1 coluna em mobile */
-  div[style*="display: grid"] {
-    grid-template-columns: 1fr !important;
-    gap: 8px !important;
-  }
-
-  /* Tamanho de fonte reduzido para labels e hints */
-  div[style*="fontSize: 11px"] {
-    font-size: 10px !important;
-  }
-
-  div[style*="fontSize: 13px"] {
-    font-size: 11px !important;
-  }
-
-  /* Section headers em mobile */
-  div[style*="fontSize: 18px"][style*="fontWeight: 600"] {
-    font-size: 14px !important;
-  }
-
-  div[style*="fontSize: 20px"][style*="fontWeight: 800"] {
-    font-size: 16px !important;
-  }
-
-  div[style*="fontSize: 40px"][style*="fontWeight: 800"] {
-    font-size: 24px !important;
-  }
-
-  div[style*="fontSize: 48px"][style*="fontWeight: 800"] {
-    font-size: 32px !important;
-  }
-
-  /* Remover paddingTop excessivo */
-  div[style*="paddingTop: 32px"] {
-    padding-top: 16px !important;
-  }
-
-  /* Botões de seleção menores */
-  button[style*="border: 1px solid"][style*="fontFamily: \"'Lora'\""] {
-    padding: 8px 10px !important;
-    font-size: 11px !important;
   }
 }
 
@@ -1410,33 +1284,6 @@ textarea {
     inset 0 1px 0 rgba(255, 255, 255, 0.9),
     0 0 60px rgba(107,93,66, 0.2),
     0 0 100px rgba(212,175,55, 0.12);
-}
-
-/* Header com estilo */
-header {
-  background:
-    linear-gradient(135deg, #F5F1E8 0%, #FFFBF0 50%, #F5F1E8 100%),
-    radial-gradient(circle at 50% 0%, rgba(232,223,211, 0.4) 0%, transparent 70%),
-    radial-gradient(circle at 20% 50%, rgba(255, 240, 220, 0.2) 0%, transparent 60%);
-  background-blend-mode: multiply, screen, overlay;
-  border-bottom: 3px solid #6B5D42;
-  padding: 2rem 1.5rem;
-  box-shadow:
-    0 6px 20px rgba(139, 58, 58, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    0 0 40px rgba(212,175,55, 0.08);
-  margin-bottom: 2rem;
-  position: relative;
-  overflow: hidden;
-}
-
-header h1 {
-  margin-bottom: 0.5rem;
-}
-
-header .subtitle {
-  color: var(--cor-cobre);
-  font-size: 0.95rem;
 }
 
 /* Footer com estilo */

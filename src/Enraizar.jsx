@@ -2110,7 +2110,7 @@ async function gerarPdfDoNo(nodeOculto) {
 function Cabecalho({ onHome, onClientes }) {
   return (
     <header
-      className="px-8 py-6 flex items-baseline justify-between print:hidden"
+      className="px-4 sm:px-8 py-4 sm:py-6 flex flex-wrap items-center justify-between gap-3 print:hidden"
       style={{
         background: CORES.fundoPrincipal,
         borderBottom: `2px solid ${CORES.dourado}`,
@@ -2119,9 +2119,8 @@ function Cabecalho({ onHome, onClientes }) {
     >
       <button onClick={onHome} className="text-left" style={{ background: "transparent", border: "none", cursor: "pointer", padding: 0 }}>
         <div
-          className="font-serif"
+          className="font-serif text-[26px] sm:text-[32px]"
           style={{
-            fontSize: 32,
             fontWeight: 800,
             letterSpacing: 2,
             color: CORES.dourado,
@@ -2129,7 +2128,7 @@ function Cabecalho({ onHome, onClientes }) {
         >
           ENRAIZAR
         </div>
-        <div className="fonte-corpo" style={{ fontSize: 11, letterSpacing: 2, color: CORES.textoDim, textTransform: "uppercase" }}>
+        <div className="fonte-corpo hidden sm:block" style={{ fontSize: 11, letterSpacing: 2, color: CORES.textoDim, textTransform: "uppercase" }}>
           Desenvolvimento Organizacional
         </div>
       </button>
@@ -2872,7 +2871,7 @@ function DashboardInicial({ clientes, nomeUsuario, onSetNomeUsuario, onAbrir, on
       </h1>
 
       {/* KPI Cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "32px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "16px", marginBottom: "32px" }}>
         {kartoes.map((k) => (
           <div
             key={k.label}
@@ -3110,7 +3109,7 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
             }
           `}</style>
 
-          <table className="clientes-table">
+          <div className="overflow-x-auto"><table className="clientes-table">
           <thead>
             <tr style={{ borderBottom: "2px solid #D4AF37", background: CORES.hover }}>
               <th style={{ textAlign: "left", padding: "12px", fontSize: "11px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", minWidth: "150px" }}>Cliente</th>
@@ -3188,7 +3187,7 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
               );
             })}
           </tbody>
-        </table>
+        </table></div>
 
         <div style={{ marginTop: "0", padding: "16px 24px", background: CORES.hover, borderTop: "1px solid rgba(74,64,53, 0.08)", fontSize: "11px", color: "#6B5D4F", fontFamily: "'Lora', serif" }}>
           {clientes.filter(c => gestaoPorCliente[c.id]?.frentes?.length).length} em andamento · {clientes.filter(c => c.tipo === "pessoa").length} mentorado(s) · Total: {clientes.length} engajamento{clientes.length !== 1 ? 's' : ''}
@@ -3570,7 +3569,7 @@ function ModuloTabela({ cliente, tabela, gerando, erro, onGerar, onMudarTabela, 
 
         {!gerando && tabela && (
           <>
-            <table style={{ width: "100%", borderCollapse: "collapse", background: CORES.cartao, marginBottom: "20px" }}>
+            <div className="overflow-x-auto"><table style={{ width: "100%", borderCollapse: "collapse", background: CORES.cartao, marginBottom: "20px" }}>
               <thead>
                 <tr style={{ borderBottom: "2px solid #D4AF37", background: "#EFE8D6" }}>
                   <th style={{ textAlign: "left", padding: "16px", fontSize: "11px", fontWeight: "700", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Setor</th>
@@ -3622,7 +3621,7 @@ function ModuloTabela({ cliente, tabela, gerando, erro, onGerar, onMudarTabela, 
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
 
             <button
               onClick={() => onMudarTabela([...tabela, { id: uid(), setor: "Geral", infracao: "", gravidade: "leve" }])}
@@ -3653,7 +3652,7 @@ function ImpressaoTabela({ cliente, tabela }) {
         <div className="text-sm font-bold uppercase tracking-widest mb-2" style={{ color: CORES.dourado }}>
           Gradação de medidas
         </div>
-        <table className="w-full text-sm border-collapse">
+        <div className="overflow-x-auto"><table className="w-full text-sm border-collapse">
           <tbody>
             {GRAVIDADES.map((g) => (
               <tr key={g}>
@@ -3664,7 +3663,7 @@ function ImpressaoTabela({ cliente, tabela }) {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
         <p className="text-xs mt-2" style={{ color: "#6B5D42" }}>
           Reincidência no mesmo tema eleva a medida ao grau seguinte. Três feedbacks registrados sobre o mesmo tema equivalem a advertência escrita. Sem registro, a ocorrência não existe.
         </p>
@@ -3675,7 +3674,7 @@ function ImpressaoTabela({ cliente, tabela }) {
           <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.fogo }}>
             {gr.setor}
           </div>
-          <table className="w-full text-sm border-collapse">
+          <div className="overflow-x-auto"><table className="w-full text-sm border-collapse">
             <tbody>
               {gr.itens.map((item) => (
                 <tr key={item.id}>
@@ -3687,7 +3686,7 @@ function ImpressaoTabela({ cliente, tabela }) {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         </div>
       ))}
 
@@ -4856,7 +4855,7 @@ function ImpressaoPop({ cliente, pop }) {
         </div>
       </div>
 
-      <table className="w-full text-sm border-collapse mb-6">
+      <div className="overflow-x-auto"><table className="w-full text-sm border-collapse mb-6">
         <tbody>
           {pop.responsavel && (
             <tr>
@@ -4871,7 +4870,7 @@ function ImpressaoPop({ cliente, pop }) {
             </tr>
           )}
         </tbody>
-      </table>
+      </table></div>
 
       {pop.objetivo && (
         <div className="mb-5">
@@ -5057,7 +5056,7 @@ function ImpressaoChecklist({ cliente, doc }) {
           {doc.frequencia ? ` · ${doc.frequencia}` : ""}
         </div>
       </div>
-      <table className="w-full text-sm border-collapse mb-8">
+      <div className="overflow-x-auto"><table className="w-full text-sm border-collapse mb-8">
         <tbody>
           {itens.map((item, i) => (
             <tr key={i}>
@@ -5068,7 +5067,7 @@ function ImpressaoChecklist({ cliente, doc }) {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table></div>
       <div className="flex gap-10 text-sm mb-2">
         <div className="flex-1 border-t pt-1" style={{ borderColor: "#2A1218" }}>Executado por</div>
         <div className="w-40 border-t pt-1" style={{ borderColor: "#2A1218" }}>Data / hora</div>
@@ -5705,7 +5704,7 @@ function ImpressaoDiagnostico({ cliente, diag, titulo, framework: fw }) {
             <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.fogo }}>
               {a.area} — {pct}%
             </div>
-            <table className="w-full text-sm border-collapse">
+            <div className="overflow-x-auto"><table className="w-full text-sm border-collapse">
               <tbody>
                 {a.criterios.map((crit, cIdx) => {
                   const n = diag.notas[chaveNota(aIdx, cIdx)];
@@ -5720,7 +5719,7 @@ function ImpressaoDiagnostico({ cliente, diag, titulo, framework: fw }) {
                   );
                 })}
               </tbody>
-            </table>
+            </table></div>
           </div>
         );
       })}
@@ -6072,7 +6071,7 @@ function ImpressaoProposta({ cliente, prop }) {
       {fases.length > 0 && (
         <div className="mb-5">
           <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.fogo }}>Fases do trabalho</div>
-          <table className="w-full text-sm border-collapse">
+          <div className="overflow-x-auto"><table className="w-full text-sm border-collapse">
             <tbody>
               {fases.map((f, i) => (
                 <tr key={i}>
@@ -6080,7 +6079,7 @@ function ImpressaoProposta({ cliente, prop }) {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         </div>
       )}
 
@@ -6113,7 +6112,7 @@ function ImpressaoProposta({ cliente, prop }) {
       {(prop.investimento || prop.condicoesPagamento || prop.duracao) && (
         <div className="mb-5">
           <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.dourado }}>Investimento</div>
-          <table className="w-full text-sm border-collapse">
+          <div className="overflow-x-auto"><table className="w-full text-sm border-collapse">
             <tbody>
               {prop.duracao && (
                 <tr>
@@ -6134,7 +6133,7 @@ function ImpressaoProposta({ cliente, prop }) {
                 </tr>
               )}
             </tbody>
-          </table>
+          </table></div>
         </div>
       )}
 
@@ -6330,7 +6329,7 @@ function ImpressaoCronograma({ cliente, gestao }) {
             <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.fogo }}>
               Semana {w}{intervaloSemana(gestao.inicio, w) ? ` · ${intervaloSemana(gestao.inicio, w)}` : ""}
             </div>
-            <table className="w-full text-sm border-collapse">
+            <div className="overflow-x-auto"><table className="w-full text-sm border-collapse">
               <tbody>
                 {doW.map((x) => (
                   <tr key={x.acao.id}>
@@ -6343,7 +6342,7 @@ function ImpressaoCronograma({ cliente, gestao }) {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           </div>
         );
       })}
@@ -7154,7 +7153,7 @@ function ImpressaoAlcadas({ cliente, alcadas }) {
       {grupos.map((g) => (
         <div key={g.categoria} className="mb-5">
           <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.fogo }}>{g.categoria}</div>
-          <table className="w-full text-sm border-collapse">
+          <div className="overflow-x-auto"><table className="w-full text-sm border-collapse">
             <thead>
               <tr>
                 <th className="border px-3 py-1 text-left" style={{ borderColor: CORES.laranja, color: CORES.dourado }}>Decisão</th>
@@ -7173,7 +7172,7 @@ function ImpressaoAlcadas({ cliente, alcadas }) {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         </div>
       ))}
       <RodapeImpressao />
@@ -7313,7 +7312,7 @@ function ImpressaoIndicadores({ cliente, painel }) {
       {areas.map((area) => (
         <div key={area} className="mb-5">
           <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.fogo }}>{area}</div>
-          <table className="w-full text-sm border-collapse">
+          <div className="overflow-x-auto"><table className="w-full text-sm border-collapse">
             <thead>
               <tr>
                 <th className="border px-3 py-1 text-left" style={{ borderColor: CORES.laranja, color: CORES.dourado }}>Indicador</th>
@@ -7336,7 +7335,7 @@ function ImpressaoIndicadores({ cliente, painel }) {
                   </tr>
                 ))}
             </tbody>
-          </table>
+          </table></div>
         </div>
       ))}
       <RodapeImpressao />
@@ -7467,7 +7466,7 @@ function ImpressaoRitos({ cliente, ritos }) {
         return (
           <div key={r.id} className="mb-5">
             <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.fogo }}>{r.nome}</div>
-            <table className="w-full text-sm border-collapse mb-2">
+            <div className="overflow-x-auto"><table className="w-full text-sm border-collapse mb-2">
               <tbody>
                 <tr>
                   {r.frequencia && (
@@ -7483,7 +7482,7 @@ function ImpressaoRitos({ cliente, ritos }) {
                   </tr>
                 )}
               </tbody>
-            </table>
+            </table></div>
             {pauta.length > 0 && (
               <ol className="text-sm list-decimal pl-5">
                 {pauta.map((p, i) => <li key={i} className="mb-0.5">{p}</li>)}
