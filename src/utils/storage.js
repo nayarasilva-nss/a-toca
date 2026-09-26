@@ -1,11 +1,10 @@
-// Storage adapter — converte localStorage em promise-based API
-// A Toca.jsx espera window.storage.get() e window.storage.set() async
+// Storage adapter — localStorage com API async no formato { value } que Enraizar.jsx espera
 
 window.storage = {
   async get(chave) {
     try {
       const valor = localStorage.getItem(chave);
-      return valor ? JSON.parse(valor) : null;
+      return valor === null ? null : { value: valor };
     } catch (e) {
       console.error(`Erro ao ler ${chave}:`, e);
       return null;
@@ -14,10 +13,20 @@ window.storage = {
 
   async set(chave, valor) {
     try {
-      localStorage.setItem(chave, JSON.stringify(valor));
+      localStorage.setItem(chave, typeof valor === "string" ? valor : JSON.stringify(valor));
       return true;
     } catch (e) {
       console.error(`Erro ao salvar ${chave}:`, e);
+      return false;
+    }
+  },
+
+  async delete(chave) {
+    try {
+      localStorage.removeItem(chave);
+      return true;
+    } catch (e) {
+      console.error(`Erro ao remover ${chave}:`, e);
       return false;
     }
   },

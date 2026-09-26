@@ -3,10 +3,16 @@ export default async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { prompt } = req.body;
+  const { prompt, messages, max_tokens } = req.body || {};
 
-  if (!prompt) {
-    return res.status(400).json({ error: 'Missing prompt' });
+  const mensagens = Array.isArray(messages) && messages.length > 0
+    ? messages
+    : prompt
+      ? [{ role: 'user', content: prompt }]
+      : null;
+
+  if (!mensagens) {
+    return res.status(400).json({ error: 'Missing prompt or messages' });
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -25,8 +31,8 @@ export default async (req, res) => {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }],
+        max_tokens: Math.min(Number(max_tokens) || 1000, 4000),
+        messages: mensagens,
       }),
     });
 

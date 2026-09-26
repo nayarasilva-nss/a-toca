@@ -1,78 +1,49 @@
-# 🏛️ A Toca — Central de Governança
+# 🌱 ENRAIZAR — Desenvolvimento Organizacional
 
-Ferramenta interna de consultoria para estruturação organizacional de pequenas e médias empresas brasileiras.
+Ferramenta de consultoria para estruturação organizacional de pequenas e médias empresas brasileiras.
 
-**Autor**: Nayara Silva  
-**Metodologia**: Base Kenkyo  
-**Status**: ✅ Pronto para produção
+**Autora**: Nayara Silva
+**Método**: Escuta · Raio-X · Acordo · Construção · Sustentação · Prova
+**Produção**: https://enraizar.vercel.app
 
 ---
 
-## O que é A Toca?
+## Módulos
 
-App completo de React (9.907 linhas otimizadas) que gerencia:
-
-- **Tabela Disciplinar**: Catálogo de infrações com escalas de gravidade
-- **Descrições de Cargo**: Geração automática com IA
-- **Organograma**: Estrutura de liderança
-- **Manual do Colaborador**: Políticas e procedimentos
-- **POPs**: Procedimentos operacionais padrão
-- **Diagnóstico de Maturidade**: 8 áreas de governança
-- **Trabalho de Campo**: Visitas, entrevistas, turnos
-- **Penseira**: Chat com IA para insights
-- **Relatórios**: Geração automática de documentos
+- **Clientes**: cadastro (empresa ou pessoa mentorada), trilhas contratadas, briefing
+- **Diagnóstico de maturidade**: 6 áreas, 24 critérios
+- **Propostas e financeiro**: geração com IA, parcelas, acompanhamento
+- **Cargos, organograma e alçadas**
+- **Manual do colaborador, tabela disciplinar, políticas**
+- **POPs e fluxos de processo**
+- **Trabalho de campo**: visitas, entrevistas, anomalias
+- **Treinamentos e mentoria**: encontros, avaliações, relatórios
+- **Ritos e indicadores**
+- **Conselheira**: chat com IA no contexto do cliente
+- **Relatórios** e backup/restauração em `.json`
 
 ---
 
 ## Tecnologia
 
-- **Frontend**: React 19.2.7
-- **Bundler**: Vite 8.1.1
-- **Storage**: localStorage (~5-10MB)
-- **IA**: Anthropic Claude (via Vercel Edge Functions)
-- **Deploy**: Vercel (auto via GitHub)
+- **Frontend**: React 19 + Vite
+- **Storage**: localStorage (dados ficam no navegador)
+- **IA**: Anthropic Claude via `api/ia.js` (Vercel Function — a chave nunca vai ao navegador)
+- **Deploy**: Vercel
 
 ---
 
-## Rodando Localmente
+## Rodando localmente
 
 ```bash
 npm install
-npm run dev          # http://localhost:5183
-npm run build        # Produção
-npm run preview      # Simula produção
+npm run dev
+npm run build
+npm run lint
 ```
 
----
-
-## Produção (Vercel)
-
-Variável de ambiente necessária:
+Variável de ambiente (Vercel e `.env.local`):
 
 ```
-ANTHROPIC_API_KEY = sua-chave-aqui
+ANTHROPIC_API_KEY=...
 ```
-
----
-
-## Performance
-
-✅ Otimizado com:
-- 1 useReducer (40x menos re-renders)
-- Promise.all paralelo (26x mais rápido)
-- useMemo para derivações
-- Bundle: 142KB gzipped
-
----
-
-## Dados & Segurança
-
-✅ Dados em `localStorage` (seu navegador)  
-✅ Nenhum servidor guarda dados  
-✅ Backup manual com .json  
-✅ Sem telemetria  
-
----
-
-**Última atualização**: 2026-07-21  
-**Deploy**: https://a-toca.vercel.app

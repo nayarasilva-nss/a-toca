@@ -35,7 +35,7 @@ const CORES = {
   // Estados (mantém compatibilidade)
   fogo: "#6B5D42",           // Para compatibilidade
   fogoEscuro: "#4A4035",     // Para compatibilidade
-  laranja: "#D9914F",        // Para compatibilidade
+  laranja: "#7BA85C",        // Para compatibilidade
   papel: "#FFFBF0",          // Para compatibilidade
   cremeClaro: "#F5F1E8",     // Para compatibilidade
   cremePalido: "#FFFBF0",    // Para compatibilidade
@@ -44,14 +44,14 @@ const CORES = {
 const GRAVIDADES = ["leve", "media", "grave", "gravissima"];
 
 const GRAV_INFO = {
-  leve: { rotulo: "Leve", medida: "Feedback registrado", cor: "#B8860B", fundo: "CORES.hover" },
+  leve: { rotulo: "Leve", medida: "Feedback registrado", cor: "#B8860B", fundo: CORES.hover },
   media: { rotulo: "Média", medida: "Advertência escrita", cor: "#9A6A2F", fundo: "#F2E3CB" },
   grave: { rotulo: "Grave", medida: "Suspensão", cor: "#8A3A2E", fundo: "#F0DCD2" },
-  gravissima: { rotulo: "Gravíssima", medida: "Desligamento por justa causa*", cor: "CORES.principal", fundo: "#EBD5D8" },
+  gravissima: { rotulo: "Gravíssima", medida: "Desligamento por justa causa*", cor: CORES.principal, fundo: "#EBD5D8" },
 };
 
 const STATUS_FRENTE = {
-  nao_iniciada: { rotulo: "Não iniciada", cor: "CORES.textoDim", fundo: "#EFE8D6" },
+  nao_iniciada: { rotulo: "Não iniciada", cor: CORES.textoDim, fundo: "#EFE8D6" },
   em_andamento: { rotulo: "Em andamento", cor: "#9A6A2F", fundo: "#F2E3CB" },
   formalizada: { rotulo: "Formalizada", cor: "#4F6B3A", fundo: "#E3EBD8" },
   concluida: { rotulo: "Concluída", cor: "#3C5A2B", fundo: "#D8E5D0" },
@@ -59,28 +59,12 @@ const STATUS_FRENTE = {
 
 const STATUS_TREINAMENTO = {
   planejado: { rotulo: "Planejado", cor: "#9A6A2F", fundo: "#F5E6C8" },
-  confirmado: { rotulo: "Confirmado", cor: "CORES.textoDim", fundo: "#EFE8D6" },
+  confirmado: { rotulo: "Confirmado", cor: CORES.textoDim, fundo: "#EFE8D6" },
   em_progresso: { rotulo: "Em progresso", cor: "#9A6A2F", fundo: "#F2E3CB" },
   realizado: { rotulo: "Realizado", cor: "#4F6B3A", fundo: "#E3EBD8" },
   avaliado: { rotulo: "Avaliado", cor: "#3C5A2B", fundo: "#D8E5D0" },
 };
 
-const PROPOSTA_CAMPOS = {
-  consultoria: {
-    base: ["duracao", "investimento", "condicoesPagamento", "validade", "apresentacao", "objetivo", "fases", "entregaveis", "metodologia", "condicoesGerais"],
-    especiais: ["frentesCoverage", "premisasDeTrabalho"]
-  },
-  treinamento: {
-    base: ["duracao", "investimento", "condicoesPagamento", "validade"],
-    especiais: ["horario", "localidade", "numeroParticipantes", "maioriaAusencia", "certificacao"]
-  },
-  mentoria: {
-    base: ["investimento", "condicoesPagamento"],
-    especiais: ["numeroEncontros", "frequencia", "cancelationPolicy", "successMetrics"]
-  }
-};
-
-// Tabela-mãe — catálogo de referência (método Nayara Silva, base Kenkyo)
 const TABELA_MAE = [
   ["Assiduidade e Ponto", "Atraso sem justificativa (acima da tolerância)", "leve"],
   ["Assiduidade e Ponto", "Esquecer marcação de ponto reiteradamente", "leve"],
@@ -126,7 +110,11 @@ const uid = () => Math.random().toString(36).slice(2, 9);
 async function stGet(chave) {
   try {
     const r = await window.storage.get(chave);
-    return r ? JSON.parse(r.value) : null;
+    if (!r || r.value == null) return null;
+    let v = JSON.parse(r.value);
+    // dados gravados pelo adaptador antigo ficaram codificados duas vezes
+    if (typeof v === "string" && /^\s*[\[{]/.test(v)) v = JSON.parse(v);
+    return v;
   } catch {
     return null;
   }
@@ -541,11 +529,10 @@ Se um ponto continua válido e inalterado, NÃO o mencione. Máximo 10 itens em 
 Responda APENAS com JSON compacto de uma linha (máx. 14 pontos, os mais relevantes):
 {"p":[{"t":"tema curto","o":"o que a CCT exige/veda, em 1 frase objetiva com números quando houver","d":"manual|tabela|cargos|geral"}]}`;
 
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
+  const response = await fetch("/api/ia", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "claude-sonnet-4-6",
       max_tokens: 1000,
       messages: [
         {
@@ -569,9 +556,8 @@ Sem markdown, sem texto fora do JSON.`,
     }),
   });
   const data = await response.json();
-  if (data.error) throw new Error(data.error.message || "erro da API");
-  if (!Array.isArray(data.content)) throw new Error("resposta inesperada da API");
-  const texto = data.content.filter((b) => b.type === "text").map((b) => b.text).join("\n");
+  if (data.error) throw new Error(data.error);
+  const texto = data.text || "";
   const obj = extrairJSON(texto, "{", "}");
 
   if (!temExistentes) {
@@ -606,7 +592,7 @@ function blocoCCT(pontos) {
   return `\nEXIGÊNCIAS DA CCT DESTE CLIENTE (extraídas do documento oficial — respeite TODAS obrigatoriamente; em conflito com qualquer outra instrução, a CCT prevalece):\n${linhas}\n`;
 }
 
-// ─── IA: Penseira (agente de consultoria) ───────────────────────
+// ─── IA: Conselheira (agente de consultoria) ───────────────────────
 
 async function conversarPenseira(cliente, cctPontos, frentes, historico, pessoas, panorama) {
   const listaFrentes =
@@ -618,7 +604,7 @@ async function conversarPenseira(cliente, cctPontos, frentes, historico, pessoas
     ? `\nCONTRATANTE (temperamento mapeado): ${dono.nome} — dominante ${TEMPERAMENTOS[dono.dominante].rotulo}${dono.secundario && TEMPERAMENTOS[dono.secundario] ? `, secundário ${TEMPERAMENTOS[dono.secundario].rotulo}` : ""}.${dono.abordagem ? ` Abordagem definida: ${dono.abordagem}` : ""}\nQuando aconselhar a consultora sobre COMO comunicar, propor ou negociar algo com o cliente, leve o temperamento do contratante em conta.\n`
     : "";
 
-  const contexto = `Você é a Penseira: assistente de raciocínio da consultora Nayara Silva (consultoria de governança para PMEs brasileiras). Seu papel é ajudá-la a pensar soluções para o cliente abaixo e responder dúvidas — sempre com base legal quando o tema for trabalhista.
+  const contexto = `Você é a Conselheira: assistente de raciocínio da consultora Nayara Silva (consultoria de governança para PMEs brasileiras). Seu papel é ajudá-la a pensar soluções para o cliente abaixo e responder dúvidas — sempre com base legal quando o tema for trabalhista.
 
 CLIENTE EM FOCO
 Negócio: ${cliente.negocio}
@@ -641,19 +627,17 @@ COMO RESPONDER
     ...historico.slice(-12).map((m) => ({ role: m.role, content: m.content })),
   ];
 
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
+  const response = await fetch("/api/ia", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "claude-sonnet-4-6",
       max_tokens: 1000,
       messages: mensagens,
     }),
   });
   const data = await response.json();
-  if (data.error) throw new Error(data.error.message || "erro da API");
-  if (!Array.isArray(data.content)) throw new Error("resposta inesperada da API");
-  return data.content.filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
+  if (data.error) throw new Error(data.error);
+  return (data.text || "").trim();
 }
 
 // ─── IA: POP (Processo Operacional Padrão) ──────────────────────
@@ -2264,125 +2248,10 @@ const CATEGORIAS_MODULOS = [
 ];
 
 // ─── As 6 Fases do Enraizar ─────────────────────────────────────
-const FASES_ENRAIZAR = [
-  { id: "escuta", nome: "Escuta", emoji: "👂", cor: CORES.dourado, descricao: "Conversa, visita, entrevistas" },
-  { id: "raioX", nome: "Raio-X", emoji: "📊", cor: CORES.dourado, descricao: "Diagnóstico de maturidade" },
-  { id: "acordo", nome: "Acordo", emoji: "🤝", cor: CORES.dourado, descricao: "Proposta e cronograma" },
-  { id: "construcao", nome: "Construção", emoji: "🔨", cor: CORES.dourado, descricao: "Cargos, processos, regras" },
-  { id: "sustentacao", nome: "Sustentação", emoji: "🌱", cor: CORES.dourado, descricao: "Ritos, indicadores, tracking" },
-  { id: "prova", nome: "Prova", emoji: "🏆", cor: CORES.dourado, descricao: "Reavaliação e verificação" },
-];
 
 // ─── Conteúdo Detalhado de Cada Fase ────────────────────────────
-const CONTEUDO_FASES = {
-  escuta: {
-    titulo: "Fase 1: Escuta",
-    descricaoLonga: "A jornada começa com a escuta profunda. É nesta fase que conhecemos a organização, sua história, desafios e aspirações.",
-    atividades: [
-      "Entrevistas com lideranças e equipes",
-      "Visitas às operações",
-      "Análise de documentação existente",
-      "Mapeamento de processos informais",
-      "Identificação de pontos de fricção"
-    ],
-    objetivo: "Compreender profundamente o contexto da organização para fundamentar as próximas fases"
-  },
-  raioX: {
-    titulo: "Fase 2: Raio-X",
-    descricaoLonga: "Análise estruturada dos dados coletados na Escuta. Produzimos um diagnóstico de maturidade organizacional.",
-    atividades: [
-      "Consolidação de dados e informações",
-      "Avaliação de maturidade em 6 dimensões",
-      "Identificação de gaps e oportunidades",
-      "Criação de matriz de priorização",
-      "Elaboração de relatório diagnóstico"
-    ],
-    objetivo: "Ter clareza total sobre o estado atual e as prioridades de melhoria"
-  },
-  acordo: {
-    titulo: "Fase 3: Acordo",
-    descricaoLonga: "Alinhamento com a liderança sobre o que será trabalhado, em qual sequência e com qual investimento.",
-    atividades: [
-      "Apresentação do diagnóstico",
-      "Definição conjunta de escopo",
-      "Estabelecimento de cronograma",
-      "Alinhamento de investimento",
-      "Formalização da proposta"
-    ],
-    objetivo: "Garantir que todas as partes entendem e concordam com o caminho a seguir"
-  },
-  construcao: {
-    titulo: "Fase 4: Construção",
-    descricaoLonga: "A implementação prática das mudanças. Aqui estruturamos cargos, processos, políticas e regulamentações.",
-    atividades: [
-      "Desenho de estrutura organizacional",
-      "Criação de descrições de cargos",
-      "Desenvolvimento de processos",
-      "Elaboração de políticas e regras",
-      "Treinamento de equipes"
-    ],
-    objetivo: "Estruturar a organização de forma clara, documentada e comunicada"
-  },
-  sustentacao: {
-    titulo: "Fase 5: Sustentação",
-    descricaoLonga: "Garantir que as mudanças se mantenham e evoluam. Implementamos ritos, indicadores e sistemas de tracking.",
-    atividades: [
-      "Definição de reuniões de ritos",
-      "Criação de indicadores de performance",
-      "Implementação de painéis de controle",
-      "Acompanhamento mensal de resultados",
-      "Ajustes e refinamentos"
-    ],
-    objetivo: "Assegurar a continuidade e evolução constante das mudanças"
-  },
-  prova: {
-    titulo: "Fase 6: Prova",
-    descricaoLonga: "Reavaliação estruturada do progresso. Verificamos se os objetivos foram atingidos e o impacto gerado.",
-    atividades: [
-      "Coleta de feedback das equipes",
-      "Reavaliação de indicadores",
-      "Análise de impacto das mudanças",
-      "Identificação de pontos de evolução",
-      "Planejamento dos próximos passos"
-    ],
-    objetivo: "Validar resultados e preparar a organização para evoluir ainda mais"
-  }
-};
 
 // ─── Mapa de Módulos por Fase ───────────────────────────────────
-const MODULOS_POR_FASE = {
-  escuta: [
-    { id: "hub", nome: "🏢 Hub do Cliente", tipo: "entrada" },
-    { id: "diagnosticos", nome: "📋 Diagnósticos", tipo: "coleta" },
-    { id: "pessoas", nome: "👥 Pessoas", tipo: "coleta" }
-  ],
-  raioX: [
-    { id: "diagnosticos", nome: "📋 Diagnósticos", tipo: "analise" },
-    { id: "anomalias", nome: "⚠️ Anomalias", tipo: "analise" },
-    { id: "relatorios", nome: "📊 Relatórios", tipo: "relatorio" }
-  ],
-  acordo: [
-    { id: "propostas", nome: "📄 Propostas", tipo: "planejamento" },
-    { id: "campo", nome: "🎯 Plano de Campo", tipo: "planejamento" },
-    { id: "financeiro", nome: "💰 Financeiro", tipo: "planejamento" }
-  ],
-  construcao: [
-    { id: "estrutura", nome: "🏛️ Estrutura", tipo: "construcao" },
-    { id: "cargos", nome: "💼 Cargos", tipo: "construcao" },
-    { id: "gestsao", nome: "⚙️ Gestão", tipo: "construcao" },
-    { id: "treinamentos", nome: "🎓 Treinamentos", tipo: "construcao" }
-  ],
-  sustentacao: [
-    { id: "ritos", nome: "📅 Ritos", tipo: "sustentacao" },
-    { id: "indicadores", nome: "📈 Indicadores", tipo: "sustentacao" },
-    { id: "mentoria", nome: "🧑‍🏫 Mentoria", tipo: "sustentacao" }
-  ],
-  prova: [
-    { id: "relatorios", nome: "📊 Relatórios", tipo: "validacao" },
-    { id: "diagnosticos", nome: "📋 Reavaliação", tipo: "validacao" },
-    { id: "paineis", nome: "📱 Painéis", tipo: "validacao" }
-  ]
-};
 
 function NavegacaoModulos({ categoriaAtiva, onSelecionarModulo, onMostrarTodas, mostrandoTodas = false }) {
   const [expanded, setExpanded] = useState({});
@@ -2432,7 +2301,7 @@ function NavegacaoModulos({ categoriaAtiva, onSelecionarModulo, onMostrarTodas, 
                 position: "absolute",
                 top: "100%",
                 left: 0,
-                background: "white",
+                background: CORES.cartao,
                 border: `1px solid ${CORES.border}`,
                 borderRadius: "4px",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
@@ -2473,52 +2342,6 @@ function NavegacaoModulos({ categoriaAtiva, onSelecionarModulo, onMostrarTodas, 
   );
 }
 
-function NavegacaoFases({ faseAtual, onMudarFase, cliente }) {
-  return (
-    <nav
-      style={{
-        background: CORES.cartao,
-        borderBottom: `1px solid ${CORES.border}`,
-        padding: "20px 32px",
-        display: "flex",
-        gap: "8px",
-        overflowX: "auto",
-        justifyContent: "center",
-      }}
-    >
-      {FASES_ENRAIZAR.map((fase, idx) => (
-        <button
-          key={fase.id}
-          onClick={() => onMudarFase(fase.id)}
-          style={{
-            flex: "0 0 auto",
-            padding: "12px 20px",
-            borderRadius: "6px",
-            border: faseAtual === fase.id ? `2px solid ${CORES.principal}` : `1px solid ${CORES.border}`,
-            background: faseAtual === fase.id ? CORES.hover : "transparent",
-            color: CORES.principal,
-            fontSize: "12px",
-            fontWeight: "600",
-            fontFamily: "'Lora', serif",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-            whiteSpace: "nowrap",
-            transition: "all 0.2s ease",
-          }}
-        >
-          <span>{fase.emoji}</span>
-          <span>{fase.nome}</span>
-          {idx < FASES_ENRAIZAR.length - 1 && (
-            <span style={{ marginLeft: "8px", color: CORES.textoDim, fontSize: "10px" }}>→</span>
-          )}
-        </button>
-      ))}
-    </nav>
-  );
-}
-
 // ─── Árvore (Símbolo do Enraizar) ────────────────────────────────
 function ArvoreEnraizar({ tamanho = 140, cor = CORES.dourado }) {
   return (
@@ -2547,37 +2370,6 @@ function ArvoreEnraizar({ tamanho = 140, cor = CORES.dourado }) {
 }
 
 // ─── CardFase (Visualização de cada fase do Enraizar) ────────────
-function CardFase({ fase, ativo = false, onClick }) {
-  return (
-    <div
-      onClick={onClick}
-      style={{
-        padding: "24px",
-        background: ativo ? CORES.fundoPrincipal : CORES.cartao,
-        border: `2px solid ${ativo ? CORES.principal : CORES.border}`,
-        borderRadius: "12px",
-        cursor: "pointer",
-        transition: "all 0.3s ease",
-        textAlign: "center",
-        flex: "0 0 auto",
-        minWidth: "200px",
-        boxShadow: ativo ? `0 4px 12px rgba(107, 93, 66, 0.15)` : "none",
-        transform: ativo ? "translateY(-2px)" : "none",
-      }}
-    >
-      <div style={{ fontSize: "40px", marginBottom: "12px" }}>{fase.emoji}</div>
-      <h3 style={{ margin: "0 0 8px", fontSize: "16px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif" }}>
-        {fase.nome}
-      </h3>
-      <p style={{ margin: "0", fontSize: "12px", color: CORES.textoDim, lineHeight: "1.4", fontFamily: "'Lora', serif" }}>
-        {fase.descricao}
-      </p>
-      <div style={{ marginTop: "12px", display: "flex", justifyContent: "center" }}>
-        <ArvoreEnraizar tamanho={60} cor={CORES.dourado} />
-      </div>
-    </div>
-  );
-}
 
 // ─── Toast (Notificação) ────────────────────────────────────────
 function Toast({ mensagem, tipo = "info" }) {
@@ -2611,155 +2403,8 @@ function Toast({ mensagem, tipo = "info" }) {
 }
 
 // ─── CardModulo (Exibe um módulo dentro de uma fase) ────────────
-function CardModulo({ modulo, onClick }) {
-  return (
-    <div
-      onClick={onClick}
-      style={{
-        padding: "16px",
-        background: CORES.cartao,
-        border: `1px solid ${CORES.border}`,
-        borderRadius: "8px",
-        cursor: "pointer",
-        transition: "all 0.2s ease",
-        textAlign: "center",
-        flex: "1",
-        minWidth: "140px",
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = CORES.principal;
-        e.currentTarget.style.boxShadow = "0 2px 8px rgba(107, 93, 66, 0.1)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = CORES.border;
-        e.currentTarget.style.boxShadow = "none";
-      }}
-    >
-      <div style={{ fontSize: "24px", marginBottom: "8px" }}>{modulo.nome.split(" ")[0]}</div>
-      <p style={{ margin: "0", fontSize: "11px", color: CORES.textoDim, fontFamily: "'Lora', serif", fontWeight: "500" }}>
-        {modulo.nome.substring(modulo.nome.indexOf(" ") + 1)}
-      </p>
-    </div>
-  );
-}
 
 // ─── TelaDeFases (Dashboard principal com as 6 fases) ────────────
-function TelaDeFases({ faseAtual, onMudarFase, onSelecionarModulo }) {
-  const conteudo = CONTEUDO_FASES[faseAtual] || CONTEUDO_FASES.escuta;
-
-  return (
-    <div style={{ padding: "32px", background: CORES.fundoPrincipal, minHeight: "100vh" }}>
-      <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-        {/* Título */}
-        <h1 style={{ textAlign: "center", fontSize: "32px", fontWeight: "700", color: CORES.principal, marginBottom: "12px", fontFamily: "'Lora', serif" }}>
-          Método Enraizar
-        </h1>
-        <p style={{ textAlign: "center", fontSize: "14px", color: CORES.textoDim, marginBottom: "48px", fontFamily: "'Lora', serif" }}>
-          Todo crescimento começa em quem enraiza — 6 fases de desenvolvimento organizacional
-        </p>
-
-        {/* Grid de Fases */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "24px", marginBottom: "48px" }}>
-          {FASES_ENRAIZAR.map((fase) => (
-            <CardFase
-              key={fase.id}
-              fase={fase}
-              ativo={faseAtual === fase.id}
-              onClick={() => onMudarFase(fase.id)}
-            />
-          ))}
-        </div>
-
-        {/* Conteúdo da Fase Selecionada */}
-        <div style={{ background: CORES.cartao, padding: "32px", borderRadius: "12px", border: `2px solid ${CORES.dourado}`, marginBottom: "40px" }}>
-          <h2 style={{ margin: "0 0 16px", fontSize: "24px", fontWeight: "700", color: CORES.principal, fontFamily: "'Lora', serif" }}>
-            {conteudo.titulo}
-          </h2>
-          <p style={{ margin: "0 0 24px", fontSize: "14px", color: CORES.textoDim, lineHeight: "1.6", fontFamily: "'Lora', serif" }}>
-            {conteudo.descricaoLonga}
-          </p>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "32px" }}>
-            {/* Atividades */}
-            <div>
-              <h3 style={{ margin: "0 0 12px", fontSize: "14px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>
-                Atividades
-              </h3>
-              <ul style={{ margin: "0", padding: "0", listStyle: "none" }}>
-                {conteudo.atividades.map((atividade, idx) => (
-                  <li key={idx} style={{ padding: "8px 0", fontSize: "13px", color: CORES.texto, fontFamily: "'Lora', serif", borderBottom: `1px solid ${CORES.border}`, paddingBottom: "8px" }}>
-                    ✓ {atividade}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Objetivo */}
-            <div>
-              <h3 style={{ margin: "0 0 12px", fontSize: "14px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>
-                Objetivo
-              </h3>
-              <div style={{ background: CORES.hover, padding: "16px", borderRadius: "8px", borderLeft: `4px solid ${CORES.dourado}` }}>
-                <p style={{ margin: "0", fontSize: "13px", color: CORES.texto, lineHeight: "1.6", fontFamily: "'Lora', serif" }}>
-                  {conteudo.objetivo}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Módulos da Fase */}
-        {MODULOS_POR_FASE[faseAtual] && MODULOS_POR_FASE[faseAtual].length > 0 && (
-          <div style={{ marginBottom: "40px" }}>
-            <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>
-              Módulos Nesta Fase
-            </h3>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
-              {MODULOS_POR_FASE[faseAtual].map((modulo) => (
-                <CardModulo
-                  key={modulo.id}
-                  modulo={modulo}
-                  onClick={() => onSelecionarModulo && onSelecionarModulo(modulo.id, faseAtual)}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Legenda */}
-        <div style={{ background: CORES.cartao, padding: "24px", borderRadius: "12px", border: `1px solid ${CORES.border}` }}>
-          <h3 style={{ margin: "0 0 16px", fontSize: "16px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif" }}>
-            Sobre o Enraizar
-          </h3>
-          <p style={{ margin: "0", fontSize: "13px", color: CORES.textoDim, lineHeight: "1.6", fontFamily: "'Lora', serif" }}>
-            O Método Enraizar é uma abordagem integrada de desenvolvimento organizacional que funciona como as raízes de uma árvore.
-            Cada fase é essencial para o crescimento saudável: começamos ouvindo (Escuta), entendendo o contexto (Raio-X),
-            alinhando objetivos (Acordo), desenvolvendo ações (Construção), mantendo o ritmo (Sustentação), e finalmente
-            validando resultados (Prova). As raízes são o alicerce para que a organização cresça forte, significativa e duradoura.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function CampoTexto({ rotulo, valor, onChange, area, linhas, placeholder }) {
-  const base = "w-full px-3 py-2 rounded border bg-white text-sm outline-none focus:ring-2";
-  const estilo = { borderColor: "CORES.laranja", color: CORES.fogoEscuro };
-  return (
-    <label className="block mb-4">
-      <span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>
-        {rotulo}
-      </span>
-      {area ? (
-        <textarea rows={linhas || 3} className={base} style={estilo} value={valor} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} />
-      ) : (
-        <input className={base} style={estilo} value={valor} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} />
-      )}
-    </label>
-  );
-}
-
 function BotaoPrimario({ children, onClick, disabled, style }) {
   return (
     <button
@@ -2857,78 +2502,11 @@ function InputField({ label, placeholder, value, onChange, type = "text", requir
   );
 }
 
-function CardComponent({ children, style, onClick, className = "" }) {
-  return (
-    <div
-      onClick={onClick}
-      className={`rounded-lg transition-all hover:shadow-lg ${className}`}
-      style={{
-        background: CORES.cremePalido,
-        border: `1px solid rgba(60, 24, 30, 0.08)`,
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
-        ...style
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
-function Label({ children, color = CORES.dourado, uppercase = true }) {
-  return (
-    <label
-      style={{
-        fontFamily: "'Lora', serif",
-        fontSize: "11px",
-        fontWeight: "600",
-        letterSpacing: `${uppercase ? "1px" : "0"}`,
-        color: color,
-        textTransform: uppercase ? "uppercase" : "none",
-        display: "block"
-      }}
-    >
-      {children}
-    </label>
-  );
-}
-
-function SectionHeader({ title, subtitle }) {
-  return (
-    <div
-      style={{
-        background: "linear-gradient(180deg, rgba(217, 145, 79, 0.08) 0%, rgba(245, 237, 217, 0.4) 100%)",
-        padding: "28px 32px",
-        borderBottom: `1px solid rgba(60, 24, 30, 0.08)`,
-        marginBottom: "28px"
-      }}
-    >
-      <div
-        style={{
-          fontFamily: "'Lora', serif",
-          fontSize: "18px",
-          fontWeight: "600",
-          color: CORES.fogo,
-          marginBottom: "4px"
-        }}
-      >
-        {title}
-      </div>
-      {subtitle && (
-        <div style={{ fontSize: "12px", color: CORES.madeira }}>
-          {subtitle}
-        </div>
-      )}
-    </div>
-  );
-}
-
-const FRASES_TOCA = [
-  "A louça se lava sozinha...",
-  "As agulhas de tricô trabalham sozinhas...",
-  "A pena escreve sem ninguém segurar...",
-  "A colher mexe o caldeirão sozinha...",
-  "O relógio ajusta os ponteiros...",
-  "Um aceno de varinha e o cômodo se arruma...",
+const FRASES_TRABALHANDO = [
+  "Organizando as ideias...",
+  "Estruturando o conteúdo...",
+  "Revisando os detalhes...",
+  "Quase pronto...",
 ];
 
 function ConfirmarAcao({ rotulo, aviso, onConfirmar, classe }) {
@@ -2957,7 +2535,7 @@ function ConfirmarAcao({ rotulo, aviso, onConfirmar, classe }) {
 }
 
 function Trabalhando() {
-  const [frase] = useState(() => FRASES_TOCA[Math.floor(Math.random() * FRASES_TOCA.length)]);
+  const [frase] = useState(() => FRASES_TRABALHANDO[Math.floor(Math.random() * FRASES_TRABALHANDO.length)]);
   return (
     <div className="py-10 text-center font-serif italic" style={{ color: CORES.dourado }}>
       ENRAIZAR está trabalhando — {frase}
@@ -2971,8 +2549,8 @@ function AvisoErro({ erro }) {
   return (
     <div className="mb-4 p-3 rounded text-sm" style={{ background: "#F0DCD2", color: "#8A3A2E" }}>
       {eLimite
-        ? "A rede de Flu está congestionada — limite de gerações atingido por agora. Recarregue a página e tente de novo em alguns minutos; o que você digitou está salvo."
-        : `Errol bateu na janela e a mensagem não chegou. Verifique a conexão e tente de novo. (${erro})`}
+        ? "Limite de gerações atingido por agora. Recarregue a página e tente de novo em alguns minutos; o que você digitou está salvo."
+        : `Não foi possível conectar. Verifique a conexão e tente de novo. (${erro})`}
     </div>
   );
 }
@@ -3222,155 +2800,17 @@ function FormCliente({ inicial, onSalvar, onCancelar, onExcluir }) {
   );
 }
 
-function BadgesFrentes({ gestao }) {
-  const frentes = (gestao && gestao.frentes) || [];
-  if (frentes.length === 0) return null;
-  return (
-    <div className="flex gap-1.5 flex-wrap mt-2">
-      {frentes.map((f) => {
-        const st = STATUS_FRENTE[f.status];
-        return (
-          <span
-            key={f.id}
-            className="px-2 py-0.5 rounded-full text-xs font-semibold"
-            style={{ background: st.fundo, color: st.cor }}
-            title={st.rotulo}
-          >
-            {f.nome}
-          </span>
-        );
-      })}
-    </div>
-  );
-}
-
 // ─── Header Padrão para Módulos ────────────────────────────────
 function HeaderModulo({ titulo, cliente, onVoltar, acoes }) {
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto", paddingTop: "32px", paddingLeft: "32px", paddingRight: "32px" }}>
-      <button onClick={onVoltar} style={{ fontSize: "11px", marginBottom: "24px", textTransform: "uppercase", fontWeight: "600", background: "none", border: "none", cursor: "pointer", color: "CORES.principal", fontFamily: "'Lora', serif", letterSpacing: "1px" }}>
+      <button onClick={onVoltar} style={{ fontSize: "11px", marginBottom: "24px", textTransform: "uppercase", fontWeight: "600", background: "none", border: "none", cursor: "pointer", color: CORES.principal, fontFamily: "'Lora', serif", letterSpacing: "1px" }}>
         ← {cliente.negocio}
       </button>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "32px", gap: "16px", flexWrap: "wrap" }}>
-        <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "32px", fontWeight: "800", color: "CORES.principal", margin: "0", letterSpacing: "2px" }}>{titulo}</h1>
+        <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "32px", fontWeight: "800", color: CORES.principal, margin: "0", letterSpacing: "2px" }}>{titulo}</h1>
         <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
           {acoes}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function DashboardGamificado({ onNavigate, clientes = [] }) {
-  const cliente = clientes[0] || { negocio: "Sem cliente", segmento: "" };
-
-  return (
-    <div style={{ background: "CORES.cartao", minHeight: "100vh" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700;800&family=Lora:wght@400;500;600;700&display=swap');
-      `}</style>
-
-      {/* HEADER VINHO ESCURO */}
-      <div style={{ background: "CORES.principal", padding: "32px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "24px", flexWrap: "wrap" }}>
-        <div>
-          <h1 style={{ fontSize: "36px", fontWeight: "800", color: CORES.dourado, fontFamily: "'Crimson Text', serif", margin: "0 0 4px 0", letterSpacing: "2px" }}>ENRAIZAR</h1>
-          <p style={{ fontSize: "13px", color: "CORES.dourado", fontFamily: "'Lora', serif", margin: "0", opacity: "0.9" }}>
-            {cliente.negocio}{cliente.segmento ? ` · ${cliente.segmento}` : ""}
-          </p>
-        </div>
-
-        {/* CARDS DE PONTOS E STREAK À DIREITA */}
-        <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-          <div style={{ background: "CORES.dourado", padding: "16px 24px", borderRadius: "6px", textAlign: "center", minWidth: "140px" }}>
-            <div style={{ fontSize: "32px", fontWeight: "800", color: "CORES.principal", fontFamily: "'Crimson Text', serif" }}>285</div>
-            <div style={{ fontSize: "10px", fontWeight: "600", color: "CORES.principal", fontFamily: "'Lora', serif", letterSpacing: "1px" }}>PONTOS</div>
-          </div>
-
-          <div style={{ background: "CORES.dourado", padding: "16px 24px", borderRadius: "6px", textAlign: "center", minWidth: "140px" }}>
-            <div style={{ fontSize: "32px", fontWeight: "800", color: "CORES.principal", fontFamily: "'Crimson Text', serif" }}>4 🔥</div>
-            <div style={{ fontSize: "10px", fontWeight: "600", color: "CORES.principal", fontFamily: "'Lora', serif", letterSpacing: "1px" }}>SEMANAS</div>
-          </div>
-        </div>
-      </div>
-
-      {/* CONTEÚDO PRINCIPAL */}
-      <div style={{ padding: "32px", maxWidth: "1200px", margin: "0 auto" }}>
-
-        {/* 4 CARDS DE DIAS DA SEMANA */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: "16px", marginBottom: "48px" }}>
-          {["Seg", "Ter", "Qua", "Qui"].map((dia) => (
-            <div key={dia} style={{
-              border: "2px solid #4F6B3A",
-              borderRadius: "8px",
-              padding: "20px",
-              textAlign: "center",
-              background: "CORES.cartao",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-            }}>
-              <div style={{ fontSize: "14px", fontWeight: "600", color: "CORES.principal", fontFamily: "'Lora', serif", marginBottom: "12px" }}>{dia}</div>
-              <div style={{ fontSize: "28px", marginBottom: "8px" }}>✓</div>
-              <div style={{ fontSize: "11px", color: "#8B6F47", fontFamily: "'Lora', serif" }}>+8 pontos</div>
-            </div>
-          ))}
-        </div>
-
-        {/* SEÇÃO CONQUISTAS DESBLOQUEADAS */}
-        <div style={{ marginBottom: "48px" }}>
-          <h2 style={{ fontSize: "14px", fontWeight: "700", color: "CORES.principal", fontFamily: "'Lora', serif", uppercase: true, letterSpacing: "2px", marginBottom: "24px", display: "flex", alignItems: "center", gap: "8px" }}>
-            🏆 CONQUISTAS DESBLOQUEADAS
-          </h2>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(90px, 1fr))", gap: "12px" }}>
-            {["Primeiro Passo", "Consistência", "Mestre do Método"].map((badge, idx) => (
-              <div key={idx} style={{
-                background: "#E3EBD8",
-                border: "2px solid #4F6B3A",
-                borderRadius: "8px",
-                padding: "16px",
-                textAlign: "center",
-                cursor: "pointer",
-              }}>
-                <div style={{ fontSize: "32px", marginBottom: "8px" }}>🎖️</div>
-                <div style={{ fontSize: "10px", fontWeight: "600", color: "CORES.principal", fontFamily: "'Lora', serif" }}>{badge}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* PRÓXIMA CONQUISTA */}
-        <div style={{
-          background: "linear-gradient(135deg, rgba(217, 145, 79, 0.1), rgba(212, 175, 55, 0.05))",
-          border: "2px dashed #D9914F",
-          borderRadius: "8px",
-          padding: "32px",
-          textAlign: "center",
-          marginBottom: "48px"
-        }}>
-          <div style={{ fontSize: "48px", marginBottom: "16px" }}>🔒</div>
-          <h3 style={{ fontSize: "18px", fontWeight: "700", color: "CORES.principal", fontFamily: "'Lora', serif", margin: "0 0 8px 0" }}>
-            Mestre do Planejamento
-          </h3>
-          <p style={{ fontSize: "12px", color: "#8B6F47", fontFamily: "'Lora', serif", margin: "0 0 16px 0", lineHeight: "1.6" }}>
-            Complete 10 tarefas estratégicas
-          </p>
-          <div style={{ fontSize: "12px", fontWeight: "600", color: "#4F6B3A", fontFamily: "'Lora', serif", marginBottom: "12px" }}>
-            6 de 10 completas
-          </div>
-          <div style={{ width: "100%", height: "8px", background: "#E3EBD8", borderRadius: "4px", marginBottom: "24px", overflow: "hidden" }}>
-            <div style={{ width: "60%", height: "100%", background: "CORES.laranja" }} />
-          </div>
-          <button style={{ background: "CORES.principal", color: "CORES.cartao", border: "none", padding: "12px 24px", borderRadius: "4px", fontSize: "12px", fontWeight: "600", cursor: "pointer", fontFamily: "'Lora', serif" }}>
-            CONTINUAR ASSIM
-          </button>
-        </div>
-
-        {/* FOOTER COM DICA */}
-        <div style={{ textAlign: "center", padding: "24px 0", borderTop: "2px solid #D4AF37" }}>
-          <div style={{ fontSize: "20px", marginBottom: "8px" }}>💡</div>
-          <p style={{ fontSize: "13px", color: "#8B6F47", fontFamily: "'Lora', serif", lineHeight: "1.6", margin: "0", maxWidth: "600px", marginLeft: "auto", marginRight: "auto" }}>
-            Dica: Quanto mais consistente, mais pontos!<br />Continue sua sequência. Você está no caminho certo.
-          </p>
         </div>
       </div>
     </div>
@@ -3436,7 +2876,7 @@ function DashboardInicial({ clientes, nomeUsuario, onSetNomeUsuario, onAbrir, on
           <div
             key={k.label}
             style={{
-              background: "white",
+              background: CORES.cartao,
               border: `2px solid ${k.cor}`,
               borderRadius: "8px",
               padding: "20px",
@@ -3475,7 +2915,7 @@ function DashboardInicial({ clientes, nomeUsuario, onSetNomeUsuario, onAbrir, on
       </div>
 
       {/* Gráfico de Clientes por Fase */}
-      <div style={{ marginBottom: "32px", padding: "24px", background: "white", borderRadius: "8px", border: `1px solid ${CORES.border}` }}>
+      <div style={{ marginBottom: "32px", padding: "24px", background: CORES.cartao, borderRadius: "8px", border: `1px solid ${CORES.border}` }}>
         <h2 style={{ fontSize: "16px", fontWeight: "700", color: CORES.principal, margin: "0 0 16px 0", fontFamily: "'Lora', serif", letterSpacing: "1px", textTransform: "uppercase" }}>
           Clientes por Fase
         </h2>
@@ -3523,7 +2963,7 @@ function DashboardInicial({ clientes, nomeUsuario, onSetNomeUsuario, onAbrir, on
                   padding: "16px",
                   borderRadius: "4px",
                   border: `1px solid ${CORES.border}`,
-                  background: "white",
+                  background: CORES.cartao,
                   cursor: "pointer",
                   transition: "all 0.2s ease",
                   fontFamily: "'Lora', serif",
@@ -3556,12 +2996,12 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto", paddingTop: "32px", paddingLeft: "32px", paddingRight: "32px", paddingBottom: "32px" }}>
       {backupPendente && (
-        <div style={{ marginBottom: "24px", padding: "16px", borderRadius: "4px", display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap", background: "CORES.hover", border: "2px solid #D4AF37" }}>
-          <span style={{ fontSize: "13px", color: "#3C181E", fontFamily: "'Lora', serif" }}>
+        <div style={{ marginBottom: "24px", padding: "16px", borderRadius: "4px", display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap", background: CORES.hover, border: "2px solid #D4AF37" }}>
+          <span style={{ fontSize: "13px", color: "#4A4035", fontFamily: "'Lora', serif" }}>
             Backup lido: {backupPendente.clientes.length} cliente(s). Aplicar substitui todos os dados atuais do app.
           </span>
           <BotaoPrimario onClick={onAplicarBackup}>Aplicar backup</BotaoPrimario>
-          <button onClick={onCancelarBackup} style={{ fontSize: "11px", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", color: "CORES.textoDim", fontFamily: "'Lora', serif" }}>Cancelar</button>
+          <button onClick={onCancelarBackup} style={{ fontSize: "11px", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", color: CORES.textoDim, fontFamily: "'Lora', serif" }}>Cancelar</button>
         </div>
       )}
 
@@ -3569,7 +3009,7 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
       <div style={{ marginTop: "0", paddingTop: "32px", marginBottom: "24px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
         <div style={{ flex: 1 }}>
           {nomeUsuario ? (
-            <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "28px", fontWeight: "800", letterSpacing: "2px", color: "CORES.principal", margin: "0 0 4px 0" }}>
+            <h1 style={{ fontFamily: "'Crimson Text', serif", fontSize: "28px", fontWeight: "800", letterSpacing: "2px", color: CORES.principal, margin: "0 0 4px 0" }}>
               Oi, {nomeUsuario.split(" ")[0]}
             </h1>
           ) : (
@@ -3598,8 +3038,8 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
           <button
             onClick={onNovo}
             style={{
-              background: "CORES.principal",
-              color: "CORES.cartao",
+              background: CORES.principal,
+              color: CORES.cartao,
               border: "none",
               padding: "8px 16px",
               borderRadius: "4px",
@@ -3615,8 +3055,8 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
             <button
               onClick={onVoltar}
               style={{
-                background: "CORES.principal",
-                color: "CORES.cartao",
+                background: CORES.principal,
+                color: CORES.cartao,
                 border: "none",
                 padding: "8px 16px",
                 borderRadius: "4px",
@@ -3632,15 +3072,15 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
         </div>
       </div>
 
-      <div style={{ marginBottom: "24px", padding: "20px 24px", background: "linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%)", borderBottom: "1px solid rgba(60, 24, 30, 0.08)", borderRadius: "4px 4px 0 0" }}>
-        <h3 style={{ fontSize: "14px", fontWeight: "600", color: "CORES.principal", fontFamily: "'Crimson Text', serif", margin: "0" }}>Engajamentos Ativos</h3>
+      <div style={{ marginBottom: "24px", padding: "20px 24px", background: "linear-gradient(180deg, rgba(217, 145, 79, 0.1) 0%, rgba(245, 237, 217, 0.3) 100%)", borderBottom: "1px solid rgba(74,64,53, 0.08)", borderRadius: "4px 4px 0 0" }}>
+        <h3 style={{ fontSize: "14px", fontWeight: "600", color: CORES.principal, fontFamily: "'Crimson Text', serif", margin: "0" }}>Engajamentos Ativos</h3>
       </div>
 
       {clientes.length === 0 ? (
-        <div style={{ textAlign: "center", paddingTop: "32px", paddingBottom: "32px", borderRadius: "4px", background: "CORES.cartao", border: "2px dashed #D4AF37" }}>
-          <p style={{ fontSize: "16px", fontFamily: "'Crimson Text', serif", marginBottom: "12px", color: "CORES.principal" }}>📭 ENRAIZAR está vazio</p>
+        <div style={{ textAlign: "center", paddingTop: "32px", paddingBottom: "32px", borderRadius: "4px", background: CORES.cartao, border: "2px dashed #D4AF37" }}>
+          <p style={{ fontSize: "16px", fontFamily: "'Crimson Text', serif", marginBottom: "12px", color: CORES.principal }}>📭 ENRAIZAR está vazio</p>
           <p style={{ fontSize: "13px", color: "#A0826D", fontFamily: "'Lora', serif" }}>nenhum cliente ainda</p>
-          <p style={{ fontSize: "11px", marginTop: "16px", color: "CORES.textoDim", fontFamily: "'Lora', serif" }}>Cadastre o primeiro cliente para começar a gerar documentos.</p>
+          <p style={{ fontSize: "11px", marginTop: "16px", color: CORES.textoDim, fontFamily: "'Lora', serif" }}>Cadastre o primeiro cliente para começar a gerar documentos.</p>
         </div>
       ) : (
         <>
@@ -3650,7 +3090,7 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
               width: 100%;
               border-collapse: collapse;
               background: #FFFBF0;
-              border: 1px solid #D9914F;
+              border: 1px solid #7BA85C;
               font-size: 13px;
             }
             .clientes-cards {
@@ -3671,13 +3111,13 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
 
           <table className="clientes-table">
           <thead>
-            <tr style={{ borderBottom: "2px solid #D4AF37", background: "CORES.hover" }}>
-              <th style={{ textAlign: "left", padding: "12px", fontSize: "11px", fontWeight: "600", color: "CORES.principal", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", minWidth: "150px" }}>Cliente</th>
-              <th style={{ textAlign: "left", padding: "12px", fontSize: "11px", fontWeight: "600", color: "CORES.principal", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", minWidth: "180px" }}>Segmento</th>
-              <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: "CORES.principal", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Status</th>
-              <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: "CORES.principal", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Progresso</th>
-              <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: "CORES.principal", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Semana</th>
-              <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: "CORES.principal", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Ações</th>
+            <tr style={{ borderBottom: "2px solid #D4AF37", background: CORES.hover }}>
+              <th style={{ textAlign: "left", padding: "12px", fontSize: "11px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", minWidth: "150px" }}>Cliente</th>
+              <th style={{ textAlign: "left", padding: "12px", fontSize: "11px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px", minWidth: "180px" }}>Segmento</th>
+              <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Status</th>
+              <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Progresso</th>
+              <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Semana</th>
+              <th style={{ textAlign: "center", padding: "12px", fontSize: "11px", fontWeight: "600", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -3698,7 +3138,7 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
               } else {
                 statusBadge = "Novo";
                 statusIcon = "✨";
-                statusColor = "CORES.textoDim";
+                statusColor = CORES.textoDim;
                 statusBg = "#F0DCD2";
               }
 
@@ -3707,15 +3147,15 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
                   key={c.id}
                   style={{
                     borderBottom: "1px solid rgba(212, 175, 55, 0.2)",
-                    background: idx % 2 === 0 ? "CORES.cartao" : "#FBF9F5",
+                    background: idx % 2 === 0 ? CORES.cartao : "#FBF9F5",
                     cursor: "pointer",
                     transition: "background-color 0.2s ease"
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = "CORES.hover"}
-                  onMouseLeave={(e) => e.currentTarget.style.background = (idx % 2 === 0 ? "CORES.cartao" : "#FBF9F5")}
+                  onMouseEnter={(e) => e.currentTarget.style.background = CORES.hover}
+                  onMouseLeave={(e) => e.currentTarget.style.background = (idx % 2 === 0 ? CORES.cartao : "#FBF9F5")}
                   onClick={() => onAbrir(c.id)}
                 >
-                  <td style={{ padding: "12px", fontSize: "13px", color: "CORES.principal", fontFamily: "'Lora', serif", fontWeight: "600" }}>
+                  <td style={{ padding: "12px", fontSize: "13px", color: CORES.principal, fontFamily: "'Lora', serif", fontWeight: "600" }}>
                     {c.negocio}
                   </td>
                   <td style={{ padding: "12px", fontSize: "13px", color: "#A0826D", fontFamily: "'Lora', serif" }}>
@@ -3726,10 +3166,10 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
                       {statusIcon} {statusBadge}
                     </span>
                   </td>
-                  <td style={{ padding: "12px", fontSize: "13px", textAlign: "center", color: "CORES.principal", fontFamily: "'Lora', serif" }}>
+                  <td style={{ padding: "12px", fontSize: "13px", textAlign: "center", color: CORES.principal, fontFamily: "'Lora', serif" }}>
                     {gestao.frentes ? `${Math.min(100, (gestao.frentes.filter((f) => f.status === "concluida").length / gestao.frentes.length) * 100 || 0).toFixed(0)}%` : "0%"}
                   </td>
-                  <td style={{ padding: "12px", fontSize: "12px", textAlign: "center", color: "CORES.principal", fontFamily: "'Lora', serif", fontWeight: "600" }}>
+                  <td style={{ padding: "12px", fontSize: "12px", textAlign: "center", color: CORES.principal, fontFamily: "'Lora', serif", fontWeight: "600" }}>
                     S{Math.ceil(Math.random() * 12)}/12
                   </td>
                   <td style={{ padding: "12px", fontSize: "12px", textAlign: "center" }}>
@@ -3738,7 +3178,7 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
                         e.stopPropagation();
                         onAbrir(c.id);
                       }}
-                      style={{ color: "CORES.principal", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", fontFamily: "'Lora', serif", marginRight: "12px", fontSize: "12px" }}
+                      style={{ color: CORES.principal, textDecoration: "underline", background: "none", border: "none", cursor: "pointer", fontFamily: "'Lora', serif", marginRight: "12px", fontSize: "12px" }}
                     >
                       {statusBadge === "Novo" ? "Abrir" : statusBadge === "Em andamento" ? "Ver relatório" : "Aguardando"}
                     </button>
@@ -3749,7 +3189,7 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
           </tbody>
         </table>
 
-        <div style={{ marginTop: "0", padding: "16px 24px", background: "CORES.hover", borderTop: "1px solid rgba(60, 24, 30, 0.08)", fontSize: "11px", color: "#6B5D4F", fontFamily: "'Lora', serif" }}>
+        <div style={{ marginTop: "0", padding: "16px 24px", background: CORES.hover, borderTop: "1px solid rgba(74,64,53, 0.08)", fontSize: "11px", color: "#6B5D4F", fontFamily: "'Lora', serif" }}>
           {clientes.filter(c => gestaoPorCliente[c.id]?.frentes?.length).length} em andamento · {clientes.filter(c => c.tipo === "pessoa").length} mentorado(s) · Total: {clientes.length} engajamento{clientes.length !== 1 ? 's' : ''}
         </div>
 
@@ -3771,7 +3211,7 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
               } else {
                 statusBadge = "Novo";
                 statusIcon = "✨";
-                statusColor = "CORES.textoDim";
+                statusColor = CORES.textoDim;
                 statusBg = "#F0DCD2";
               }
 
@@ -3781,14 +3221,14 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
                   onClick={() => onAbrir(c.id)}
                   style={{
                     padding: "16px",
-                    background: "CORES.cartao",
-                    border: "1px solid #D9914F",
+                    background: CORES.cartao,
+                    border: "1px solid #7BA85C",
                     borderRadius: "4px",
                     cursor: "pointer",
                     transition: "all 0.3s ease",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(92, 26, 43, 0.15)";
+                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(107,93,66, 0.15)";
                     e.currentTarget.style.transform = "translateY(-2px)";
                   }}
                   onMouseLeave={(e) => {
@@ -3797,7 +3237,7 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
                   }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
-                    <h3 style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "800", color: "CORES.principal", margin: "0" }}>
+                    <h3 style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "800", color: CORES.principal, margin: "0" }}>
                       {c.negocio}
                     </h3>
                     <span style={{ display: "inline-block", padding: "4px 8px", borderRadius: "12px", background: statusBg, color: statusColor, fontWeight: "600", fontFamily: "'Lora', serif", fontSize: "10px" }}>
@@ -3811,12 +3251,12 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
 
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginTop: "12px", paddingTop: "12px", borderTop: "1px solid rgba(212, 175, 55, 0.2)" }}>
                     <div>
-                      <p style={{ fontSize: "10px", color: "CORES.textoDim", fontFamily: "'Lora', serif", textTransform: "uppercase", margin: "0 0 4px 0" }}>Semana</p>
-                      <p style={{ fontSize: "14px", fontWeight: "600", color: "CORES.principal", fontFamily: "'Crimson Text', serif", margin: "0" }}>S{Math.ceil(Math.random() * 12)}/12</p>
+                      <p style={{ fontSize: "10px", color: CORES.textoDim, fontFamily: "'Lora', serif", textTransform: "uppercase", margin: "0 0 4px 0" }}>Semana</p>
+                      <p style={{ fontSize: "14px", fontWeight: "600", color: CORES.principal, fontFamily: "'Crimson Text', serif", margin: "0" }}>S{Math.ceil(Math.random() * 12)}/12</p>
                     </div>
                     <div>
-                      <p style={{ fontSize: "10px", color: "CORES.textoDim", fontFamily: "'Lora', serif", textTransform: "uppercase", margin: "0 0 4px 0" }}>Progresso</p>
-                      <p style={{ fontSize: "14px", fontWeight: "600", color: "CORES.principal", fontFamily: "'Crimson Text', serif", margin: "0" }}>
+                      <p style={{ fontSize: "10px", color: CORES.textoDim, fontFamily: "'Lora', serif", textTransform: "uppercase", margin: "0 0 4px 0" }}>Progresso</p>
+                      <p style={{ fontSize: "14px", fontWeight: "600", color: CORES.principal, fontFamily: "'Crimson Text', serif", margin: "0" }}>
                         {gestao.frentes ? `${Math.min(100, (gestao.frentes.filter((f) => f.status === "concluida").length / gestao.frentes.length) * 100 || 0).toFixed(0)}%` : "0%"}
                       </p>
                     </div>
@@ -3828,7 +3268,7 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
                         e.stopPropagation();
                         onAbrir(c.id);
                       }}
-                      style={{ flex: 1, padding: "8px", background: "CORES.principal", color: "CORES.cartao", border: "none", borderRadius: "4px", cursor: "pointer", fontFamily: "'Lora', serif", fontSize: "12px", fontWeight: "600" }}
+                      style={{ flex: 1, padding: "8px", background: CORES.principal, color: CORES.cartao, border: "none", borderRadius: "4px", cursor: "pointer", fontFamily: "'Lora', serif", fontSize: "12px", fontWeight: "600" }}
                     >
                       Abrir
                     </button>
@@ -3837,7 +3277,7 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
                       aviso={`apaga ${c.negocio} e TODOS os seus dados`}
                       onConfirmar={() => onExcluir(c.id)}
                       classe="text-xs px-2 py-1 rounded font-semibold"
-                      style={{ color: "#8A3A2E", background: "#F0DCD2", border: "1px solid #D9914F", borderRadius: "4px", padding: "8px", flex: 0.2, cursor: "pointer" }}
+                      style={{ color: "#8A3A2E", background: "#F0DCD2", border: "1px solid #7BA85C", borderRadius: "4px", padding: "8px", flex: 0.2, cursor: "pointer" }}
                     />
                   </div>
                 </div>
@@ -3847,12 +3287,12 @@ function ListaClientes({ clientes, gestaoPorCliente, fases, backupPendente, onAp
         </>
       )}
 
-      <div style={{ marginTop: "48px", paddingTop: "24px", borderTop: "4px solid #D4AF37", display: "flex", alignItems: "center", gap: "24px", fontSize: "13px", color: "CORES.principal", fontFamily: "'Lora', serif" }}>
+      <div style={{ marginTop: "48px", paddingTop: "24px", borderTop: "4px solid #D4AF37", display: "flex", alignItems: "center", gap: "24px", fontSize: "13px", color: CORES.principal, fontFamily: "'Lora', serif" }}>
         <span>Seu histórico no ENRAIZAR — seus dados vivem neste app:</span>
-        <button onClick={onExportarBackup} style={{ textDecoration: "underline", background: "none", border: "none", cursor: "pointer", color: "CORES.dourado", fontSize: "13px", fontFamily: "'Lora', serif" }}>
+        <button onClick={onExportarBackup} style={{ textDecoration: "underline", background: "none", border: "none", cursor: "pointer", color: CORES.dourado, fontSize: "13px", fontFamily: "'Lora', serif" }}>
           Exportar backup (.json)
         </button>
-        <label style={{ textDecoration: "underline", cursor: "pointer", color: "CORES.dourado", fontSize: "13px", fontFamily: "'Lora', serif" }}>
+        <label style={{ textDecoration: "underline", cursor: "pointer", color: CORES.dourado, fontSize: "13px", fontFamily: "'Lora', serif" }}>
           Importar backup
           <input
             type="file"
@@ -3911,7 +3351,7 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
     "docs-politicas": totalPoliticas > 0 ? `${totalPoliticas} política${totalPoliticas > 1 ? "s" : ""}` : "Nenhuma ainda",
     "docs-checklists": totalChecklists > 0 ? `${totalChecklists} checklist${totalChecklists > 1 ? "s" : ""}` : "Nenhum ainda",
     relatorios: totalRelatorios > 0 ? `${totalRelatorios} relatório${totalRelatorios > 1 ? "s" : ""}` : "Malfeito feito — o fechamento do ciclo",
-    financeiro: resumoFinanceiro || "O cofre de Gringotes",
+    financeiro: resumoFinanceiro || "Nenhuma parcela registrada",
   };
 
   const TITULOS = {
@@ -3960,25 +3400,25 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
         textAlign: "left",
         padding: compacto ? "16px" : "20px",
         borderRadius: "4px",
-        border: "1px solid #D9914F",
-        background: "CORES.cartao",
-        boxShadow: "0 2px 8px rgba(92, 26, 43, 0.1)",
+        border: "1px solid #7BA85C",
+        background: CORES.cartao,
+        boxShadow: "0 2px 8px rgba(107,93,66, 0.1)",
         cursor: "pointer",
         transition: "all 0.3s ease"
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = "0 8px 16px rgba(92, 26, 43, 0.2)";
+        e.currentTarget.style.boxShadow = "0 8px 16px rgba(107,93,66, 0.2)";
         e.currentTarget.style.transform = "translateY(-2px)";
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = "0 2px 8px rgba(92, 26, 43, 0.1)";
+        e.currentTarget.style.boxShadow = "0 2px 8px rgba(107,93,66, 0.1)";
         e.currentTarget.style.transform = "translateY(0)";
       }}
     >
-      <div style={{ fontFamily: "'Crimson Text', serif", marginBottom: "4px", fontSize: compacto ? "16px" : "18px", fontWeight: "600", color: "CORES.principal" }}>
+      <div style={{ fontFamily: "'Crimson Text', serif", marginBottom: "4px", fontSize: compacto ? "16px" : "18px", fontWeight: "600", color: CORES.principal }}>
         {TITULOS[chave]}
       </div>
-      <div style={{ fontSize: "11px", color: "CORES.textoDim", fontFamily: "'Lora', serif" }}>{estados[chave]}</div>
+      <div style={{ fontSize: "11px", color: CORES.textoDim, fontFamily: "'Lora', serif" }}>{estados[chave]}</div>
     </button>
   );
   return (
@@ -3998,11 +3438,11 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
       <NavegacaoModulos categoriaAtiva={null} onSelecionarModulo={onModulo} />
 
       {(metasAceitas || []).filter((m) => m.objetivo).length > 0 && (
-        <div style={{ marginBottom: "12px", padding: "16px", borderRadius: "4px", background: "CORES.hover", border: "1px solid #D4AF37" }}>
+        <div style={{ marginBottom: "12px", padding: "16px", borderRadius: "4px", background: CORES.hover, border: "1px solid #D4AF37" }}>
           <div style={{ fontSize: "11px", textTransform: "uppercase", fontWeight: "600", marginBottom: "8px", color: "#9A6A2F", fontFamily: "'Lora', serif", letterSpacing: "1px" }}>Metas pactuadas</div>
           {(metasAceitas || []).filter((m) => m.objetivo).map((m) => (
-            <div key={m.id} style={{ fontSize: "13px", paddingTop: "3px", paddingBottom: "3px", color: "#3C181E", fontFamily: "'Lora', serif" }}>
-              • {m.objetivo}{m.prazo ? <span style={{ fontSize: "11px", color: "CORES.textoDim" }}> — até {m.prazo}</span> : null}
+            <div key={m.id} style={{ fontSize: "13px", paddingTop: "3px", paddingBottom: "3px", color: "#4A4035", fontFamily: "'Lora', serif" }}>
+              • {m.objetivo}{m.prazo ? <span style={{ fontSize: "11px", color: CORES.textoDim }}> — até {m.prazo}</span> : null}
             </div>
           ))}
         </div>
@@ -4011,17 +3451,17 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
       {(servicosCliente.treinamentos || servicosCliente.mentoria) && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "12px", marginBottom: "32px" }}>
           {servicosCliente.treinamentos && (
-            <button onClick={() => onModulo("treinamentos")} style={{ textAlign: "left", padding: "16px", borderRadius: "4px", border: "1px solid #D9914F", background: "CORES.cartao", boxShadow: "0 2px 8px rgba(92, 26, 43, 0.1)", cursor: "pointer", transition: "all 0.3s ease" }} onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 16px rgba(92, 26, 43, 0.2)"; e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 2px 8px rgba(92, 26, 43, 0.1)"; e.currentTarget.style.transform = "translateY(0)"; }}>
-              <div style={{ fontFamily: "'Crimson Text', serif", color: "CORES.principal", fontSize: "18px", fontWeight: "600" }}>Treinamentos</div>
-              <div style={{ fontSize: "11px", marginTop: "3px", color: "CORES.textoDim", fontFamily: "'Lora', serif" }}>
-                {totalTreinamentos > 0 ? `${totalTreinamentosRealizados}/${totalTreinamentos} realizados` : "A Sala Precisa aguarda a primeira turma"}
+            <button onClick={() => onModulo("treinamentos")} style={{ textAlign: "left", padding: "16px", borderRadius: "4px", border: "1px solid #7BA85C", background: CORES.cartao, boxShadow: "0 2px 8px rgba(107,93,66, 0.1)", cursor: "pointer", transition: "all 0.3s ease" }} onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 16px rgba(107,93,66, 0.2)"; e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 2px 8px rgba(107,93,66, 0.1)"; e.currentTarget.style.transform = "translateY(0)"; }}>
+              <div style={{ fontFamily: "'Crimson Text', serif", color: CORES.principal, fontSize: "18px", fontWeight: "600" }}>Treinamentos</div>
+              <div style={{ fontSize: "11px", marginTop: "3px", color: CORES.textoDim, fontFamily: "'Lora', serif" }}>
+                {totalTreinamentos > 0 ? `${totalTreinamentosRealizados}/${totalTreinamentos} realizados` : "Nenhum treinamento ainda"}
               </div>
             </button>
           )}
           {servicosCliente.mentoria && (
-            <button onClick={() => onModulo("mentoria")} style={{ textAlign: "left", padding: "16px", borderRadius: "4px", border: "1px solid #D9914F", background: "CORES.cartao", boxShadow: "0 2px 8px rgba(92, 26, 43, 0.1)", cursor: "pointer", transition: "all 0.3s ease" }} onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 16px rgba(92, 26, 43, 0.2)"; e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 2px 8px rgba(92, 26, 43, 0.1)"; e.currentTarget.style.transform = "translateY(0)"; }}>
-              <div style={{ fontFamily: "'Crimson Text', serif", color: "CORES.principal", fontSize: "18px", fontWeight: "600" }}>Mentoria</div>
-              <div style={{ fontSize: "11px", marginTop: "3px", color: "CORES.textoDim", fontFamily: "'Lora', serif" }}>
+            <button onClick={() => onModulo("mentoria")} style={{ textAlign: "left", padding: "16px", borderRadius: "4px", border: "1px solid #7BA85C", background: CORES.cartao, boxShadow: "0 2px 8px rgba(107,93,66, 0.1)", cursor: "pointer", transition: "all 0.3s ease" }} onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 16px rgba(107,93,66, 0.2)"; e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 2px 8px rgba(107,93,66, 0.1)"; e.currentTarget.style.transform = "translateY(0)"; }}>
+              <div style={{ fontFamily: "'Crimson Text', serif", color: CORES.principal, fontSize: "18px", fontWeight: "600" }}>Mentoria</div>
+              <div style={{ fontSize: "11px", marginTop: "3px", color: CORES.textoDim, fontFamily: "'Lora', serif" }}>
                 {totalEncontros > 0 ? `${totalEncontrosRealizados}/${totalEncontros} encontros realizados` : "Jornada ainda não desenhada"}
               </div>
             </button>
@@ -4032,31 +3472,31 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
       {proximoPasso && servicosCliente.consultoria && (
         <button
           onClick={() => onModulo(proximoPasso.modulo)}
-          style={{ textAlign: "left", width: "100%", padding: "16px 20px", borderRadius: "4px", marginBottom: "12px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", flexWrap: "wrap", background: "CORES.hover", border: "1px solid #D4AF37", cursor: "pointer", transition: "all 0.3s ease" }}
+          style={{ textAlign: "left", width: "100%", padding: "16px 20px", borderRadius: "4px", marginBottom: "12px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", flexWrap: "wrap", background: CORES.hover, border: "1px solid #D4AF37", cursor: "pointer", transition: "all 0.3s ease" }}
           onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 4px 12px rgba(212, 175, 55, 0.2)"; }}
           onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "none"; }}
         >
-          <span style={{ fontSize: "13px", color: "#3C181E", fontFamily: "'Lora', serif" }}>
-            <span style={{ fontWeight: "600", color: "CORES.dourado" }}>Próximo passo · </span>
+          <span style={{ fontSize: "13px", color: "#4A4035", fontFamily: "'Lora', serif" }}>
+            <span style={{ fontWeight: "600", color: CORES.dourado }}>Próximo passo · </span>
             {proximoPasso.texto}
           </span>
-          <span style={{ fontSize: "11px", fontWeight: "600", color: "CORES.dourado", fontFamily: "'Lora', serif" }}>abrir →</span>
+          <span style={{ fontSize: "11px", fontWeight: "600", color: CORES.dourado, fontFamily: "'Lora', serif" }}>abrir →</span>
         </button>
       )}
 
       <button
         onClick={() => onModulo("penseira")}
-        style={{ textAlign: "left", width: "100%", padding: "20px", borderRadius: "4px", marginBottom: "32px", display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "12px", flexWrap: "wrap", background: "#3C181E", border: "1px solid #8A3A2E", cursor: "pointer", transition: "all 0.3s ease" }}
-        onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 16px rgba(92, 26, 43, 0.3)"; }}
+        style={{ textAlign: "left", width: "100%", padding: "20px", borderRadius: "4px", marginBottom: "32px", display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "12px", flexWrap: "wrap", background: "#4A4035", border: "1px solid #8A3A2E", cursor: "pointer", transition: "all 0.3s ease" }}
+        onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 16px rgba(107,93,66, 0.3)"; }}
         onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "none"; }}
       >
-        <span style={{ fontFamily: "'Crimson Text', serif", fontSize: "18px", fontWeight: "600", color: "CORES.dourado" }}>Penseira</span>
-        <span style={{ fontSize: "11px", color: "CORES.laranja", fontFamily: "'Lora', serif" }}>Despeje um pensamento e examine-o com clareza — soluções e dúvidas com base legal, sobre qualquer cômodo</span>
+        <span style={{ fontFamily: "'Crimson Text', serif", fontSize: "18px", fontWeight: "600", color: CORES.dourado }}>Conselheira</span>
+        <span style={{ fontSize: "11px", color: CORES.laranja, fontFamily: "'Lora', serif" }}>Despeje um pensamento e examine-o com clareza — soluções e dúvidas com base legal, sobre qualquer cômodo</span>
       </button>
 
       {(servicosCliente.consultoria || ehPessoa) && (
       <div style={{ marginBottom: "32px" }}>
-        <div style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "800", marginBottom: "6px", color: "CORES.principal" }}>{ehPessoa ? "Ala do Mentorado" : "Ala do Contratante"}</div>
+        <div style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "800", marginBottom: "6px", color: CORES.principal }}>{ehPessoa ? "Ala do Mentorado" : "Ala do Contratante"}</div>
         <div style={{ fontSize: "11px", marginBottom: "16px", color: "#A89878", fontFamily: "'Lora', serif" }}>{ehPessoa ? "A pessoa, o combinado e o entorno — mapeie também quem ela lidera" : "A pessoa e a relação — de quem contrata ao que foi combinado"}</div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "12px" }}>
           {alaContratante.map((chave) => (
@@ -4068,11 +3508,11 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
 
       {servicosCliente.consultoria && (
       <div style={{ marginBottom: "32px" }}>
-        <div style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "800", marginBottom: "6px", color: "CORES.principal" }}>Ala do Negócio</div>
+        <div style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "800", marginBottom: "6px", color: CORES.principal }}>Ala do Negócio</div>
         <div style={{ fontSize: "11px", marginBottom: "16px", color: "#A89878", fontFamily: "'Lora', serif" }}>A empresa, organizada por frentes de trabalho</div>
         {alaNegocio.map((grupo) => (
           <div key={grupo.frente} style={{ marginBottom: "24px" }}>
-            <div style={{ fontSize: "11px", textTransform: "uppercase", fontWeight: "600", marginBottom: "12px", color: "CORES.dourado", fontFamily: "'Lora', serif", letterSpacing: "1px" }}>
+            <div style={{ fontSize: "11px", textTransform: "uppercase", fontWeight: "600", marginBottom: "12px", color: CORES.dourado, fontFamily: "'Lora', serif", letterSpacing: "1px" }}>
               {grupo.frente}
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "12px" }}>
@@ -4090,42 +3530,6 @@ function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCa
 
 // ─── Módulo: Tabela Disciplinar ─────────────────────────────────
 
-function LinhaInfracao({ item, onMudar, onRemover }) {
-  return (
-    <div className="flex items-start gap-2 py-2 border-b" style={{ borderColor: "#EFE8D6" }}>
-      <input
-        className="w-28 shrink-0 px-2 py-1 text-xs rounded border bg-white"
-        style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
-        value={item.setor}
-        onChange={(e) => onMudar({ ...item, setor: e.target.value })}
-      />
-      <input
-        className="flex-1 px-2 py-1 text-sm rounded border bg-white"
-        style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
-        value={item.infracao}
-        onChange={(e) => onMudar({ ...item, infracao: e.target.value })}
-      />
-      <select
-        className="px-2 py-1 text-xs rounded border font-semibold"
-        style={{
-          borderColor: GRAV_INFO[item.gravidade].cor,
-          background: GRAV_INFO[item.gravidade].fundo,
-          color: GRAV_INFO[item.gravidade].cor,
-        }}
-        value={item.gravidade}
-        onChange={(e) => onMudar({ ...item, gravidade: e.target.value })}
-      >
-        {GRAVIDADES.map((g) => (
-          <option key={g} value={g}>{GRAV_INFO[g].rotulo}</option>
-        ))}
-      </select>
-      <button onClick={onRemover} className="px-2 py-1 text-xs" style={{ color: "#B8860B" }} title="Remover">
-        ✕
-      </button>
-    </div>
-  );
-}
-
 function agruparPorSetor(tabela) {
   return [...new Set(tabela.map((t) => t.setor))].map((s) => ({
     setor: s,
@@ -4139,7 +3543,7 @@ function ModuloTabela({ cliente, tabela, gerando, erro, onGerar, onMudarTabela, 
   const grupos = tabela ? agruparPorSetor(tabela) : [];
 
   return (
-    <div style={{ background: "CORES.cartao", minHeight: "100vh", paddingBottom: "64px" }}>
+    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
       <HeaderModulo
         titulo="Tabela Disciplinar"
         cliente={cliente}
@@ -4158,21 +3562,21 @@ function ModuloTabela({ cliente, tabela, gerando, erro, onGerar, onMudarTabela, 
         {gerando && <Trabalhando />}
 
         {!gerando && !tabela && !erro && (
-          <p className="text-sm py-6" style={{ color: "CORES.textoDim" }}>
+          <p className="text-sm py-6" style={{ color: CORES.textoDim }}>
             Nenhuma tabela gerada ainda. A IA parte da tabela-mãe e adapta aos dados do cliente — você revisa e ajusta tudo antes de exportar.
           </p>
         )}
 
         {!gerando && tabela && (
           <>
-            <table style={{ width: "100%", borderCollapse: "collapse", background: "CORES.cartao", marginBottom: "20px" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", background: CORES.cartao, marginBottom: "20px" }}>
               <thead>
                 <tr style={{ borderBottom: "2px solid #D4AF37", background: "#EFE8D6" }}>
-                  <th style={{ textAlign: "left", padding: "16px", fontSize: "11px", fontWeight: "700", color: "CORES.principal", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Setor</th>
-                  <th style={{ textAlign: "left", padding: "16px", fontSize: "11px", fontWeight: "700", color: "CORES.principal", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Infração</th>
-                  <th style={{ textAlign: "center", padding: "16px", fontSize: "11px", fontWeight: "700", color: "CORES.principal", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Gravidade</th>
-                  <th style={{ textAlign: "center", padding: "16px", fontSize: "11px", fontWeight: "700", color: "CORES.principal", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Medida</th>
-                  <th style={{ textAlign: "center", padding: "16px", fontSize: "11px", fontWeight: "700", color: "CORES.principal", fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Ações</th>
+                  <th style={{ textAlign: "left", padding: "16px", fontSize: "11px", fontWeight: "700", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Setor</th>
+                  <th style={{ textAlign: "left", padding: "16px", fontSize: "11px", fontWeight: "700", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Infração</th>
+                  <th style={{ textAlign: "center", padding: "16px", fontSize: "11px", fontWeight: "700", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Gravidade</th>
+                  <th style={{ textAlign: "center", padding: "16px", fontSize: "11px", fontWeight: "700", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Medida</th>
+                  <th style={{ textAlign: "center", padding: "16px", fontSize: "11px", fontWeight: "700", color: CORES.principal, fontFamily: "'Lora', serif", textTransform: "uppercase", letterSpacing: "1px" }}>Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -4181,19 +3585,19 @@ function ModuloTabela({ cliente, tabela, gerando, erro, onGerar, onMudarTabela, 
                     key={item.id}
                     style={{
                       borderBottom: "1px solid rgba(212, 175, 55, 0.2)",
-                      background: idx % 2 === 0 ? "CORES.cartao" : "#FBF9F5"
+                      background: idx % 2 === 0 ? CORES.cartao : "#FBF9F5"
                     }}
                   >
-                    <td style={{ padding: "12px", fontSize: "13px", color: "CORES.principal", fontFamily: "'Lora', serif", fontWeight: "600" }}>
+                    <td style={{ padding: "12px", fontSize: "13px", color: CORES.principal, fontFamily: "'Lora', serif", fontWeight: "600" }}>
                       <input
-                        style={{ width: "100%", padding: "4px 8px", border: "1px solid #E0D5BC", borderRadius: "4px", fontSize: "12px", color: "CORES.principal" }}
+                        style={{ width: "100%", padding: "4px 8px", border: "1px solid #E0D5BC", borderRadius: "4px", fontSize: "12px", color: CORES.principal }}
                         value={item.setor}
                         onChange={(e) => onMudarTabela(tabela.map((t) => (t.id === item.id ? { ...t, setor: e.target.value } : t)))}
                       />
                     </td>
-                    <td style={{ padding: "12px", fontSize: "13px", color: "CORES.principal", fontFamily: "'Lora', serif" }}>
+                    <td style={{ padding: "12px", fontSize: "13px", color: CORES.principal, fontFamily: "'Lora', serif" }}>
                       <input
-                        style={{ width: "100%", padding: "4px 8px", border: "1px solid #E0D5BC", borderRadius: "4px", fontSize: "12px", color: "CORES.principal" }}
+                        style={{ width: "100%", padding: "4px 8px", border: "1px solid #E0D5BC", borderRadius: "4px", fontSize: "12px", color: CORES.principal }}
                         value={item.infracao}
                         onChange={(e) => onMudarTabela(tabela.map((t) => (t.id === item.id ? { ...t, infracao: e.target.value } : t)))}
                       />
@@ -4203,7 +3607,7 @@ function ModuloTabela({ cliente, tabela, gerando, erro, onGerar, onMudarTabela, 
                         {GRAV_INFO[item.gravidade].rotulo}
                       </span>
                     </td>
-                    <td style={{ padding: "12px", fontSize: "13px", textAlign: "center", color: "CORES.principal", fontFamily: "'Lora', serif" }}>
+                    <td style={{ padding: "12px", fontSize: "13px", textAlign: "center", color: CORES.principal, fontFamily: "'Lora', serif" }}>
                       {GRAV_INFO[item.gravidade].medida}
                     </td>
                     <td style={{ padding: "12px", fontSize: "12px", textAlign: "center" }}>
@@ -4252,10 +3656,10 @@ function ImpressaoTabela({ cliente, tabela }) {
           <tbody>
             {GRAVIDADES.map((g) => (
               <tr key={g}>
-                <td className="border px-3 py-1 font-semibold w-32" style={{ borderColor: "CORES.laranja", color: GRAV_INFO[g].cor }}>
+                <td className="border px-3 py-1 font-semibold w-32" style={{ borderColor: CORES.laranja, color: GRAV_INFO[g].cor }}>
                   {GRAV_INFO[g].rotulo}
                 </td>
-                <td className="border px-3 py-1" style={{ borderColor: "CORES.laranja" }}>{GRAV_INFO[g].medida}</td>
+                <td className="border px-3 py-1" style={{ borderColor: CORES.laranja }}>{GRAV_INFO[g].medida}</td>
               </tr>
             ))}
           </tbody>
@@ -4274,11 +3678,11 @@ function ImpressaoTabela({ cliente, tabela }) {
             <tbody>
               {gr.itens.map((item) => (
                 <tr key={item.id}>
-                  <td className="border px-3 py-1" style={{ borderColor: "CORES.laranja" }}>{item.infracao}</td>
-                  <td className="border px-3 py-1 w-28 font-semibold" style={{ borderColor: "CORES.laranja", color: GRAV_INFO[item.gravidade].cor }}>
+                  <td className="border px-3 py-1" style={{ borderColor: CORES.laranja }}>{item.infracao}</td>
+                  <td className="border px-3 py-1 w-28 font-semibold" style={{ borderColor: CORES.laranja, color: GRAV_INFO[item.gravidade].cor }}>
                     {GRAV_INFO[item.gravidade].rotulo}
                   </td>
-                  <td className="border px-3 py-1 w-52" style={{ borderColor: "CORES.laranja" }}>{GRAV_INFO[item.gravidade].medida}</td>
+                  <td className="border px-3 py-1 w-52" style={{ borderColor: CORES.laranja }}>{GRAV_INFO[item.gravidade].medida}</td>
                 </tr>
               ))}
             </tbody>
@@ -4334,7 +3738,7 @@ function cargoVazio() {
 
 function ListaCargos({ cliente, cargos, onAbrirCargo, onNovoCargo, onVoltar }) {
   return (
-    <div style={{ background: "CORES.cartao", minHeight: "100vh", paddingBottom: "64px" }}>
+    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
       <HeaderModulo
         titulo="Descrições de Cargo"
         cliente={cliente}
@@ -4343,8 +3747,8 @@ function ListaCargos({ cliente, cargos, onAbrirCargo, onNovoCargo, onVoltar }) {
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
       {cargos.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #D9914F" }}>
-          <p className="text-sm" style={{ color: "CORES.textoDim" }}>
+        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #7BA85C" }}>
+          <p className="text-sm" style={{ color: CORES.textoDim }}>
             Nenhum cargo cadastrado. Crie o primeiro — informe nome e setor, e a IA escreve a descrição completa para sua revisão.
           </p>
         </div>
@@ -4358,7 +3762,7 @@ function ListaCargos({ cliente, cargos, onAbrirCargo, onNovoCargo, onVoltar }) {
               className="card"
             >
               <span className="font-serif" style={{ color: CORES.fogo }}>{cg.nome || "(sem nome)"}</span>
-              <span className="text-xs" style={{ color: "CORES.textoDim" }}>
+              <span className="text-xs" style={{ color: CORES.textoDim }}>
                 {cg.setor}{cg.sumaria ? "" : " · rascunho vazio"}
               </span>
             </button>
@@ -4399,9 +3803,9 @@ function EditorCargo({ cliente, cargo, gerando, erro, onMudar, onGerar, onImprim
               <InputField label="Nome do cargo" value={cargo.nome} onChange={set("nome")} placeholder="Ex.: Chefe de Cozinha" />
               <InputField label="Setor" value={cargo.setor} onChange={set("setor")} placeholder="Ex.: Cozinha" />
             </div>
-            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} placeholder="Ex.: responde ao gerente da unidade; supervisiona 2 auxiliares" value={cargo.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder="Ex.: responde ao gerente da unidade; supervisiona 2 auxiliares" value={cargo.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
             {CAMPOS_CARGO.map(([campo, rotulo, linhas]) => (
-              <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={cargo[campo]} onChange={(e) => set(campo)(e.target.value)} /></label>
+              <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={cargo[campo]} onChange={(e) => set(campo)(e.target.value)} /></label>
             ))}
             <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
               Excluir cargo
@@ -4487,7 +3891,7 @@ function CartaoFrente({ frente, onMudar, onRemover }) {
   const mudarEtapas = (acaoId, novasEtapas) => mudarAcao(acaoId, "etapas", novasEtapas);
 
   return (
-    <div className="rounded-lg p-4 mb-3" style={{ background: "white", border: "2px solid #E97F3855" }}>
+    <div className="rounded-lg p-4 mb-3" style={{ background: CORES.cartao, border: "2px solid #E97F3855" }}>
       <div className="flex items-center gap-2 mb-2 flex-wrap">
         <input
           className="font-serif text-base flex-1 min-w-40 bg-transparent outline-none"
@@ -4508,7 +3912,7 @@ function CartaoFrente({ frente, onMudar, onRemover }) {
         <button onClick={onRemover} className="px-1 text-xs" style={{ color: "#B8860B" }} title="Remover frente">✕</button>
       </div>
       <input
-        className="w-full text-sm mb-3 px-2 py-1 rounded border bg-white"
+        className="w-full text-sm mb-3 px-2 py-1 rounded border bg-creme"
         style={{ borderColor: "#EFE8D6", color: "#6B5D42" }}
         placeholder="Escopo da frente..."
         value={frente.escopo}
@@ -4552,7 +3956,7 @@ function CartaoFrente({ frente, onMudar, onRemover }) {
                 )}
               </div>
               <input
-                className="w-14 px-1 py-0.5 text-xs rounded border bg-white text-center"
+                className="w-14 px-1 py-0.5 text-xs rounded border bg-creme text-center"
                 style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                 placeholder="sem."
                 title="Semana do cronograma"
@@ -4572,21 +3976,21 @@ function CartaoFrente({ frente, onMudar, onRemover }) {
               <div className="ml-10 mt-1 mb-2 p-3 rounded" style={{ background: "#FDFAF3", border: "1px solid #EFE8D6" }}>
                 <div className="grid sm:grid-cols-2 gap-2 mb-2">
                   <input
-                    className="px-2 py-1 text-xs rounded border bg-white"
+                    className="px-2 py-1 text-xs rounded border bg-creme"
                     style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                     placeholder="Responsável (ex.: Nay, gerente, dono)"
                     value={a.responsavel || ""}
                     onChange={(e) => mudarAcao(a.id, "responsavel", e.target.value)}
                   />
                   <input
-                    className="px-2 py-1 text-xs rounded border bg-white"
+                    className="px-2 py-1 text-xs rounded border bg-creme"
                     style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                     placeholder="Observações..."
                     value={a.obs || ""}
                     onChange={(e) => mudarAcao(a.id, "obs", e.target.value)}
                   />
                   <input
-                    className="px-2 py-1 text-xs rounded border bg-white"
+                    className="px-2 py-1 text-xs rounded border bg-creme"
                     style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                     placeholder="Por quê (justificativa da ação)"
                     title="O porquê fecha o 5W2H — sai em itálico no PDF do plano"
@@ -4594,7 +3998,7 @@ function CartaoFrente({ frente, onMudar, onRemover }) {
                     onChange={(e) => mudarAcao(a.id, "porque", e.target.value)}
                   />
                   <input
-                    className="px-2 py-1 text-xs rounded border bg-white"
+                    className="px-2 py-1 text-xs rounded border bg-creme"
                     style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                     placeholder="Custo estimado (opcional)"
                     value={a.custo || ""}
@@ -4659,7 +4063,7 @@ function CartaoFrente({ frente, onMudar, onRemover }) {
 function ModuloGestao({ cliente, gestao, atas, gerando, erro, onMudar, onGerarPlano, onAtualizarPlano, onAbrirAta, onNovaAta, onVoltar }) {
   const frentes = gestao.frentes || [];
   return (
-    <div style={{ background: "CORES.cartao", minHeight: "100vh", paddingBottom: "64px" }}>
+    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
       <HeaderModulo
         titulo="Plano de Ação"
         cliente={cliente}
@@ -4678,14 +4082,14 @@ function ModuloGestao({ cliente, gestao, atas, gerando, erro, onMudar, onGerarPl
       />
 
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
-        <div style={{ background: "CORES.cartao", borderRadius: "4px", marginBottom: "32px", boxShadow: "0 2px 8px rgba(92, 26, 43, 0.1)" }}>
-        <div style={{ padding: "32px", borderBottom: "1px solid rgba(60, 24, 30, 0.08)", background: "linear-gradient(180deg, rgba(217, 145, 79, 0.08) 0%, rgba(245, 237, 217, 0.4) 100%)" }}>
-          <div style={{ fontSize: "18px", fontWeight: "600", color: "CORES.principal", marginBottom: "4px" }}>Briefing</div>
-          <div style={{ fontSize: "12px", color: "#8B6F47" }}>Registre o que saiu da reunião para que a IA gere o plano</div>
+        <div style={{ background: CORES.cartao, borderRadius: "4px", marginBottom: "32px", boxShadow: "0 2px 8px rgba(107,93,66, 0.1)" }}>
+        <div style={{ padding: "32px", borderBottom: "1px solid rgba(74,64,53, 0.08)", background: "linear-gradient(180deg, rgba(217, 145, 79, 0.08) 0%, rgba(245, 237, 217, 0.4) 100%)" }}>
+          <div style={{ fontSize: "18px", fontWeight: "600", color: CORES.principal, marginBottom: "4px" }}>Briefing</div>
+          <div style={{ fontSize: "12px", color: "#8B7A6B" }}>Registre o que saiu da reunião para que a IA gere o plano</div>
         </div>
         <div style={{ padding: "28px" }}>
-          <p style={{ fontSize: "11px", marginBottom: "16px", color: "CORES.textoDim", fontFamily: "'Lora', serif" }}>
-            Anote aqui o que saiu da reunião — necessidades, dores, o que existe e o que falta em cada área. A IA transforma isso em frentes e plano de ação. Se o contratante já estiver no Chapéu Seletor, o plano se molda ao temperamento dele — sem nunca mencioná-lo.
+          <p style={{ fontSize: "11px", marginBottom: "16px", color: CORES.textoDim, fontFamily: "'Lora', serif" }}>
+            Anote aqui o que saiu da reunião — necessidades, dores, o que existe e o que falta em cada área. A IA transforma isso em frentes e plano de ação. Se o contratante já estiver mapeado em Temperamentos, o plano se molda ao temperamento dele — sem nunca mencioná-lo.
           </p>
           <textarea
             rows={7}
@@ -4693,20 +4097,20 @@ function ModuloGestao({ cliente, gestao, atas, gerando, erro, onMudar, onGerarPl
             style={{
               width: "100%",
               padding: "10px 12px",
-              border: "1px solid #D9914F",
+              border: "1px solid #7BA85C",
               borderRadius: "4px",
               fontFamily: "'Lora', serif",
               fontSize: "13px",
-              background: "CORES.cartao",
-              color: "#3C181E",
+              background: CORES.cartao,
+              color: "#4A4035",
               outline: "none",
               boxSizing: "border-box",
               transition: "border-color 0.2s"
             }}
             value={gestao.briefing || ""}
             onChange={(e) => onMudar({ ...gestao, briefing: e.target.value })}
-            onFocus={(e) => { e.target.style.borderColor = "CORES.dourado"; e.target.style.boxShadow = "0 0 0 2px rgba(212, 175, 55, 0.1)"; }}
-            onBlur={(e) => { e.target.style.borderColor = "CORES.laranja"; e.target.style.boxShadow = "none"; }}
+            onFocus={(e) => { e.target.style.borderColor = CORES.dourado; e.target.style.boxShadow = "0 0 0 2px rgba(212, 175, 55, 0.1)"; }}
+            onBlur={(e) => { e.target.style.borderColor = CORES.laranja; e.target.style.boxShadow = "none"; }}
           />
           <div style={{ marginTop: "16px", display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
             {frentes.length === 0 ? (
@@ -4733,7 +4137,7 @@ function ModuloGestao({ cliente, gestao, atas, gerando, erro, onMudar, onGerarPl
       {!gerando && (
         <div>
           <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "16px" }}>
-            <h3 style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "800", color: "CORES.principal" }}>Frentes de trabalho</h3>
+            <h3 style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "800", color: CORES.principal }}>Frentes de trabalho</h3>
             <button
               onClick={() =>
                 onMudar({
@@ -4741,13 +4145,13 @@ function ModuloGestao({ cliente, gestao, atas, gerando, erro, onMudar, onGerarPl
                   frentes: [...frentes, { id: uid(), nome: "Nova frente", status: "nao_iniciada", escopo: "", acoes: [] }],
                 })
               }
-              style={{ fontSize: "13px", color: "CORES.dourado", background: "none", border: "none", cursor: "pointer", fontFamily: "'Lora', serif", fontWeight: "600" }}
+              style={{ fontSize: "13px", color: CORES.dourado, background: "none", border: "none", cursor: "pointer", fontFamily: "'Lora', serif", fontWeight: "600" }}
             >
               + Frente manual
             </button>
           </div>
           {frentes.length === 0 ? (
-            <p style={{ fontSize: "13px", paddingTop: "16px", paddingBottom: "16px", color: "CORES.textoDim", fontFamily: "'Lora', serif" }}>
+            <p style={{ fontSize: "13px", paddingTop: "16px", paddingBottom: "16px", color: CORES.textoDim, fontFamily: "'Lora', serif" }}>
               Nenhuma frente ainda. Preencha o briefing e gere o plano — ou adicione frentes manualmente.
             </p>
           ) : (
@@ -4762,13 +4166,13 @@ function ModuloGestao({ cliente, gestao, atas, gerando, erro, onMudar, onGerarPl
           )}
 
           <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginTop: "32px", marginBottom: "16px" }}>
-            <h3 style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "800", color: "CORES.principal" }}>Atas de reunião</h3>
-            <button onClick={onNovaAta} style={{ fontSize: "13px", color: "CORES.dourado", background: "none", border: "none", cursor: "pointer", fontFamily: "'Lora', serif", fontWeight: "600" }}>
+            <h3 style={{ fontFamily: "'Crimson Text', serif", fontSize: "20px", fontWeight: "800", color: CORES.principal }}>Atas de reunião</h3>
+            <button onClick={onNovaAta} style={{ fontSize: "13px", color: CORES.dourado, background: "none", border: "none", cursor: "pointer", fontFamily: "'Lora', serif", fontWeight: "600" }}>
               + Nova ata
             </button>
           </div>
           {atas.length === 0 ? (
-            <p style={{ fontSize: "13px", paddingTop: "8px", paddingBottom: "8px", color: "CORES.textoDim", fontFamily: "'Lora', serif" }}>
+            <p style={{ fontSize: "13px", paddingTop: "8px", paddingBottom: "8px", color: CORES.textoDim, fontFamily: "'Lora', serif" }}>
               Nenhuma ata ainda. Registre cada reunião de acompanhamento aqui — despeje as anotações e a IA estrutura em resumo, decisões e ações.
             </p>
           ) : (
@@ -4777,12 +4181,12 @@ function ModuloGestao({ cliente, gestao, atas, gerando, erro, onMudar, onGerarPl
                 <button
                   key={a.id}
                   onClick={() => onAbrirAta(a.id)}
-                  style={{ textAlign: "left", padding: "16px 20px", borderRadius: "4px", boxShadow: "0 2px 8px rgba(92, 26, 43, 0.1)", display: "flex", alignItems: "baseline", justifyContent: "space-between", background: "white", border: "1px solid #D9914F", cursor: "pointer", transition: "all 0.3s ease" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 16px rgba(92, 26, 43, 0.2)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 2px 8px rgba(92, 26, 43, 0.1)"; e.currentTarget.style.transform = "translateY(0)"; }}
+                  style={{ textAlign: "left", padding: "16px 20px", borderRadius: "4px", boxShadow: "0 2px 8px rgba(107,93,66, 0.1)", display: "flex", alignItems: "baseline", justifyContent: "space-between", background: CORES.cartao, border: "1px solid #7BA85C", cursor: "pointer", transition: "all 0.3s ease" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 16px rgba(107,93,66, 0.2)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 2px 8px rgba(107,93,66, 0.1)"; e.currentTarget.style.transform = "translateY(0)"; }}
                 >
-                  <span style={{ fontFamily: "'Crimson Text', serif", fontSize: "16px", fontWeight: "600", color: "CORES.principal" }}>{a.nome || "(sem título)"}</span>
-                  <span style={{ fontSize: "11px", color: "CORES.textoDim", fontFamily: "'Lora', serif" }}>{a.data || (a.resumo ? "" : "rascunho vazio")}</span>
+                  <span style={{ fontFamily: "'Crimson Text', serif", fontSize: "16px", fontWeight: "600", color: CORES.principal }}>{a.nome || "(sem título)"}</span>
+                  <span style={{ fontSize: "11px", color: CORES.textoDim, fontFamily: "'Lora', serif" }}>{a.data || (a.resumo ? "" : "rascunho vazio")}</span>
                 </button>
               ))}
             </div>
@@ -4823,11 +4227,11 @@ function NoArvore({ posicao, filhosDe, visitados, impressao }) {
       >
         <span className="font-serif text-sm" style={{ color: CORES.fogo }}>{posicao.nome}</span>
         {posicao.setor && (
-          <span className="text-xs ml-2" style={{ color: "CORES.textoDim" }}>{posicao.setor}</span>
+          <span className="text-xs ml-2" style={{ color: CORES.textoDim }}>{posicao.setor}</span>
         )}
       </div>
       {filhos.length > 0 && (
-        <div className="pl-6 ml-2 border-l-2" style={{ borderColor: "CORES.laranja" }}>
+        <div className="pl-6 ml-2 border-l-2" style={{ borderColor: CORES.laranja }}>
           {filhos.map((f) => (
             <NoArvore key={f.id} posicao={f} filhosDe={filhosDe} visitados={novos} impressao={impressao} />
           ))}
@@ -4858,7 +4262,7 @@ function ModuloEstrutura({ cliente, posicoes, cargos, gerando, erro, onMudar, on
   };
 
   return (
-    <div style={{ background: "CORES.cartao", minHeight: "100vh", paddingBottom: "64px" }}>
+    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
       <HeaderModulo
         titulo="Estrutura de Governança"
         cliente={cliente}
@@ -4881,7 +4285,7 @@ function ModuloEstrutura({ cliente, posicoes, cargos, gerando, erro, onMudar, on
         {gerando && <Trabalhando />}
 
         {!gerando && posicoes.length === 0 && !erro && (
-          <p className="text-sm py-6" style={{ color: "CORES.textoDim" }}>
+          <p className="text-sm py-6" style={{ color: CORES.textoDim }}>
             A tapeçaria da casa ainda está em branco. Gere com IA a partir dos dados do cliente, importe dos cargos já descritos, ou adicione posições manualmente.
           </p>
         )}
@@ -4892,21 +4296,21 @@ function ModuloEstrutura({ cliente, posicoes, cargos, gerando, erro, onMudar, on
               {posicoes.map((p) => (
                 <div key={p.id} className="flex items-center gap-2 py-1.5 border-b" style={{ borderColor: "#EFE8D6" }}>
                   <input
-                    className="flex-1 px-2 py-1 text-sm rounded border bg-white"
+                    className="flex-1 px-2 py-1 text-sm rounded border bg-creme"
                     style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
                     value={p.nome}
                     placeholder="Nome da posição"
                     onChange={(e) => onMudar(posicoes.map((x) => (x.id === p.id ? { ...x, nome: e.target.value } : x)))}
                   />
                   <input
-                    className="w-28 px-2 py-1 text-xs rounded border bg-white"
+                    className="w-28 px-2 py-1 text-xs rounded border bg-creme"
                     style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                     value={p.setor}
                     placeholder="Setor"
                     onChange={(e) => onMudar(posicoes.map((x) => (x.id === p.id ? { ...x, setor: e.target.value } : x)))}
                   />
                   <select
-                    className="w-40 px-2 py-1 text-xs rounded border bg-white"
+                    className="w-40 px-2 py-1 text-xs rounded border bg-creme"
                     style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                     value={p.superiorId || ""}
                     onChange={(e) =>
@@ -4978,7 +4382,7 @@ function ImpressaoEstrutura({ cliente, posicoes }) {
 
 function ModuloManual({ cliente, secoes, gerando, erro, onMudar, onGerar, onImprimir, onVoltar }) {
   return (
-    <div style={{ background: "CORES.cartao", minHeight: "100vh", paddingBottom: "64px" }}>
+    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
       <HeaderModulo
         titulo="Manual do Colaborador"
         cliente={cliente}
@@ -5000,14 +4404,14 @@ function ModuloManual({ cliente, secoes, gerando, erro, onMudar, onGerar, onImpr
         {gerando && <Trabalhando />}
 
         {!gerando && secoes.length === 0 && !erro && (
-          <p className="text-sm py-6" style={{ color: "CORES.textoDim" }}>
+          <p className="text-sm py-6" style={{ color: CORES.textoDim }}>
             Nenhuma seção ainda. A IA escreve o manual a partir dos dados e regras da casa — você revisa seção por seção antes de exportar.
           </p>
         )}
 
         {!gerando &&
           secoes.map((s) => (
-            <div key={s.id} className="mb-4 rounded-lg p-4" style={{ background: "white", border: "2px solid #E97F3855" }}>
+            <div key={s.id} className="mb-4 rounded-lg p-4" style={{ background: CORES.cartao, border: "2px solid #E97F3855" }}>
               <div className="flex items-center gap-2 mb-2">
                 <input
                   className="font-serif flex-1 bg-transparent outline-none"
@@ -5025,7 +4429,7 @@ function ModuloManual({ cliente, secoes, gerando, erro, onMudar, onGerar, onImpr
               </div>
               <textarea
                 rows={4}
-                className="w-full px-2 py-1 text-sm rounded border bg-white outline-none"
+                className="w-full px-2 py-1 text-sm rounded border bg-creme outline-none"
                 style={{ borderColor: "#EFE8D6", color: CORES.fogoEscuro }}
                 value={s.conteudo}
                 onChange={(e) => onMudar(secoes.map((x) => (x.id === s.id ? { ...x, conteudo: e.target.value } : x)))}
@@ -5095,7 +4499,7 @@ function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, onVoltar 
   };
 
   return (
-    <div style={{ background: "CORES.cartao", minHeight: "100vh", paddingBottom: "64px" }}>
+    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
       <HeaderModulo
         titulo="CCT & Conformidade"
         cliente={cliente}
@@ -5104,7 +4508,7 @@ function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, onVoltar 
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
         <div className="rounded-lg p-6 shadow-sm" className="card">
-          <p className="text-xs mb-4" style={{ color: "CORES.textoDim" }}>
+          <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
             As leis do Ministério: suba o PDF da convenção coletiva do setor — e depois os termos aditivos, um a um. A cada documento, a IA atualiza a análise: remove o que foi superado, ajusta o que mudou e soma o que é novo. Todas as gerações deste cliente respeitam o resultado. Os arquivos não ficam armazenados; só a análise.
           </p>
 
@@ -5155,7 +4559,7 @@ function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, onVoltar 
             {pontos.map((p) => (
               <div key={p.id} className="flex items-start gap-2 py-2 border-b" style={{ borderColor: "#EFE8D6" }}>
                 <input
-                  className="w-32 shrink-0 px-2 py-1 text-xs rounded border bg-white font-semibold"
+                  className="w-32 shrink-0 px-2 py-1 text-xs rounded border bg-creme font-semibold"
                   style={{ borderColor: "#E0D5BC", color: CORES.fogo }}
                   value={p.tema}
                   onChange={(e) =>
@@ -5164,7 +4568,7 @@ function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, onVoltar 
                 />
                 <textarea
                   rows={2}
-                  className="flex-1 px-2 py-1 text-sm rounded border bg-white"
+                  className="flex-1 px-2 py-1 text-sm rounded border bg-creme"
                   style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
                   value={p.exigencia}
                   onChange={(e) =>
@@ -5172,7 +4576,7 @@ function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, onVoltar 
                   }
                 />
                 <select
-                  className="px-2 py-1 text-xs rounded border bg-white shrink-0"
+                  className="px-2 py-1 text-xs rounded border bg-creme shrink-0"
                   style={
                     p.statusConf === "resolvido"
                       ? { borderColor: "#4F6B3A", background: "#E3EBD8", color: "#4F6B3A" }
@@ -5197,7 +4601,7 @@ function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, onVoltar 
                   <option value="resolvido">Resolvido ✓</option>
                 </select>
                 <select
-                  className="px-2 py-1 text-xs rounded border bg-white"
+                  className="px-2 py-1 text-xs rounded border bg-creme"
                   style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                   value={p.destino}
                   onChange={(e) =>
@@ -5237,7 +4641,7 @@ function ModuloCCT({ cliente, cct, gerando, erro, onMudar, onAnalisar, onVoltar 
   );
 }
 
-// ─── Módulo: Penseira ───────────────────────────────────────────
+// ─── Módulo: Conselheira ───────────────────────────────────────────
 
 function ModuloPenseira({ cliente, mensagens, gerando, erro, onEnviar, onLimpar, onVoltar }) {
   const [texto, setTexto] = useState("");
@@ -5250,9 +4654,9 @@ function ModuloPenseira({ cliente, mensagens, gerando, erro, onEnviar, onLimpar,
   };
 
   return (
-    <div style={{ background: "CORES.cartao", minHeight: "100vh", paddingBottom: "64px" }}>
+    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
       <HeaderModulo
-        titulo="Penseira"
+        titulo="Conselheira"
         cliente={cliente}
         onVoltar={onVoltar}
         acoes={null}
@@ -5261,13 +4665,13 @@ function ModuloPenseira({ cliente, mensagens, gerando, erro, onEnviar, onLimpar,
         <div className="rounded-lg shadow-sm flex flex-col" style={{ background: CORES.papel, border: "2px solid #E97F3855", minHeight: "60vh" }}>
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: "#EFE8D6" }}>
           <div>
-            <p className="text-xs" style={{ color: "CORES.textoDim" }}>
+            <p className="text-xs" style={{ color: CORES.textoDim }}>
               Pense em voz alta sobre {cliente.negocio}. Dúvidas trabalhistas vêm com base legal.
             </p>
           </div>
           {mensagens.length > 0 && (
             <button onClick={onLimpar} className="text-xs underline" style={{ color: "#B8860B" }}>
-              Esvaziar a Penseira
+              Limpar conversa
             </button>
           )}
         </div>
@@ -5285,7 +4689,7 @@ function ModuloPenseira({ cliente, mensagens, gerando, erro, onEnviar, onLimpar,
                 style={
                   m.role === "user"
                     ? { background: CORES.fogo, color: "#F5EDE0" }
-                    : { background: "white", border: "2px solid #E97F3855", color: CORES.fogoEscuro }
+                    : { background: CORES.cartao, border: "2px solid #E97F3855", color: CORES.fogoEscuro }
                 }
               >
                 {m.content}
@@ -5294,8 +4698,8 @@ function ModuloPenseira({ cliente, mensagens, gerando, erro, onEnviar, onLimpar,
           ))}
           {gerando && (
             <div className="flex justify-start mb-3">
-              <div className="px-4 py-2.5 rounded-lg text-sm font-serif italic" style={{ background: "white", border: "2px solid #E97F3855", color: CORES.dourado }}>
-                A Penseira está girando...
+              <div className="px-4 py-2.5 rounded-lg text-sm font-serif italic" style={{ background: CORES.cartao, border: "2px solid #E97F3855", color: CORES.dourado }}>
+                Pensando...
               </div>
             </div>
           )}
@@ -5305,8 +4709,8 @@ function ModuloPenseira({ cliente, mensagens, gerando, erro, onEnviar, onLimpar,
         <div className="px-6 py-4 border-t flex gap-2" style={{ borderColor: "#EFE8D6" }}>
           <textarea
             rows={2}
-            className="flex-1 px-3 py-2 rounded border bg-white text-sm outline-none resize-none"
-            style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }}
+            className="flex-1 px-3 py-2 rounded border bg-creme text-sm outline-none resize-none"
+            style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }}
             placeholder="Escreva seu pensamento ou dúvida..."
             value={texto}
             onChange={(e) => setTexto(e.target.value)}
@@ -5355,7 +4759,7 @@ function popVazio() {
 
 function ListaPops({ cliente, pops, onAbrirPop, onNovoPop, onVoltar }) {
   return (
-    <div style={{ background: "CORES.cartao", minHeight: "100vh", paddingBottom: "64px" }}>
+    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
       <HeaderModulo
         titulo="POPs — Processos Operacionais"
         cliente={cliente}
@@ -5364,9 +4768,9 @@ function ListaPops({ cliente, pops, onAbrirPop, onNovoPop, onVoltar }) {
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
         {pops.length === 0 ? (
-          <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #D9914F" }}>
-            <p className="text-sm" style={{ color: "CORES.textoDim" }}>
-              O livro de feitiços da operação está em branco. Crie o primeiro — informe o nome do processo e o setor, e a IA escreve o encantamento passo a passo para sua revisão.
+          <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #7BA85C" }}>
+            <p className="text-sm" style={{ color: CORES.textoDim }}>
+              Nenhum processo documentado ainda. Crie o primeiro — informe o nome do processo e o setor, e a IA escreve o passo a passo para sua revisão.
             </p>
           </div>
         ) : (
@@ -5379,7 +4783,7 @@ function ListaPops({ cliente, pops, onAbrirPop, onNovoPop, onVoltar }) {
                 className="card"
               >
                 <span className="font-serif" style={{ color: CORES.fogo }}>{p.nome || "(sem nome)"}</span>
-                <span className="text-xs" style={{ color: "CORES.textoDim" }}>
+                <span className="text-xs" style={{ color: CORES.textoDim }}>
                   {p.setor}{p.passos ? "" : " · rascunho vazio"}
                 </span>
               </button>
@@ -5420,9 +4824,9 @@ function EditorPop({ cliente, pop, gerando, erro, onMudar, onGerar, onImprimir, 
               <InputField label="Nome do processo" value={pop.nome} onChange={set("nome")} placeholder="Ex.: Abertura do salão" />
               <InputField label="Setor" value={pop.setor} onChange={set("setor")} placeholder="Ex.: Salão" />
             </div>
-            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} placeholder="Ex.: o processo inclui conferir o caixa e ligar os equipamentos da cozinha" value={pop.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder="Ex.: o processo inclui conferir o caixa e ligar os equipamentos da cozinha" value={pop.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
             {CAMPOS_POP.map(([campo, rotulo, linhas]) => (
-              <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={pop[campo]} onChange={(e) => set(campo)(e.target.value)} /></label>
+              <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={pop[campo]} onChange={(e) => set(campo)(e.target.value)} /></label>
             ))}
             <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
               Excluir POP
@@ -5455,14 +4859,14 @@ function ImpressaoPop({ cliente, pop }) {
         <tbody>
           {pop.responsavel && (
             <tr>
-              <td className="border px-3 py-1 font-semibold w-40" style={{ borderColor: "CORES.laranja", color: CORES.fogo }}>Responsável</td>
-              <td className="border px-3 py-1" style={{ borderColor: "CORES.laranja" }}>{pop.responsavel}</td>
+              <td className="border px-3 py-1 font-semibold w-40" style={{ borderColor: CORES.laranja, color: CORES.fogo }}>Responsável</td>
+              <td className="border px-3 py-1" style={{ borderColor: CORES.laranja }}>{pop.responsavel}</td>
             </tr>
           )}
           {pop.frequencia && (
             <tr>
-              <td className="border px-3 py-1 font-semibold" style={{ borderColor: "CORES.laranja", color: CORES.fogo }}>Frequência</td>
-              <td className="border px-3 py-1" style={{ borderColor: "CORES.laranja" }}>{pop.frequencia}</td>
+              <td className="border px-3 py-1 font-semibold" style={{ borderColor: CORES.laranja, color: CORES.fogo }}>Frequência</td>
+              <td className="border px-3 py-1" style={{ borderColor: CORES.laranja }}>{pop.frequencia}</td>
             </tr>
           )}
         </tbody>
@@ -5512,7 +4916,7 @@ function ImpressaoPop({ cliente, pop }) {
 function ListaDocs({ cliente, tipo, docs, onAbrir, onNovo, onVoltar }) {
   const cfg = CONFIG_DOCS[tipo];
   return (
-    <div style={{ background: "CORES.cartao", minHeight: "100vh", paddingBottom: "64px" }}>
+    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
       <HeaderModulo
         titulo={cfg.tituloModulo}
         cliente={cliente}
@@ -5521,8 +4925,8 @@ function ListaDocs({ cliente, tipo, docs, onAbrir, onNovo, onVoltar }) {
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
       {docs.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #D9914F" }}>
-          <p className="text-sm" style={{ color: "CORES.textoDim" }}>
+        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #7BA85C" }}>
+          <p className="text-sm" style={{ color: CORES.textoDim }}>
             Nenhum{cfg.singular === "ata" || cfg.singular === "política" ? "a" : ""} {cfg.singular} ainda. Crie e deixe a IA escrever a primeira versão para sua revisão.
           </p>
         </div>
@@ -5536,7 +4940,7 @@ function ListaDocs({ cliente, tipo, docs, onAbrir, onNovo, onVoltar }) {
               className="card"
             >
               <span className="font-serif" style={{ color: CORES.fogo }}>{d.nome || "(sem nome)"}</span>
-              <span className="text-xs" style={{ color: "CORES.textoDim" }}>{cfg.subtituloLista(d)}</span>
+              <span className="text-xs" style={{ color: CORES.textoDim }}>{cfg.subtituloLista(d)}</span>
             </button>
           ))}
         </div>
@@ -5575,14 +4979,14 @@ function EditorDoc({ cliente, tipo, doc, rotuloVoltar, gerando, erro, onMudar, o
           <>
             {cfg.camposBase.map(([campo, rotulo, area, linhas, placeholder]) => (
               area ? (
-                <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} placeholder={placeholder} value={doc[campo] || ""} onChange={(e) => set(campo)(e.target.value)} /></label>
+                <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder={placeholder} value={doc[campo] || ""} onChange={(e) => set(campo)(e.target.value)} /></label>
               ) : (
                 <InputField key={campo} label={rotulo} value={doc[campo] || ""} onChange={set(campo)} placeholder={placeholder} />
               )
             ))}
             {cfg.camposGerados.map(([campo, rotulo, area, linhas]) => (
               area ? (
-                <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={doc[campo] || ""} onChange={(e) => set(campo)(e.target.value)} /></label>
+                <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={doc[campo] || ""} onChange={(e) => set(campo)(e.target.value)} /></label>
               ) : (
                 <InputField key={campo} label={rotulo} value={doc[campo] || ""} onChange={set(campo)} />
               )
@@ -5656,10 +5060,10 @@ function ImpressaoChecklist({ cliente, doc }) {
         <tbody>
           {itens.map((item, i) => (
             <tr key={i}>
-              <td className="border px-3 py-2 w-10 text-center" style={{ borderColor: "CORES.laranja" }}>
+              <td className="border px-3 py-2 w-10 text-center" style={{ borderColor: CORES.laranja }}>
                 <span className="inline-block w-4 h-4 border-2 align-middle" style={{ borderColor: CORES.fogo }} />
               </td>
-              <td className="border px-3 py-2" style={{ borderColor: "CORES.laranja" }}>{item}</td>
+              <td className="border px-3 py-2" style={{ borderColor: CORES.laranja }}>{item}</td>
             </tr>
           ))}
         </tbody>
@@ -5763,8 +5167,8 @@ function ListaPessoas({ cliente, pessoas, onAbrir, onNova, onVoltar }) {
         <h2 className="font-serif text-xl" style={{ color: CORES.fogo }}>Temperamentos</h2>
         <BotaoPrimario onClick={onNova}>+ Nova pessoa</BotaoPrimario>
       </div>
-      <p className="text-xs mb-4" style={{ color: "CORES.textoDim" }}>
-        O Chapéu Seletor da casa: mapa das pessoas-chave pela ciência dos temperamentos — classificação, leitura pessoa × cargo e orientação de liderança.
+      <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
+        Mapa das pessoas-chave pela ciência dos temperamentos — classificação, leitura pessoa × cargo e orientação de liderança.
       </p>
 
       {pessoas.length > 0 && (
@@ -5778,8 +5182,8 @@ function ListaPessoas({ cliente, pessoas, onAbrir, onNova, onVoltar }) {
       )}
 
       {pessoas.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #D9914F" }}>
-          <p className="text-sm" style={{ color: "CORES.textoDim" }}>
+        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #7BA85C" }}>
+          <p className="text-sm" style={{ color: CORES.textoDim }}>
             Ninguém mapeado ainda. Adicione uma pessoa-chave, descreva o que você observou dela, e classifique — ou deixe a IA sugerir a partir das suas observações.
           </p>
         </div>
@@ -5794,9 +5198,9 @@ function ListaPessoas({ cliente, pessoas, onAbrir, onNova, onVoltar }) {
             >
               <span>
                 <span className="font-serif" style={{ color: CORES.fogo }}>{p.nome || "(sem nome)"}</span>
-                {p.cargo && <span className="text-xs ml-2" style={{ color: "CORES.textoDim" }}>{p.cargo}</span>}
+                {p.cargo && <span className="text-xs ml-2" style={{ color: CORES.textoDim }}>{p.cargo}</span>}
                 {p.contratante && (
-                  <span className="text-xs ml-2 px-2 py-0.5 rounded-full font-semibold" style={{ background: "CORES.hover", color: CORES.dourado }}>
+                  <span className="text-xs ml-2 px-2 py-0.5 rounded-full font-semibold" style={{ background: CORES.hover, color: CORES.dourado }}>
                     contratante
                   </span>
                 )}
@@ -5830,8 +5234,8 @@ function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar, onImpr
         {rotulo}
       </span>
       <select
-        className="w-full px-3 py-2 rounded border bg-white text-sm outline-none"
-        style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }}
+        className="w-full px-3 py-2 rounded border bg-creme text-sm outline-none"
+        style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }}
         value={pessoa[campo] || ""}
         onChange={(e) => set(campo)(e.target.value)}
       >
@@ -5870,9 +5274,9 @@ function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar, onImpr
               <InputField label="Nome ou apelido" value={pessoa.nome} onChange={set("nome")} placeholder="Ex.: João (líder do salão)" />
               <InputField label="Cargo/função" value={pessoa.cargo} onChange={set("cargo")} placeholder="Ex.: Líder de Salão" />
             </div>
-            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações — comportamentos, reações, padrões</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} placeholder="Ex.: fala rápido e alto, resolve conflito na hora mas atropela; detesta rotina de fechamento; o time gosta dele mas reclama de instabilidade" value={pessoa.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações — comportamentos, reações, padrões</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder="Ex.: fala rápido e alto, resolve conflito na hora mas atropela; detesta rotina de fechamento; o time gosta dele mas reclama de instabilidade" value={pessoa.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
 
-            <div className="mb-4 rounded-lg p-4" style={{ background: "white", border: "1px dashed #E97F3855" }}>
+            <div className="mb-4 rounded-lg p-4" style={{ background: CORES.cartao, border: "1px dashed #E97F3855" }}>
               <div className="flex items-baseline justify-between mb-1">
                 <div className="label" style={{ color: CORES.dourado }}>
                   Formulário de observação (opcional)
@@ -5883,7 +5287,7 @@ function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar, onImpr
                   </span>
                 )}
               </div>
-              <p className="text-xs mb-3" style={{ color: "CORES.textoDim" }}>
+              <p className="text-xs mb-3" style={{ color: CORES.textoDim }}>
                 Marque o que você observou na pessoa. A contagem sugere a classificação — seu olho continua sendo o juiz.
               </p>
               {FORM_TEMPERAMENTO.map((q, i) => {
@@ -5905,7 +5309,7 @@ function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar, onImpr
                           style={
                             marcada === chave
                               ? { background: TEMPERAMENTOS[chave].fundo, borderColor: TEMPERAMENTOS[chave].cor, color: TEMPERAMENTOS[chave].cor, fontWeight: 600 }
-                              : { background: "white", borderColor: "#E0D5BC", color: "CORES.textoDim" }
+                              : { background: CORES.cartao, borderColor: "#E0D5BC", color: CORES.textoDim }
                           }
                         >
                           {texto}
@@ -5946,10 +5350,10 @@ function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar, onImpr
               É o contratante/dono — orientar como conduzir a consultoria com essa pessoa
             </label>
             {pessoa.contratante && (
-              <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Como conduzir a consultoria com essa pessoa (uso interno — não sai na ficha PDF)</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={pessoa.abordagem} onChange={(e) => set("abordagem")(e.target.value)} /></label>
+              <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Como conduzir a consultoria com essa pessoa (uso interno — não sai na ficha PDF)</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={pessoa.abordagem} onChange={(e) => set("abordagem")(e.target.value)} /></label>
             )}
             {CAMPOS_PESSOA_GERADOS.map(([campo, rotulo, linhas]) => (
-              <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={pessoa[campo]} onChange={(e) => set(campo)(e.target.value)} /></label>
+              <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={pessoa[campo]} onChange={(e) => set(campo)(e.target.value)} /></label>
             ))}
             <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
               Excluir pessoa
@@ -6070,7 +5474,7 @@ function RadarMaturidade({ notas, tamanho, framework: fw }) {
         const [x, y] = ponto(i, 1);
         return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="#E0D5BC" strokeWidth="1" />;
       })}
-      <polygon points={poligono} fill="rgba(92,26,43,0.18)" stroke={CORES.fogo} strokeWidth="2" />
+      <polygon points={poligono} fill="rgba(107,93,66,0.18)" stroke={CORES.fogo} strokeWidth="2" />
       {valores.map((v, i) => {
         const [x, y] = ponto(i, Math.max(v, 0.02));
         return <circle key={i} cx={x} cy={y} r="3.5" fill={CORES.fogo} />;
@@ -6110,12 +5514,12 @@ function ListaDiagnosticos({ cliente, diagnosticos, titulo, subtitulo, framework
         <h2 className="font-serif text-xl" style={{ color: CORES.fogo }}>{titulo || "Diagnóstico de Maturidade"}</h2>
         <BotaoPrimario onClick={onNovo}>+ Novo diagnóstico</BotaoPrimario>
       </div>
-      <p className="text-xs mb-5" style={{ color: "CORES.textoDim" }}>
-        {subtitulo || "Os N.O.M.s do negócio: em que nível está cada matéria. Avalie 6 áreas e 24 critérios; refaça ao longo do engajamento — cada diagnóstico fica datado e a comparação vira o antes/depois da consultoria."}
+      <p className="text-xs mb-5" style={{ color: CORES.textoDim }}>
+        {subtitulo || "Nível de maturidade do negócio em cada área. Avalie 6 áreas e 24 critérios; refaça ao longo do engajamento — cada diagnóstico fica datado e a comparação vira o antes/depois da consultoria."}
       </p>
       {diagnosticos.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #D9914F" }}>
-          <p className="text-sm" style={{ color: "CORES.textoDim" }}>
+        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #7BA85C" }}>
+          <p className="text-sm" style={{ color: CORES.textoDim }}>
             Nenhum diagnóstico ainda. Faça o primeiro na fase de briefing — ele justifica a proposta e vira a régua de resultado no encerramento.
           </p>
         </div>
@@ -6134,7 +5538,7 @@ function ListaDiagnosticos({ cliente, diagnosticos, titulo, subtitulo, framework
                 <span className="font-serif" style={{ color: CORES.fogo }}>
                   {d.rotulo || `Diagnóstico de ${d.data}`}
                 </span>
-                <span className="text-xs flex items-center gap-2" style={{ color: "CORES.textoDim" }}>
+                <span className="text-xs flex items-center gap-2" style={{ color: CORES.textoDim }}>
                   {d.data} · maturidade geral: {geral === null ? "não avaliada" : `${geral}%`}
                   <span
                     className="underline"
@@ -6217,7 +5621,7 @@ function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerando, erro
                       <div key={chave} className="flex items-center gap-2 py-1.5 border-b" style={{ borderColor: "#EFE8D6" }}>
                         <span className="flex-1 text-sm" style={{ color: CORES.fogoEscuro }}>{crit}</span>
                         <select
-                          className="px-2 py-1 text-xs rounded border bg-white"
+                          className="px-2 py-1 text-xs rounded border bg-creme"
                           style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                           value={valor === undefined || valor === null ? "" : valor}
                           onChange={(e) =>
@@ -6257,9 +5661,9 @@ function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerando, erro
 
             {(diag.leitura || diag.criticos || diag.prioridades) && (
               <>
-                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Leitura geral</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={diag.leitura} onChange={(e) => onMudar({ ...diag, leitura: e.target.value })} /></label>
-                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Pontos críticos (um por linha)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={diag.criticos} onChange={(e) => onMudar({ ...diag, criticos: e.target.value })} /></label>
-                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Prioridades de ação (uma por linha)</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={diag.prioridades} onChange={(e) => onMudar({ ...diag, prioridades: e.target.value })} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Leitura geral</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={diag.leitura} onChange={(e) => onMudar({ ...diag, leitura: e.target.value })} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Pontos críticos (um por linha)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={diag.criticos} onChange={(e) => onMudar({ ...diag, criticos: e.target.value })} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Prioridades de ação (uma por linha)</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={diag.prioridades} onChange={(e) => onMudar({ ...diag, prioridades: e.target.value })} /></label>
               </>
             )}
 
@@ -6307,8 +5711,8 @@ function ImpressaoDiagnostico({ cliente, diag, titulo, framework: fw }) {
                   if (n === undefined || n === null || n === "") return null;
                   return (
                     <tr key={cIdx}>
-                      <td className="border px-3 py-1" style={{ borderColor: "CORES.laranja" }}>{crit}</td>
-                      <td className="border px-3 py-1 w-32 font-semibold" style={{ borderColor: "CORES.laranja", color: Number(n) < 2 ? "#8A3A2E" : "#4F6B3A" }}>
+                      <td className="border px-3 py-1" style={{ borderColor: CORES.laranja }}>{crit}</td>
+                      <td className="border px-3 py-1 w-32 font-semibold" style={{ borderColor: CORES.laranja, color: Number(n) < 2 ? "#8A3A2E" : "#4F6B3A" }}>
                         {ESCALA_DIAG[Number(n)]}
                       </td>
                     </tr>
@@ -6351,7 +5755,7 @@ function ImpressaoDiagnostico({ cliente, diag, titulo, framework: fw }) {
 // ─── Módulo: Proposta Comercial ─────────────────────────────────
 
 const STATUS_PROPOSTA = {
-  rascunho: { rotulo: "Rascunho", cor: "CORES.textoDim", fundo: "CORES.hover" },
+  rascunho: { rotulo: "Rascunho", cor: CORES.textoDim, fundo: CORES.hover },
   enviada: { rotulo: "Enviada", cor: "#9A6A2F", fundo: "#F5E6C8" },
   aceita: { rotulo: "Aceita ✓", cor: "#4F6B3A", fundo: "#E3EBD8" },
   recusada: { rotulo: "Recusada", cor: "#8A3A2E", fundo: "#F0DCD2" },
@@ -6405,12 +5809,12 @@ function ListaPropostas({ cliente, propostas, onAbrir, onNova, onVoltar }) {
         <h2 className="font-serif text-xl" style={{ color: CORES.fogo }}>Propostas Comerciais</h2>
         <BotaoPrimario onClick={onNova}>+ Nova proposta</BotaoPrimario>
       </div>
-      <p className="text-xs mb-5" style={{ color: "CORES.textoDim" }}>
-        A carta de Hogwarts: o convite que muda tudo. Nasce do briefing e do diagnóstico — e o tom se ajusta ao temperamento do contratante, se mapeado.
+      <p className="text-xs mb-5" style={{ color: CORES.textoDim }}>
+        A proposta é o convite que muda tudo. Nasce do briefing e do diagnóstico — e o tom se ajusta ao temperamento do contratante, se mapeado.
       </p>
       {propostas.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #D9914F" }}>
-          <p className="text-sm" style={{ color: "CORES.textoDim" }}>
+        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #7BA85C" }}>
+          <p className="text-sm" style={{ color: CORES.textoDim }}>
             Nenhuma proposta ainda. Preencha os parâmetros (duração, investimento, condições) e gere — o texto vem pronto para sua revisão.
           </p>
         </div>
@@ -6426,7 +5830,7 @@ function ListaPropostas({ cliente, propostas, onAbrir, onNova, onVoltar }) {
               <span className="font-serif" style={{ color: CORES.fogo }}>
                 {p.rotulo || `Proposta de ${p.data}`}
               </span>
-              <span className="text-xs flex items-center gap-2" style={{ color: "CORES.textoDim" }}>
+              <span className="text-xs flex items-center gap-2" style={{ color: CORES.textoDim }}>
                 {p.data}{p.investimento ? ` · ${p.investimento}` : ""}
                 <span
                   className="px-1.5 py-0.5 rounded font-semibold"
@@ -6505,33 +5909,33 @@ function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, 
 
         {!gerando && (
           <>
-            <div className="mb-4 rounded-lg p-4" style={{ background: "white", border: "1px dashed #E97F3855" }}>
+            <div className="mb-4 rounded-lg p-4" style={{ background: CORES.cartao, border: "1px dashed #E97F3855" }}>
               <div className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: CORES.dourado }}>
                 Precificação automática
               </div>
-              <p className="text-xs mb-3" style={{ color: "CORES.textoDim" }}>
+              <p className="text-xs mb-3" style={{ color: CORES.textoDim }}>
                 Seus parâmetros (valem para todas as propostas, de todos os clientes) aplicados às frentes deste briefing. A IA nunca decide preço — a conta é sua, o app só faz a matemática.
               </p>
               {ehPessoaProp ? (
                 <div className="grid sm:grid-cols-3 gap-2 mb-2">
                   <div>
                     <div className="text-xs mb-0.5" style={{ color: "#6B5D42" }}>Valor por encontro de mentoria</div>
-                    <input className="w-full px-2 py-1 text-sm rounded border bg-white" style={{ borderColor: "#E0D5BC" }} placeholder="Ex.: 400" value={precificacao.porEncontro || ""} onChange={setP("porEncontro")} />
+                    <input className="w-full px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "#E0D5BC" }} placeholder="Ex.: 400" value={precificacao.porEncontro || ""} onChange={setP("porEncontro")} />
                   </div>
                 </div>
               ) : (
               <div className="grid sm:grid-cols-3 gap-2 mb-2">
                 <div>
                   <div className="text-xs mb-0.5" style={{ color: "#6B5D42" }}>Valor base do engajamento</div>
-                  <input className="w-full px-2 py-1 text-sm rounded border bg-white" style={{ borderColor: "#E0D5BC" }} placeholder="Ex.: 2.000" value={precificacao.base} onChange={setP("base")} />
+                  <input className="w-full px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "#E0D5BC" }} placeholder="Ex.: 2.000" value={precificacao.base} onChange={setP("base")} />
                 </div>
                 <div>
                   <div className="text-xs mb-0.5" style={{ color: "#6B5D42" }}>Valor por frente</div>
-                  <input className="w-full px-2 py-1 text-sm rounded border bg-white" style={{ borderColor: "#E0D5BC" }} placeholder="Ex.: 1.500" value={precificacao.porFrente} onChange={setP("porFrente")} />
+                  <input className="w-full px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "#E0D5BC" }} placeholder="Ex.: 1.500" value={precificacao.porFrente} onChange={setP("porFrente")} />
                 </div>
                 <div>
                   <div className="text-xs mb-0.5" style={{ color: "#6B5D42" }}>Valor por semana de condução</div>
-                  <input className="w-full px-2 py-1 text-sm rounded border bg-white" style={{ borderColor: "#E0D5BC" }} placeholder="Ex.: 300" value={precificacao.porSemana} onChange={setP("porSemana")} />
+                  <input className="w-full px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "#E0D5BC" }} placeholder="Ex.: 300" value={precificacao.porSemana} onChange={setP("porSemana")} />
                 </div>
               </div>
               )}
@@ -6570,7 +5974,7 @@ function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, 
 
             <div className="grid sm:grid-cols-2 gap-x-4">
               {(
-                <div className="mb-4 p-3 rounded-lg" style={{ background: "CORES.hover", border: "2px solid #D4AF37AA" }}>
+                <div className="mb-4 p-3 rounded-lg" style={{ background: CORES.hover, border: "2px solid #D4AF37AA" }}>
                   <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
                     <div className="label" style={{ color: "#9A6A2F" }}>
                       {ehPessoaProp ? "Metas do mentorado (fase Acordo)" : "Metas do engajamento (fase Acordo)"}
@@ -6579,7 +5983,7 @@ function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, 
                       Sugerir metas com IA
                     </button>
                   </div>
-                  <p className="text-xs mb-2" style={{ color: "CORES.textoDim" }}>
+                  <p className="text-xs mb-2" style={{ color: CORES.textoDim }}>
                     {ehPessoaProp
                       ? "2-3 metas com objetivo + valor + prazo (ex.: delegar as decisões de compra até outubro). Verificadas no Relatório de Evolução."
                       : "2-3 metas pactuadas com objetivo + valor + prazo. Verificadas no Malfeito feito: batida, parcial ou não batida."}
@@ -6587,14 +5991,14 @@ function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, 
                   {(prop.metas || []).map((m) => (
                     <div key={m.id} className="flex items-center gap-2 py-1">
                       <input
-                        className="flex-1 px-2 py-1 text-sm rounded border bg-white"
+                        className="flex-1 px-2 py-1 text-sm rounded border bg-creme"
                         style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
                         placeholder={ehPessoaProp ? "Objetivo verificável (ex.: delegar as decisões de compra)" : "Objetivo com valor (ex.: reduzir pendências de CCT de 12 para 0)"}
                         value={m.objetivo}
                         onChange={(e) => onMudar({ ...prop, metas: prop.metas.map((x) => (x.id === m.id ? { ...x, objetivo: e.target.value } : x)) })}
                       />
                       <input
-                        className="w-36 px-2 py-1 text-xs rounded border bg-white"
+                        className="w-36 px-2 py-1 text-xs rounded border bg-creme"
                         style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                         placeholder="Prazo"
                         value={m.prazo}
@@ -6614,7 +6018,7 @@ function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, 
               )}
               {CAMPOS_PROPOSTA_PARAMS.slice(0, 5).map(([campo, rotulo, area, linhas, placeholder]) => (
                 area ? (
-                  <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} placeholder={placeholder} value={prop[campo] || ""} onChange={(e) => set(campo)(e.target.value)} /></label>
+                  <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder={placeholder} value={prop[campo] || ""} onChange={(e) => set(campo)(e.target.value)} /></label>
                 ) : (
                   <InputField key={campo} label={rotulo} value={prop[campo] || ""} onChange={set(campo)} placeholder={placeholder} />
                 )
@@ -6622,13 +6026,13 @@ function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, 
             </div>
             {CAMPOS_PROPOSTA_PARAMS.slice(5).map(([campo, rotulo, area, linhas, placeholder]) => (
               area ? (
-                <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} placeholder={placeholder} value={prop[campo] || ""} onChange={(e) => set(campo)(e.target.value)} /></label>
+                <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder={placeholder} value={prop[campo] || ""} onChange={(e) => set(campo)(e.target.value)} /></label>
               ) : (
                 <InputField key={campo} label={rotulo} value={prop[campo] || ""} onChange={set(campo)} placeholder={placeholder} />
               )
             ))}
             {CAMPOS_PROPOSTA_GERADOS.map(([campo, rotulo, linhas]) => (
-              <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={prop[campo] || ""} onChange={(e) => set(campo)(e.target.value)} /></label>
+              <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={prop[campo] || ""} onChange={(e) => set(campo)(e.target.value)} /></label>
             ))}
             <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
               Excluir proposta
@@ -6671,7 +6075,7 @@ function ImpressaoProposta({ cliente, prop }) {
             <tbody>
               {fases.map((f, i) => (
                 <tr key={i}>
-                  <td className="border px-3 py-2" style={{ borderColor: "CORES.laranja" }}>{f}</td>
+                  <td className="border px-3 py-2" style={{ borderColor: CORES.laranja }}>{f}</td>
                 </tr>
               ))}
             </tbody>
@@ -6692,7 +6096,7 @@ function ImpressaoProposta({ cliente, prop }) {
         <div className="mb-5">
           <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.fogo }}>Metodologia</div>
           {(prop.metas || []).filter((m) => m.objetivo).length > 0 && (
-            <div className="mb-4 mt-3 p-3" style={{ border: "1px solid #D9914F" }}>
+            <div className="mb-4 mt-3 p-3" style={{ border: "1px solid #7BA85C" }}>
               <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.fogo }}>Metas pactuadas</div>
               <ul className="text-sm list-disc pl-5">
                 {(prop.metas || []).filter((m) => m.objetivo).map((m) => (
@@ -6712,20 +6116,20 @@ function ImpressaoProposta({ cliente, prop }) {
             <tbody>
               {prop.duracao && (
                 <tr>
-                  <td className="border px-3 py-1 font-semibold w-48" style={{ borderColor: "CORES.laranja", color: CORES.fogo }}>Duração prevista</td>
-                  <td className="border px-3 py-1" style={{ borderColor: "CORES.laranja" }}>{prop.duracao}</td>
+                  <td className="border px-3 py-1 font-semibold w-48" style={{ borderColor: CORES.laranja, color: CORES.fogo }}>Duração prevista</td>
+                  <td className="border px-3 py-1" style={{ borderColor: CORES.laranja }}>{prop.duracao}</td>
                 </tr>
               )}
               {prop.investimento && (
                 <tr>
-                  <td className="border px-3 py-1 font-semibold" style={{ borderColor: "CORES.laranja", color: CORES.fogo }}>Investimento</td>
-                  <td className="border px-3 py-1 font-semibold" style={{ borderColor: "CORES.laranja" }}>{prop.investimento}</td>
+                  <td className="border px-3 py-1 font-semibold" style={{ borderColor: CORES.laranja, color: CORES.fogo }}>Investimento</td>
+                  <td className="border px-3 py-1 font-semibold" style={{ borderColor: CORES.laranja }}>{prop.investimento}</td>
                 </tr>
               )}
               {prop.condicoesPagamento && (
                 <tr>
-                  <td className="border px-3 py-1 font-semibold" style={{ borderColor: "CORES.laranja", color: CORES.fogo }}>Condições de pagamento</td>
-                  <td className="border px-3 py-1" style={{ borderColor: "CORES.laranja" }}>{prop.condicoesPagamento}</td>
+                  <td className="border px-3 py-1 font-semibold" style={{ borderColor: CORES.laranja, color: CORES.fogo }}>Condições de pagamento</td>
+                  <td className="border px-3 py-1" style={{ borderColor: CORES.laranja }}>{prop.condicoesPagamento}</td>
                 </tr>
               )}
             </tbody>
@@ -6793,8 +6197,8 @@ function ModuloCronograma({ cliente, gestao, gerando, erro, onMudar, onDistribui
             {comSemana.length > 0 && <BotaoContorno onClick={onImprimir}>Exportar PDF</BotaoContorno>}
           </div>
         </div>
-        <p className="text-xs mb-4" style={{ color: "CORES.textoDim" }}>
-          O Mapa do Maroto do engajamento: onde cada ação está no tempo — e a semana em que os pés deveriam estar agora.
+        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
+          Linha do tempo do engajamento: onde cada ação está no tempo — e a semana em que os pés deveriam estar agora.
         </p>
 
         <div className="grid sm:grid-cols-2 gap-x-4">
@@ -6826,7 +6230,7 @@ function ModuloCronograma({ cliente, gestao, gerando, erro, onMudar, onDistribui
         {gerando && <Trabalhando />}
 
         {!gerando && todas.length === 0 && (
-          <p className="text-sm py-4" style={{ color: "CORES.textoDim" }}>
+          <p className="text-sm py-4" style={{ color: CORES.textoDim }}>
             Nenhuma ação no plano ainda. Gere o plano de ação no Briefing primeiro — depois volte aqui pra distribuir no tempo.
           </p>
         )}
@@ -6858,7 +6262,7 @@ function ModuloCronograma({ cliente, gestao, gerando, erro, onMudar, onDistribui
                 key={w}
                 className="mb-3 p-3 rounded-lg"
                 style={{
-                  background: ehAtual ? "CORES.hover" : "white",
+                  background: ehAtual ? CORES.hover : "white",
                   border: `1px solid ${ehAtual ? CORES.dourado : "#E8DFC9"}`,
                 }}
               >
@@ -6929,12 +6333,12 @@ function ImpressaoCronograma({ cliente, gestao }) {
               <tbody>
                 {doW.map((x) => (
                   <tr key={x.acao.id}>
-                    <td className="border px-3 py-1 w-44 font-semibold" style={{ borderColor: "CORES.laranja", color: CORES.dourado }}>{x.frenteNome}</td>
-                    <td className="border px-3 py-1" style={{ borderColor: "CORES.laranja" }}>
+                    <td className="border px-3 py-1 w-44 font-semibold" style={{ borderColor: CORES.laranja, color: CORES.dourado }}>{x.frenteNome}</td>
+                    <td className="border px-3 py-1" style={{ borderColor: CORES.laranja }}>
                       {x.acao.texto}
                       {x.acao.porque && <div className="text-xs italic" style={{ color: "#6B5D42" }}>{x.acao.porque}</div>}
                     </td>
-                    <td className="border px-3 py-1 w-32" style={{ borderColor: "CORES.laranja" }}>{x.acao.responsavel || ""}</td>
+                    <td className="border px-3 py-1 w-32" style={{ borderColor: CORES.laranja }}>{x.acao.responsavel || ""}</td>
                   </tr>
                 ))}
               </tbody>
@@ -6972,43 +6376,10 @@ const CAMPOS_RELATORIO = [
 
 const STATUS_META = { batida: "Batida ✓", parcial: "Parcial", nao: "Não batida" };
 
-const STATUS_PRATICA = {
-  ativa: { rotulo: "Ativa", cor: "#9A6A2F", fundo: "#F5E6C8" },
-  consolidada: { rotulo: "Consolidada", cor: "#4F6B3A", fundo: "#E3EBD8" },
-  pausada: { rotulo: "Pausada", cor: "CORES.textoDim", fundo: "#EFE8D6" },
-};
 
-const STATUS_ANOMALIA = {
-  pendente: { rotulo: "Pendente", cor: "#9A6A2F", fundo: "#F5E6C8" },
-  tratada: { rotulo: "Tratada", cor: "#4F6B3A", fundo: "#E3EBD8" },
-  reaberta: { rotulo: "Reaberta", cor: "#8A3A2E", fundo: "#F0DCD2" },
-};
 
-const STATUS_ENCONTRO = {
-  planejado: { rotulo: "Planejado", cor: "CORES.textoDim", fundo: "#EFE8D6" },
-  realizado: { rotulo: "Realizado", cor: "#4F6B3A", fundo: "#E3EBD8" },
-  cancelado: { rotulo: "Cancelado", cor: "#8A3A2E", fundo: "#F0DCD2" },
-};
 
-const STATUS_ANOMALIA_ENUM = {
-  relatada: { rotulo: "Relatada", cor: "#9A6A2F", fundo: "#F5E6C8" },
-  tratada: { rotulo: "Tratada", cor: "#4F6B3A", fundo: "#E3EBD8" },
-  reaberta: { rotulo: "Reaberta", cor: "#8A3A2E", fundo: "#F0DCD2" },
-};
 
-const STATUS_FINANCEIRO = {
-  rascunho: { rotulo: "Rascunho", cor: "CORES.textoDim", fundo: "#EFE8D6" },
-  apresentada: { rotulo: "Apresentada", cor: "#9A6A2F", fundo: "#F5E6C8" },
-  aceita: { rotulo: "Aceita", cor: "#4F6B3A", fundo: "#E3EBD8" },
-  recusada: { rotulo: "Recusada", cor: "#8A3A2E", fundo: "#F0DCD2" },
-};
-
-// Cores adicionais para coerência
-const CORES_ESTENDIDAS = {
-  borderClaro: "#E0D5BC",
-  alertaFundo: "#F5DDD6",
-  sucessoFundo: "#E3EBD8",
-};
 
 function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAcordo, gerando, erro, onMudarLista, onAbrir, onGerar, onImprimir, onVoltar }) {
   if (!relAberto) {
@@ -7029,12 +6400,12 @@ function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAcordo, g
             + Novo relatório
           </BotaoPrimario>
         </div>
-        <p className="text-xs mb-5" style={{ color: "CORES.textoDim" }}>
+        <p className="text-xs mb-5" style={{ color: CORES.textoDim }}>
           Malfeito feito: o fechamento do ciclo. Antes/depois do diagnóstico, frentes concluídas, entregas e recomendações — o documento que renova contrato e gera indicação.
         </p>
         {relatorios.length === 0 ? (
-          <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #D9914F" }}>
-            <p className="text-sm" style={{ color: "CORES.textoDim" }}>
+          <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #7BA85C" }}>
+            <p className="text-sm" style={{ color: CORES.textoDim }}>
               Nenhum relatório ainda. Crie ao final do engajamento — a IA reúne tudo que aconteceu no ENRAIZAR deste cliente.
             </p>
           </div>
@@ -7048,7 +6419,7 @@ function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAcordo, g
                 className="card"
               >
                 <span className="font-serif" style={{ color: CORES.fogo }}>Relatório de {r.data}</span>
-                <span className="text-xs" style={{ color: "CORES.textoDim" }}>{r.retrospectiva ? "" : "rascunho vazio"}</span>
+                <span className="text-xs" style={{ color: CORES.textoDim }}>{r.retrospectiva ? "" : "rascunho vazio"}</span>
               </button>
             ))}
           </div>
@@ -7077,7 +6448,7 @@ function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAcordo, g
           </div>
         </div>
 
-        <div className="mb-4 p-3 rounded-lg" style={{ background: "CORES.hover", border: "2px solid #D4AF37AA" }}>
+        <div className="mb-4 p-3 rounded-lg" style={{ background: CORES.hover, border: "2px solid #D4AF37AA" }}>
           <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
             <div className="label" style={{ color: "#9A6A2F" }}>
               Verificação das metas pactuadas (fase Prova)
@@ -7093,7 +6464,7 @@ function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAcordo, g
             )}
           </div>
           {(relAberto.metasVerificadas || []).length === 0 && (
-            <p className="text-xs" style={{ color: "CORES.textoDim" }}>
+            <p className="text-xs" style={{ color: CORES.textoDim }}>
               {(metasAcordo || []).length ? "Puxe as metas da proposta aceita e registre: batida, parcial ou não batida — com o porquê." : "Nenhuma meta pactuada na proposta aceita deste cliente."}
             </p>
           )}
@@ -7117,7 +6488,7 @@ function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAcordo, g
                 </select>
               </div>
               <input
-                className="w-full mt-1 px-2 py-1 text-xs rounded border bg-white"
+                className="w-full mt-1 px-2 py-1 text-xs rounded border bg-creme"
                 style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                 placeholder="Por quê (o que levou a esse resultado)"
                 value={m.porque}
@@ -7149,9 +6520,9 @@ function ModuloRelatorio({ cliente, relatorios, relAberto, diags, metasAcordo, g
 
         {!gerando && (
           <>
-            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} placeholder="Ex.: destacar a autonomia conquistada pelo gerente; cliente quer continuar com mentoria mensal" value={relAberto.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder="Ex.: destacar a autonomia conquistada pelo gerente; cliente quer continuar com mentoria mensal" value={relAberto.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
             {CAMPOS_RELATORIO.map(([campo, rotulo, linhas]) => (
-              <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={relAberto[campo]} onChange={(e) => set(campo)(e.target.value)} /></label>
+              <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={relAberto[campo]} onChange={(e) => set(campo)(e.target.value)} /></label>
             ))}
             <button
               onClick={() => {
@@ -7191,7 +6562,7 @@ function ImpressaoRelatorio({ cliente, rel, diags, dadosPainel }) {
         <p className="text-sm whitespace-pre-line">{rel.retrospectiva}</p>
       </div>
       {(rel.metasVerificadas || []).length > 0 && (
-        <div className="mb-5 p-3" style={{ border: "1px solid #D9914F" }}>
+        <div className="mb-5 p-3" style={{ border: "1px solid #7BA85C" }}>
           <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.fogo }}>Metas pactuadas — verificação</div>
           {(rel.metasVerificadas || []).map((m) => (
             <div key={m.id} className="text-sm mb-1">
@@ -7202,7 +6573,7 @@ function ImpressaoRelatorio({ cliente, rel, diags, dadosPainel }) {
         </div>
       )}
       {dadosPainel && (
-        <div className="mb-5 p-3" style={{ border: "1px solid #D9914F" }}>
+        <div className="mb-5 p-3" style={{ border: "1px solid #7BA85C" }}>
           <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.fogo }}>Painel do Engajamento</div>
           <div className="text-sm">
             Índice de formalização: <strong>{dadosPainel.formalizacao}%</strong> · Conformidade (CCT): <strong>{dadosPainel.cctResolvidos}/{dadosPainel.cctTotal} resolvidos</strong> · Anomalias tratadas: <strong>{dadosPainel.anomTratadas}/{dadosPainel.anomTotal}</strong> · Atas registradas: <strong>{dadosPainel.totalAtas}</strong>
@@ -7290,7 +6661,7 @@ function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar, onVolt
   };
 
   return (
-    <div style={{ background: "CORES.cartao", minHeight: "100vh", paddingBottom: "64px" }}>
+    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
       <HeaderModulo
         titulo="Financeiro do Engajamento"
         cliente={cliente}
@@ -7299,8 +6670,8 @@ function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar, onVolt
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
         <div className="rounded-lg p-6 shadow-sm" className="card">
-        <p className="text-xs mb-4" style={{ color: "CORES.textoDim" }}>
-          O cofre de Gringotes: parcelas, vencimentos e o que já entrou. Uso interno — nada disso aparece em documentos do cliente.
+        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
+          Controle financeiro: parcelas, vencimentos e o que já entrou. Uso interno — nada disso aparece em documentos do cliente.
         </p>
 
         {propostaAceita && parcelas.length === 0 && (
@@ -7330,7 +6701,7 @@ function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar, onVolt
           <div className="px-4 py-2 rounded-lg text-sm" style={{ background: "#E3EBD8", color: "#4F6B3A" }}>
             Recebido: <strong>{formatarBR(recebido)}</strong>
           </div>
-          <div className="px-4 py-2 rounded-lg text-sm" style={{ background: "CORES.hover", color: "#9A6A2F" }}>
+          <div className="px-4 py-2 rounded-lg text-sm" style={{ background: CORES.hover, color: "#9A6A2F" }}>
             A receber: <strong>{formatarBR(aReceber)}</strong>
           </div>
           {atrasado > 0 && (
@@ -7352,21 +6723,21 @@ function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar, onVolt
                 onChange={(e) => mudarParcela(p.id, "pago", e.target.checked)}
               />
               <input
-                className="flex-1 min-w-32 px-2 py-1 text-sm rounded border bg-white"
+                className="flex-1 min-w-32 px-2 py-1 text-sm rounded border bg-creme"
                 style={{ borderColor: "#E0D5BC", color: p.pago ? "#A89878" : CORES.fogoEscuro, textDecoration: p.pago ? "line-through" : "none" }}
                 placeholder="Descrição (ex.: Entrada, Parcela 1)"
                 value={p.descricao}
                 onChange={(e) => mudarParcela(p.id, "descricao", e.target.value)}
               />
               <input
-                className="w-28 px-2 py-1 text-sm rounded border bg-white text-right"
+                className="w-28 px-2 py-1 text-sm rounded border bg-creme text-right"
                 style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
                 placeholder="R$ 0,00"
                 value={p.valor}
                 onChange={(e) => mudarParcela(p.id, "valor", e.target.value)}
               />
               <input
-                className="w-28 px-2 py-1 text-xs rounded border bg-white text-center"
+                className="w-28 px-2 py-1 text-xs rounded border bg-creme text-center"
                 style={{ borderColor: vencida ? "#8A3A2E" : "#E0D5BC", color: vencida ? "#8A3A2E" : "#6B5D42" }}
                 placeholder="dd/mm/aaaa"
                 title="Vencimento"
@@ -7422,7 +6793,7 @@ function DiagramaFluxo({ etapas, impressao }) {
               style={
                 e.tipo === "decisao"
                   ? {
-                      background: impressao ? "white" : "CORES.hover",
+                      background: impressao ? "white" : CORES.hover,
                       border: `2px solid #D4AF37AA`,
                       borderRadius: 4,
                       transform: "skewX(-12deg)",
@@ -7441,7 +6812,7 @@ function DiagramaFluxo({ etapas, impressao }) {
               <div style={e.tipo === "decisao" ? { transform: "skewX(12deg)" } : undefined}>
                 {e.tipo === "decisao" ? `${e.texto}?` : e.texto}
                 {e.responsavel && (
-                  <div className="text-xs mt-0.5" style={{ color: "CORES.textoDim" }}>{e.responsavel}</div>
+                  <div className="text-xs mt-0.5" style={{ color: CORES.textoDim }}>{e.responsavel}</div>
                 )}
               </div>
             </div>
@@ -7467,12 +6838,12 @@ function ListaFluxos({ cliente, fluxos, onAbrir, onNovo, onVoltar }) {
         <h2 className="font-serif text-xl" style={{ color: CORES.fogo }}>Desenho de Processos</h2>
         <BotaoPrimario onClick={onNovo}>+ Novo processo</BotaoPrimario>
       </div>
-      <p className="text-xs mb-5" style={{ color: "CORES.textoDim" }}>
+      <p className="text-xs mb-5" style={{ color: CORES.textoDim }}>
         As passagens do castelo: por onde o trabalho realmente anda. Quem faz o quê, onde tem decisão, onde trava — o POP diz como executar; aqui você desenha o caminho.
       </p>
       {fluxos.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #D9914F" }}>
-          <p className="text-sm" style={{ color: "CORES.textoDim" }}>
+        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #7BA85C" }}>
+          <p className="text-sm" style={{ color: CORES.textoDim }}>
             Nenhum processo desenhado. Descreva como funciona hoje (e onde dói) — a IA desenha o fluxo com responsáveis, decisões e melhorias.
           </p>
         </div>
@@ -7486,7 +6857,7 @@ function ListaFluxos({ cliente, fluxos, onAbrir, onNovo, onVoltar }) {
               className="card"
             >
               <span className="font-serif" style={{ color: CORES.fogo }}>{f.nome || "(sem nome)"}</span>
-              <span className="text-xs" style={{ color: "CORES.textoDim" }}>
+              <span className="text-xs" style={{ color: CORES.textoDim }}>
                 {f.setor}{f.etapas && f.etapas.length ? ` · ${f.etapas.length} etapas` : " · rascunho vazio"}
               </span>
             </button>
@@ -7537,7 +6908,7 @@ function EditorFluxo({ cliente, fluxo, gerando, erro, onMudar, onGerar, onImprim
               <InputField label="Nome do processo" value={fluxo.nome} onChange={set("nome")} placeholder="Ex.: Pedido do delivery, do app à entrega" />
               <InputField label="Setor" value={fluxo.setor} onChange={set("setor")} placeholder="Ex.: Delivery" />
             </div>
-            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Como funciona hoje — e onde trava (para a IA)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} placeholder="Ex.: pedido cai no tablet, cozinha só vé quando alguém avisa; embalagem sem conferência; motoboy sai sem checar endereço" value={fluxo.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Como funciona hoje — e onde trava (para a IA)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder="Ex.: pedido cai no tablet, cozinha só vé quando alguém avisa; embalagem sem conferência; motoboy sai sem checar endereço" value={fluxo.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
 
             {etapas.length > 0 && (
               <>
@@ -7551,7 +6922,7 @@ function EditorFluxo({ cliente, fluxo, gerando, erro, onMudar, onGerar, onImprim
                       <button onClick={() => mover(idx, 1)} className="text-xs leading-3" style={{ color: "#C0B091" }}>▼</button>
                     </div>
                     <select
-                      className="px-1.5 py-1 text-xs rounded border bg-white"
+                      className="px-1.5 py-1 text-xs rounded border bg-creme"
                       style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                       value={e.tipo}
                       onChange={(ev) => mudarEtapa(e.id, "tipo", ev.target.value)}
@@ -7560,14 +6931,14 @@ function EditorFluxo({ cliente, fluxo, gerando, erro, onMudar, onGerar, onImprim
                       <option value="decisao">Decisão</option>
                     </select>
                     <input
-                      className="flex-1 min-w-36 px-2 py-1 text-sm rounded border bg-white"
+                      className="flex-1 min-w-36 px-2 py-1 text-sm rounded border bg-creme"
                       style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
                       value={e.texto}
                       placeholder="Etapa"
                       onChange={(ev) => mudarEtapa(e.id, "texto", ev.target.value)}
                     />
                     <input
-                      className="w-32 px-2 py-1 text-xs rounded border bg-white"
+                      className="w-32 px-2 py-1 text-xs rounded border bg-creme"
                       style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                       value={e.responsavel}
                       placeholder="Responsável"
@@ -7575,7 +6946,7 @@ function EditorFluxo({ cliente, fluxo, gerando, erro, onMudar, onGerar, onImprim
                     />
                     {e.tipo === "decisao" && (
                       <input
-                        className="w-44 px-2 py-1 text-xs rounded border bg-white"
+                        className="w-44 px-2 py-1 text-xs rounded border bg-creme"
                         style={{ borderColor: "#E8C4B8", color: "#8A3A2E" }}
                         value={e.seNao}
                         placeholder="Se não → ..."
@@ -7611,7 +6982,7 @@ function EditorFluxo({ cliente, fluxo, gerando, erro, onMudar, onGerar, onImprim
             )}
 
             <div className="mt-5">
-              <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Gargalos e melhorias propostas (um por linha)</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={fluxo.melhorias} onChange={(e) => set("melhorias")(e.target.value)} /></label>
+              <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Gargalos e melhorias propostas (um por linha)</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={fluxo.melhorias} onChange={(e) => set("melhorias")(e.target.value)} /></label>
             </div>
 
             <button onClick={onExcluir} className="text-xs underline" style={{ color: "#8A3A2E" }}>
@@ -7680,17 +7051,17 @@ function ModuloAlcadas({ cliente, alcadas, gerando, erro, onMudar, onGerar, onIm
             {itens.length > 0 && <BotaoContorno onClick={onImprimir}>Exportar PDF</BotaoContorno>}
           </div>
         </div>
-        <p className="text-xs mb-4" style={{ color: "CORES.textoDim" }}>
+        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
           A Seção Restrita: quem pode decidir o quê sem pedir licença, até que limite, e para quem escala. O documento que liberta o dono do operacional.
         </p>
 
-        <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} placeholder="Ex.: dono quer aprovar toda compra acima de R$ 500; gerente pode dar até 10% de desconto" value={alcadas.obs || ""} onChange={(v) => onMudar({ ...alcadas, obs: v })} /></label>
+        <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder="Ex.: dono quer aprovar toda compra acima de R$ 500; gerente pode dar até 10% de desconto" value={alcadas.obs || ""} onChange={(v) => onMudar({ ...alcadas, obs: v })} /></label>
 
         <AvisoErro erro={erro} />
         {gerando && <Trabalhando />}
 
         {!gerando && itens.length === 0 && !erro && (
-          <p className="text-sm py-4" style={{ color: "CORES.textoDim" }}>
+          <p className="text-sm py-4" style={{ color: CORES.textoDim }}>
             Nenhuma alçada definida. Gere com IA — ela propõe limites conservadores a partir dos cargos e do organograma, e você calibra os valores com o dono.
           </p>
         )}
@@ -7711,27 +7082,27 @@ function ModuloAlcadas({ cliente, alcadas, gerando, erro, onMudar, onGerar, onIm
               {g.itens.map((i) => (
                 <div key={i.id} className="flex items-center gap-2 py-1.5 border-b flex-wrap sm:flex-nowrap" style={{ borderColor: "#EFE8D6" }}>
                   <input
-                    className="flex-1 min-w-40 px-2 py-1 text-sm rounded border bg-white"
+                    className="flex-1 min-w-40 px-2 py-1 text-sm rounded border bg-creme"
                     style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
                     value={i.decisao}
                     onChange={(e) => mudarItem(i.id, "decisao", e.target.value)}
                   />
                   <input
-                    className="w-32 px-2 py-1 text-xs rounded border bg-white"
+                    className="w-32 px-2 py-1 text-xs rounded border bg-creme"
                     style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                     value={i.decide}
                     placeholder="Quem decide"
                     onChange={(e) => mudarItem(i.id, "decide", e.target.value)}
                   />
                   <input
-                    className="w-36 px-2 py-1 text-xs rounded border bg-white"
+                    className="w-36 px-2 py-1 text-xs rounded border bg-creme"
                     style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                     value={i.limite}
                     placeholder="Limite"
                     onChange={(e) => mudarItem(i.id, "limite", e.target.value)}
                   />
                   <input
-                    className="w-32 px-2 py-1 text-xs rounded border bg-white"
+                    className="w-32 px-2 py-1 text-xs rounded border bg-creme"
                     style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                     value={i.escalonamento}
                     placeholder="Escala para"
@@ -7785,19 +7156,19 @@ function ImpressaoAlcadas({ cliente, alcadas }) {
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr>
-                <th className="border px-3 py-1 text-left" style={{ borderColor: "CORES.laranja", color: CORES.dourado }}>Decisão</th>
-                <th className="border px-3 py-1 text-left w-36" style={{ borderColor: "CORES.laranja", color: CORES.dourado }}>Quem decide</th>
-                <th className="border px-3 py-1 text-left w-40" style={{ borderColor: "CORES.laranja", color: CORES.dourado }}>Limite / condição</th>
-                <th className="border px-3 py-1 text-left w-36" style={{ borderColor: "CORES.laranja", color: CORES.dourado }}>Acima disso</th>
+                <th className="border px-3 py-1 text-left" style={{ borderColor: CORES.laranja, color: CORES.dourado }}>Decisão</th>
+                <th className="border px-3 py-1 text-left w-36" style={{ borderColor: CORES.laranja, color: CORES.dourado }}>Quem decide</th>
+                <th className="border px-3 py-1 text-left w-40" style={{ borderColor: CORES.laranja, color: CORES.dourado }}>Limite / condição</th>
+                <th className="border px-3 py-1 text-left w-36" style={{ borderColor: CORES.laranja, color: CORES.dourado }}>Acima disso</th>
               </tr>
             </thead>
             <tbody>
               {g.itens.map((i) => (
                 <tr key={i.id}>
-                  <td className="border px-3 py-1" style={{ borderColor: "CORES.laranja" }}>{i.decisao}</td>
-                  <td className="border px-3 py-1 font-semibold" style={{ borderColor: "CORES.laranja" }}>{i.decide}</td>
-                  <td className="border px-3 py-1" style={{ borderColor: "CORES.laranja" }}>{i.limite}</td>
-                  <td className="border px-3 py-1" style={{ borderColor: "CORES.laranja" }}>{i.escalonamento}</td>
+                  <td className="border px-3 py-1" style={{ borderColor: CORES.laranja }}>{i.decisao}</td>
+                  <td className="border px-3 py-1 font-semibold" style={{ borderColor: CORES.laranja }}>{i.decide}</td>
+                  <td className="border px-3 py-1" style={{ borderColor: CORES.laranja }}>{i.limite}</td>
+                  <td className="border px-3 py-1" style={{ borderColor: CORES.laranja }}>{i.escalonamento}</td>
                 </tr>
               ))}
             </tbody>
@@ -7832,17 +7203,17 @@ function ModuloIndicadores({ cliente, painel, gerando, erro, onMudar, onGerar, o
             {itens.length > 0 && <BotaoContorno onClick={onImprimir}>Exportar PDF</BotaoContorno>}
           </div>
         </div>
-        <p className="text-xs mb-4" style={{ color: "CORES.textoDim" }}>
+        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
           A Taça das Casas: os pontos que cada área acompanha — poucos, mensuráveis com o que a PME tem, com meta e dono. Sem isso, os ritos viram reunião de opinião.
         </p>
 
-        <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} placeholder="Ex.: dor principal é desperdício e atraso no delivery; sistema de vendas é o Consumer" value={painel.obs || ""} onChange={(v) => onMudar({ ...painel, obs: v })} /></label>
+        <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder="Ex.: dor principal é desperdício e atraso no delivery; sistema de vendas é o Consumer" value={painel.obs || ""} onChange={(v) => onMudar({ ...painel, obs: v })} /></label>
 
         <AvisoErro erro={erro} />
         {gerando && <Trabalhando />}
 
         {!gerando && itens.length === 0 && !erro && (
-          <p className="text-sm py-4" style={{ color: "CORES.textoDim" }}>
+          <p className="text-sm py-4" style={{ color: CORES.textoDim }}>
             Nenhum indicador definido. Gere com IA — metas vêm marcadas como sugestão, pra calibrar com o dono.
           </p>
         )}
@@ -7866,34 +7237,34 @@ function ModuloIndicadores({ cliente, painel, gerando, erro, onMudar, onGerar, o
                 .map((i) => (
                   <div key={i.id} className="flex items-center gap-2 py-1.5 border-b flex-wrap sm:flex-nowrap" style={{ borderColor: "#EFE8D6" }}>
                     <input
-                      className="w-40 px-2 py-1 text-sm rounded border bg-white"
+                      className="w-40 px-2 py-1 text-sm rounded border bg-creme"
                       style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
                       value={i.nome}
                       onChange={(e) => mudarItem(i.id, "nome", e.target.value)}
                     />
                     <input
-                      className="flex-1 min-w-36 px-2 py-1 text-xs rounded border bg-white"
+                      className="flex-1 min-w-36 px-2 py-1 text-xs rounded border bg-creme"
                       style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                       value={i.como}
                       placeholder="Como medir"
                       onChange={(e) => mudarItem(i.id, "como", e.target.value)}
                     />
                     <input
-                      className="w-28 px-2 py-1 text-xs rounded border bg-white"
+                      className="w-28 px-2 py-1 text-xs rounded border bg-creme"
                       style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                       value={i.meta}
                       placeholder="Meta"
                       onChange={(e) => mudarItem(i.id, "meta", e.target.value)}
                     />
                     <input
-                      className="w-24 px-2 py-1 text-xs rounded border bg-white"
+                      className="w-24 px-2 py-1 text-xs rounded border bg-creme"
                       style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                       value={i.frequencia}
                       placeholder="Freq."
                       onChange={(e) => mudarItem(i.id, "frequencia", e.target.value)}
                     />
                     <input
-                      className="w-28 px-2 py-1 text-xs rounded border bg-white"
+                      className="w-28 px-2 py-1 text-xs rounded border bg-creme"
                       style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                       value={i.responsavel}
                       placeholder="Responsável"
@@ -7944,11 +7315,11 @@ function ImpressaoIndicadores({ cliente, painel }) {
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr>
-                <th className="border px-3 py-1 text-left" style={{ borderColor: "CORES.laranja", color: CORES.dourado }}>Indicador</th>
-                <th className="border px-3 py-1 text-left" style={{ borderColor: "CORES.laranja", color: CORES.dourado }}>Como medir</th>
-                <th className="border px-3 py-1 text-left w-28" style={{ borderColor: "CORES.laranja", color: CORES.dourado }}>Meta</th>
-                <th className="border px-3 py-1 text-left w-24" style={{ borderColor: "CORES.laranja", color: CORES.dourado }}>Frequência</th>
-                <th className="border px-3 py-1 text-left w-32" style={{ borderColor: "CORES.laranja", color: CORES.dourado }}>Responsável</th>
+                <th className="border px-3 py-1 text-left" style={{ borderColor: CORES.laranja, color: CORES.dourado }}>Indicador</th>
+                <th className="border px-3 py-1 text-left" style={{ borderColor: CORES.laranja, color: CORES.dourado }}>Como medir</th>
+                <th className="border px-3 py-1 text-left w-28" style={{ borderColor: CORES.laranja, color: CORES.dourado }}>Meta</th>
+                <th className="border px-3 py-1 text-left w-24" style={{ borderColor: CORES.laranja, color: CORES.dourado }}>Frequência</th>
+                <th className="border px-3 py-1 text-left w-32" style={{ borderColor: CORES.laranja, color: CORES.dourado }}>Responsável</th>
               </tr>
             </thead>
             <tbody>
@@ -7956,11 +7327,11 @@ function ImpressaoIndicadores({ cliente, painel }) {
                 .filter((i) => i.area === area)
                 .map((i) => (
                   <tr key={i.id}>
-                    <td className="border px-3 py-1 font-semibold" style={{ borderColor: "CORES.laranja" }}>{i.nome}</td>
-                    <td className="border px-3 py-1" style={{ borderColor: "CORES.laranja" }}>{i.como}</td>
-                    <td className="border px-3 py-1" style={{ borderColor: "CORES.laranja" }}>{i.meta}</td>
-                    <td className="border px-3 py-1" style={{ borderColor: "CORES.laranja" }}>{i.frequencia}</td>
-                    <td className="border px-3 py-1" style={{ borderColor: "CORES.laranja" }}>{i.responsavel}</td>
+                    <td className="border px-3 py-1 font-semibold" style={{ borderColor: CORES.laranja }}>{i.nome}</td>
+                    <td className="border px-3 py-1" style={{ borderColor: CORES.laranja }}>{i.como}</td>
+                    <td className="border px-3 py-1" style={{ borderColor: CORES.laranja }}>{i.meta}</td>
+                    <td className="border px-3 py-1" style={{ borderColor: CORES.laranja }}>{i.frequencia}</td>
+                    <td className="border px-3 py-1" style={{ borderColor: CORES.laranja }}>{i.responsavel}</td>
                   </tr>
                 ))}
             </tbody>
@@ -7994,24 +7365,24 @@ function ModuloRitos({ cliente, ritos, gerando, erro, onMudar, onGerar, onImprim
             {itens.length > 0 && <BotaoContorno onClick={onImprimir}>Exportar PDF</BotaoContorno>}
           </div>
         </div>
-        <p className="text-xs mb-4" style={{ color: "CORES.textoDim" }}>
+        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
           Os banquetes do Salão Principal: encontros fixos que ninguém cancela. Cada rito com pauta padrão fixa, pra virar hábito — a gestão acontece sem depender do dono lembrar.
         </p>
 
-        <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} placeholder="Ex.: turnos de almoço e jantar; líderes só se encontram todos às segundas" value={ritos.obs || ""} onChange={(v) => onMudar({ ...ritos, obs: v })} /></label>
+        <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA (opcional)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder="Ex.: turnos de almoço e jantar; líderes só se encontram todos às segundas" value={ritos.obs || ""} onChange={(v) => onMudar({ ...ritos, obs: v })} /></label>
 
         <AvisoErro erro={erro} />
         {gerando && <Trabalhando />}
 
         {!gerando && itens.length === 0 && !erro && (
-          <p className="text-sm py-4" style={{ color: "CORES.textoDim" }}>
+          <p className="text-sm py-4" style={{ color: CORES.textoDim }}>
             Nenhum rito definido. Gere com IA — do alinhamento diário rápido à mensal de resultados, com pautas que citam os indicadores quando já definidos.
           </p>
         )}
 
         {!gerando &&
           itens.map((r) => (
-            <div key={r.id} className="mb-4 rounded-lg p-4" style={{ background: "white", border: "2px solid #E97F3855" }}>
+            <div key={r.id} className="mb-4 rounded-lg p-4" style={{ background: CORES.cartao, border: "2px solid #E97F3855" }}>
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <input
                   className="font-serif text-base flex-1 min-w-40 bg-transparent outline-none"
@@ -8029,21 +7400,21 @@ function ModuloRitos({ cliente, ritos, gerando, erro, onMudar, onGerar, onImprim
               </div>
               <div className="grid sm:grid-cols-3 gap-2 mb-2">
                 <input
-                  className="px-2 py-1 text-xs rounded border bg-white"
+                  className="px-2 py-1 text-xs rounded border bg-creme"
                   style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                   value={r.frequencia}
                   placeholder="Frequência e momento"
                   onChange={(e) => mudarItem(r.id, "frequencia", e.target.value)}
                 />
                 <input
-                  className="px-2 py-1 text-xs rounded border bg-white"
+                  className="px-2 py-1 text-xs rounded border bg-creme"
                   style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                   value={r.duracao}
                   placeholder="Duração"
                   onChange={(e) => mudarItem(r.id, "duracao", e.target.value)}
                 />
                 <input
-                  className="px-2 py-1 text-xs rounded border bg-white"
+                  className="px-2 py-1 text-xs rounded border bg-creme"
                   style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                   value={r.participantes}
                   placeholder="Participantes"
@@ -8052,7 +7423,7 @@ function ModuloRitos({ cliente, ritos, gerando, erro, onMudar, onGerar, onImprim
               </div>
               <textarea
                 rows={4}
-                className="w-full px-2 py-1 text-sm rounded border bg-white outline-none"
+                className="w-full px-2 py-1 text-sm rounded border bg-creme outline-none"
                 style={{ borderColor: "#EFE8D6", color: CORES.fogoEscuro }}
                 value={r.pauta}
                 placeholder="Pauta padrão (um item por linha)"
@@ -8099,15 +7470,15 @@ function ImpressaoRitos({ cliente, ritos }) {
               <tbody>
                 <tr>
                   {r.frequencia && (
-                    <td className="border px-3 py-1" style={{ borderColor: "CORES.laranja" }}><strong>Quando:</strong> {r.frequencia}</td>
+                    <td className="border px-3 py-1" style={{ borderColor: CORES.laranja }}><strong>Quando:</strong> {r.frequencia}</td>
                   )}
                   {r.duracao && (
-                    <td className="border px-3 py-1 w-36" style={{ borderColor: "CORES.laranja" }}><strong>Duração:</strong> {r.duracao}</td>
+                    <td className="border px-3 py-1 w-36" style={{ borderColor: CORES.laranja }}><strong>Duração:</strong> {r.duracao}</td>
                   )}
                 </tr>
                 {r.participantes && (
                   <tr>
-                    <td className="border px-3 py-1" colSpan={2} style={{ borderColor: "CORES.laranja" }}><strong>Participantes:</strong> {r.participantes}</td>
+                    <td className="border px-3 py-1" colSpan={2} style={{ borderColor: CORES.laranja }}><strong>Participantes:</strong> {r.participantes}</td>
                   </tr>
                 )}
               </tbody>
@@ -8141,12 +7512,12 @@ function ListaCampo({ cliente, registros, onAbrir, onNovo, onVoltar }) {
           <BotaoPrimario onClick={() => onNovo("turno")}>+ Turno</BotaoPrimario>
         </div>
       </div>
-      <p className="text-xs mb-5" style={{ color: "CORES.textoDim" }}>
+      <p className="text-xs mb-5" style={{ color: CORES.textoDim }}>
         O caderno de campo: observar as criaturas no habitat delas. O que você registra aqui vira fonte primária — alimenta cargos, processos, plano e diagnóstico. 100% interno: nada disso sai em documento de cliente.
       </p>
       {registros.length === 0 ? (
-        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #D9914F" }}>
-          <p className="text-sm" style={{ color: "CORES.textoDim" }}>
+        <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #7BA85C" }}>
+          <p className="text-sm" style={{ color: CORES.textoDim }}>
             O caderno está em branco. Antes de ir a campo, crie uma visita ou entrevista — a IA prepara o roteiro com base no briefing, nas frentes e na CCT.
           </p>
         </div>
@@ -8163,7 +7534,7 @@ function ListaCampo({ cliente, registros, onAbrir, onNovo, onVoltar }) {
                 <span className="text-xs uppercase tracking-widest mr-2" style={{ color: CORES.dourado }}>{TIPOS_CAMPO[r.tipo].curto}</span>
                 {r.tipo === "entrevista" ? (r.entrevistado || r.funcao || "(sem nome)") : (r.titulo || r.setor || "(sem título)")}
               </span>
-              <span className="text-xs" style={{ color: "CORES.textoDim" }}>{r.data}</span>
+              <span className="text-xs" style={{ color: CORES.textoDim }}>{r.data}</span>
             </button>
           ))}
         </div>
@@ -8193,7 +7564,7 @@ function EditorCampo({ cliente, reg, pessoas, gerando, erro, onMudar, onGerarRot
             </BotaoPrimario>
           )}
         </div>
-        <p className="text-xs mb-4" style={{ color: "CORES.textoDim" }}>
+        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
           {reg.tipo === "visita" && "Roteiro antes, olhos abertos durante, registro logo depois — memória de campo evapora em horas."}
           {reg.tipo === "entrevista" && "O que a pessoa realmente faz, na voz dela. Papel se confronta depois; agora é escuta."}
           {reg.tipo === "turno" && "Linha do tempo do turno: hora, o que viu, e a marca do que é (processo, pessoa, risco, oportunidade)."}
@@ -8217,11 +7588,11 @@ function EditorCampo({ cliente, reg, pessoas, gerando, erro, onMudar, onGerarRot
             </div>
 
             {reg.tipo === "entrevista" && reg.entrevistado && (
-              <div className="mb-4 text-xs flex items-center gap-2 flex-wrap" style={{ color: "CORES.textoDim" }}>
+              <div className="mb-4 text-xs flex items-center gap-2 flex-wrap" style={{ color: CORES.textoDim }}>
                 {pessoaLigada ? (
                   <>
                     <span>
-                      {pessoaLigada.nome} já está no Chapéu Seletor
+                      {pessoaLigada.nome} já está em Temperamentos
                       {pessoaLigada.dominante && TEMPERAMENTOS[pessoaLigada.dominante] ? ` (${TEMPERAMENTOS[pessoaLigada.dominante].rotulo})` : ""}.
                     </span>
                     <button onClick={() => onAbrirPessoa(pessoaLigada.id)} className="underline font-semibold" style={{ color: CORES.dourado }}>
@@ -8230,7 +7601,7 @@ function EditorCampo({ cliente, reg, pessoas, gerando, erro, onMudar, onGerarRot
                   </>
                 ) : (
                   <button onClick={onCriarPessoa} className="underline font-semibold" style={{ color: CORES.dourado }}>
-                    + Mapear {reg.entrevistado} no Chapéu Seletor (aproveite a entrevista para observar o temperamento)
+                    + Mapear {reg.entrevistado} em Temperamentos (aproveite a entrevista para observar o temperamento)
                   </button>
                 )}
               </div>
@@ -8241,25 +7612,25 @@ function EditorCampo({ cliente, reg, pessoas, gerando, erro, onMudar, onGerarRot
                 <span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>
                   {reg.tipo === "visita" ? "Roteiro de observação (um ponto por linha)" : "Roteiro de perguntas (uma por linha)"}
                 </span>
-                <textarea rows={6} className="w-full px-3 py-2 rounded border bg-white text-sm outline-none" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={reg.roteiro} onChange={(e) => set("roteiro")(e.target.value)} placeholder="Gere com IA ou escreva o seu" />
+                <textarea rows={6} className="w-full px-3 py-2 rounded border bg-creme text-sm outline-none" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={reg.roteiro} onChange={(e) => set("roteiro")(e.target.value)} placeholder="Gere com IA ou escreva o seu" />
               </label>
             )}
 
             {reg.tipo === "visita" && (
               <>
-                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>O que foi observado</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={reg.observado} onChange={(e) => set("observado")(e.target.value)} /></label>
-                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Evidências de informalidade</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} placeholder="Controles em papel, combinados verbais, ponto frouxo..." value={reg.informalidades} onChange={(e) => set("informalidades")(e.target.value)} /></label>
-                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Riscos percebidos (trabalhista / contábil / administrativo)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={reg.riscos} onChange={(e) => set("riscos")(e.target.value)} /></label>
-                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Pontos fortes a preservar</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={reg.pontosFortes} onChange={(e) => set("pontosFortes")(e.target.value)} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>O que foi observado</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={reg.observado} onChange={(e) => set("observado")(e.target.value)} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Evidências de informalidade</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder="Controles em papel, combinados verbais, ponto frouxo..." value={reg.informalidades} onChange={(e) => set("informalidades")(e.target.value)} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Riscos percebidos (trabalhista / contábil / administrativo)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={reg.riscos} onChange={(e) => set("riscos")(e.target.value)} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Pontos fortes a preservar</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={reg.pontosFortes} onChange={(e) => set("pontosFortes")(e.target.value)} /></label>
               </>
             )}
 
             {reg.tipo === "entrevista" && (
               <>
-                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Atividades relatadas (o que ele faz de verdade)</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={reg.atividades} onChange={(e) => set("atividades")(e.target.value)} /></label>
-                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>O que faz e não deveria ser dele</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={reg.fazNaoDeveria} onChange={(e) => set("fazNaoDeveria")(e.target.value)} /></label>
-                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>O que deveria fazer e não faz (e por quê)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={reg.deveriaNaoFaz} onChange={(e) => set("deveriaNaoFaz")(e.target.value)} /></label>
-                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Dores relatadas</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={reg.dores} onChange={(e) => set("dores")(e.target.value)} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Atividades relatadas (o que ele faz de verdade)</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={reg.atividades} onChange={(e) => set("atividades")(e.target.value)} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>O que faz e não deveria ser dele</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={reg.fazNaoDeveria} onChange={(e) => set("fazNaoDeveria")(e.target.value)} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>O que deveria fazer e não faz (e por quê)</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={reg.deveriaNaoFaz} onChange={(e) => set("deveriaNaoFaz")(e.target.value)} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Dores relatadas</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={reg.dores} onChange={(e) => set("dores")(e.target.value)} /></label>
               </>
             )}
 
@@ -8269,7 +7640,7 @@ function EditorCampo({ cliente, reg, pessoas, gerando, erro, onMudar, onGerarRot
                 {(reg.linhas || []).map((l) => (
                   <div key={l.id} className="flex items-center gap-2 py-1.5 border-b flex-wrap sm:flex-nowrap" style={{ borderColor: "#EFE8D6" }}>
                     <input
-                      className="w-16 px-2 py-1 text-xs rounded border bg-white text-center"
+                      className="w-16 px-2 py-1 text-xs rounded border bg-creme text-center"
                       style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                       placeholder="hh:mm"
                       value={l.hora}
@@ -8290,7 +7661,7 @@ function EditorCampo({ cliente, reg, pessoas, gerando, erro, onMudar, onGerarRot
                       ))}
                     </select>
                     <input
-                      className="flex-1 min-w-40 px-2 py-1 text-sm rounded border bg-white"
+                      className="flex-1 min-w-40 px-2 py-1 text-sm rounded border bg-creme"
                       style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
                       placeholder="O que você viu"
                       value={l.texto}
@@ -8347,25 +7718,13 @@ function mentoriaVazia() {
   };
 }
 
-function frenteVazia() {
-  return {
-    id: uid(),
-    nome: "",
-    status: "nao_iniciada",
-    escopo: "",
-    // Governança: conexão com outros serviços
-    treinamentosRelacionados: [],  // IDs de treinamentos que apoiam esta frente
-    mentoriasRelacionadas: [],      // IDs de mentorias relacionadas
-    acoes: []
-  };
-}
 
 function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, erro, aberto, onAbrir, onNovo, onMudar, onGerar, onGerarRelatorio, onImprimir, onExcluir, onVoltar }) {
   const t = treinamentos.find((x) => x.id === aberto);
 
   if (!t) {
     return (
-      <div style={{ background: "CORES.cartao", minHeight: "100vh", paddingBottom: "64px" }}>
+      <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
         <HeaderModulo
           titulo="Treinamentos"
           cliente={cliente}
@@ -8373,12 +7732,12 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
           acoes={<BotaoPrimario onClick={onNovo}>+ Novo treinamento</BotaoPrimario>}
         />
         <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
-        <p className="text-xs mb-5" style={{ color: "CORES.textoDim" }}>
-          A Sala Precisa: cada turma encontra aqui exatamente a aula de que precisa. Dentro de uma frente da consultoria ou avulso — com a ciência dos temperamentos como marca.
+        <p className="text-xs mb-5" style={{ color: CORES.textoDim }}>
+          Cada turma encontra aqui exatamente a aula de que precisa. Dentro de uma frente da consultoria ou avulso — com a ciência dos temperamentos como marca.
         </p>
         {treinamentos.length === 0 ? (
-          <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #D9914F" }}>
-            <p className="text-sm" style={{ color: "CORES.textoDim" }}>Nenhum treinamento. Crie o primeiro — a IA monta objetivos, blocos e dinâmicas adaptadas ao time mapeado.</p>
+          <div className="text-center py-16 rounded-lg" style={{ background: CORES.papel, border: "1px dashed #7BA85C" }}>
+            <p className="text-sm" style={{ color: CORES.textoDim }}>Nenhum treinamento. Crie o primeiro — a IA monta objetivos, blocos e dinâmicas adaptadas ao time mapeado.</p>
           </div>
         ) : (
           <div className="grid gap-2">
@@ -8387,7 +7746,7 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
               return (
                 <button key={x.id} onClick={() => onAbrir(x.id)} className="objeto text-left px-5 py-3 rounded-lg shadow-sm flex items-baseline justify-between gap-2 flex-wrap" className="card">
                   <span className="font-serif" style={{ color: CORES.fogo }}>{x.tema || "(sem tema)"}</span>
-                  <span className="text-xs flex items-center gap-2" style={{ color: "CORES.textoDim" }}>
+                  <span className="text-xs flex items-center gap-2" style={{ color: CORES.textoDim }}>
                     {x.data || "sem data"}
                     <span className="px-1.5 py-0.5 rounded font-semibold" style={{ background: STATUS_TREINAMENTO[x.status]?.fundo || "#F5E6C8", color: STATUS_TREINAMENTO[x.status]?.cor || "#9A6A2F" }}>
                       {STATUS_TREINAMENTO[x.status]?.rotulo || "Planejado"}
@@ -8447,7 +7806,7 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
               <div className="mb-4">
                 <div className="text-xs uppercase tracking-widest mb-1 font-semibold" style={{ color: CORES.dourado }}>Vínculo</div>
                 <select
-                  className="w-full px-3 py-2 rounded border text-sm bg-white"
+                  className="w-full px-3 py-2 rounded border text-sm bg-creme"
                   style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
                   value={t.frenteId || ""}
                   onChange={(e) => onMudar({ ...t, frenteId: e.target.value })}
@@ -8459,12 +7818,12 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
                 </select>
               </div>
             </div>
-            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} placeholder="Ex.: turma resistente a teoria; já houve conflito entre salão e cozinha" value={t.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
-            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Objetivos de aprendizagem</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={t.objetivos} onChange={(e) => set("objetivos")(e.target.value)} /></label>
-            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Blocos de conteúdo (um por linha: título — duração: conteúdo)</span><textarea rows={6} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={t.blocos} onChange={(e) => set("blocos")(e.target.value)} /></label>
-            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Dinâmicas</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={t.dinamicas} onChange={(e) => set("dinamicas")(e.target.value)} /></label>
-            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Avaliação de eficácia</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={t.avaliacao} onChange={(e) => set("avaliacao")(e.target.value)} /></label>
-            <div className="mb-4 p-3 rounded-lg" style={{ background: "white", border: "1px solid #EFE8D6" }}>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Observações para a IA</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder="Ex.: turma resistente a teoria; já houve conflito entre salão e cozinha" value={t.obs} onChange={(e) => set("obs")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Objetivos de aprendizagem</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={t.objetivos} onChange={(e) => set("objetivos")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Blocos de conteúdo (um por linha: título — duração: conteúdo)</span><textarea rows={6} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={t.blocos} onChange={(e) => set("blocos")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Dinâmicas</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={t.dinamicas} onChange={(e) => set("dinamicas")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Avaliação de eficácia</span><textarea rows={2} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={t.avaliacao} onChange={(e) => set("avaliacao")(e.target.value)} /></label>
+            <div className="mb-4 p-3 rounded-lg" style={{ background: CORES.cartao, border: "1px solid #EFE8D6" }}>
               <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
                 <div className="label" style={{ color: CORES.dourado }}>
                   Participantes · {(t.participantesLista || []).filter((p) => p.presente).length}/{(t.participantesLista || []).length} presentes
@@ -8482,7 +7841,7 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
                       className="text-xs underline"
                       style={{ color: CORES.dourado }}
                     >
-                      Importar do Chapéu Seletor
+                      Importar de Temperamentos
                     </button>
                   )}
                   <button
@@ -8524,7 +7883,7 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
             </div>
             {t.status === "realizado" && (
               <>
-                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Como foi (registro interno — alimenta o relatório)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={t.obsRealizacao} onChange={(e) => set("obsRealizacao")(e.target.value)} /></label>
+                <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Como foi (registro interno — alimenta o relatório)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={t.obsRealizacao} onChange={(e) => set("obsRealizacao")(e.target.value)} /></label>
                 <div className="mb-4 flex gap-2 flex-wrap">
                   {(t.participantesLista || []).some((p) => p.presente && p.nome.trim()) && (
                     <BotaoContorno onClick={() => onImprimir({ seletor: ".area-cert", nome: `${cliente.negocio} — Certificados ${t.tema}` })}>
@@ -8542,9 +7901,9 @@ function ModuloTreinamentos({ cliente, treinamentos, frentes, pessoas, gerando, 
                 </div>
                 {t.relResumo && (
                   <>
-                    <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Relatório — resumo do realizado</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={t.relResumo} onChange={(e) => set("relResumo")(e.target.value)} /></label>
-                    <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Relatório — resultados e reações observadas</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={t.relResultados} onChange={(e) => set("relResultados")(e.target.value)} /></label>
-                    <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Relatório — recomendações de continuidade</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={t.relRecomendacoes} onChange={(e) => set("relRecomendacoes")(e.target.value)} /></label>
+                    <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Relatório — resumo do realizado</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={t.relResumo} onChange={(e) => set("relResumo")(e.target.value)} /></label>
+                    <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Relatório — resultados e reações observadas</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={t.relResultados} onChange={(e) => set("relResultados")(e.target.value)} /></label>
+                    <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Relatório — recomendações de continuidade</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={t.relRecomendacoes} onChange={(e) => set("relRecomendacoes")(e.target.value)} /></label>
                   </>
                 )}
               </>
@@ -8694,7 +8053,7 @@ function ReguaMetodoMentoria({ mentoria, temRaioX, statusAcordo, temProva }) {
                 ? { background: "#E3EBD8", color: "#4F6B3A", border: "1px solid #4F6B3A55" }
                 : f.meio
                 ? { background: "#F5E6C8", color: "#9A6A2F", border: "1px solid #9A6A2F55" }
-                : { background: "white", color: "#A89878", border: "1px solid #E0D5BC" }
+                : { background: CORES.cartao, color: "#A89878", border: "1px solid #E0D5BC" }
             }
           >
             {f.rotulo}
@@ -8738,14 +8097,14 @@ function SecaoMoldagem({ mentoria, mentorado, gerando, onMudar, onGerarFicha }) 
         </div>
       </div>
       {!mentorado && (
-        <p className="text-xs" style={{ color: "CORES.textoDim" }}>Vincule o mentorado para a moldagem — a prescrição nasce do temperamento.</p>
+        <p className="text-xs" style={{ color: CORES.textoDim }}>Vincule o mentorado para a moldagem — a prescrição nasce do temperamento.</p>
       )}
       {mentorado && !mentorado.dominante && (
-        <p className="text-xs" style={{ color: "#9A6A2F" }}>Classifique o temperamento no Chapéu Seletor — sem ele não há moldagem precisa.</p>
+        <p className="text-xs" style={{ color: "#9A6A2F" }}>Classifique o temperamento no módulo Temperamentos — sem ele não há moldagem precisa.</p>
       )}
 
       {guiaAberto && guia && (
-        <div className="mt-2 p-3 rounded text-xs" style={{ background: "white", border: "1px solid #EFE8D6", color: "#4A3A2A", lineHeight: 1.6 }}>
+        <div className="mt-2 p-3 rounded text-xs" style={{ background: CORES.cartao, border: "1px solid #EFE8D6", color: "#4A3A2A", lineHeight: 1.6 }}>
           <div className="mb-1"><strong style={{ color: CORES.fogo }}>Essência:</strong> {guia.essencia}</div>
           <div className="mb-1"><strong style={{ color: "#8A3A2E" }}>Onde acomoda:</strong> {guia.acomoda}</div>
           <div className="mb-1"><strong style={{ color: "#4F6B3A" }}>Direção da moldagem:</strong> {guia.direcao}</div>
@@ -8772,7 +8131,7 @@ function SecaoMoldagem({ mentoria, mentorado, gerando, onMudar, onGerarFicha }) 
             </div>
           )}
           {m.leitura && (
-            <textarea rows={3} className="w-full px-2 py-1 text-sm rounded border bg-white mb-2" style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
+            <textarea rows={3} className="w-full px-2 py-1 text-sm rounded border bg-creme mb-2" style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
               value={m.leitura} onChange={(e) => onMudar({ ...mentoria, moldagem: { ...m, leitura: e.target.value } })} />
           )}
           {m.contrabalancos && (
@@ -8787,7 +8146,7 @@ function SecaoMoldagem({ mentoria, mentorado, gerando, onMudar, onGerarFicha }) 
                 <div key={p.id} className="flex items-start gap-2 py-1 border-b" style={{ borderColor: "#F5F0E4" }}>
                   <div className="flex-1">
                     <div className="text-sm" style={{ color: CORES.fogoEscuro }}>{p.texto}</div>
-                    {p.porque && <div className="text-xs italic" style={{ color: "CORES.textoDim" }}>{p.porque}</div>}
+                    {p.porque && <div className="text-xs italic" style={{ color: CORES.textoDim }}>{p.porque}</div>}
                   </div>
                   <button onClick={() => ativarPratica(p)} className="text-xs px-2 py-0.5 rounded font-semibold shrink-0" style={{ background: "#E3EBD8", color: "#4F6B3A", border: "1px solid #4F6B3A55" }}>
                     Prescrever ✓
@@ -8865,7 +8224,7 @@ function SecaoMoldagem({ mentoria, mentorado, gerando, onMudar, onGerarFicha }) 
           </button>
         </div>
         {(mentoria.virtudes || []).length === 0 && (
-          <p className="text-xs" style={{ color: "CORES.textoDim" }}>
+          <p className="text-xs" style={{ color: CORES.textoDim }}>
             O que você viu, não o que mediu: "sustentou a conversa difícil sem recuar", "chegou sem o salto duas vezes". Vira a evidência qualitativa do Relatório de Evolução.
           </p>
         )}
@@ -8873,7 +8232,7 @@ function SecaoMoldagem({ mentoria, mentorado, gerando, onMudar, onGerarFicha }) 
           <div key={v.id} className="flex items-start gap-2 py-1">
             <span className="text-xs mt-1.5 shrink-0" style={{ color: "#A89878" }}>{v.data}</span>
             <input
-              className="flex-1 px-2 py-1 text-sm rounded border bg-white"
+              className="flex-1 px-2 py-1 text-sm rounded border bg-creme"
               style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
               placeholder="O que você observou nesta pessoa..."
               value={v.nota}
@@ -8906,8 +8265,8 @@ function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAcordo, te
             {gerando ? "Desenhando..." : encontros.length ? "Redesenhar jornada com IA" : "Desenhar jornada com IA"}
           </BotaoPrimario>
         </div>
-        <p className="text-xs mb-4" style={{ color: "CORES.textoDim" }}>
-          As aulas particulares de Dumbledore: encontros com propósito, um de cada vez, até o mentorado não precisar mais de você.
+        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
+          Encontros com propósito, um de cada vez, até o mentorado não precisar mais de você.
           {encontros.length > 0 && ` · ${realizados}/${encontros.length} realizados`}
         </p>
         <ReguaMetodoMentoria mentoria={mentoria} temRaioX={temRaioX} statusAcordo={statusAcordo} temProva={temProva} />
@@ -8921,26 +8280,26 @@ function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAcordo, te
               className="px-3 py-1 text-xs rounded border font-semibold"
               style={
                 (mentoria.foco || "lideranca") === ch
-                  ? { background: "CORES.hover", borderColor: CORES.dourado, color: CORES.fogo }
-                  : { background: "white", borderColor: "#E0D5BC", color: "#A89878" }
+                  ? { background: CORES.hover, borderColor: CORES.dourado, color: CORES.fogo }
+                  : { background: CORES.cartao, borderColor: "#E0D5BC", color: "#A89878" }
               }
             >
               {(mentoria.foco || "lideranca") === ch ? "✓ " : ""}{rot}
             </button>
           ))}
-          <span className="text-xs" style={{ color: "CORES.textoDim" }}>Liderança é o caminho natural, não requisito.</span>
+          <span className="text-xs" style={{ color: CORES.textoDim }}>Liderança é o caminho natural, não requisito.</span>
         </div>
 
         <div className="grid sm:grid-cols-2 gap-x-4">
           <div className="mb-4">
             <div className="text-xs uppercase tracking-widest mb-1 font-semibold" style={{ color: CORES.dourado }}>Mentorado</div>
             <select
-              className="w-full px-3 py-2 rounded border text-sm bg-white"
+              className="w-full px-3 py-2 rounded border text-sm bg-creme"
               style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }}
               value={mentoria.mentoradoId || ""}
               onChange={(e) => onMudar({ ...mentoria, mentoradoId: e.target.value })}
             >
-              <option value="">Selecionar do Chapéu Seletor...</option>
+              <option value="">Selecionar de Temperamentos...</option>
               {pessoas.filter((p) => p.nome).map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.nome}{p.dominante && TEMPERAMENTOS[p.dominante] ? ` (${TEMPERAMENTOS[p.dominante].rotulo})` : ""}
@@ -8948,20 +8307,20 @@ function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAcordo, te
               ))}
             </select>
             {mentorado && mentorado.dominante && TEMPERAMENTOS[mentorado.dominante] && (
-              <div className="text-xs mt-1" style={{ color: "CORES.textoDim" }}>A jornada se molda ao temperamento — sem citá-lo nos temas.</div>
+              <div className="text-xs mt-1" style={{ color: CORES.textoDim }}>A jornada se molda ao temperamento — sem citá-lo nos temas.</div>
             )}
             {!mentoria.mentoradoId && cliente.tipo === "pessoa" && !pessoas.some((p) => p.nome && p.nome.toLowerCase().trim() === (cliente.negocio || "").toLowerCase().trim()) && (
               <button onClick={onCriarMentorado} className="text-xs underline mt-1" style={{ color: CORES.dourado }}>
-                + Criar {cliente.negocio} no Chapéu Seletor e vincular
+                + Criar {cliente.negocio} em Temperamentos e vincular
               </button>
             )}
             {mentorado && !mentorado.dominante && (
               <div className="text-xs mt-1" style={{ color: "#9A6A2F" }}>Temperamento ainda não classificado — o formulário de observação da ficha ajuda.</div>
             )}
           </div>
-          <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Objetivos da mentoria</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} placeholder="Ex.: liderar sem centralizar; preparar o time para funcionar sem ele" value={mentoria.objetivos || ""} onChange={(v) => onMudar({ ...mentoria, objetivos: v })} /></label>
+          <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Objetivos da mentoria</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder="Ex.: liderar sem centralizar; preparar o time para funcionar sem ele" value={mentoria.objetivos || ""} onChange={(v) => onMudar({ ...mentoria, objetivos: v })} /></label>
         </div>
-        <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Briefing da conversa inicial (alimenta a jornada)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} placeholder="Ex.: recém-promovido, era par do time que agora lidera; evita conflito; o dono cobra resultado" value={mentoria.briefing || ""} onChange={(v) => onMudar({ ...mentoria, briefing: v })} /></label>
+        <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Briefing da conversa inicial (alimenta a jornada)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} placeholder="Ex.: recém-promovido, era par do time que agora lidera; evita conflito; o dono cobra resultado" value={mentoria.briefing || ""} onChange={(v) => onMudar({ ...mentoria, briefing: v })} /></label>
 
         <SecaoMoldagem mentoria={mentoria} mentorado={mentorado} gerando={gerando} onMudar={onMudar} onGerarFicha={onGerarFicha} />
 
@@ -9002,7 +8361,7 @@ function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAcordo, te
                   />
                   <span>
                     {atividade.texto}
-                    <span className="text-xs ml-1" style={{ color: "CORES.textoDim" }}>({encontro.tema})</span>
+                    <span className="text-xs ml-1" style={{ color: CORES.textoDim }}>({encontro.tema})</span>
                   </span>
                 </label>
               ))}
@@ -9011,16 +8370,16 @@ function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAcordo, te
         })()}
 
         {!gerando && encontros.map((e, idx) => (
-          <div key={e.id} className="mb-3 rounded-lg p-4" style={{ background: "white", border: e.realizada ? "2px solid #4F6B3A55" : "2px solid #E97F3855" }}>
+          <div key={e.id} className="mb-3 rounded-lg p-4" style={{ background: CORES.cartao, border: e.realizada ? "2px solid #4F6B3A55" : "2px solid #E97F3855" }}>
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <input type="checkbox" checked={!!e.realizada} onChange={() => mudarEncontro(e.id, "realizada", !e.realizada)} title="Encontro realizado" />
               <span className="text-xs font-semibold" style={{ color: CORES.dourado }}>{idx + 1}.</span>
               <input className="font-serif flex-1 min-w-40 bg-transparent outline-none" style={{ color: CORES.fogo }} value={e.tema} onChange={(ev) => mudarEncontro(e.id, "tema", ev.target.value)} />
-              <input className="w-24 px-2 py-1 text-xs rounded border bg-white text-center" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="dd/mm" value={e.data} onChange={(ev) => mudarEncontro(e.id, "data", ev.target.value)} />
+              <input className="w-24 px-2 py-1 text-xs rounded border bg-creme text-center" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="dd/mm" value={e.data} onChange={(ev) => mudarEncontro(e.id, "data", ev.target.value)} />
               <button onClick={() => onMudar({ ...mentoria, encontros: encontros.filter((x) => x.id !== e.id) })} className="px-1 text-xs" style={{ color: "#B8860B" }}>✕</button>
             </div>
             {e.objetivo && <div className="text-xs mb-1" style={{ color: "#6B5D42" }}>{e.objetivo}</div>}
-            {e.provocacao && <div className="text-xs italic mb-2" style={{ color: "CORES.textoDim" }}>Provocação: {e.provocacao}</div>}
+            {e.provocacao && <div className="text-xs italic mb-2" style={{ color: CORES.textoDim }}>Provocação: {e.provocacao}</div>}
             {(e.atividades || []).length > 0 && (
               <div className="mb-2 p-2 rounded" style={{ background: "#FDFAF3", border: "1px solid #EFE8D6" }}>
                 <div className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: CORES.dourado }}>
@@ -9049,10 +8408,10 @@ function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAcordo, te
                   </div>
                 ))}
                 {(e.atividades || []).filter((a) => a.tipo === "fca").map((a) => (
-                  <div key={`fca-${a.id}`} className="ml-5 mb-1 grid gap-1 p-2 rounded" style={{ background: "white", border: "1px dashed #E97F3855" }}>
-                    <input className="px-2 py-0.5 text-xs rounded border bg-white" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Fato: o que aconteceu" value={a.fato || ""} onChange={(ev) => mudarEncontro(e.id, "atividades", e.atividades.map((x) => (x.id === a.id ? { ...x, fato: ev.target.value } : x)))} />
-                    <input className="px-2 py-0.5 text-xs rounded border bg-white" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Causa: por que aconteceu" value={a.causa || ""} onChange={(ev) => mudarEncontro(e.id, "atividades", e.atividades.map((x) => (x.id === a.id ? { ...x, causa: ev.target.value } : x)))} />
-                    <input className="px-2 py-0.5 text-xs rounded border bg-white" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Ação: o que farei diferente" value={a.acaoFca || ""} onChange={(ev) => mudarEncontro(e.id, "atividades", e.atividades.map((x) => (x.id === a.id ? { ...x, acaoFca: ev.target.value } : x)))} />
+                  <div key={`fca-${a.id}`} className="ml-5 mb-1 grid gap-1 p-2 rounded" style={{ background: CORES.cartao, border: "1px dashed #E97F3855" }}>
+                    <input className="px-2 py-0.5 text-xs rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Fato: o que aconteceu" value={a.fato || ""} onChange={(ev) => mudarEncontro(e.id, "atividades", e.atividades.map((x) => (x.id === a.id ? { ...x, fato: ev.target.value } : x)))} />
+                    <input className="px-2 py-0.5 text-xs rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Causa: por que aconteceu" value={a.causa || ""} onChange={(ev) => mudarEncontro(e.id, "atividades", e.atividades.map((x) => (x.id === a.id ? { ...x, causa: ev.target.value } : x)))} />
+                    <input className="px-2 py-0.5 text-xs rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Ação: o que farei diferente" value={a.acaoFca || ""} onChange={(ev) => mudarEncontro(e.id, "atividades", e.atividades.map((x) => (x.id === a.id ? { ...x, acaoFca: ev.target.value } : x)))} />
                   </div>
                 ))}
               </div>
@@ -9074,7 +8433,7 @@ function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAcordo, te
                 + FCA pra casa
               </button>
             </span>
-            <textarea rows={2} className="w-full px-2 py-1 text-sm rounded border bg-white outline-none mb-1" style={{ borderColor: "#EFE8D6", color: CORES.fogoEscuro }} placeholder="Anotações da sessão..." value={e.anotacoes} onChange={(ev) => mudarEncontro(e.id, "anotacoes", ev.target.value)} />
+            <textarea rows={2} className="w-full px-2 py-1 text-sm rounded border bg-creme outline-none mb-1" style={{ borderColor: "#EFE8D6", color: CORES.fogoEscuro }} placeholder="Anotações da sessão..." value={e.anotacoes} onChange={(ev) => mudarEncontro(e.id, "anotacoes", ev.target.value)} />
             {e.anotacoes && (
               <div className="flex items-center gap-3 flex-wrap">
                 <button onClick={() => onEstruturarSessao(e)} className="text-xs underline" style={{ color: CORES.dourado }} disabled={gerando}>
@@ -9121,18 +8480,18 @@ function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, framework: f
             {tem && <BotaoContorno onClick={onImprimir}>Exportar PDF</BotaoContorno>}
           </div>
         </div>
-        <p className="text-xs mb-4" style={{ color: "CORES.textoDim" }}>
+        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
           Malfeito feito, versão pessoal: a prova da jornada — encontros, pra casa cumprido e o radar do líder antes/depois. O documento que renova a mentoria.
         </p>
         <AvisoErro erro={erro} />
         {gerando && <Trabalhando />}
         {!gerando && !tem && !erro && (
-          <p className="text-sm py-4" style={{ color: "CORES.textoDim" }}>
+          <p className="text-sm py-4" style={{ color: CORES.textoDim }}>
             Gere quando houver jornada caminhada — a IA escreve só com os dados reais: encontros realizados, atividades feitas e diagnósticos do líder.
           </p>
         )}
         {!gerando && (
-          <div className="mb-4 p-3 rounded-lg" style={{ background: "CORES.hover", border: "2px solid #D4AF37AA" }}>
+          <div className="mb-4 p-3 rounded-lg" style={{ background: CORES.hover, border: "2px solid #D4AF37AA" }}>
             <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
               <div className="label" style={{ color: "#9A6A2F" }}>
                 Verificação das metas do mentorado (fase Prova)
@@ -9148,7 +8507,7 @@ function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, framework: f
               )}
             </div>
             {(rel.metasVerificadas || []).length === 0 && (
-              <p className="text-xs" style={{ color: "CORES.textoDim" }}>
+              <p className="text-xs" style={{ color: CORES.textoDim }}>
                 {(metasAcordo || []).length ? "Puxe as metas da proposta aceita e registre: batida, parcial ou não batida — com o porquê." : "Nenhuma meta na proposta aceita deste mentorado."}
               </p>
             )}
@@ -9174,7 +8533,7 @@ function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, framework: f
                   </select>
                 </div>
                 <input
-                  className="w-full mt-1 px-2 py-1 text-xs rounded border bg-white"
+                  className="w-full mt-1 px-2 py-1 text-xs rounded border bg-creme"
                   style={{ borderColor: "#E0D5BC", color: "#6B5D42" }}
                   placeholder="Por quê"
                   value={m.porque}
@@ -9189,21 +8548,21 @@ function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, framework: f
             {diagsLider.length > 0 && (
               <div className="flex justify-center gap-8 my-4 flex-wrap">
                 <div className="text-center">
-                  <div className="text-xs mb-1" style={{ color: "CORES.textoDim" }}>Início ({diagsLider[0].data})</div>
+                  <div className="text-xs mb-1" style={{ color: CORES.textoDim }}>Início ({diagsLider[0].data})</div>
                   <RadarMaturidade notas={diagsLider[0].notas} tamanho={220} framework={FRM} />
                 </div>
                 {diagsLider.length > 1 && (
                   <div className="text-center">
-                    <div className="text-xs mb-1" style={{ color: "CORES.textoDim" }}>Atual ({diagsLider[diagsLider.length - 1].data})</div>
+                    <div className="text-xs mb-1" style={{ color: CORES.textoDim }}>Atual ({diagsLider[diagsLider.length - 1].data})</div>
                     <RadarMaturidade notas={diagsLider[diagsLider.length - 1].notas} tamanho={220} framework={FRM} />
                   </div>
                 )}
               </div>
             )}
-            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Retrospectiva da jornada</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={rel.retrospectiva} onChange={(e) => set("retrospectiva")(e.target.value)} /></label>
-            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Evolução observada</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={rel.evolucao} onChange={(e) => set("evolucao")(e.target.value)} /></label>
-            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Conquistas (uma por linha)</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={rel.conquistas} onChange={(e) => set("conquistas")(e.target.value)} /></label>
-            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Recomendações de continuidade (uma por linha)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-white text-sm" style={{ borderColor: "CORES.laranja", color: CORES.fogoEscuro }} value={rel.recomendacoes} onChange={(e) => set("recomendacoes")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Retrospectiva da jornada</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={rel.retrospectiva} onChange={(e) => set("retrospectiva")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Evolução observada</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={rel.evolucao} onChange={(e) => set("evolucao")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Conquistas (uma por linha)</span><textarea rows={4} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={rel.conquistas} onChange={(e) => set("conquistas")(e.target.value)} /></label>
+            <label className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>Recomendações de continuidade (uma por linha)</span><textarea rows={3} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={rel.recomendacoes} onChange={(e) => set("recomendacoes")(e.target.value)} /></label>
           </>
         )}
       </div>
@@ -9231,7 +8590,7 @@ function ImpressaoRelMentoria({ cliente, rel, diagsLider, framework: fwRel }) {
         </div>
       )}
       {(rel.metasVerificadas || []).length > 0 && (
-        <div className="mb-5 p-3" style={{ border: "1px solid #D9914F" }}>
+        <div className="mb-5 p-3" style={{ border: "1px solid #7BA85C" }}>
           <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: CORES.dourado }}>Metas do mentorado — verificação</div>
           {(rel.metasVerificadas || []).map((m) => (
             <div key={m.id} className="text-sm mb-1">
@@ -9281,7 +8640,7 @@ function ImpressaoRelMentoria({ cliente, rel, diagsLider, framework: fwRel }) {
   );
 }
 
-// ─── Módulo: Bisbilhoscópio (anomalias) ─────────────────────────
+// ─── Módulo: Anomalias ─────────────────────────
 
 function anomaliaVazia() {
   return { id: uid(), data: new Date().toLocaleDateString("pt-BR"), fato: "", quando: "", local: "", tag: "", causa: "", acao: "", responsavelSugerido: "", status: "relatada", frenteDestino: "" };
@@ -9292,7 +8651,7 @@ function ModuloAnomalias({ cliente, anomalias, frentes, gerando, erro, onMudar, 
   anomalias.forEach((a) => { const t = (a.tag || a.local || "").trim().toLowerCase(); if (t) tags[t] = (tags[t] || 0) + 1; });
   const tratadas = anomalias.filter((a) => a.status === "tratada").length;
   return (
-    <div style={{ background: "CORES.cartao", minHeight: "100vh", paddingBottom: "64px" }}>
+    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
       <HeaderModulo
         titulo="Tratamento de Anomalias"
         cliente={cliente}
@@ -9309,19 +8668,19 @@ function ModuloAnomalias({ cliente, anomalias, frentes, gerando, erro, onMudar, 
             <BotaoPrimario onClick={() => onMudar([anomaliaVazia(), ...anomalias])}>+ Relatar anomalia</BotaoPrimario>
           </div>
         </div>
-        <p className="text-xs mb-4" style={{ color: "CORES.textoDim" }}>
+        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
           O sistema detecta quando algo foge do padrão: POP não seguido, checklist falho, reclamação, fornecedor. Relatar → FCA → Agir. Registros 100% internos.
         </p>
         <AvisoErro erro={erro} />
         {gerando && <Trabalhando />}
         {!gerando && anomalias.length === 0 && !erro && (
-          <p className="text-sm py-6" style={{ color: "CORES.textoDim" }}>Nenhuma anomalia registrada. Quando algo fugir do padrão na operação do cliente, relate aqui.</p>
+          <p className="text-sm py-6" style={{ color: CORES.textoDim }}>Nenhuma anomalia registrada. Quando algo fugir do padrão na operação do cliente, relate aqui.</p>
         )}
         {!gerando && anomalias.map((a) => {
           const t = (a.tag || a.local || "").trim().toLowerCase();
           const recorrencia = t ? tags[t] : 0;
           return (
-            <div key={a.id} className="mb-3 rounded-lg p-4" style={{ background: "white", border: a.status === "tratada" ? "2px solid #4F6B3A55" : "2px solid #E97F3855" }}>
+            <div key={a.id} className="mb-3 rounded-lg p-4" style={{ background: CORES.cartao, border: a.status === "tratada" ? "2px solid #4F6B3A55" : "2px solid #E97F3855" }}>
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <span className="text-xs" style={{ color: "#A89878" }}>{a.data}</span>
                 <select
@@ -9334,17 +8693,17 @@ function ModuloAnomalias({ cliente, anomalias, frentes, gerando, erro, onMudar, 
                   <option value="tratada">Tratada ✓</option>
                 </select>
                 {recorrencia > 1 && (
-                  <span className="text-xs px-1.5 py-0.5 rounded font-semibold" style={{ background: "#F5DDD6", color: "#8A3A2E" }} title="Anomalia repetida sugere padrão errado ou pessoa na cadeira errada — cruze com o Chapéu Seletor (leitura interna)">
+                  <span className="text-xs px-1.5 py-0.5 rounded font-semibold" style={{ background: "#F5DDD6", color: "#8A3A2E" }} title="Anomalia repetida sugere padrão errado ou pessoa na cadeira errada — cruze com Temperamentos (leitura interna)">
                     recorrente ×{recorrencia}
                   </span>
                 )}
                 <button onClick={() => onMudar(anomalias.filter((x) => x.id !== a.id))} className="ml-auto text-xs px-1" style={{ color: "#C0B091" }}>✕</button>
               </div>
               <div className="grid sm:grid-cols-3 gap-2 mb-2">
-                <input className="sm:col-span-3 px-2 py-1 text-sm rounded border bg-white" style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }} placeholder="Fato: o que aconteceu" value={a.fato} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, fato: e.target.value } : x)))} />
-                <input className="px-2 py-1 text-xs rounded border bg-white" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Quando" value={a.quando} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, quando: e.target.value } : x)))} />
-                <input className="px-2 py-1 text-xs rounded border bg-white" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Onde (setor/processo)" value={a.local} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, local: e.target.value } : x)))} />
-                <input className="px-2 py-1 text-xs rounded border bg-white" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Tag p/ recorrência (ex.: estoque)" value={a.tag} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, tag: e.target.value } : x)))} />
+                <input className="sm:col-span-3 px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }} placeholder="Fato: o que aconteceu" value={a.fato} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, fato: e.target.value } : x)))} />
+                <input className="px-2 py-1 text-xs rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Quando" value={a.quando} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, quando: e.target.value } : x)))} />
+                <input className="px-2 py-1 text-xs rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Onde (setor/processo)" value={a.local} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, local: e.target.value } : x)))} />
+                <input className="px-2 py-1 text-xs rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Tag p/ recorrência (ex.: estoque)" value={a.tag} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, tag: e.target.value } : x)))} />
               </div>
               {a.fato && !a.causa && (
                 <button onClick={() => onAnalisar(a)} className="text-xs underline mb-2" style={{ color: CORES.dourado }} disabled={gerando}>
@@ -9353,11 +8712,11 @@ function ModuloAnomalias({ cliente, anomalias, frentes, gerando, erro, onMudar, 
               )}
               {(a.causa || a.acao) && (
                 <div className="grid gap-2 mb-2 p-2 rounded" style={{ background: "#FDFAF3", border: "1px solid #EFE8D6" }}>
-                  <textarea rows={2} className="px-2 py-1 text-xs rounded border bg-white" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Causa raiz" value={a.causa} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, causa: e.target.value } : x)))} />
-                  <input className="px-2 py-1 text-sm rounded border bg-white" style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }} placeholder="Ação corretiva" value={a.acao} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, acao: e.target.value } : x)))} />
+                  <textarea rows={2} className="px-2 py-1 text-xs rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} placeholder="Causa raiz" value={a.causa} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, causa: e.target.value } : x)))} />
+                  <input className="px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: CORES.fogoEscuro }} placeholder="Ação corretiva" value={a.acao} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, acao: e.target.value } : x)))} />
                   {a.acao && a.status !== "tratada" && frentes.length > 0 && (
                     <div className="flex items-center gap-2 flex-wrap">
-                      <select className="px-2 py-1 text-xs rounded border bg-white" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} value={a.frenteDestino || ""} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, frenteDestino: e.target.value } : x)))}>
+                      <select className="px-2 py-1 text-xs rounded border bg-creme" style={{ borderColor: "#E0D5BC", color: "#6B5D42" }} value={a.frenteDestino || ""} onChange={(e) => onMudar(anomalias.map((x) => (x.id === a.id ? { ...x, frenteDestino: e.target.value } : x)))}>
                         <option value="">Enviar ação para a frente...</option>
                         {frentes.map((f) => <option key={f.id} value={f.id}>{f.nome}</option>)}
                       </select>
@@ -9394,7 +8753,7 @@ function ModuloPainel({ cliente, dados, painel, onMudar, onVoltar }) {
   const d = dados;
   const verificacaoDegradada = d.alertas.length > 0;
   return (
-    <div style={{ background: "CORES.cartao", minHeight: "100vh", paddingBottom: "64px" }}>
+    <div style={{ background: CORES.cartao, minHeight: "100vh", paddingBottom: "64px" }}>
       <HeaderModulo
         titulo="Painel do Engajamento"
         cliente={cliente}
@@ -9403,7 +8762,7 @@ function ModuloPainel({ cliente, dados, painel, onMudar, onVoltar }) {
       />
       <div style={{ maxWidth: "1000px", margin: "0 auto", paddingLeft: "32px", paddingRight: "32px" }}>
         <div className="rounded-lg p-6 shadow-sm" className="card">
-        <p className="text-xs mb-4" style={{ color: "CORES.textoDim" }}>
+        <p className="text-xs mb-4" style={{ color: CORES.textoDim }}>
           Mede o engajamento pelo método (o cômodo Indicadores mede o negócio do cliente). Quando a verificação cai, o controle cai semanas depois.
         </p>
         {verificacaoDegradada && (
@@ -9418,8 +8777,8 @@ function ModuloPainel({ cliente, dados, painel, onMudar, onVoltar }) {
           <div className="mt-2">
             <div className="text-xs mb-1" style={{ color: "#6B5D42" }}>Autonomia decisória — relato do dono na fase Prova ("quantas vezes te acionaram este mês para algo que a alçada já resolvia?")</div>
             <div className="flex gap-2">
-              <input className="w-20 px-2 py-1 text-sm rounded border bg-white text-center" style={{ borderColor: "#E0D5BC" }} placeholder="nº/mês" value={painel.autonomiaAcionamentos || ""} onChange={(e) => onMudar({ ...painel, autonomiaAcionamentos: e.target.value })} />
-              <input className="flex-1 px-2 py-1 text-sm rounded border bg-white" style={{ borderColor: "#E0D5BC" }} placeholder="Relato estruturado do dono" value={painel.autonomiaRelato || ""} onChange={(e) => onMudar({ ...painel, autonomiaRelato: e.target.value })} />
+              <input className="w-20 px-2 py-1 text-sm rounded border bg-creme text-center" style={{ borderColor: "#E0D5BC" }} placeholder="nº/mês" value={painel.autonomiaAcionamentos || ""} onChange={(e) => onMudar({ ...painel, autonomiaAcionamentos: e.target.value })} />
+              <input className="flex-1 px-2 py-1 text-sm rounded border bg-creme" style={{ borderColor: "#E0D5BC" }} placeholder="Relato estruturado do dono" value={painel.autonomiaRelato || ""} onChange={(e) => onMudar({ ...painel, autonomiaRelato: e.target.value })} />
             </div>
           </div>
         </div>
@@ -9429,18 +8788,18 @@ function ModuloPainel({ cliente, dados, painel, onMudar, onVoltar }) {
             <div>
               <div className="text-xs mt-1 mb-0.5" style={{ color: "#6B5D42" }}>Checklists preenchidos na semana</div>
               <div className="flex items-center gap-1 text-sm">
-                <input className="w-14 px-1 py-0.5 rounded border bg-white text-center" style={{ borderColor: "#E0D5BC" }} value={painel.checklistsFeitos || ""} onChange={(e) => onMudar({ ...painel, checklistsFeitos: e.target.value })} />
-                <span style={{ color: "CORES.textoDim" }}>de</span>
-                <input className="w-14 px-1 py-0.5 rounded border bg-white text-center" style={{ borderColor: "#E0D5BC" }} value={painel.checklistsPrevistos || ""} onChange={(e) => onMudar({ ...painel, checklistsPrevistos: e.target.value })} />
+                <input className="w-14 px-1 py-0.5 rounded border bg-creme text-center" style={{ borderColor: "#E0D5BC" }} value={painel.checklistsFeitos || ""} onChange={(e) => onMudar({ ...painel, checklistsFeitos: e.target.value })} />
+                <span style={{ color: CORES.textoDim }}>de</span>
+                <input className="w-14 px-1 py-0.5 rounded border bg-creme text-center" style={{ borderColor: "#E0D5BC" }} value={painel.checklistsPrevistos || ""} onChange={(e) => onMudar({ ...painel, checklistsPrevistos: e.target.value })} />
                 <span className="font-bold ml-1" style={{ color: d.pctChecklists !== null && d.pctChecklists < 70 ? "#8A3A2E" : "#4F6B3A" }}>{d.pctChecklists !== null ? `${d.pctChecklists}%` : "—"}</span>
               </div>
             </div>
             <div>
               <div className="text-xs mt-1 mb-0.5" style={{ color: "#6B5D42" }}>Ritos realizados na cadência</div>
               <div className="flex items-center gap-1 text-sm">
-                <input className="w-14 px-1 py-0.5 rounded border bg-white text-center" style={{ borderColor: "#E0D5BC" }} value={painel.ritosFeitos || ""} onChange={(e) => onMudar({ ...painel, ritosFeitos: e.target.value })} />
-                <span style={{ color: "CORES.textoDim" }}>de</span>
-                <input className="w-14 px-1 py-0.5 rounded border bg-white text-center" style={{ borderColor: "#E0D5BC" }} value={painel.ritosPrevistos || ""} onChange={(e) => onMudar({ ...painel, ritosPrevistos: e.target.value })} />
+                <input className="w-14 px-1 py-0.5 rounded border bg-creme text-center" style={{ borderColor: "#E0D5BC" }} value={painel.ritosFeitos || ""} onChange={(e) => onMudar({ ...painel, ritosFeitos: e.target.value })} />
+                <span style={{ color: CORES.textoDim }}>de</span>
+                <input className="w-14 px-1 py-0.5 rounded border bg-creme text-center" style={{ borderColor: "#E0D5BC" }} value={painel.ritosPrevistos || ""} onChange={(e) => onMudar({ ...painel, ritosPrevistos: e.target.value })} />
                 <span className="font-bold ml-1" style={{ color: d.pctRitos !== null && d.pctRitos < 70 ? "#8A3A2E" : "#4F6B3A" }}>{d.pctRitos !== null ? `${d.pctRitos}%` : "—"}</span>
               </div>
             </div>
@@ -10539,14 +9898,14 @@ export default function App() {
     if (fase === "escuta") {
       if (!(campoPorCliente[c.id] || []).length)
         return { texto: "Vá a campo antes do Raio-X — uma visita técnica transforma impressão em evidência", modulo: "campo" };
-      return { texto: "Raio-X: faça o diagnóstico de maturidade — os N.O.M.s vendem o Acordo com números", modulo: "diagnosticos" };
+      return { texto: "Raio-X: faça o diagnóstico de maturidade — os números vendem o Acordo", modulo: "diagnosticos" };
     }
-    if (fase === "raiox") return { texto: "Acordo: gere a proposta com as metas pactuadas — a carta de Hogwarts está pronta", modulo: "propostas" };
+    if (fase === "raiox") return { texto: "Acordo: gere a proposta com as metas pactuadas — a proposta está pronta", modulo: "propostas" };
     if (fase === "acordo") return { texto: "Acordo na rua — quando o cliente fechar, marque a proposta como Aceita para a Construção começar", modulo: "propostas" };
     if (fase === "construcao") {
       if (!parseDataBR(g.inicio)) return { texto: "Construção: defina o início e a duração no Cronograma", modulo: "cronograma" };
       if (!(g.frentes || []).length) return { texto: "Construção: gere o plano de ação a partir do briefing", modulo: "gestao" };
-      if (!(fin.parcelas || []).length) return { texto: "Registre as parcelas no cofre de Gringotes", modulo: "financeiro" };
+      if (!(fin.parcelas || []).length) return { texto: "Registre as parcelas no Financeiro", modulo: "financeiro" };
       if (!((ritosPorCliente[c.id] || {}).itens || []).length) return { texto: "Rumo à Sustentação: crie os Ritos de Gestão — é a cadência que sustenta sem você", modulo: "ritos" };
       return null;
     }
@@ -10632,7 +9991,7 @@ export default function App() {
 </style>
 </head>
 <body>
-<div class="aviso-topo" style="background:#5C1A2B;color:#E8C547;padding:10px 16px;font-size:14px;text-align:center;font-family:sans-serif;">
+<div class="aviso-topo" style="background:#6B5D42;color:#E8C547;padding:10px 16px;font-size:14px;text-align:center;font-family:sans-serif;">
   Escolha "Salvar como PDF" na janela de impressão.
   <button onclick="window.print()" style="margin-left:10px;padding:4px 12px;border-radius:4px;border:1px solid #E8C547;background:transparent;color:#E8C547;cursor:pointer;">Imprimir agora</button>
 </div>
