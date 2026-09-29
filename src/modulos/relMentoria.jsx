@@ -1,5 +1,5 @@
 import { AvisoErro, BotaoContorno, BotaoPrimario, Trabalhando } from "../componentes/ui.jsx";
-import { FRAMEWORK_LIDER } from "../ia/diagnostico.jsx";
+import { FRAMEWORK_PESSOAL } from "../ia/diagnostico.jsx";
 import { RadarMaturidade } from "./diagnostico.jsx";
 import { emLinhasDoc } from "./documentos.jsx";
 import { RodapeImpressao } from "./tabela.jsx";
@@ -8,7 +8,7 @@ import { CORES, uid } from "../nucleo/base.jsx";
 // ─── Módulo: Relatório de Evolução (mentoria) ───────────────────
 
 export function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, framework: fwRel, gerando, erro, onMudar, onGerar, onImprimir, onVoltar }) {
-  const FRM = fwRel || FRAMEWORK_LIDER;
+  const FRM = fwRel || FRAMEWORK_PESSOAL;
   const set = (campo) => (v) => onMudar({ ...rel, [campo]: v });
   const tem = rel.retrospectiva || rel.evolucao;
   return (
@@ -33,7 +33,7 @@ export function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, frame
         {gerando && <Trabalhando />}
         {!gerando && !tem && !erro && (
           <p className="text-sm py-4" style={{ color: CORES.textoDim }}>
-            Gere quando houver jornada caminhada — a IA escreve só com os dados reais: encontros realizados, atividades feitas e diagnósticos do líder.
+            Gere quando houver jornada caminhada — a IA escreve só com os dados reais: encontros realizados, atividades feitas e diagnósticos do mentorado.
           </p>
         )}
         {!gerando && (
@@ -117,7 +117,7 @@ export function ModuloRelMentoria({ cliente, rel, diagsLider, metasAcordo, frame
 }
 
 export function ImpressaoRelMentoria({ cliente, rel, diagsLider, framework: fwRel }) {
-  const FRM = fwRel || FRAMEWORK_LIDER;
+  const FRM = fwRel || FRAMEWORK_PESSOAL;
   if (!rel || !(rel.retrospectiva || rel.evolucao)) return null;
   const ROT_META_M = { batida: "Batida", parcial: "Parcial", nao: "Não batida" };
   const conquistas = emLinhasDoc(rel.conquistas);
@@ -148,7 +148,7 @@ export function ImpressaoRelMentoria({ cliente, rel, diagsLider, framework: fwRe
       )}
       {diagsLider.length > 0 && (
         <div className="mb-5">
-          <div className="text-sm font-bold uppercase tracking-widest mb-2" style={{ color: CORES.dourado }}>Maturidade de liderança</div>
+          <div className="text-sm font-bold uppercase tracking-widest mb-2" style={{ color: CORES.dourado }}>Maturidade — antes e depois</div>
           <div className="flex justify-center gap-10">
             <div className="text-center">
               <div className="text-xs mb-1" style={{ color: "var(--tinta)" }}>Início ({diagsLider[0].data})</div>

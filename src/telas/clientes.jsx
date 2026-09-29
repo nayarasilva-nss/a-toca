@@ -56,15 +56,15 @@ export function FormCliente({ inicial, onSalvar, onCancelar, onExcluir }) {
         </div>
       </div>
 
-      <InputField label={ehPessoa ? "Nome da pessoa" : "Nome do negócio"} value={c.negocio} onChange={set("negocio")} placeholder={ehPessoa ? "Carlos Andrade" : "Caverna do Cheff"} />
-      <InputField label={ehPessoa ? "Atuação" : "Segmento"} value={c.segmento} onChange={set("segmento")} placeholder={ehPessoa ? "Gerente geral — restaurante de médio porte" : "Restaurante — hamburgueria artesanal"} ajuda={ehPessoa ? "cargo e onde atua." : undefined} />
+      <InputField label={ehPessoa ? "Nome da pessoa" : "Nome do negócio"} value={c.negocio} onChange={set("negocio")} placeholder={ehPessoa ? "Marina Costa" : "Caverna do Cheff"} />
+      <InputField label={ehPessoa ? "Atuação" : "Segmento"} value={c.segmento} onChange={set("segmento")} placeholder={ehPessoa ? "analista financeira — em busca de novo rumo" : "Restaurante — hamburgueria artesanal"} ajuda={ehPessoa ? "o que faz hoje, em poucas palavras." : undefined} />
       {!ehPessoa && <InputField label="Setores e áreas" value={c.setores} onChange={set("setores")} placeholder="Salão, Cozinha, Delivery, Estoque" />}
       {!ehPessoa && <Area label="Regras próprias da casa" value={c.regras} onChange={set("regras")} placeholder="celular proibido na operação; uniforme completo obrigatório" />}
       <Area
         label={ehPessoa ? "Contexto e objetivos" : "Contexto e dores relatadas"}
         value={c.contexto}
         onChange={set("contexto")}
-        placeholder={ehPessoa ? "liderança recém-promovida; o time resiste; quer parar de apagar incêndio" : "atrasos recorrentes, desperdício de insumos"}
+        placeholder={ehPessoa ? "o que a trouxe até aqui: uma decisão a tomar, um hábito a mudar, um time a conduzir" : "atrasos recorrentes, desperdício de insumos"}
         ajuda={ehPessoa ? "por que buscou a mentoria." : undefined}
       />
 
