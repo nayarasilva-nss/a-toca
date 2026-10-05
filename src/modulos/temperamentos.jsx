@@ -38,7 +38,7 @@ export function SeloTemperamento({ chave, pequeno }) {
   );
 }
 
-export function ListaPessoas({ cliente, pessoas, onAbrir, onNova, onVoltar }) {
+export function ListaPessoas({ cliente, pessoas, entorno = false, onAbrir, onNova, onVoltar }) {
   const contagem = {};
   for (const p of pessoas) {
     if (p.dominante) contagem[p.dominante] = (contagem[p.dominante] || 0) + 1;
@@ -46,14 +46,14 @@ export function ListaPessoas({ cliente, pessoas, onAbrir, onNova, onVoltar }) {
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
       <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>
-        ← {cliente.negocio}
+        ← {entorno ? `Ficha de ${cliente.negocio}` : cliente.negocio}
       </button>
       <div className="flex items-start justify-between gap-4 flex-wrap mb-3">
-        <h2 className="enz-titulo is-2">Temperamentos</h2>
-        <BotaoPrimario onClick={onNova}>+ Nova pessoa</BotaoPrimario>
+        <h2 className="enz-titulo is-2">{entorno ? "Entorno do mentorado" : "Temperamentos"}</h2>
+        <BotaoPrimario onClick={onNova}>{entorno ? "+ Pessoa do entorno" : "+ Nova pessoa"}</BotaoPrimario>
       </div>
       <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
-        {cliente.tipo === "pessoa" ? "O mentorado e as pessoas do entorno dele, pela ciência dos temperamentos. Classificação, leitura pessoa × cargo e orientação de liderança." : "O mapa das pessoas-chave pela ciência dos temperamentos. Classificação, leitura pessoa × cargo e orientação de liderança."}
+        {entorno ? "Quem convive com o mentorado — chefe, sócio, time, família. Mapear o entorno ajuda a ler as relações; não é obrigatório." : "O mapa das pessoas-chave pela ciência dos temperamentos. Classificação, leitura pessoa × cargo e orientação de liderança."}
       </p>
 
       {pessoas.length > 0 && (
@@ -69,7 +69,7 @@ export function ListaPessoas({ cliente, pessoas, onAbrir, onNova, onVoltar }) {
       {pessoas.length === 0 ? (
         <div className="enz-card enz-card-vazado" style={{ padding: "28px 0" }}>
           <p className="enz-nota" style={{ fontSize: 14 }}>
-            {cliente.tipo === "pessoa" ? "Ninguém mapeado ainda. Comece pelo mentorado: descreva o que você observou e classifique — ou deixe a IA sugerir." : "Ninguém mapeado ainda. Adicione uma pessoa-chave, descreva o que você observou dela e classifique — ou deixe a IA sugerir a partir das suas observações."}
+            {entorno ? "Ninguém do entorno mapeado ainda. Adicione só quem importa para a jornada." : "Ninguém mapeado ainda. Adicione uma pessoa-chave, descreva o que você observou dela e classifique — ou deixe a IA sugerir a partir das suas observações."}
           </p>
         </div>
       ) : (
@@ -111,7 +111,7 @@ export const CAMPOS_PESSOA_GERADOS = [
   ["adequacao", "Adequação temperamento × cargo", 2],
 ];
 
-export function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar, onImprimir, onExcluir, onVoltar }) {
+export function EditorPessoa({ cliente, pessoa, mentorado = false, totalEntorno = 0, gerando, erro, onMudar, onGerar, onImprimir, onEntorno, onExcluir, onVoltar }) {
   const set = (campo) => (v) => onMudar({ ...pessoa, [campo]: v });
   const selectTemp = (campo, rotulo) => (
     <label className="block mb-4">
@@ -135,12 +135,13 @@ export function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar,
   return (
     <div className="max-w-3xl mx-auto mt-8 px-6 pb-16">
       <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>
-        ← Temperamentos · {cliente.negocio}
+        ← {mentorado ? cliente.negocio : cliente.tipo === "pessoa" ? `Entorno · ${cliente.negocio}` : `Temperamentos · ${cliente.negocio}`}
       </button>
+      {mentorado && <span className="enz-rotulo" style={{ marginBottom: 8 }}>Temperamento do mentorado</span>}
       <div className="enz-card">
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="font-serif text-lg flex items-center gap-2" style={{ color: CORES.fogo }}>
-            {pessoa.nome || "Nova pessoa"} <SeloTemperamento chave={pessoa.dominante} pequeno />
+            {pessoa.nome || (cliente.tipo === "pessoa" ? "Pessoa do entorno" : "Nova pessoa")} <SeloTemperamento chave={pessoa.dominante} pequeno />
           </h2>
           <div className="flex gap-2">
             <BotaoPrimario onClick={onGerar} disabled={gerando || !pessoa.nome.trim()}>
@@ -240,10 +241,17 @@ export function EditorPessoa({ cliente, pessoa, gerando, erro, onMudar, onGerar,
             {CAMPOS_PESSOA_GERADOS.map(([campo, rotulo, linhas]) => (
               <label key={campo} className="block mb-4"><span className="block text-xs uppercase tracking-wider mb-1 font-semibold" style={{ color: CORES.dourado }}>{rotulo}</span><textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: CORES.laranja, color: CORES.fogoEscuro }} value={pessoa[campo]} onChange={(e) => set(campo)(e.target.value)} /></label>
             ))}
-            <button onClick={onExcluir} className="enz-confirmar">
-              Excluir pessoa
-            </button>
+            {onExcluir && (
+              <button onClick={onExcluir} className="enz-confirmar">
+                Excluir pessoa
+              </button>
+            )}
           </>
+        )}
+        {onEntorno && (
+          <div style={{ marginTop: 24, paddingTop: 20, borderTop: "1px solid var(--linha)" }}>
+            <button onClick={onEntorno} className="enz-link">{totalEntorno > 0 ? `entorno do mentorado · ${totalEntorno} pessoa${totalEntorno > 1 ? "s" : ""} →` : "mapear o entorno do mentorado (opcional) →"}</button>
+          </div>
         )}
       </div>
     </div>

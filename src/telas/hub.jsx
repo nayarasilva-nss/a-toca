@@ -1,4 +1,5 @@
 import { TituloSecao, Card, FasesEnraizar, FASES } from "../componentes/enraizar.jsx";
+import { TEMPERAMENTOS } from "../ia/documentos.jsx";
 import { FOCOS_MENTORIA } from "../nucleo/focos.jsx";
 import { ArvoreEnraizar } from "../componentes/arvore.jsx";
 import { BotaoPrimario, ConfirmarAcao } from "../componentes/ui.jsx";
@@ -134,7 +135,7 @@ export function ListaClientes({ clientes, fases = {}, backupPendente, onAplicarB
   );
 }
 
-export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, totalCampo, totalDiagsLider, temRelMentoria, totalAnomalias, totalAnomaliasTratadas, totalTreinamentos, totalTreinamentosRealizados, totalEncontros, totalEncontrosRealizados, totalCargos, temTabela, gestao, totalPosicoes, totalAlcadas, totalRitos, totalIndicadores, totalSecoesManual, totalPontosCCT, totalPops, totalFluxos, totalPoliticas, totalChecklists, totalPessoas, totalDiagnosticos, totalPropostas, totalRelatorios, resumoFinanceiro, onModulo, onEditarCliente, onVoltar }) {
+export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, temperamentoMentorado, totalCampo, totalDiagsLider, temRelMentoria, totalAnomalias, totalAnomaliasTratadas, totalTreinamentos, totalTreinamentosRealizados, totalEncontros, totalEncontrosRealizados, totalCargos, temTabela, gestao, totalPosicoes, totalAlcadas, totalRitos, totalIndicadores, totalSecoesManual, totalPontosCCT, totalPops, totalFluxos, totalPoliticas, totalChecklists, totalPessoas, totalDiagnosticos, totalPropostas, totalRelatorios, resumoFinanceiro, onModulo, onEditarCliente, onVoltar }) {
   const servicosCliente = cliente.servicos || { consultoria: true, mentoria: false, treinamentos: false };
   const ehPessoa = cliente.tipo === "pessoa";
   const frentes = (gestao && gestao.frentes) || [];
@@ -156,7 +157,9 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
           : `Semana ${semCrono}${gestao.duracaoSemanas ? ` de ${gestao.duracaoSemanas}` : ""}${atrasadasCrono ? ` · ${atrasadasCrono} atrasada${atrasadasCrono > 1 ? "s" : ""}` : ""}`,
     diagnosticos: totalDiagnosticos > 0 ? `${totalDiagnosticos} diagnóstico${totalDiagnosticos > 1 ? "s" : ""}` : "Ainda não avaliado",
     propostas: totalPropostas > 0 ? `${totalPropostas} proposta${totalPropostas > 1 ? "s" : ""}` : "Nenhuma proposta ainda",
-    temperamentos: totalPessoas > 0 ? `${totalPessoas} pessoa${totalPessoas > 1 ? "s" : ""} mapeada${totalPessoas > 1 ? "s" : ""}` : ehPessoa ? "Mapeie o mentorado e o entorno dele" : "Ninguém mapeado ainda",
+    temperamentos: ehPessoa
+      ? (temperamentoMentorado && TEMPERAMENTOS[temperamentoMentorado] ? `${TEMPERAMENTOS[temperamentoMentorado].rotulo}${totalPessoas > 1 ? ` · entorno: ${totalPessoas - 1}` : ""}` : "Ainda não classificado")
+      : totalPessoas > 0 ? `${totalPessoas} pessoa${totalPessoas > 1 ? "s" : ""} mapeada${totalPessoas > 1 ? "s" : ""}` : "Ninguém mapeado ainda",
     cct: totalPontosCCT > 0 ? `${totalPontosCCT} ponto${totalPontosCCT > 1 ? "s" : ""} obrigatório${totalPontosCCT > 1 ? "s" : ""}` : "CCT ainda não analisada",
     campo: totalCampo > 0 ? `${totalCampo} registro${totalCampo > 1 ? "s" : ""} no caderno` : "O caderno está em branco",
     diagslider: totalDiagsLider > 0 ? `${totalDiagsLider} avaliaç${totalDiagsLider > 1 ? "ões" : "ão"}` : "Ainda não avaliado",
@@ -187,7 +190,7 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
     anomalias: "Tratamento de Anomalias",
     painel: "Painel do Projeto",
     propostas: "Propostas Comerciais",
-    temperamentos: "Temperamentos",
+    temperamentos: ehPessoa ? "Temperamento" : "Temperamentos",
     cct: "CCT & Conformidade",
     campo: "Trabalho de Campo",
     estrutura: "Estrutura de Governança",

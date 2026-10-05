@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SeloTemperamento } from "./temperamentos.jsx";
 import { FOCOS_MENTORIA, focoDe } from "../nucleo/focos.jsx";
 import { AvisoErro, BotaoPrimario, Trabalhando } from "../componentes/ui.jsx";
 import { GUIA_MOLDAGEM, TEMPERAMENTOS } from "../ia/documentos.jsx";
@@ -271,6 +272,12 @@ export function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAco
         <div className="grid sm:grid-cols-2 gap-x-4">
           <div className="mb-4">
             <div className="enz-rotulo mb-1">Mentorado</div>
+            {cliente.tipo === "pessoa" ? (
+              <div className="flex items-center gap-2 flex-wrap" style={{ padding: "10px 0" }}>
+                <span className="font-serif" style={{ fontSize: 20 }}>{cliente.negocio}</span>
+                {mentorado && mentorado.dominante ? <SeloTemperamento chave={mentorado.dominante} pequeno /> : <span className="enz-nota">temperamento ainda não classificado — abra Temperamentos</span>}
+              </div>
+            ) : (
             <select
               className="w-full px-3 py-2 rounded border text-sm bg-creme"
               style={{ borderColor: "var(--linha)", color: CORES.fogoEscuro }}
@@ -284,6 +291,7 @@ export function ModuloMentoria({ cliente, mentoria, pessoas, temRaioX, statusAco
                 </option>
               ))}
             </select>
+            )}
             {mentorado && mentorado.dominante && TEMPERAMENTOS[mentorado.dominante] && (
               <div className="text-xs mt-1" style={{ color: CORES.textoDim }}>A jornada se molda ao temperamento — sem citá-lo nos temas.</div>
             )}

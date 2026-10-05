@@ -1,5 +1,6 @@
 import { useState, useEffect, useReducer } from "react";
 import { COLECOES, COLECOES_INICIAIS, reduzirColecoes } from "./nucleo/estado.jsx";
+import { pessoaVazia } from "./modulos/temperamentos.jsx";
 import { FOCOS_MENTORIA, focoDe } from "./nucleo/focos.jsx";
 import { frameworkMentorado as frameworkDoMentorado } from "./ia/diagnostico.jsx";
 import { lerTema, aplicarTema } from "./nucleo/tema.js";
@@ -200,7 +201,11 @@ export default function App() {
     const lista = [...clientes, novo];
     setClientes(lista);
     await stSet("toca:clientes", lista);
-    if (novo.tipo === "pessoa" && novo.focoMentoria) await salvarColecao("mentoria", novo.id, { ...mentoriaVazia(), foco: novo.focoMentoria });
+    if (novo.tipo === "pessoa") {
+      const ficha = { ...pessoaVazia(), nome: novo.negocio, cargo: novo.segmento, contratante: true };
+      await salvarColecao("pessoas", novo.id, [ficha]);
+      await salvarColecao("mentoria", novo.id, { ...mentoriaVazia(), foco: novo.focoMentoria || "", mentoradoId: ficha.id });
+    }
     abrirCliente(novo.id);
   };
 
@@ -569,7 +574,7 @@ ${conteudo}
           <TelaPropostas app={app} />
         ) : ["diagnosticos", "diagnostico"].includes(tela.nome) ? (
           <TelaDiagnostico app={app} />
-        ) : ["temperamentos", "pessoa"].includes(tela.nome) ? (
+        ) : ["temperamentos", "pessoa", "entorno"].includes(tela.nome) ? (
           <TelaTemperamentos app={app} />
         ) : ["docs", "doc"].includes(tela.nome) ? (
           <TelaDocumentos app={app} />

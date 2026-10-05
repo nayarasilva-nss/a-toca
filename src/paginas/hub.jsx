@@ -86,6 +86,7 @@ export function TelaHub({ app }) {
         totalPoliticas={docsDe("politicas", clienteAtual.id).length}
         totalChecklists={docsDe("checklists", clienteAtual.id).length}
         totalPessoas={pessoasAtuais.length}
+        temperamentoMentorado={(pessoasAtuais.find((p) => p.id === (mentoriaAtual || {}).mentoradoId) || pessoasAtuais.find((p) => p.contratante) || {}).dominante || ""}
         totalDiagnosticos={diagsAtuais.length}
         totalPropostas={propostasAtuais.length}
         totalRelatorios={relatoriosAtuais.length}
