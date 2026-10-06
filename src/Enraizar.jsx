@@ -504,7 +504,7 @@ ${conteudo}
     setGerandoPdf(true);
     setErro(null);
     try {
-      const bytes = await gerarPdfDoNo(node);
+      const bytes = await gerarPdfDoNo(node, { cliente: clienteAtual ? clienteAtual.negocio : "" });
       const blob = new Blob([bytes], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");

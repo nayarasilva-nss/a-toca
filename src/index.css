@@ -217,3 +217,19 @@
   .enz-cabecalho, .print\:hidden { display: none !important; }
   .enz-ilustracao { background: var(--tinta); -webkit-mask: var(--enz-img) center / contain no-repeat; mask: var(--enz-img) center / contain no-repeat; }
 }
+
+/* ── PDF: a área de impressão renderizada pelo motor próprio (sempre Papel sobre branco) ── */
+.enz-pdf { --fundo: #ffffff; --fundo-elevado: #ffffff; --fundo-recuo: #f6f2e8; --fundo-destaque: #eee8da; --ouro: #b8902f; --ouro-texto: #7d601c; font-family: var(--font-body); font-size: 13px; line-height: 1.55; color: var(--tinta); }
+.enz-pdf .area-impressao { display: block !important; }
+.enz-pdf .font-serif, .enz-pdf h1, .enz-pdf h2, .enz-pdf h3 { font-family: var(--font-display); font-weight: 500; }
+.enz-pdf .text-3xl { font-size: 34px; line-height: 1.1; }
+.enz-pdf .text-2xl { font-size: 28px; line-height: 1.15; }
+.enz-pdf .text-xl { font-size: 22px; line-height: 1.2; }
+.enz-pdf .text-lg { font-size: 18px; }
+.enz-pdf .text-sm { font-size: 13px; }
+.enz-pdf .text-xs { font-size: 11px; }
+.enz-pdf .uppercase.tracking-widest, .enz-pdf .enz-rotulo { font-family: var(--font-body); font-size: 10px; letter-spacing: .24em; text-transform: uppercase; font-weight: 700; color: var(--ouro-texto); }
+.enz-pdf .border-b-4 { border-bottom-width: 1px !important; border-color: var(--ouro) !important; }
+.enz-pdf table { border-collapse: collapse; width: 100%; }
+.enz-pdf th { font-size: 10px; letter-spacing: .2em; color: var(--ouro-texto); border-bottom: 1px solid var(--linha-forte); }
+.enz-pdf td { border-bottom: 1px solid var(--linha); padding: 7px 8px; font-size: 12px; }
