@@ -1,10 +1,11 @@
 import { comRetentativa } from "../ia/base.jsx";
+import { resumoPercepcoesParaIA } from "../nucleo/percepcao.jsx";
 import { FOCOS_MENTORIA } from "../nucleo/focos.jsx";
 import { gerarLeituraDiagLider } from "../ia/diagnostico.jsx";
 import { EditorDiagnostico, ListaDiagnosticos, diagVazio } from "../modulos/diagnostico.jsx";
 
 export function TelaDiagLider({ app }) {
-  const { clienteAtual, diagLiderAtual, diagsLiderAtuais, diagsLiderPorCliente, erro, executarGeracao, exportarImpressao, focoMentoriaAtual, frameworkMentorado, gerando, mentoriaPorCliente, pessoasPorCliente, salvarColecao, setErro, setTela, tela, tituloDiagMentorado } = app;
+  const { clienteAtual, diagLiderAtual, diagsLiderAtuais, diagsLiderPorCliente, erro, executarGeracao, exportarImpressao, focoMentoriaAtual, frameworkMentorado, gerando, mentoriaPorCliente, pessoasPorCliente, salvarColecao, setErro, setTela, tela, tituloDiagMentorado, percepcoesPorCliente } = app;
 
   const mudarDiagsLider = (clienteId, novos) => salvarColecao("diagsLider", clienteId, novos);
 
@@ -12,7 +13,7 @@ export function TelaDiagLider({ app }) {
     executarGeracao(async () => {
       const mentoria = mentoriaPorCliente[cliente.id] || {};
       const mentorado = (pessoasPorCliente[cliente.id] || []).find((p) => p.id === mentoria.mentoradoId) || (pessoasPorCliente[cliente.id] || []).find((p) => p.contratante) || null;
-      const gerado = await comRetentativa(() => gerarLeituraDiagLider(cliente, diag.notas, mentoria, mentorado));
+      const gerado = await comRetentativa(() => gerarLeituraDiagLider(cliente, diag.notas, mentoria, mentorado, resumoPercepcoesParaIA(percepcoesPorCliente[cliente.id] || [], frameworkMentorado)));
       const lista = diagsLiderPorCliente[cliente.id] || [];
       await mudarDiagsLider(cliente.id, lista.map((d) => (d.id === diag.id ? { ...diag, ...gerado } : d)));
     });

@@ -1,8 +1,8 @@
 // ─── Persistência ───────────────────────────────────────────────
 
-export async function stGet(chave) {
+export async function stGet(chave, opcoes) {
   try {
-    const r = await window.storage.get(chave);
+    const r = await window.storage.get(chave, opcoes);
     if (!r || r.value == null) return null;
     let v = JSON.parse(r.value);
     // dados gravados pelo adaptador antigo ficaram codificados duas vezes

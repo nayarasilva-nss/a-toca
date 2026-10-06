@@ -3,7 +3,7 @@ import { formatarBR, parseValorBR } from "../ia/financeiro.jsx";
 import { HubCliente } from "../telas/hub.jsx";
 
 export function TelaHub({ app }) {
-  const { alcadasAtuais, anomaliasPorCliente, campoAtuais, campoPorCliente, cargosAtuais, clienteAtual, diagsAtuais, diagsLiderAtuais, docsDe, estruturaAtual, faseDoCliente, financeiroAtual, financeiroPorCliente, fluxosAtuais, focoMentoriaAtual, gestaoPorCliente, indicadoresAtuais, manualAtual, mentoriaAtual, pessoasAtuais, pontosCCTDe, popsAtuais, propostasAtuais, propostasPorCliente, relMentoriaAtual, relatoriosAtuais, ritosAtuais, ritosPorCliente, setErro, setTela, tabelas, tela, treinamentosAtuais } = app;
+  const { alcadasAtuais, anomaliasPorCliente, campoAtuais, campoPorCliente, cargosAtuais, clienteAtual, diagsAtuais, diagsLiderAtuais, docsDe, estruturaAtual, faseDoCliente, financeiroAtual, financeiroPorCliente, fluxosAtuais, focoMentoriaAtual, gestaoPorCliente, indicadoresAtuais, manualAtual, mentoriaAtual, pessoasAtuais, pontosCCTDe, popsAtuais, propostasAtuais, propostasPorCliente, relMentoriaAtual, relatoriosAtuais, ritosAtuais, ritosPorCliente, setErro, setTela, tabelas, tela, treinamentosAtuais, percepcoesPorCliente } = app;
 
   const proximoPassoDe = (c) => {
     const fase = faseDoCliente(c);
@@ -86,6 +86,7 @@ export function TelaHub({ app }) {
         totalPoliticas={docsDe("politicas", clienteAtual.id).length}
         totalChecklists={docsDe("checklists", clienteAtual.id).length}
         totalPessoas={pessoasAtuais.length}
+        totalPercepcoes={((percepcoesPorCliente || {})[clienteAtual.id] || []).filter((c) => c.respostas).length}
         temperamentoMentorado={(pessoasAtuais.find((p) => p.id === (mentoriaAtual || {}).mentoradoId) || pessoasAtuais.find((p) => p.contratante) || {}).dominante || ""}
         totalDiagnosticos={diagsAtuais.length}
         totalPropostas={propostasAtuais.length}

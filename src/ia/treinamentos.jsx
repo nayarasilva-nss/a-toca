@@ -260,7 +260,7 @@ Sem markdown, sem texto fora do JSON.`;
   };
 }
 
-export async function gerarRelatorioEvolucao(cliente, mentoria, mentorado, diagsLider) {
+export async function gerarRelatorioEvolucao(cliente, mentoria, mentorado, diagsLider, percepcoes = "") {
   const encontros = mentoria.encontros || [];
   const realizados = encontros.filter((e) => e.realizada);
   const atividadesTotal = encontros.flatMap((e) => e.atividades || []);
@@ -283,7 +283,7 @@ Papel: ${cliente.tipo === "pessoa" ? cliente.segmento : (mentorado && mentorado.
 Objetivos da mentoria: ${mentoria.objetivos || "nao declarados"}
 
 DADOS REAIS
-Encontros: ${realizados.length} realizados de ${encontros.length} desenhados
+${percepcoes ? `${percepcoes}\n(se houver inicio e fim, o antes/depois visto pelo entorno e a evidencia mais forte de evolucao - cite com numeros)\n` : ""}Encontros: ${realizados.length} realizados de ${encontros.length} desenhados
 Temas trabalhados: ${temasRealizados}
 Atividades pra casa: ${atividadesFeitas.length} concluidas de ${atividadesTotal.length}
 FCAs realizados pelo mentorado (analises Fato-Causa-Acao de situacoes reais): ${atividadesTotal.filter((a) => a.tipo === "fca" && (a.fato || a.causa)).map((a) => `[${(a.fato || "").slice(0, 80)} -> ${(a.acaoFca || "").slice(0, 60)}]`).join("; ") || "nenhum"}

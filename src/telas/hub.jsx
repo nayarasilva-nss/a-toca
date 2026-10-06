@@ -135,7 +135,7 @@ export function ListaClientes({ clientes, fases = {}, backupPendente, onAplicarB
   );
 }
 
-export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, temperamentoMentorado, totalCampo, totalDiagsLider, temRelMentoria, totalAnomalias, totalAnomaliasTratadas, totalTreinamentos, totalTreinamentosRealizados, totalEncontros, totalEncontrosRealizados, totalCargos, temTabela, gestao, totalPosicoes, totalAlcadas, totalRitos, totalIndicadores, totalSecoesManual, totalPontosCCT, totalPops, totalFluxos, totalPoliticas, totalChecklists, totalPessoas, totalDiagnosticos, totalPropostas, totalRelatorios, resumoFinanceiro, onModulo, onEditarCliente, onVoltar }) {
+export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, temperamentoMentorado, totalPercepcoes = 0, totalCampo, totalDiagsLider, temRelMentoria, totalAnomalias, totalAnomaliasTratadas, totalTreinamentos, totalTreinamentosRealizados, totalEncontros, totalEncontrosRealizados, totalCargos, temTabela, gestao, totalPosicoes, totalAlcadas, totalRitos, totalIndicadores, totalSecoesManual, totalPontosCCT, totalPops, totalFluxos, totalPoliticas, totalChecklists, totalPessoas, totalDiagnosticos, totalPropostas, totalRelatorios, resumoFinanceiro, onModulo, onEditarCliente, onVoltar }) {
   const servicosCliente = cliente.servicos || { consultoria: true, mentoria: false, treinamentos: false };
   const ehPessoa = cliente.tipo === "pessoa";
   const frentes = (gestao && gestao.frentes) || [];
@@ -164,6 +164,7 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
     campo: totalCampo > 0 ? `${totalCampo} registro${totalCampo > 1 ? "s" : ""} no caderno` : "O caderno está em branco",
     diagslider: totalDiagsLider > 0 ? `${totalDiagsLider} avaliaç${totalDiagsLider > 1 ? "ões" : "ão"}` : "Ainda não avaliado",
     relmentoria: temRelMentoria ? "Relatório pronto" : "A prova da jornada",
+    percepcoes: totalPercepcoes > 0 ? `${totalPercepcoes} resposta${totalPercepcoes > 1 ? "s" : ""} do entorno` : "Como o entorno vê o mentorado",
     anomalias: totalAnomalias > 0 ? `${totalAnomaliasTratadas}/${totalAnomalias} tratadas` : "Nenhuma anomalia registrada",
     painel: "Controle e verificação do método",
     estrutura: totalPosicoes > 0 ? `Organograma com ${totalPosicoes} posiç${totalPosicoes > 1 ? "ões" : "ão"}` : "Ainda não montada",
@@ -187,6 +188,7 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
     diagnosticos: "Diagnóstico de Maturidade",
     diagslider: focoMentoria && FOCOS_MENTORIA[focoMentoria] ? FOCOS_MENTORIA[focoMentoria].diagnostico : "Diagnóstico do Mentorado",
     relmentoria: "Relatório de Evolução",
+    percepcoes: "Percepção do entorno",
     anomalias: "Tratamento de Anomalias",
     painel: "Painel do Projeto",
     propostas: "Propostas Comerciais",
@@ -209,7 +211,7 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
   };
 
   const alaContratante = ehPessoa
-    ? ["temperamentos", "diagslider", "propostas", "financeiro", "relmentoria"]
+    ? ["temperamentos", "diagslider", "percepcoes", "propostas", "financeiro", "relmentoria"]
     : ["gestao", "temperamentos", "propostas", "cronograma", "financeiro"];
   const alaNegocio = [
     { frente: "Transversal", chaves: ["diagnosticos", "cct", "campo"] },

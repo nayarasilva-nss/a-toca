@@ -25,6 +25,7 @@ export const COLECOES = {
   propostas: { chave: "propostas", padrao: () => [] },
   relatorios: { chave: "relatorios", padrao: () => [] },
   financeiro: { chave: "financeiro", padrao: () => ({ parcelas: [] }) },
+  percepcoes: { chave: "percepcoes", padrao: () => [] },
 };
 
 export const COLECOES_INICIAIS = Object.fromEntries(Object.keys(COLECOES).map((k) => [k, {}]));

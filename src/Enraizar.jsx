@@ -51,6 +51,7 @@ import { TelaAlcadas } from "./paginas/alcadas.jsx";
 import { TelaAnomalias } from "./paginas/anomalias.jsx";
 import { TelaPainel } from "./paginas/painel.jsx";
 import { TelaRelMentoria } from "./paginas/relMentoria.jsx";
+import { TelaPercepcoes } from "./paginas/percepcoes.jsx";
 import { TelaDiagLider } from "./paginas/diagLider.jsx";
 import { TelaTreinamentos } from "./paginas/treinamentos.jsx";
 import { TelaMentoria } from "./paginas/mentoria.jsx";
@@ -95,6 +96,7 @@ export default function App() {
   const propostasPorCliente = colecoes.propostas, setPropostasPorCliente = atualizar("propostas");
   const relatoriosPorCliente = colecoes.relatorios, setRelatoriosPorCliente = atualizar("relatorios");
   const financeiroPorCliente = colecoes.financeiro, setFinanceiroPorCliente = atualizar("financeiro");
+  const percepcoesPorCliente = colecoes.percepcoes;
   const [gerando, setGerando] = useState(false);
   const [erro, setErro] = useState(null);
   const [pronto, setPronto] = useState(false);
@@ -229,7 +231,7 @@ export default function App() {
 
   const mudarPessoas = (clienteId, novas) => salvarColecao("pessoas", clienteId, novas);
 
-  const TIPOS_BACKUP = ["tabela", "cargos", "gestao", "estrutura", "manual", "cct", "penseira", "pops", "fluxos", "alcadas", "ritos", "indicadores", "politicas", "checklists", "atas", "temperamentos", "diagnosticos", "propostas", "relatorios", "financeiro", "campo", "treinamentos", "mentoria", "diagslider", "relmentoria", "anomalias", "painel"];
+  const TIPOS_BACKUP = ["tabela", "cargos", "gestao", "estrutura", "manual", "cct", "penseira", "pops", "fluxos", "alcadas", "ritos", "indicadores", "politicas", "checklists", "atas", "temperamentos", "diagnosticos", "propostas", "relatorios", "financeiro", "campo", "treinamentos", "mentoria", "diagslider", "percepcoes", "relmentoria", "anomalias", "painel"];
 
   const exportarBackup = async () => {
     const dados = { versao: 1, exportadoEm: new Date().toISOString(), clientes, precificacao, porCliente: {} };
@@ -532,7 +534,7 @@ ${conteudo}
   }
 
   const app = {
-    alcadasAtuais, alcadasPorCliente, anomaliasPorCliente, atasAtuais, campoAtuais, campoAtual, campoPorCliente, cargoAtual, cargosAtuais, cargosPorCliente, cctPorCliente, clienteAtual, dadosPainelDe, diagAtual, diagLiderAtual, diagsAtuais, diagsLiderAtuais, diagsLiderPorCliente, diagsPorCliente, docAtual, docsAtuais, docsDe, erro, estruturaAtual, estruturaPorCliente, executarGeracao, exportarImpressao, faseDoCliente, financeiroAtual, financeiroPorCliente, fluxoAtual, fluxosAtuais, fluxosPorCliente, focoMentoriaAtual, frameworkMentorado, gerando, gestaoPorCliente, indicadoresAtuais, indicadoresPorCliente, manualAtual, manualPorCliente, mentoriaAtual, mentoriaPorCliente, mudarDocs, mudarGestao, mudarPessoas, painelPorCliente, penseiraPorCliente, pessoaAtual, pessoasAtuais, pessoasPorCliente, pontosCCTDe, popAtual, popsAtuais, popsPorCliente, precificacao, propostaAtual, propostasAtuais, propostasPorCliente, relMentoriaAtual, relatorioAtual, relatoriosAtuais, relatoriosPorCliente, ritosAtuais, ritosPorCliente, salvarColecao, setErro, setGerando, setMentoriaPorCliente, setPenseiraPorCliente, setPrecificacao, setTabelas, setTela, tabelas, tela, tituloDiagMentorado, treinamentoAtual, treinamentosAtuais, treinamentosPorCliente,
+    alcadasAtuais, alcadasPorCliente, anomaliasPorCliente, atasAtuais, campoAtuais, campoAtual, campoPorCliente, cargoAtual, cargosAtuais, cargosPorCliente, cctPorCliente, clienteAtual, dadosPainelDe, diagAtual, diagLiderAtual, diagsAtuais, diagsLiderAtuais, diagsLiderPorCliente, diagsPorCliente, docAtual, docsAtuais, docsDe, erro, estruturaAtual, estruturaPorCliente, executarGeracao, exportarImpressao, faseDoCliente, financeiroAtual, financeiroPorCliente, fluxoAtual, fluxosAtuais, fluxosPorCliente, focoMentoriaAtual, frameworkMentorado, gerando, gestaoPorCliente, indicadoresAtuais, indicadoresPorCliente, manualAtual, manualPorCliente, mentoriaAtual, mentoriaPorCliente, mudarDocs, mudarGestao, mudarPessoas, painelPorCliente, penseiraPorCliente, pessoaAtual, percepcoesPorCliente, pessoasAtuais, pessoasPorCliente, pontosCCTDe, popAtual, popsAtuais, popsPorCliente, precificacao, propostaAtual, propostasAtuais, propostasPorCliente, relMentoriaAtual, relatorioAtual, relatoriosAtuais, relatoriosPorCliente, ritosAtuais, ritosPorCliente, salvarColecao, setErro, setGerando, setMentoriaPorCliente, setPenseiraPorCliente, setPrecificacao, setTabelas, setTela, tabelas, tela, tituloDiagMentorado, treinamentoAtual, treinamentosAtuais, treinamentosPorCliente,
   };
 
   return (
@@ -588,6 +590,8 @@ ${conteudo}
           <TelaAnomalias app={app} />
         ) : ["painel"].includes(tela.nome) ? (
           <TelaPainel app={app} />
+        ) : ["percepcoes"].includes(tela.nome) ? (
+          <TelaPercepcoes app={app} />
         ) : ["relmentoria"].includes(tela.nome) ? (
           <TelaRelMentoria app={app} />
         ) : ["diagslider", "diaglider"].includes(tela.nome) ? (

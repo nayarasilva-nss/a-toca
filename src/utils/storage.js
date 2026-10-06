@@ -66,8 +66,20 @@ function carregarRemoto() {
 }
 
 window.storage = {
-  async get(chave) {
+  async get(chave, { fresco = false } = {}) {
     await carregarRemoto();
+    if (fresco && remotoOk) {
+      try {
+        const r = await fetch(`${API}?chave=${encodeURIComponent(chave)}`);
+        if (r.ok && ehJson(r)) {
+          const { value } = await r.json();
+          if (value === null || value === undefined) cache.delete(chave);
+          else cache.set(chave, value);
+        }
+      } catch (e) {
+        console.warn(`storage: não foi possível recarregar ${chave} —`, e.message);
+      }
+    }
     const v = remotoOk ? cache.get(chave) ?? null : lerLocal(chave);
     return v === null || v === undefined ? null : { value: v };
   },

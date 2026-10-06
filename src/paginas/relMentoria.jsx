@@ -1,11 +1,12 @@
 import { comRetentativa } from "../ia/base.jsx";
+import { resumoPercepcoesParaIA } from "../nucleo/percepcao.jsx";
 import { gerarRelatorioEvolucao } from "../ia/treinamentos.jsx";
 import { ModuloRelMentoria } from "../modulos/relMentoria.jsx";
 import { mentoriaVazia } from "../modulos/treinamentos.jsx";
 import { stSet } from "../nucleo/persistencia.jsx";
 
 export function TelaRelMentoria({ app }) {
-  const { clienteAtual, diagsLiderAtuais, diagsLiderPorCliente, erro, executarGeracao, exportarImpressao, frameworkMentorado, gerando, mentoriaPorCliente, pessoasPorCliente, propostasPorCliente, relMentoriaAtual, setMentoriaPorCliente, setTela, tela } = app;
+  const { clienteAtual, diagsLiderAtuais, diagsLiderPorCliente, erro, executarGeracao, exportarImpressao, frameworkMentorado, gerando, mentoriaPorCliente, pessoasPorCliente, propostasPorCliente, relMentoriaAtual, setMentoriaPorCliente, setTela, tela, percepcoesPorCliente } = app;
 
   const mudarRelMentoria = async (clienteId, novo) => {
     setMentoriaPorCliente((prev) => ({ ...prev, [clienteId]: { ...(prev[clienteId] || mentoriaVazia()), relatorio: novo } }));
@@ -16,7 +17,7 @@ export function TelaRelMentoria({ app }) {
     executarGeracao(async () => {
       const mentoria = mentoriaPorCliente[cliente.id] || { encontros: [] };
       const mentorado = (pessoasPorCliente[cliente.id] || []).find((p) => p.id === mentoria.mentoradoId) || null;
-      const gerado = await comRetentativa(() => gerarRelatorioEvolucao(cliente, mentoria, mentorado, diagsLiderPorCliente[cliente.id] || []));
+      const gerado = await comRetentativa(() => gerarRelatorioEvolucao(cliente, mentoria, mentorado, diagsLiderPorCliente[cliente.id] || [], resumoPercepcoesParaIA(percepcoesPorCliente[cliente.id] || [], frameworkMentorado)));
       await mudarRelMentoria(cliente.id, { ...(mentoriaPorCliente[cliente.id]?.relatorio || {}), ...gerado });
     });
 

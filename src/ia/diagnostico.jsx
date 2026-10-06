@@ -116,7 +116,7 @@ export function frameworkMentorado(mentoria) {
   return chave === "lider" ? FRAMEWORK_LIDER : chave === "vocacao" ? FRAMEWORK_VOCACAO : FRAMEWORK_PESSOAL;
 }
 
-export async function gerarLeituraDiagLider(cliente, notas, mentoria, mentorado) {
+export async function gerarLeituraDiagLider(cliente, notas, mentoria, mentorado, percepcoes = "") {
   const FRD = frameworkMentorado(mentoria);
   const foco = metaFoco(mentoria);
   const linhas = FRD.map((a, aIdx) => {
@@ -142,7 +142,7 @@ Papel/atuacao: ${cliente.tipo === "pessoa" ? cliente.segmento : (mentorado && me
 Contexto: ${cliente.contexto || "nao informado"}
 ${mentorado && mentorado.dominante && TEMPERAMENTOS[mentorado.dominante] ? `Temperamento: ${TEMPERAMENTOS[mentorado.dominante].rotulo}${mentorado.secundario && TEMPERAMENTOS[mentorado.secundario] ? ` com ${TEMPERAMENTOS[mentorado.secundario].rotulo}` : ""} - conecte as notas ao perfil (ex.: colerico forte em resultados e fraco em escuta e um padrao tipico).` : ""}
 ${mentoria && mentoria.objetivos ? `Objetivos da mentoria: ${mentoria.objetivos}` : ""}
-
+${percepcoes ? `\nCOMO O ENTORNO O VE (mesma regua, respondida por quem convive com ele - cruze com a avaliacao da mentora: a distancia entre as duas e o ponto cego)\n${percepcoes}\n` : ""}
 AVALIACAO
 ${linhas}
 
