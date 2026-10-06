@@ -398,7 +398,7 @@ export function ImpressaoProposta({ cliente, prop }) {
 
       <div className="mt-10 pt-6 text-sm" style={{ color: "var(--tinta)" }}>
         <div className="flex gap-16">
-          <div className="flex-1 border-t pt-1 text-center" style={{ borderColor: "var(--tinta)" }}>Nayara Silva · Consultoria de Governança</div>
+          <div className="flex-1 border-t pt-1 text-center" style={{ borderColor: "var(--tinta)" }}>Nayara Silva · Enraizar</div>
           <div className="flex-1 border-t pt-1 text-center" style={{ borderColor: "var(--tinta)" }}>{cliente.negocio}</div>
         </div>
       </div>

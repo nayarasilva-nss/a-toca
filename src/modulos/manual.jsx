@@ -94,7 +94,7 @@ export function ImpressaoManual({ cliente, secoes }) {
           <p className="text-sm whitespace-pre-line">{s.conteudo}</p>
         </div>
       ))}
-      <RodapeImpressao />
+      <RodapeImpressao trabalhista />
     </div>
   );
 }

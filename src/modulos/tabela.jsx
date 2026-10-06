@@ -164,19 +164,18 @@ export function ImpressaoTabela({ cliente, tabela }) {
         </div>
       ))}
 
-      <RodapeImpressao />
+      <RodapeImpressao trabalhista />
     </div>
   );
 }
 
-export function RodapeImpressao() {
+// Nota legal só nos documentos que tratam de medidas disciplinares; a assinatura fica no rodapé de cada página do PDF.
+export function RodapeImpressao({ trabalhista = false }) {
+  if (!trabalhista) return null;
   return (
-    <div className="mt-8 pt-4 border-t text-xs" style={{ borderColor: CORES.dourado, color: "var(--tinta)" }}>
-      <p className="mb-1">
-        * A aplicação de qualquer medida disciplinar — em especial suspensão e desligamento por justa causa (art. 482 da CLT) — deve ser validada previamente com o contador e/ou advogado trabalhista da empresa, inclusive quanto à convenção coletiva (CCT) vigente do setor.
-      </p>
-      <p className="font-serif italic" style={{ color: CORES.fogo }}>
-        Elaborado por Nayara Silva · Consultoria de Governança
+    <div className="mt-8 pt-4 border-t text-xs" style={{ borderColor: "var(--linha)", color: "var(--tinta-musgo)" }}>
+      <p>
+        * A aplicação de qualquer medida disciplinar — em especial suspensão e desligamento por justa causa (art. 482 da CLT) — deve ser validada previamente com o contador e/ou advogado trabalhista da empresa, inclusive quanto à convenção coletiva (CCT) vigente.
       </p>
     </div>
   );
