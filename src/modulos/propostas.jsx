@@ -161,7 +161,7 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
             <BotaoPrimario onClick={onGerar} disabled={gerando}>
               {gerando ? "Gerando..." : prop.apresentacao ? "Gerar texto novamente" : "Gerar texto com IA"}
             </BotaoPrimario>
-            {prop.apresentacao && <BotaoContorno onClick={onImprimir}>Exportar PDF</BotaoContorno>}
+            {(prop.apresentacao || (ehSistema && (prop.titulo || (prop.opcoes || []).length))) && <BotaoContorno onClick={onImprimir}>Exportar PDF</BotaoContorno>}
           </div>
         </div>
 
@@ -171,7 +171,7 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
         {!gerando && ehSistema && (
           <>
             <PainelPrecoSistema prop={prop} precificacao={precificacao} onMudar={onMudar} onMudarPrecificacao={onMudarPrecificacao} />
-            <CamposSistema prop={prop} onMudar={onMudar} />
+            <CamposSistema prop={prop} precificacao={precificacao} onMudar={onMudar} />
             <button onClick={onExcluir} className="enz-confirmar">Excluir proposta</button>
           </>
         )}
@@ -313,8 +313,9 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
 }
 
 export function ImpressaoProposta({ cliente, prop }) {
-  if (!prop || !prop.apresentacao) return null;
-  if (prop.tipo === "sistema") return <ImpressaoPropostaSistema cliente={cliente} prop={prop} />;
+  if (!prop) return null;
+  if (prop.tipo === "sistema") return prop.titulo || (prop.opcoes || []).length || prop.investimento ? <ImpressaoPropostaSistema cliente={cliente} prop={prop} /> : null;
+  if (!prop.apresentacao) return null;
   const fases = emLinhasDoc(prop.fases);
   const entregaveis = emLinhasDoc(prop.entregaveis);
   return (

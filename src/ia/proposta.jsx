@@ -120,7 +120,7 @@ Fora do escopo: ${fora.join("; ") || "não informado"}
 Fornecido pelo cliente: ${fornecido.join("; ") || "não informado"}
 Stack: ${sistema.stack || "não informada"}
 Prazo: ${prop.duracao || (sistema.prazoSemanas ? `${sistema.prazoSemanas} semanas` : "a definir")}
-Implantação + desenvolvimento: ${prop.investimento || "a definir"} · Mensalidade: ${prop.mensalidade ? `R$ ${prop.mensalidade}/mês` : "a definir"}
+${(prop.opcoes || []).length ? `OPÇÕES OFERECIDAS (o cliente escolhe uma; a apresentação deve mencionar que há mais de um caminho):\n${prop.opcoes.map((o) => `- ${o.nome}: ${o.titulo || ""} — ${o.descricao || ""} · ${o.investimento || "valor a definir"}${o.mensalidade ? ` + R$ ${o.mensalidade}/mês` : ""}${o.prazo ? ` · ${o.prazo}` : ""}`).join("\n")}` : `Implantação + desenvolvimento: ${prop.investimento || "a definir"} · Mensalidade: ${prop.mensalidade ? `R$ ${prop.mensalidade}/mês` : "a definir"}`}
 Condições de pagamento: ${prop.condicoesPagamento || "50% no aceite e 50% na entrega"}
 Observações: ${prop.obs || "nenhuma"}
 

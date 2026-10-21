@@ -101,23 +101,53 @@ function desenharMarca(ctx, x, y, tamanho) {
   ctx.restore();
 }
 
-function cabecalhoERodape(ctx, { escala, larg, alt, margem, cliente, data, pagina, total, topo, rodapeY }) {
+function desenharMonograma(ctx, x, y, tamanho) {
+  ctx.save();
+  ctx.fillStyle = PAPEL.ouro;
+  const r = 7;
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + tamanho, y, x + tamanho, y + tamanho, r);
+  ctx.arcTo(x + tamanho, y + tamanho, x, y + tamanho, r);
+  ctx.arcTo(x, y + tamanho, x, y, r);
+  ctx.arcTo(x, y, x + tamanho, y, r);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "500 22px 'Cormorant Garamond', Georgia, serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("NS", x + tamanho / 2, y + tamanho / 2 + 1);
+  ctx.restore();
+}
+
+function cabecalhoERodape(ctx, { escala, larg, alt, margem, cliente, data, pagina, total, topo, rodapeY, marca }) {
+  const ns = marca === "ns";
   ctx.save();
   ctx.scale(escala, escala);
-  // cabeçalho
-  desenharMarca(ctx, margem - 6, 26, 56);
-  ctx.fillStyle = PAPEL.tinta;
-  ctx.font = "500 24px 'Cormorant Garamond', Georgia, serif";
   ctx.textBaseline = "alphabetic";
-  ctx.fillText("Enraizar", margem + 54, 52);
-  ctx.fillStyle = PAPEL.ouro;
-  ctx.font = "700 9px Lato, 'Helvetica Neue', Arial, sans-serif";
-  ctx.fillText("MÉTODO ENRAIZAR  ·  NAYARA SILVA".split("").join(" "), margem + 55, 68);
+  if (ns) {
+    desenharMonograma(ctx, margem, 24, 44);
+    ctx.fillStyle = PAPEL.tinta;
+    ctx.font = "500 24px 'Cormorant Garamond', Georgia, serif";
+    ctx.fillText("Nayara Silva", margem + 58, 48);
+    ctx.fillStyle = PAPEL.ouro;
+    ctx.font = "700 9px Lato, 'Helvetica Neue', Arial, sans-serif";
+    ctx.fillText("SOLUÇÕES PERSONALIZADAS PARA NEGÓCIOS".split("").join("\u200A"), margem + 59, 66);
+  } else {
+    desenharMarca(ctx, margem - 6, 26, 56);
+    ctx.fillStyle = PAPEL.tinta;
+    ctx.font = "500 24px 'Cormorant Garamond', Georgia, serif";
+    ctx.fillText("Enraizar", margem + 54, 52);
+    ctx.fillStyle = PAPEL.ouro;
+    ctx.font = "700 9px Lato, 'Helvetica Neue', Arial, sans-serif";
+    ctx.fillText("MÉTODO ENRAIZAR  ·  NAYARA SILVA".split("").join("\u200A"), margem + 55, 68);
+  }
   if (cliente) {
     ctx.textAlign = "right";
     ctx.fillStyle = PAPEL.tinta;
-    ctx.font = "500 16px 'Cormorant Garamond', Georgia, serif";
-    ctx.fillText(cliente, larg - margem, 50);
+    ctx.font = ns ? "400 11px Lato, 'Helvetica Neue', Arial, sans-serif" : "500 16px 'Cormorant Garamond', Georgia, serif";
+    ctx.fillText(ns ? `Proposta para ${cliente}` : cliente, larg - margem, 50);
     ctx.fillStyle = PAPEL.musgo;
     ctx.font = "400 10px Lato, 'Helvetica Neue', Arial, sans-serif";
     ctx.fillText(data, larg - margem, 67);
@@ -136,10 +166,12 @@ function cabecalhoERodape(ctx, { escala, larg, alt, margem, cliente, data, pagin
   ctx.stroke();
   ctx.fillStyle = PAPEL.musgo;
   ctx.font = "400 10px Lato, 'Helvetica Neue', Arial, sans-serif";
-  ctx.fillText("Enraizar · desenvolvimento organizacional · Nayara Silva", margem, rodapeY + 20);
-  ctx.fillStyle = PAPEL.salvia;
-  ctx.font = "italic 400 10px Lato, 'Helvetica Neue', Arial, sans-serif";
-  ctx.fillText("Todo crescimento começa em quem enraíza.", margem, rodapeY + 35);
+  ctx.fillText(ns ? "Nayara Silva · soluções personalizadas para negócios" : "Enraizar · desenvolvimento organizacional · Nayara Silva", margem, rodapeY + 20);
+  if (!ns) {
+    ctx.fillStyle = PAPEL.salvia;
+    ctx.font = "italic 400 10px Lato, 'Helvetica Neue', Arial, sans-serif";
+    ctx.fillText("Todo crescimento começa em quem enraíza.", margem, rodapeY + 35);
+  }
   ctx.textAlign = "right";
   ctx.fillStyle = PAPEL.musgo;
   ctx.font = "400 10px Lato, 'Helvetica Neue', Arial, sans-serif";
@@ -152,12 +184,14 @@ export async function gerarPdfDoNo(nodeOculto, opcoes = {}) {
   const LARG = 794; // A4 a 96dpi
   const ALT_PAG = 1123;
   const ESCALA = 2;
-  const MARGEM = 56;
-  const TOPO = 110;
-  const RODAPE_Y = ALT_PAG - 62;
-  const ALT_CONTEUDO = RODAPE_Y - 16 - TOPO;
+  const marcaPedida = opcoes.marca || nodeOculto.dataset.marca || "enraizar";
+  const MARGEM = marcaPedida === "ns" ? 48 : 56;
+  const TOPO = marcaPedida === "ns" ? 96 : 110;
+  const RODAPE_Y = ALT_PAG - 60;
+  const ALT_CONTEUDO = RODAPE_Y - 12 - TOPO;
   const LARG_CONTEUDO = LARG - MARGEM * 2;
   const cliente = opcoes.cliente || "";
+  const marca = marcaPedida;
   const data = new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
 
   if (document.fonts && document.fonts.ready) await document.fonts.ready;
@@ -169,7 +203,7 @@ export async function gerarPdfDoNo(nodeOculto, opcoes = {}) {
   const quadro = document.createElement("div");
   quadro.setAttribute("data-theme", "papel");
   quadro.className = "enz-pdf";
-  quadro.style.cssText = `position:fixed;left:-13000px;top:0;width:${LARG_CONTEUDO}px;background:#ffffff;color:${PAPEL.tinta};`;
+  quadro.style.cssText = `position:fixed;left:-13000px;top:0;width:${LARG_CONTEUDO}px;background:#ffffff;color:${PAPEL.tinta};--font-body:'Helvetica Neue',Arial,sans-serif;`;
   quadro.appendChild(clone);
   document.body.appendChild(quadro);
   await new Promise((r) => setTimeout(r, 80));
@@ -182,7 +216,8 @@ export async function gerarPdfDoNo(nodeOculto, opcoes = {}) {
     inlinarEstilos(clone);
     clone.style.padding = "0";
     clone.style.background = "#ffffff";
-    const altura = Math.max(clone.scrollHeight, 120);
+    // o raster pode quebrar linhas um pouco diferente da medição: folga de 3% evita cortar a última linha
+    const altura = Math.ceil(Math.max(clone.scrollHeight, 120) * 1.03) + 12;
 
     // 3. Serializa num SVG foreignObject e rasteriza
     const xml = new XMLSerializer().serializeToString(clone);
@@ -212,7 +247,7 @@ export async function gerarPdfDoNo(nodeOculto, opcoes = {}) {
       const origemY = i * ALT_CONTEUDO * ESCALA;
       const alturaFatia = Math.min(ALT_CONTEUDO * ESCALA, cheio.height - origemY);
       if (alturaFatia > 0) pctx.drawImage(cheio, 0, origemY, cheio.width, alturaFatia, MARGEM * ESCALA, TOPO * ESCALA, cheio.width, alturaFatia);
-      cabecalhoERodape(pctx, { escala: ESCALA, larg: LARG, alt: ALT_PAG, margem: MARGEM, cliente, data, pagina: i + 1, total: numPaginas, topo: TOPO, rodapeY: RODAPE_Y });
+      cabecalhoERodape(pctx, { escala: ESCALA, larg: LARG, alt: ALT_PAG, margem: MARGEM, cliente, data, pagina: i + 1, total: numPaginas, topo: TOPO, rodapeY: RODAPE_Y, marca });
       const b64 = pag.toDataURL("image/jpeg", 0.93).split(",")[1];
       paginas.push({ dados: atob(b64), w: pag.width, h: pag.height });
     }
