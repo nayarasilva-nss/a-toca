@@ -52,6 +52,30 @@ function Bloco({ titulo, nota, codigo }) {
   );
 }
 
+function AvisoWhatsApp() {
+  const [resultado, setResultado] = useState(null);
+  const [testando, setTestando] = useState(false);
+  const testar = async () => {
+    setTestando(true);
+    try { setResultado(await api("GET", null, "?aviso=testar")); } catch (e) { setResultado({ ok: false, motivo: e.message }); }
+    setTestando(false);
+  };
+  return (
+    <div style={{ marginTop: 20, paddingTop: 16, borderTop: "1px solid var(--linha)" }}>
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <span className="enz-rotulo">Aviso no seu WhatsApp</span>
+        <BotaoContorno onClick={testar} disabled={testando}>{testando ? "Enviando…" : "Enviar aviso de teste"}</BotaoContorno>
+      </div>
+      <p className="enz-nota" style={{ margin: "6px 0 0" }}>cada lead novo chega como mensagem no seu WhatsApp, com nome, contato, negócio e a dor. configuração: no WhatsApp, mande "I allow callmebot to send me messages" para +34 644 71 81 99, receba a chave e grave na Vercel as variáveis WHATSAPP_NUMERO e CALLMEBOT_APIKEY.</p>
+      {resultado && (
+        <p style={{ marginTop: 8, fontSize: 13.5, color: resultado.ok ? "var(--sucesso)" : "var(--alerta)" }}>
+          {resultado.ok ? "enviado. confira o WhatsApp." : `não enviado: ${resultado.motivo}`}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function LinhaLead({ lead, onMudar, onConverter, onExcluir, clienteNome }) {
   const [obs, setObs] = useState(lead.obs || "");
   const st = STATUS_LEAD[lead.status] || STATUS_LEAD.novo;
@@ -139,6 +163,7 @@ fetch("${URL_APP}/api/leads", {
           <Bloco titulo="2 · Formulário embutido (iframe)" nota="cole onde o formulário deve aparecer no site. o script ajusta a altura sozinho." codigo={iframe} />
           <Bloco titulo="3 · Seu próprio formulário" nota="se o site já tem o formulário desenhado, só troque o envio por esta chamada. nomes dos campos iguais aos do site." codigo={fetchSnippet} />
           <p className="enz-nota" style={{ marginTop: 14 }}>o endereço aceita envios de qualquer domínio. há limite de envios por conexão e um campo-armadilha contra robôs.</p>
+          <AvisoWhatsApp />
         </Card>
       )}
 

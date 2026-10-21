@@ -1,5 +1,6 @@
 import { neon } from '@neondatabase/serverless';
 import { exigirSessao, novoId } from './_lib/sessao.js';
+import { configurado, enviarWhatsApp, textoLeadNovo } from './_lib/whatsapp.js';
 
 // Leads do site: POST é público (o formulário do site envia para cá); o resto exige a consultora logada.
 
@@ -85,10 +86,18 @@ export default async (req, res) => {
       };
       await sql`INSERT INTO leads (id, nome, whatsapp, email, negocio, funcionarios, interesse, dor, origem)
                 VALUES (${lead.id}, ${lead.nome}, ${lead.whatsapp}, ${lead.email}, ${lead.negocio}, ${lead.funcionarios}, ${lead.interesse}, ${lead.dor}, ${lead.origem})`;
+      const aviso = await enviarWhatsApp(textoLeadNovo(lead));
+      if (!aviso.ok) console.warn('leads: aviso no WhatsApp não enviado —', aviso.motivo);
       return res.status(200).json({ ok: true });
     }
 
     if (!exigirSessao(req, res, ['consultora'])) return;
+
+    if (req.method === 'GET' && req.query?.aviso === 'testar') {
+      if (!configurado()) return res.status(200).json({ ok: false, configurado: false, motivo: 'Faltam as variáveis WHATSAPP_NUMERO e CALLMEBOT_APIKEY na Vercel.' });
+      const r = await enviarWhatsApp('✅ Teste do Enraizar: os avisos de lead novo vão chegar aqui.');
+      return res.status(200).json({ ...r, configurado: true });
+    }
 
     if (req.method === 'GET') {
       if (req.query?.resumo) {
