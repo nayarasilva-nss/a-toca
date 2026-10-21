@@ -1,5 +1,6 @@
 import { useState, useEffect, useReducer } from "react";
 import { COLECOES, COLECOES_INICIAIS, reduzirColecoes } from "./nucleo/estado.jsx";
+import { CATALOGO_PADRAO } from "./nucleo/catalogo.jsx";
 import { pessoaVazia } from "./modulos/temperamentos.jsx";
 import { FOCOS_MENTORIA, focoDe } from "./nucleo/focos.jsx";
 import { frameworkMentorado as frameworkDoMentorado } from "./ia/diagnostico.jsx";
@@ -236,7 +237,7 @@ export default function App() {
   const TIPOS_BACKUP = ["tabela", "cargos", "gestao", "estrutura", "manual", "cct", "penseira", "pops", "fluxos", "alcadas", "ritos", "indicadores", "politicas", "checklists", "atas", "temperamentos", "diagnosticos", "propostas", "relatorios", "financeiro", "campo", "treinamentos", "mentoria", "diagslider", "percepcoes", "sistemas", "relmentoria", "anomalias", "painel"];
 
   const exportarBackup = async () => {
-    const dados = { versao: 1, exportadoEm: new Date().toISOString(), clientes, precificacao, porCliente: {} };
+    const dados = { versao: 1, exportadoEm: new Date().toISOString(), clientes, precificacao, catalogo, porCliente: {} };
     for (const c of clientes) {
       dados.porCliente[c.id] = {};
       for (const tipo of TIPOS_BACKUP) {
@@ -254,13 +255,24 @@ export default function App() {
 
   const [backupPendente, setBackupPendente] = useState(null);
   const [gerandoPdf, setGerandoPdf] = useState(false);
-  const [precificacao, setPrecificacao] = useState({ base: "", porFrente: "", porSemana: "", porEncontro: "", valorHora: "", mensalidadePadrao: "" });
+  const [precificacao, setPrecificacao] = useState({ base: "", porFrente: "", porSemana: "", porEncontro: "", valorHora: "", mensalidadePadrao: "", horasPorSemana: "" });
+  const [catalogo, setCatalogo] = useState(CATALOGO_PADRAO);
+  const mudarCatalogo = async (novo) => {
+    setCatalogo(novo);
+    await stSet("toca:catalogo", novo);
+  };
+  const mudarPrecificacaoGlobal = async (nova) => {
+    setPrecificacao(nova);
+    await stSet("toca:precificacao", nova);
+  };
 
   useEffect(() => {
     if (!autenticado) return;
     (async () => {
       const p = await stGet("toca:precificacao");
       if (p) setPrecificacao(p);
+      const cat = await stGet("toca:catalogo");
+      if (Array.isArray(cat) && cat.length) setCatalogo(cat);
     })();
   }, [autenticado]);
 
@@ -280,6 +292,7 @@ export default function App() {
     if (!dados) return;
     await stSet("toca:clientes", dados.clientes);
     if (dados.precificacao) await stSet("toca:precificacao", dados.precificacao);
+    if (Array.isArray(dados.catalogo)) await stSet("toca:catalogo", dados.catalogo);
     for (const c of dados.clientes) {
       const pacote = (dados.porCliente || {})[c.id] || {};
       for (const tipo of TIPOS_BACKUP) {
@@ -549,7 +562,7 @@ ${conteudo}
   }
 
   const app = {
-    alcadasAtuais, alcadasPorCliente, anomaliasPorCliente, atasAtuais, campoAtuais, campoAtual, campoPorCliente, cargoAtual, cargosAtuais, cargosPorCliente, cctPorCliente, clienteAtual, dadosPainelDe, diagAtual, diagLiderAtual, diagsAtuais, diagsLiderAtuais, diagsLiderPorCliente, diagsPorCliente, docAtual, docsAtuais, docsDe, erro, estruturaAtual, estruturaPorCliente, executarGeracao, exportarImpressao, faseDoCliente, financeiroAtual, financeiroPorCliente, fluxoAtual, fluxosAtuais, fluxosPorCliente, focoMentoriaAtual, frameworkMentorado, gerando, gestaoPorCliente, indicadoresAtuais, indicadoresPorCliente, manualAtual, manualPorCliente, mentoriaAtual, mentoriaPorCliente, mudarDocs, mudarGestao, mudarPessoas, painelPorCliente, penseiraPorCliente, pessoaAtual, percepcoesPorCliente, pessoasAtuais, sistemasPorCliente, pessoasPorCliente, pontosCCTDe, popAtual, popsAtuais, popsPorCliente, precificacao, propostaAtual, propostasAtuais, propostasPorCliente, relMentoriaAtual, relatorioAtual, relatoriosAtuais, relatoriosPorCliente, ritosAtuais, ritosPorCliente, salvarColecao, setErro, setGerando, setMentoriaPorCliente, setPenseiraPorCliente, setPrecificacao, setTabelas, setTela, tabelas, tela, tituloDiagMentorado, treinamentoAtual, treinamentosAtuais, treinamentosPorCliente,
+    alcadasAtuais, alcadasPorCliente, anomaliasPorCliente, atasAtuais, campoAtuais, campoAtual, campoPorCliente, cargoAtual, cargosAtuais, cargosPorCliente, cctPorCliente, clienteAtual, dadosPainelDe, diagAtual, diagLiderAtual, diagsAtuais, diagsLiderAtuais, diagsLiderPorCliente, diagsPorCliente, docAtual, docsAtuais, docsDe, erro, estruturaAtual, estruturaPorCliente, executarGeracao, exportarImpressao, faseDoCliente, financeiroAtual, financeiroPorCliente, fluxoAtual, fluxosAtuais, fluxosPorCliente, focoMentoriaAtual, frameworkMentorado, gerando, gestaoPorCliente, indicadoresAtuais, indicadoresPorCliente, manualAtual, manualPorCliente, mentoriaAtual, mentoriaPorCliente, mudarDocs, mudarGestao, mudarPessoas, painelPorCliente, penseiraPorCliente, pessoaAtual, percepcoesPorCliente, pessoasAtuais, sistemasPorCliente, pessoasPorCliente, pontosCCTDe, popAtual, popsAtuais, popsPorCliente, catalogo, mudarCatalogo, mudarPrecificacaoGlobal, precificacao, propostaAtual, propostasAtuais, propostasPorCliente, relMentoriaAtual, relatorioAtual, relatoriosAtuais, relatoriosPorCliente, ritosAtuais, ritosPorCliente, salvarColecao, setErro, setGerando, setMentoriaPorCliente, setPenseiraPorCliente, setPrecificacao, setTabelas, setTela, tabelas, tela, tituloDiagMentorado, treinamentoAtual, treinamentosAtuais, treinamentosPorCliente,
   };
 
   return (

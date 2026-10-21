@@ -2,6 +2,7 @@ import { comRetentativa } from "../ia/base.jsx";
 import { resumoCampo } from "../ia/campo.jsx";
 import { gerarProposta, gerarPropostaSistema } from "../ia/proposta.jsx";
 import { sistemaVazio } from "../modulos/sistema.jsx";
+import { planoDoEscopo, etapasTexto, somaHoras } from "../nucleo/catalogo.jsx";
 import { gerarMetasEngajamento, gerarMetasMentorado } from "../ia/treinamentos.jsx";
 import { EditorProposta, ListaPropostas, propostaVazia } from "../modulos/propostas.jsx";
 import { stSet } from "../nucleo/persistencia.jsx";
@@ -59,7 +60,8 @@ export function TelaPropostas({ app }) {
           const nova = propostaVazia(servicos.sistemas && !servicos.consultoria ? "sistema" : "consultoria");
           if (nova.tipo === "sistema") {
             const sis = { ...sistemaVazio(), ...((sistemasPorCliente || {})[clienteAtual.id] || {}) };
-            Object.assign(nova, { titulo: sis.nome, mensalidade: sis.mensalidade, duracao: sis.prazoSemanas ? `${sis.prazoSemanas} semanas` : "", condicoesPagamento: "50% no aceite e 50% na entrega", validade: "15 dias", entregaveis: (sis.escopo || []).map((i) => i.texto).filter(Boolean).join("\n"), foraEscopo: sis.foraEscopo || "", fornecidoCliente: (sis.fornecidoCliente || []).map((i) => i.texto).filter(Boolean).join("\n") });
+            const plano = planoDoEscopo(sis.escopo, precificacao.horasPorSemana);
+            Object.assign(nova, { titulo: sis.nome, mensalidade: sis.mensalidade || precificacao.mensalidadePadrao || "", horasEstimadas: somaHoras(sis.escopo) ? String(somaHoras(sis.escopo)) : "", fases: etapasTexto(plano).join("\n"), duracao: sis.prazoSemanas ? `${sis.prazoSemanas} semanas` : (somaHoras(sis.escopo) ? plano.prazoTexto : ""), condicoesPagamento: "50% no aceite e 50% na entrega", validade: "15 dias", entregaveis: (sis.escopo || []).map((i) => i.texto).filter(Boolean).join("\n"), foraEscopo: sis.foraEscopo || "", fornecidoCliente: (sis.fornecidoCliente || []).map((i) => i.texto).filter(Boolean).join("\n") });
           }
           await mudarPropostas(clienteAtual.id, [...propostasAtuais, nova]);
           setErro(null);

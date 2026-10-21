@@ -143,7 +143,7 @@ export function CamposSistema({ prop, precificacao, onMudar }) {
         <span className="enz-rotulo mb-1">Observações para a IA (opcional)</span>
         <textarea rows={2} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: "var(--linha)" }} value={prop.obs || ""} onChange={(e) => set("obs")(e.target.value)} placeholder="Ex.: cliente fundador, mensalidade congelada" />
       </label>
-      {[["apresentacao", "Apresentação", 3], ["objetivo", "Objetivo", 2], ...(opcoes.length ? [] : [["entregaveis", "Escopo (um item por linha)", 6]]), ["foraEscopo", "Fora do escopo (um por linha)", 3], ["fornecidoCliente", "Fornecido pelo cliente (um por linha)", 3], ["condicoesGerais", "Condições gerais (uma por linha)", 3]].map(([campo, rotulo, linhas]) => (
+      {[["apresentacao", "Apresentação", 3], ["objetivo", "Objetivo", 2], ...(opcoes.length ? [] : [["entregaveis", "Escopo (um item por linha)", 6]]), ["fases", "Etapas (uma por linha: Etapa — semanas — o que inclui)", 4], ["foraEscopo", "Fora do escopo (um por linha)", 3], ["fornecidoCliente", "Fornecido pelo cliente (um por linha)", 3], ["condicoesGerais", "Condições gerais (uma por linha)", 3]].map(([campo, rotulo, linhas]) => (
         <label key={campo} className="block mb-4">
           <span className="enz-rotulo mb-1">{rotulo}</span>
           <textarea rows={linhas} className="w-full px-3 py-2 rounded border bg-creme text-sm" style={{ borderColor: "var(--linha)" }} value={prop[campo] || ""} onChange={(e) => set(campo)(e.target.value)} />
@@ -265,6 +265,26 @@ export function ImpressaoPropostaSistema({ cliente, prop }) {
             </div>
           </div>
         </>
+      )}
+
+      {!opcoes.length && linhasPara(prop.fases).length > 0 && (
+        <div style={{ marginTop: 18 }}>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: 17, fontWeight: 500, color: VERDE, marginBottom: 6 }}>Etapas</div>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <tbody>
+              {linhasPara(prop.fases).map((l, i) => {
+                const [etapa, semanas, ...resto] = l.split("—").map((x) => x.trim());
+                return (
+                  <tr key={i}>
+                    <td style={{ padding: "5px 8px 5px 0", borderBottom: "1px solid #dcd6c6", fontSize: 11.5, fontWeight: 700, color: VERDE, width: 110 }}>{etapa}</td>
+                    <td style={{ padding: "5px 8px", borderBottom: "1px solid #dcd6c6", fontSize: 11.5, color: "#56645a", width: 110 }}>{semanas}</td>
+                    <td style={{ padding: "5px 0 5px 8px", borderBottom: "1px solid #dcd6c6", fontSize: 11.5 }}>{resto.join(" — ")}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       )}
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginTop: 16 }}>

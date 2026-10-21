@@ -139,3 +139,28 @@ Sem markdown, sem texto fora do JSON.`;
     condicoesGerais: linhas(obj.cg),
   };
 }
+
+// ─── IA: estimativa de escopo a partir do briefing e do catálogo ──
+
+export async function estimarEscopoSistema(cliente, sistema, catalogo) {
+  const lista = (catalogo || []).map((b) => `- [${b.id}] ${b.nome} (${b.horas} h, etapa ${b.etapa})`).join("\n");
+  const prompt = `Você estima projetos de software para pequenos negócios brasileiros, no padrão da desenvolvedora Nayara Silva (stack web moderna; entregas em poucas semanas). Monte o ESCOPO do sistema abaixo escolhendo blocos do catálogo e, só quando o briefing pedir algo que o catálogo não cobre, criando blocos novos com horas realistas.
+
+CLIENTE: ${cliente.negocio} (${cliente.segmento})
+Contexto: ${cliente.contexto || "não informado"}
+SISTEMA: ${sistema.nome || "a definir"}
+BRIEFING: ${sistema.briefing || "não registrado"}
+${sistema.foraEscopo ? `FORA DO ESCOPO (não inclua): ${String(sistema.foraEscopo).split("\n").filter(Boolean).join("; ")}` : ""}
+
+CATÁLOGO (horas padrão por bloco):
+${lista}
+
+Regras: inclua sempre a base do sistema (ou a publicação do site, se for site) e a implantação/treinamento; blocos "por página"/"por entidade"/"por tela" podem repetir com um complemento no nome (ex.: "Página interna — Sobre"); ajuste as horas do catálogo só com motivo claro; não invente integrações que o briefing não pediu.
+
+Responda APENAS com JSON compacto de uma linha:
+{"e":[{"b":"id do bloco do catálogo ou vazio se novo","n":"nome do item como vai para a proposta","h":horas,"et":"Levantamento|Fundação|Construção|Entrega"}],"obs":"1-2 frases: premissas da estimativa e o que ficou de fora"}
+Sem markdown, sem texto fora do JSON.`;
+  const texto = await chamarIA(prompt);
+  const obj = extrairJSON(texto, "{", "}");
+  return { itens: (obj.e || []).filter((i) => i && i.n), obs: obj.obs || "" };
+}
