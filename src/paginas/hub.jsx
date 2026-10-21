@@ -103,6 +103,7 @@ export function TelaHub({ app }) {
         totalChecklists={docsDe("checklists", clienteAtual.id).length}
         totalPessoas={pessoasAtuais.length}
         sistema={(sistemasPorCliente || {})[clienteAtual.id] || null}
+        contratoStatus={(() => { const a = propostasAtuais.find((p) => p.status === "aceita"); if (!a) return null; const c = a.contrato; return c && (c.clausulas || []).length ? c.status || "rascunho" : "aceita-sem-contrato"; })()}
         totalPercepcoes={((percepcoesPorCliente || {})[clienteAtual.id] || []).filter((c) => c.respostas).length}
         temperamentoMentorado={(pessoasAtuais.find((p) => p.id === (mentoriaAtual || {}).mentoradoId) || pessoasAtuais.find((p) => p.contratante) || {}).dominante || ""}
         totalDiagnosticos={diagsAtuais.length}

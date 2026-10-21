@@ -4,6 +4,7 @@ import { emLinhasDoc } from "./documentos.jsx";
 import { RodapeImpressao } from "./tabela.jsx";
 import { CORES, uid } from "../nucleo/base.jsx";
 import { PainelPrecoSistema, CamposSistema, ImpressaoPropostaSistema } from "./propostaSistema.jsx";
+import { CardContrato } from "./contrato.jsx";
 
 // ─── Módulo: Proposta Comercial ─────────────────────────────────
 
@@ -104,7 +105,7 @@ export function ListaPropostas({ cliente, propostas, onAbrir, onNova, onVoltar }
   );
 }
 
-export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, numEncontros, precificacao, temSistemas, onMudarPrecificacao, onMudar, onGerar, onGerarMetas, onImprimir, onExcluir, onVoltar }) {
+export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, numEncontros, precificacao, temSistemas, contratada, onMudarContratada, onGerarContrato, onImprimirContrato, onMudarPrecificacao, onMudar, onGerar, onGerarMetas, onImprimir, onExcluir, onVoltar }) {
   const ehPessoaProp = cliente.tipo === "pessoa";
   const ehSistema = prop.tipo === "sistema";
   const set = (campo) => (v) => onMudar({ ...prop, [campo]: v });
@@ -164,6 +165,20 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
             {(prop.apresentacao || (ehSistema && (prop.titulo || (prop.opcoes || []).length))) && <BotaoContorno onClick={onImprimir}>Exportar PDF</BotaoContorno>}
           </div>
         </div>
+
+        {prop.status === "aceita" && (
+          <CardContrato
+            cliente={cliente}
+            prop={prop}
+            contratada={contratada || {}}
+            gerando={gerando}
+            erro={erro}
+            onMudarContratada={onMudarContratada}
+            onMudar={(contrato, extra) => onMudar({ ...prop, ...(extra || {}), contrato })}
+            onGerar={onGerarContrato}
+            onImprimir={onImprimirContrato}
+          />
+        )}
 
         <AvisoErro erro={erro} />
         {gerando && <Trabalhando />}

@@ -220,7 +220,7 @@
 
 /* ── PDF: a área de impressão renderizada pelo motor próprio (sempre Papel sobre branco) ── */
 .enz-pdf { --fundo: #ffffff; --fundo-elevado: #ffffff; --fundo-recuo: #f6f2e8; --fundo-destaque: #eee8da; --ouro: #b8902f; --ouro-texto: #7d601c; font-family: var(--font-body); font-size: 13px; line-height: 1.55; color: var(--tinta); }
-.enz-pdf .area-impressao { display: block !important; }
+.enz-pdf .area-impressao, .enz-pdf .area-contrato { display: block !important; }
 .enz-pdf .font-serif, .enz-pdf h1, .enz-pdf h2, .enz-pdf h3 { font-family: var(--font-display); font-weight: 500; }
 .enz-pdf .text-3xl { font-size: 34px; line-height: 1.1; }
 .enz-pdf .text-2xl { font-size: 28px; line-height: 1.15; }

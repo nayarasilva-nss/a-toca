@@ -1,6 +1,8 @@
 import { comRetentativa } from "../ia/base.jsx";
 import { resumoCampo } from "../ia/campo.jsx";
 import { gerarProposta, gerarPropostaSistema } from "../ia/proposta.jsx";
+import { gerarContrato, tipoContratoDe } from "../ia/contrato.jsx";
+import { contratoVazio } from "../modulos/contrato.jsx";
 import { sistemaVazio } from "../modulos/sistema.jsx";
 import { planoDoEscopo, etapasTexto, somaHoras } from "../nucleo/catalogo.jsx";
 import { gerarMetasEngajamento, gerarMetasMentorado } from "../ia/treinamentos.jsx";
@@ -8,7 +10,7 @@ import { EditorProposta, ListaPropostas, propostaVazia } from "../modulos/propos
 import { stSet } from "../nucleo/persistencia.jsx";
 
 export function TelaPropostas({ app }) {
-  const { campoPorCliente, clienteAtual, diagsLiderPorCliente, diagsPorCliente, erro, executarGeracao, exportarImpressao, gerando, gestaoPorCliente, mentoriaAtual, mentoriaPorCliente, pessoasPorCliente, pontosCCTDe, precificacao, propostaAtual, propostasAtuais, propostasPorCliente, salvarColecao, setErro, setPrecificacao, setTela, tela, sistemasPorCliente } = app;
+  const { campoPorCliente, clienteAtual, diagsLiderPorCliente, diagsPorCliente, erro, executarGeracao, exportarImpressao, gerando, gestaoPorCliente, mentoriaAtual, mentoriaPorCliente, pessoasPorCliente, pontosCCTDe, precificacao, propostaAtual, propostasAtuais, propostasPorCliente, salvarColecao, setErro, setPrecificacao, setTela, tela, sistemasPorCliente, contratada, mudarContratada } = app;
 
   const mudarPropostas = (clienteId, novas) => salvarColecao("propostas", clienteId, novas);
 
@@ -29,6 +31,15 @@ export function TelaPropostas({ app }) {
       await mudarPropostas(cliente.id, props.map((p) => (p.id === prop.id ? { ...prop, ...gerado } : p)));
     });
 
+
+  const gerarContratoCliente = (cliente, prop) =>
+    executarGeracao(async () => {
+      const atual = { ...contratoVazio(), ...(prop.contrato || {}) };
+      const partes = { contratada, contratante: { nome: cliente.negocio, ...atual.contratante } };
+      const gerado = await comRetentativa(() => gerarContrato(cliente, prop, tipoContratoDe(cliente, prop), partes, (sistemasPorCliente || {})[cliente.id] || null));
+      const lista = propostasPorCliente[cliente.id] || [];
+      await mudarPropostas(cliente.id, lista.map((p) => (p.id === prop.id ? { ...p, contrato: { ...atual, ...gerado } } : p)));
+    });
 
   const mudarPrecificacao = async (nova) => {
     setPrecificacao(nova);
@@ -87,6 +98,10 @@ export function TelaPropostas({ app }) {
         onMudar={(nova) => mudarPropostas(clienteAtual.id, propostasAtuais.map((p) => (p.id === nova.id ? nova : p)))}
         onGerar={() => gerarPropostaCliente(clienteAtual, propostaAtual)}
         onGerarMetas={() => gerarMetasCliente(clienteAtual, propostaAtual)}
+        contratada={contratada}
+        onMudarContratada={mudarContratada}
+        onGerarContrato={() => gerarContratoCliente(clienteAtual, propostaAtual)}
+        onImprimirContrato={() => exportarImpressao({ seletor: ".area-contrato", nome: `Contrato — ${clienteAtual.negocio}` })}
         onImprimir={exportarImpressao}
         onExcluir={async () => {
           await mudarPropostas(clienteAtual.id, propostasAtuais.filter((p) => p.id !== propostaAtual.id));

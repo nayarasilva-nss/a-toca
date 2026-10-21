@@ -136,7 +136,7 @@ export function ListaClientes({ clientes, fases = {}, backupPendente, onAplicarB
   );
 }
 
-export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, temperamentoMentorado, totalPercepcoes = 0, sistema = null, totalCampo, totalDiagsLider, temRelMentoria, totalAnomalias, totalAnomaliasTratadas, totalTreinamentos, totalTreinamentosRealizados, totalEncontros, totalEncontrosRealizados, totalCargos, temTabela, gestao, totalPosicoes, totalAlcadas, totalRitos, totalIndicadores, totalSecoesManual, totalPontosCCT, totalPops, totalFluxos, totalPoliticas, totalChecklists, totalPessoas, totalDiagnosticos, totalPropostas, totalRelatorios, resumoFinanceiro, onModulo, onEditarCliente, onVoltar }) {
+export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, temperamentoMentorado, totalPercepcoes = 0, sistema = null, contratoStatus = null, totalCampo, totalDiagsLider, temRelMentoria, totalAnomalias, totalAnomaliasTratadas, totalTreinamentos, totalTreinamentosRealizados, totalEncontros, totalEncontrosRealizados, totalCargos, temTabela, gestao, totalPosicoes, totalAlcadas, totalRitos, totalIndicadores, totalSecoesManual, totalPontosCCT, totalPops, totalFluxos, totalPoliticas, totalChecklists, totalPessoas, totalDiagnosticos, totalPropostas, totalRelatorios, resumoFinanceiro, onModulo, onEditarCliente, onVoltar }) {
   const servicosCliente = cliente.servicos || { consultoria: true, mentoria: false, treinamentos: false };
   const ehPessoa = cliente.tipo === "pessoa";
   const frentes = (gestao && gestao.frentes) || [];
@@ -157,7 +157,7 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
           ? "Projeto ainda não iniciado"
           : `Semana ${semCrono}${gestao.duracaoSemanas ? ` de ${gestao.duracaoSemanas}` : ""}${atrasadasCrono ? ` · ${atrasadasCrono} atrasada${atrasadasCrono > 1 ? "s" : ""}` : ""}`,
     diagnosticos: totalDiagnosticos > 0 ? `${totalDiagnosticos} diagnóstico${totalDiagnosticos > 1 ? "s" : ""}` : "Ainda não avaliado",
-    propostas: totalPropostas > 0 ? `${totalPropostas} proposta${totalPropostas > 1 ? "s" : ""}` : "Nenhuma proposta ainda",
+    propostas: contratoStatus === "assinado" ? "Contrato assinado" : contratoStatus === "enviado" ? "Contrato enviado para assinatura" : contratoStatus === "rascunho" ? "Contrato em rascunho — revise e envie" : contratoStatus === "aceita-sem-contrato" ? "Proposta aceita — gere o contrato" : totalPropostas > 0 ? `${totalPropostas} proposta${totalPropostas > 1 ? "s" : ""}` : "Nenhuma proposta ainda",
     temperamentos: ehPessoa
       ? (temperamentoMentorado && TEMPERAMENTOS[temperamentoMentorado] ? `${TEMPERAMENTOS[temperamentoMentorado].rotulo}${totalPessoas > 1 ? ` · entorno: ${totalPessoas - 1}` : ""}` : "Ainda não classificado")
       : totalPessoas > 0 ? `${totalPessoas} pessoa${totalPessoas > 1 ? "s" : ""} mapeada${totalPessoas > 1 ? "s" : ""}` : "Ninguém mapeado ainda",

@@ -121,7 +121,7 @@ function desenharMonograma(ctx, x, y, tamanho) {
   ctx.restore();
 }
 
-function cabecalhoERodape(ctx, { escala, larg, alt, margem, cliente, data, pagina, total, topo, rodapeY, marca }) {
+function cabecalhoERodape(ctx, { escala, larg, alt, margem, cliente, cabecalho, data, pagina, total, topo, rodapeY, marca }) {
   const ns = marca === "ns";
   ctx.save();
   ctx.scale(escala, escala);
@@ -147,7 +147,7 @@ function cabecalhoERodape(ctx, { escala, larg, alt, margem, cliente, data, pagin
     ctx.textAlign = "right";
     ctx.fillStyle = PAPEL.tinta;
     ctx.font = ns ? "400 11px Lato, 'Helvetica Neue', Arial, sans-serif" : "500 16px 'Cormorant Garamond', Georgia, serif";
-    ctx.fillText(ns ? `Proposta para ${cliente}` : cliente, larg - margem, 50);
+    ctx.fillText(cabecalho || (ns ? `Proposta para ${cliente}` : cliente), larg - margem, 50);
     ctx.fillStyle = PAPEL.musgo;
     ctx.font = "400 10px Lato, 'Helvetica Neue', Arial, sans-serif";
     ctx.fillText(data, larg - margem, 67);
@@ -192,6 +192,7 @@ export async function gerarPdfDoNo(nodeOculto, opcoes = {}) {
   const LARG_CONTEUDO = LARG - MARGEM * 2;
   const cliente = opcoes.cliente || "";
   const marca = marcaPedida;
+  const cabecalho = opcoes.cabecalho || nodeOculto.dataset.cabecalho || "";
   const data = new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
 
   if (document.fonts && document.fonts.ready) await document.fonts.ready;
@@ -247,7 +248,7 @@ export async function gerarPdfDoNo(nodeOculto, opcoes = {}) {
       const origemY = i * ALT_CONTEUDO * ESCALA;
       const alturaFatia = Math.min(ALT_CONTEUDO * ESCALA, cheio.height - origemY);
       if (alturaFatia > 0) pctx.drawImage(cheio, 0, origemY, cheio.width, alturaFatia, MARGEM * ESCALA, TOPO * ESCALA, cheio.width, alturaFatia);
-      cabecalhoERodape(pctx, { escala: ESCALA, larg: LARG, alt: ALT_PAG, margem: MARGEM, cliente, data, pagina: i + 1, total: numPaginas, topo: TOPO, rodapeY: RODAPE_Y, marca });
+      cabecalhoERodape(pctx, { escala: ESCALA, larg: LARG, alt: ALT_PAG, margem: MARGEM, cliente, data, pagina: i + 1, total: numPaginas, topo: TOPO, rodapeY: RODAPE_Y, marca, cabecalho });
       const b64 = pag.toDataURL("image/jpeg", 0.93).split(",")[1];
       paginas.push({ dados: atob(b64), w: pag.width, h: pag.height });
     }

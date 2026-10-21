@@ -22,6 +22,7 @@ import { ImpressaoIndicadores } from "./modulos/indicadores.jsx";
 import { ImpressaoManual } from "./modulos/manual.jsx";
 import { ImpressaoPop } from "./modulos/pops.jsx";
 import { ImpressaoProposta } from "./modulos/propostas.jsx";
+import { ImpressaoContrato } from "./modulos/contrato.jsx";
 import { ImpressaoRelMentoria } from "./modulos/relMentoria.jsx";
 import { ImpressaoRelatorio } from "./modulos/relatorio.jsx";
 import { ImpressaoRitos } from "./modulos/ritos.jsx";
@@ -247,7 +248,7 @@ export default function App() {
   const TIPOS_BACKUP = ["tabela", "cargos", "gestao", "estrutura", "manual", "cct", "penseira", "pops", "fluxos", "alcadas", "ritos", "indicadores", "politicas", "checklists", "atas", "temperamentos", "diagnosticos", "propostas", "relatorios", "financeiro", "campo", "treinamentos", "mentoria", "diagslider", "percepcoes", "sistemas", "relmentoria", "anomalias", "painel"];
 
   const exportarBackup = async () => {
-    const dados = { versao: 1, exportadoEm: new Date().toISOString(), clientes, precificacao, catalogo, porCliente: {} };
+    const dados = { versao: 1, exportadoEm: new Date().toISOString(), clientes, precificacao, catalogo, contratada, porCliente: {} };
     for (const c of clientes) {
       dados.porCliente[c.id] = {};
       for (const tipo of TIPOS_BACKUP) {
@@ -267,6 +268,11 @@ export default function App() {
   const [gerandoPdf, setGerandoPdf] = useState(false);
   const [precificacao, setPrecificacao] = useState({ base: "", porFrente: "", porSemana: "", porEncontro: "", valorHora: "", mensalidadePadrao: "", horasPorSemana: "" });
   const [catalogo, setCatalogo] = useState(CATALOGO_PADRAO);
+  const [contratada, setContratada] = useState({ nome: "Nayara Silva", documento: "", endereco: "" });
+  const mudarContratada = async (nova) => {
+    setContratada(nova);
+    await stSet("toca:contratada", nova);
+  };
   const mudarCatalogo = async (novo) => {
     setCatalogo(novo);
     await stSet("toca:catalogo", novo);
@@ -281,6 +287,8 @@ export default function App() {
     (async () => {
       const p = await stGet("toca:precificacao");
       if (p) setPrecificacao(p);
+      const ctd = await stGet("toca:contratada");
+      if (ctd) setContratada(ctd);
       const cat = await stGet("toca:catalogo");
       if (Array.isArray(cat) && cat.length) setCatalogo(cat);
     })();
@@ -303,6 +311,7 @@ export default function App() {
     await stSet("toca:clientes", dados.clientes);
     if (dados.precificacao) await stSet("toca:precificacao", dados.precificacao);
     if (Array.isArray(dados.catalogo)) await stSet("toca:catalogo", dados.catalogo);
+    if (dados.contratada) await stSet("toca:contratada", dados.contratada);
     for (const c of dados.clientes) {
       const pacote = (dados.porCliente || {})[c.id] || {};
       for (const tipo of TIPOS_BACKUP) {
@@ -572,7 +581,7 @@ ${conteudo}
   }
 
   const app = {
-    alcadasAtuais, alcadasPorCliente, anomaliasPorCliente, atasAtuais, campoAtuais, campoAtual, campoPorCliente, cargoAtual, cargosAtuais, cargosPorCliente, cctPorCliente, clienteAtual, dadosPainelDe, diagAtual, diagLiderAtual, diagsAtuais, diagsLiderAtuais, diagsLiderPorCliente, diagsPorCliente, docAtual, docsAtuais, docsDe, erro, estruturaAtual, estruturaPorCliente, executarGeracao, exportarImpressao, faseDoCliente, financeiroAtual, financeiroPorCliente, fluxoAtual, fluxosAtuais, fluxosPorCliente, focoMentoriaAtual, frameworkMentorado, gerando, gestaoPorCliente, indicadoresAtuais, indicadoresPorCliente, manualAtual, manualPorCliente, mentoriaAtual, mentoriaPorCliente, mudarDocs, mudarGestao, mudarPessoas, painelPorCliente, penseiraPorCliente, pessoaAtual, percepcoesPorCliente, pessoasAtuais, sistemasPorCliente, pessoasPorCliente, pontosCCTDe, popAtual, popsAtuais, popsPorCliente, catalogo, mudarCatalogo, mudarPrecificacaoGlobal, precificacao, propostaAtual, propostasAtuais, propostasPorCliente, relMentoriaAtual, relatorioAtual, relatoriosAtuais, relatoriosPorCliente, ritosAtuais, ritosPorCliente, salvarColecao, setErro, setGerando, setMentoriaPorCliente, setPenseiraPorCliente, setPrecificacao, setTabelas, setTela, tabelas, tela, tituloDiagMentorado, treinamentoAtual, treinamentosAtuais, treinamentosPorCliente,
+    alcadasAtuais, alcadasPorCliente, anomaliasPorCliente, atasAtuais, campoAtuais, campoAtual, campoPorCliente, cargoAtual, cargosAtuais, cargosPorCliente, cctPorCliente, clienteAtual, dadosPainelDe, diagAtual, diagLiderAtual, diagsAtuais, diagsLiderAtuais, diagsLiderPorCliente, diagsPorCliente, docAtual, docsAtuais, docsDe, erro, estruturaAtual, estruturaPorCliente, executarGeracao, exportarImpressao, faseDoCliente, financeiroAtual, financeiroPorCliente, fluxoAtual, fluxosAtuais, fluxosPorCliente, focoMentoriaAtual, frameworkMentorado, gerando, gestaoPorCliente, indicadoresAtuais, indicadoresPorCliente, manualAtual, manualPorCliente, mentoriaAtual, mentoriaPorCliente, mudarDocs, mudarGestao, mudarPessoas, painelPorCliente, penseiraPorCliente, pessoaAtual, percepcoesPorCliente, pessoasAtuais, sistemasPorCliente, pessoasPorCliente, pontosCCTDe, popAtual, popsAtuais, popsPorCliente, catalogo, contratada, mudarCatalogo, mudarContratada, mudarPrecificacaoGlobal, precificacao, propostaAtual, propostasAtuais, propostasPorCliente, relMentoriaAtual, relatorioAtual, relatoriosAtuais, relatoriosPorCliente, ritosAtuais, ritosPorCliente, salvarColecao, setErro, setGerando, setMentoriaPorCliente, setPenseiraPorCliente, setPrecificacao, setTabelas, setTela, tabelas, tela, tituloDiagMentorado, treinamentoAtual, treinamentosAtuais, treinamentosPorCliente,
   };
 
   return (
@@ -705,6 +714,9 @@ ${conteudo}
       )}
       {tela.nome === "proposta" && clienteAtual && propostaAtual && (
         <ImpressaoProposta cliente={clienteAtual} prop={propostaAtual} />
+      )}
+      {tela.nome === "proposta" && clienteAtual && propostaAtual && (
+        <ImpressaoContrato cliente={clienteAtual} prop={propostaAtual} contratada={contratada} />
       )}
       {tela.nome === "cronograma" && clienteAtual && (
         <ImpressaoCronograma cliente={clienteAtual} gestao={gestaoPorCliente[clienteAtual.id] || { frentes: [] }} />
