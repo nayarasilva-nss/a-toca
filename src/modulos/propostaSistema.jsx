@@ -132,18 +132,18 @@ export function ImpressaoPropostaSistema({ cliente, prop }) {
       <div className="grid grid-cols-2 gap-8">
         {fora.length > 0 && (
           <Bloco titulo="Fora do escopo">
-            <ul className="text-sm pl-0" style={{ listStyle: "none" }}>{fora.map((e, i) => <li key={i}>— {e}</li>)}</ul>
+            <ul className="text-sm" style={{ listStyle: "none", paddingLeft: 0, margin: 0 }}>{fora.map((e, i) => <li key={i}>— {e}</li>)}</ul>
           </Bloco>
         )}
         {fornecido.length > 0 && (
           <Bloco titulo="Fornecido pelo cliente">
-            <ul className="text-sm pl-0" style={{ listStyle: "none" }}>{fornecido.map((e, i) => <li key={i}>— {e}</li>)}</ul>
+            <ul className="text-sm" style={{ listStyle: "none", paddingLeft: 0, margin: 0 }}>{fornecido.map((e, i) => <li key={i}>— {e}</li>)}</ul>
           </Bloco>
         )}
       </div>
 
       <Bloco titulo="Condições">
-        <ul className="text-sm pl-0" style={{ listStyle: "none" }}>
+        <ul className="text-sm" style={{ listStyle: "none", paddingLeft: 0, margin: 0 }}>
           {prop.condicoesPagamento && <li>— Pagamento: {prop.condicoesPagamento}</li>}
           {linhasPara(prop.condicoesGerais).map((c, i) => <li key={i}>— {c}</li>)}
           {prop.validade && <li>— Proposta válida por {prop.validade}</li>}
@@ -152,7 +152,7 @@ export function ImpressaoPropostaSistema({ cliente, prop }) {
 
       <div className="mt-10 pt-6 text-sm">
         <div className="flex gap-16">
-          <div className="flex-1 border-t pt-1 text-center" style={{ borderColor: "var(--tinta)" }}>Nayara Silva · Soluções personalizadas para negócios</div>
+          <div className="flex-1 border-t pt-1 text-center" style={{ borderColor: "var(--tinta)" }}>Nayara Silva</div>
           <div className="flex-1 border-t pt-1 text-center" style={{ borderColor: "var(--tinta)" }}>{cliente.negocio}</div>
         </div>
       </div>
