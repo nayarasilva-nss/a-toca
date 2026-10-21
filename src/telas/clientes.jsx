@@ -3,7 +3,7 @@ import { TituloSecao } from "../componentes/enraizar.jsx";
 import { InputField, BotaoPrimario, BotaoContorno, ConfirmarAcao } from "../componentes/ui.jsx";
 import { FOCOS_MENTORIA } from "../nucleo/focos.jsx";
 
-const SERVICOS_PADRAO = { empresa: { consultoria: true, mentoria: false, treinamentos: false }, pessoa: { consultoria: false, mentoria: true, treinamentos: false } };
+const SERVICOS_PADRAO = { empresa: { consultoria: true, mentoria: false, treinamentos: false, sistemas: false }, pessoa: { consultoria: false, mentoria: true, treinamentos: false, sistemas: false } };
 
 function Area({ label, value, onChange, placeholder, ajuda }) {
   return (
@@ -38,7 +38,7 @@ export function FormCliente({ inicial, onSalvar, onCancelar, onExcluir }) {
 
   const trilhas = ehPessoa
     ? [["mentoria", "Mentoria", "a jornada de encontros — sempre"], ["treinamentos", "Treinamentos", "turmas avulsas"]]
-    : [["consultoria", "Consultoria", "frentes, processos, governança"], ["treinamentos", "Treinamentos", "dentro de uma frente ou avulsos"], ["mentoria", "Mentoria do dono", "encontros com quem contrata"]];
+    : [["consultoria", "Consultoria", "frentes, processos, governança"], ["sistemas", "Sistemas", "desenvolvimento de sistema personalizado"], ["treinamentos", "Treinamentos", "dentro de uma frente ou avulsos"], ["mentoria", "Mentoria do dono", "encontros com quem contrata"]];
 
   return (
     <div className="enz-container" style={{ maxWidth: 720 }}>

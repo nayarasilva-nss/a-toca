@@ -3,7 +3,7 @@ import { formatarBR, parseValorBR } from "../ia/financeiro.jsx";
 import { HubCliente } from "../telas/hub.jsx";
 
 export function TelaHub({ app }) {
-  const { alcadasAtuais, anomaliasPorCliente, campoAtuais, campoPorCliente, cargosAtuais, clienteAtual, diagsAtuais, diagsLiderAtuais, docsDe, estruturaAtual, faseDoCliente, financeiroAtual, financeiroPorCliente, fluxosAtuais, focoMentoriaAtual, gestaoPorCliente, indicadoresAtuais, manualAtual, mentoriaAtual, pessoasAtuais, pontosCCTDe, popsAtuais, propostasAtuais, propostasPorCliente, relMentoriaAtual, relatoriosAtuais, ritosAtuais, ritosPorCliente, setErro, setTela, tabelas, tela, treinamentosAtuais, percepcoesPorCliente } = app;
+  const { alcadasAtuais, anomaliasPorCliente, campoAtuais, campoPorCliente, cargosAtuais, clienteAtual, diagsAtuais, diagsLiderAtuais, docsDe, estruturaAtual, faseDoCliente, financeiroAtual, financeiroPorCliente, fluxosAtuais, focoMentoriaAtual, gestaoPorCliente, indicadoresAtuais, manualAtual, mentoriaAtual, pessoasAtuais, pontosCCTDe, popsAtuais, propostasAtuais, propostasPorCliente, relMentoriaAtual, relatoriosAtuais, ritosAtuais, ritosPorCliente, setErro, setTela, tabelas, tela, treinamentosAtuais, percepcoesPorCliente, sistemasPorCliente } = app;
 
   const proximoPassoDe = (c) => {
     const fase = faseDoCliente(c);
@@ -22,6 +22,20 @@ export function TelaHub({ app }) {
       return temVencida
         ? { texto: "Há parcela vencida — cobre ou renegocie antes que vire ruído na relação", modulo: "financeiro" }
         : { texto: "Há ações atrasadas no cronograma — resolva ou realoque as semanas", modulo: "cronograma" };
+    }
+    const soSistemas = !(c.servicos || {}).consultoria && (c.servicos || {}).sistemas && c.tipo !== "pessoa";
+    if (soSistemas) {
+      if (fase === "prospeccao") return { texto: "Escuta: registre o briefing — o problema que o sistema resolve", modulo: "sistema" };
+      if (fase === "escuta") return { texto: "Raio-X: defina o escopo item a item, e o que fica de fora", modulo: "sistema" };
+      if (fase === "raiox") return { texto: "Acordo: gere a proposta por hora, com mensalidade e prazo", modulo: "propostas" };
+      if (fase === "acordo") return { texto: "Proposta na rua — quando o cliente fechar, marque como Aceita e registre o 50% do aceite", modulo: "propostas" };
+      if (fase === "construcao") {
+        if (!(fin.parcelas || []).length) return { texto: "Registre as parcelas no Financeiro (50% aceite, 50% entrega)", modulo: "financeiro" };
+        return { texto: "Construção: atualize o status de cada entrega e cobre o material do cliente", modulo: "sistema" };
+      }
+      if (fase === "prova") return { texto: "Entregue: registre a data, cobre o 50% da entrega e ative a mensalidade", modulo: "sistema" };
+      if (fase === "sustentacao") return { texto: "Sustentação: mensalidade ativa — registre as alterações e cobre mensalmente", modulo: "financeiro" };
+      return null;
     }
     if (fase === "prospeccao") return { texto: "Escuta: registre o briefing da primeira conversa. É dele que tudo nasce", modulo: "gestao" };
     if (fase === "escuta") {
@@ -86,6 +100,7 @@ export function TelaHub({ app }) {
         totalPoliticas={docsDe("politicas", clienteAtual.id).length}
         totalChecklists={docsDe("checklists", clienteAtual.id).length}
         totalPessoas={pessoasAtuais.length}
+        sistema={(sistemasPorCliente || {})[clienteAtual.id] || null}
         totalPercepcoes={((percepcoesPorCliente || {})[clienteAtual.id] || []).filter((c) => c.respostas).length}
         temperamentoMentorado={(pessoasAtuais.find((p) => p.id === (mentoriaAtual || {}).mentoradoId) || pessoasAtuais.find((p) => p.contratante) || {}).dominante || ""}
         totalDiagnosticos={diagsAtuais.length}

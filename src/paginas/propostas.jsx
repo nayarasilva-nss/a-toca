@@ -1,18 +1,21 @@
 import { comRetentativa } from "../ia/base.jsx";
 import { resumoCampo } from "../ia/campo.jsx";
-import { gerarProposta } from "../ia/proposta.jsx";
+import { gerarProposta, gerarPropostaSistema } from "../ia/proposta.jsx";
+import { sistemaVazio } from "../modulos/sistema.jsx";
 import { gerarMetasEngajamento, gerarMetasMentorado } from "../ia/treinamentos.jsx";
 import { EditorProposta, ListaPropostas, propostaVazia } from "../modulos/propostas.jsx";
 import { stSet } from "../nucleo/persistencia.jsx";
 
 export function TelaPropostas({ app }) {
-  const { campoPorCliente, clienteAtual, diagsLiderPorCliente, diagsPorCliente, erro, executarGeracao, exportarImpressao, gerando, gestaoPorCliente, mentoriaAtual, mentoriaPorCliente, pessoasPorCliente, pontosCCTDe, precificacao, propostaAtual, propostasAtuais, propostasPorCliente, salvarColecao, setErro, setPrecificacao, setTela, tela } = app;
+  const { campoPorCliente, clienteAtual, diagsLiderPorCliente, diagsPorCliente, erro, executarGeracao, exportarImpressao, gerando, gestaoPorCliente, mentoriaAtual, mentoriaPorCliente, pessoasPorCliente, pontosCCTDe, precificacao, propostaAtual, propostasAtuais, propostasPorCliente, salvarColecao, setErro, setPrecificacao, setTela, tela, sistemasPorCliente } = app;
 
   const mudarPropostas = (clienteId, novas) => salvarColecao("propostas", clienteId, novas);
 
   const gerarPropostaCliente = (cliente, prop) =>
     executarGeracao(async () => {
-      const gerado = await comRetentativa(() => gerarProposta(
+      const gerado = prop.tipo === "sistema"
+        ? await comRetentativa(() => gerarPropostaSistema(cliente, prop, { ...sistemaVazio(), ...((sistemasPorCliente || {})[cliente.id] || {}) }))
+        : await comRetentativa(() => gerarProposta(
         cliente,
         prop,
         gestaoPorCliente[cliente.id] || { briefing: "", frentes: [] },
@@ -52,7 +55,12 @@ export function TelaPropostas({ app }) {
           setTela({ nome: "proposta", id: tela.id, propostaId });
         }}
         onNova={async () => {
-          const nova = propostaVazia();
+          const servicos = clienteAtual.servicos || {};
+          const nova = propostaVazia(servicos.sistemas && !servicos.consultoria ? "sistema" : "consultoria");
+          if (nova.tipo === "sistema") {
+            const sis = { ...sistemaVazio(), ...((sistemasPorCliente || {})[clienteAtual.id] || {}) };
+            Object.assign(nova, { titulo: sis.nome, mensalidade: sis.mensalidade, duracao: sis.prazoSemanas ? `${sis.prazoSemanas} semanas` : "", condicoesPagamento: "50% no aceite e 50% na entrega", validade: "15 dias", entregaveis: (sis.escopo || []).map((i) => i.texto).filter(Boolean).join("\n"), foraEscopo: sis.foraEscopo || "", fornecidoCliente: (sis.fornecidoCliente || []).map((i) => i.texto).filter(Boolean).join("\n") });
+          }
           await mudarPropostas(clienteAtual.id, [...propostasAtuais, nova]);
           setErro(null);
           setTela({ nome: "proposta", id: tela.id, propostaId: nova.id });
@@ -72,6 +80,7 @@ export function TelaPropostas({ app }) {
         semanasPadrao={(gestaoPorCliente[clienteAtual.id] || {}).duracaoSemanas}
         numEncontros={(mentoriaAtual.encontros || []).length}
         precificacao={precificacao}
+        temSistemas={!!(clienteAtual.servicos || {}).sistemas}
         onMudarPrecificacao={mudarPrecificacao}
         onMudar={(nova) => mudarPropostas(clienteAtual.id, propostasAtuais.map((p) => (p.id === nova.id ? nova : p)))}
         onGerar={() => gerarPropostaCliente(clienteAtual, propostaAtual)}

@@ -97,3 +97,45 @@ Sem markdown, sem texto fora do JSON.`;
     condicoesGerais: obj.cg || "",
   };
 }
+
+// ─── IA: Proposta de desenvolvimento de sistema ─────────────────
+
+export async function gerarPropostaSistema(cliente, prop, sistema) {
+  const escopo = (sistema.escopo || []).map((i) => i.texto).filter(Boolean);
+  const fora = String(sistema.foraEscopo || "").split("\n").map((l) => l.trim()).filter(Boolean);
+  const fornecido = (sistema.fornecidoCliente || []).map((i) => i.texto).filter(Boolean);
+  const prompt = `Você é Nayara Silva, que desenvolve sistemas personalizados para pequenos negócios brasileiros (stack web moderna, entrega rápida, licença de uso ao cliente). Redija a proposta comercial abaixo: direta, concreta, em português claro, sem jargão técnico desnecessário e sem promessas vagas. O cliente é dono de negócio, não programador.
+
+CLIENTE
+Negócio: ${cliente.negocio}
+Segmento: ${cliente.segmento}
+Contexto: ${cliente.contexto || "não informado"}
+
+SISTEMA
+Nome: ${sistema.nome || prop.titulo || "a definir"}
+Briefing (o problema a resolver): ${sistema.briefing || "não registrado"}
+Escopo definido pela desenvolvedora (NÃO invente itens além destes; pode detalhar cada um em uma frase):
+${escopo.map((e) => `- ${e}`).join("\n") || "- (vazio — sugira 4 a 7 itens coerentes com o briefing, marcando-os como sugestão)"}
+Fora do escopo: ${fora.join("; ") || "não informado"}
+Fornecido pelo cliente: ${fornecido.join("; ") || "não informado"}
+Stack: ${sistema.stack || "não informada"}
+Prazo: ${prop.duracao || (sistema.prazoSemanas ? `${sistema.prazoSemanas} semanas` : "a definir")}
+Implantação + desenvolvimento: ${prop.investimento || "a definir"} · Mensalidade: ${prop.mensalidade ? `R$ ${prop.mensalidade}/mês` : "a definir"}
+Condições de pagamento: ${prop.condicoesPagamento || "50% no aceite e 50% na entrega"}
+Observações: ${prop.obs || "nenhuma"}
+
+Responda APENAS com JSON compacto de uma linha:
+{"ap":"apresentação em 2-3 frases: o que o cliente vive hoje e o que muda com o sistema","ob":"objetivo em 1-2 frases","es":["escopo, um item por linha, cada um nomeado e explicado em até 15 palavras"],"fe":["fora do escopo, um por linha, só o que foi informado ou é implicação direta dele"],"fc":["fornecido pelo cliente, um por linha"],"cg":["condições gerais, 3 a 5 linhas: licença de uso (código permanece com a desenvolvedora), o que a mensalidade cobre, uma rodada de ajustes, prazo conta a partir do material do cliente"]}
+Sem markdown, sem texto fora do JSON.`;
+  const texto = await chamarIA(prompt);
+  const obj = extrairJSON(texto, "{", "}");
+  const linhas = (v) => (Array.isArray(v) ? v.join("\n") : v || "");
+  return {
+    apresentacao: obj.ap || "",
+    objetivo: obj.ob || "",
+    entregaveis: linhas(obj.es),
+    foraEscopo: linhas(obj.fe),
+    fornecidoCliente: linhas(obj.fc),
+    condicoesGerais: linhas(obj.cg),
+  };
+}

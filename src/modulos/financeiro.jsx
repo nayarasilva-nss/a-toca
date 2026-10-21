@@ -45,7 +45,13 @@ export function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar,
             onClick={() =>
               onMudar({
                 ...financeiro,
-                parcelas: [
+                parcelas: propostaAceita.tipo === "sistema"
+                  ? [
+                      { id: uid(), descricao: `50% no aceite — ${propostaAceita.titulo || propostaAceita.rotulo || "sistema"}`, valor: formatarBR(parseValorBR(propostaAceita.investimento) / 2), vencimento: "", pago: false },
+                      { id: uid(), descricao: `50% na entrega — ${propostaAceita.titulo || propostaAceita.rotulo || "sistema"}`, valor: formatarBR(parseValorBR(propostaAceita.investimento) / 2), vencimento: "", pago: false },
+                      ...(propostaAceita.mensalidade ? [{ id: uid(), descricao: `Mensalidade 1 — ${propostaAceita.titulo || "sistema"}`, valor: `R$ ${propostaAceita.mensalidade}`, vencimento: "", pago: false }] : []),
+                    ]
+                  : [
                   {
                     id: uid(),
                     descricao: `Contrato — ${propostaAceita.rotulo || `proposta de ${propostaAceita.data}`}`,
@@ -59,7 +65,7 @@ export function ModuloFinanceiro({ cliente, financeiro, propostaAceita, onMudar,
             className="mb-4 px-4 py-2 rounded text-sm font-semibold"
             style={{ background: "var(--sucesso-fundo)", color: "var(--sucesso)", border: "1px solid var(--linha-forte)" }}
           >
-            Puxar da proposta aceita ({propostaAceita.investimento || "valor a definir"}) — cria a primeira parcela para você dividir
+            Puxar da proposta aceita ({propostaAceita.investimento || "valor a definir"}) — {propostaAceita.tipo === "sistema" ? "cria 50% aceite, 50% entrega e a primeira mensalidade" : "cria a primeira parcela para você dividir"}
           </button>
         )}
 

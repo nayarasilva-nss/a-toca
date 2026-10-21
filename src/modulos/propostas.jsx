@@ -3,6 +3,7 @@ import { formatarBR, parseValorBR } from "../ia/financeiro.jsx";
 import { emLinhasDoc } from "./documentos.jsx";
 import { RodapeImpressao } from "./tabela.jsx";
 import { CORES, uid } from "../nucleo/base.jsx";
+import { PainelPrecoSistema, CamposSistema, ImpressaoPropostaSistema } from "./propostaSistema.jsx";
 
 // ─── Módulo: Proposta Comercial ─────────────────────────────────
 
@@ -13,9 +14,10 @@ export const STATUS_PROPOSTA = {
   recusada: { rotulo: "Recusada", cor: "var(--erro)", fundo: "var(--erro-fundo)" },
 };
 
-export function propostaVazia() {
+export function propostaVazia(tipo = "consultoria") {
   return {
     id: uid(),
+    tipo,
     data: new Date().toLocaleDateString("pt-BR"),
     status: "rascunho",
     rotulo: "",
@@ -83,7 +85,7 @@ export function ListaPropostas({ cliente, propostas, onAbrir, onNova, onVoltar }
                 {p.rotulo || `Proposta de ${p.data}`}
               </span>
               <span className="text-xs flex items-center gap-2" style={{ color: CORES.textoDim }}>
-                {p.data}{p.investimento ? ` · ${p.investimento}` : ""}
+                {p.tipo === "sistema" ? "sistema · " : ""}{p.data}{p.investimento ? ` · ${p.investimento}` : ""}{p.tipo === "sistema" && p.mensalidade ? ` + R$ ${p.mensalidade}/mês` : ""}
                 <span
                   className="px-1.5 py-0.5 rounded font-semibold"
                   style={{
@@ -102,8 +104,9 @@ export function ListaPropostas({ cliente, propostas, onAbrir, onNova, onVoltar }
   );
 }
 
-export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, numEncontros, precificacao, onMudarPrecificacao, onMudar, onGerar, onGerarMetas, onImprimir, onExcluir, onVoltar }) {
+export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, numEncontros, precificacao, temSistemas, onMudarPrecificacao, onMudar, onGerar, onGerarMetas, onImprimir, onExcluir, onVoltar }) {
   const ehPessoaProp = cliente.tipo === "pessoa";
+  const ehSistema = prop.tipo === "sistema";
   const set = (campo) => (v) => onMudar({ ...prop, [campo]: v });
   const numFrentes = (frentes || []).length;
   const semanasDaProposta = (() => {
@@ -132,6 +135,12 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
         <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
           <h2 className="enz-titulo is-3">
             {prop.rotulo || `Proposta de ${prop.data}`}
+            {temSistemas && (cliente.servicos || {}).consultoria && (
+              <select className="ml-3 px-2 py-1 text-xs rounded border" style={{ borderColor: "var(--linha)", verticalAlign: "middle" }} value={prop.tipo || "consultoria"} onChange={(e) => onMudar({ ...prop, tipo: e.target.value })} title="Tipo da proposta">
+                <option value="consultoria">Consultoria</option>
+                <option value="sistema">Sistema</option>
+              </select>
+            )}
           </h2>
           <div className="flex gap-2 items-center">
             <select
@@ -159,7 +168,14 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
         <AvisoErro erro={erro} />
         {gerando && <Trabalhando />}
 
-        {!gerando && (
+        {!gerando && ehSistema && (
+          <>
+            <PainelPrecoSistema prop={prop} precificacao={precificacao} onMudar={onMudar} onMudarPrecificacao={onMudarPrecificacao} />
+            <CamposSistema prop={prop} onMudar={onMudar} />
+            <button onClick={onExcluir} className="enz-confirmar">Excluir proposta</button>
+          </>
+        )}
+        {!gerando && !ehSistema && (
           <>
             <div className="mb-4 rounded-lg p-4" style={{ background: CORES.cartao, border: "1px solid var(--linha)" }}>
               <div className="enz-rotulo mb-1">
@@ -298,6 +314,7 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
 
 export function ImpressaoProposta({ cliente, prop }) {
   if (!prop || !prop.apresentacao) return null;
+  if (prop.tipo === "sistema") return <ImpressaoPropostaSistema cliente={cliente} prop={prop} />;
   const fases = emLinhasDoc(prop.fases);
   const entregaveis = emLinhasDoc(prop.entregaveis);
   return (
