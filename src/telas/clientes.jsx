@@ -15,11 +15,11 @@ function Area({ label, value, onChange, placeholder, ajuda }) {
   );
 }
 
-export function FormCliente({ inicial, onSalvar, onCancelar, onExcluir }) {
+export function FormCliente({ inicial, prefill, onSalvar, onCancelar, onExcluir }) {
   const [c, setC] = useState(
     inicial
       ? { tipo: "empresa", servicos: SERVICOS_PADRAO[inicial.tipo || "empresa"], ...inicial }
-      : { tipo: "empresa", negocio: "", segmento: "", setores: "", regras: "", contexto: "", servicos: SERVICOS_PADRAO.empresa }
+      : { tipo: "empresa", negocio: "", segmento: "", setores: "", regras: "", contexto: "", servicos: SERVICOS_PADRAO.empresa, ...(prefill || {}) }
   );
   const set = (campo) => (v) => setC({ ...c, [campo]: v });
   const ehPessoa = c.tipo === "pessoa";
@@ -45,7 +45,7 @@ export function FormCliente({ inicial, onSalvar, onCancelar, onExcluir }) {
       <TituloSecao
         rotulo={inicial ? "Editar cliente" : "Novo cliente"}
         titulo={inicial ? c.negocio || "Editar cliente" : "Quem vamos enraizar?"}
-        virada={inicial ? "Atualize o que mudou." : "Comece pelo básico. O resto nasce da Escuta."}
+        virada={inicial ? "Atualize o que mudou." : prefill ? "Veio pelo site. Confira a trilha e o que a pessoa contou." : "Comece pelo básico. O resto nasce da Escuta."}
       />
 
       <div className="enz-campo" style={{ marginTop: 40 }}>

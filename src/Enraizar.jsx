@@ -34,6 +34,7 @@ import { stGet, stSet } from "./nucleo/persistencia.jsx";
 import { gerarPdfDoNo } from "./pdf/motor.jsx";
 import { FormCliente } from "./telas/clientes.jsx";
 import { DashboardInicial, ListaClientes } from "./telas/hub.jsx";
+import { TelaLeads, clienteDoLead } from "./telas/leads.jsx";
 import { TelaHub } from "./paginas/hub.jsx";
 import { TelaGestao } from "./paginas/gestao.jsx";
 import { TelaConselheira } from "./paginas/conselheira.jsx";
@@ -136,6 +137,11 @@ export default function App() {
   };
 
   useEffect(() => {
+    if (!autenticado || auth.usuario?.papel !== "consultora") return;
+    fetch("/api/leads?resumo=1").then((r) => (r.ok ? r.json() : null)).then((j) => j && setLeadsNovos(j.novos || 0)).catch(() => {});
+  }, [autenticado]);
+
+  useEffect(() => {
     if (!autenticado) return;
     stGet("toca:clientes").then(async (cs) => {
       cs = cs || [];
@@ -213,10 +219,16 @@ export default function App() {
   };
 
   const salvarNovoCliente = async (dados) => {
-    const novo = { ...dados, id: uid() };
+    const { leadId, ...resto } = dados;
+    const novo = { ...resto, id: uid() };
     const lista = [...clientes, novo];
     setClientes(lista);
     await stSet("toca:clientes", lista);
+    if (leadId) {
+      fetch("/api/leads", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: leadId, status: "convertido", clienteId: novo.id }) })
+        .then(() => setLeadsNovos((n) => Math.max(0, n - 1)))
+        .catch((e) => console.warn("lead não marcado como convertido:", e.message));
+    }
     if (novo.tipo === "pessoa") {
       const ficha = { ...pessoaVazia(), nome: novo.negocio, cargo: novo.segmento, contratante: true };
       await salvarColecao("pessoas", novo.id, [ficha]);
@@ -265,6 +277,7 @@ export default function App() {
   };
 
   const [backupPendente, setBackupPendente] = useState(null);
+  const [leadsNovos, setLeadsNovos] = useState(0);
   const [gerandoPdf, setGerandoPdf] = useState(false);
   const [precificacao, setPrecificacao] = useState({ base: "", porFrente: "", porSemana: "", porEncontro: "", valorHora: "", mensalidadePadrao: "", horasPorSemana: "" });
   const [catalogo, setCatalogo] = useState(CATALOGO_PADRAO);
@@ -586,7 +599,7 @@ ${conteudo}
 
   return (
     <div className="min-h-screen">
-      <Cabecalho onHome={() => setTela({ nome: "home" })} onClientes={() => setTela({ nome: "clientes" })} usuario={auth.usuario} onSair={auth.usuario ? sair : undefined} tema={tema} onTema={mudarTema} />
+      <Cabecalho onHome={() => setTela({ nome: "home" })} onClientes={() => setTela({ nome: "clientes" })} onLeads={() => setTela({ nome: "leads" })} leadsNovos={leadsNovos} usuario={auth.usuario} onSair={auth.usuario ? sair : undefined} tema={tema} onTema={mudarTema} />
 
       <div className="print:hidden">
         {!pronto ? (
@@ -595,8 +608,10 @@ ${conteudo}
           <DashboardInicial clientes={clientes} fases={fasesClientes} recorrente={resumoRecorrente(clientes, sistemasPorCliente)} nomeUsuario={auth.usuario?.nome || nomeUsuario} onSetNomeUsuario={setNomeUsuario} onClientes={() => setTela({ nome: "clientes" })} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} />
         ) : tela.nome === "clientes" ? (
           <ListaClientes clientes={clientes} gestaoPorCliente={gestaoPorCliente} fases={fasesClientes} backupPendente={backupPendente} onAplicarBackup={aplicarBackup} onCancelarBackup={() => setBackupPendente(null)} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} onExcluir={excluirCliente} onExportarBackup={exportarBackup} onImportarBackup={importarBackup} onVoltar={() => setTela({ nome: "home" })} nomeUsuario={nomeUsuario} onSetNomeUsuario={setNomeUsuario} />
+        ) : tela.nome === "leads" ? (
+          <TelaLeads clientes={clientes} onMudouNovos={setLeadsNovos} onConverter={(lead) => setTela({ nome: "novo", prefill: clienteDoLead(lead) })} onVoltar={() => setTela({ nome: "home" })} />
         ) : tela.nome === "novo" ? (
-          <FormCliente onSalvar={salvarNovoCliente} onCancelar={() => setTela({ nome: "home" })} />
+          <FormCliente key={tela.prefill ? tela.prefill.leadId : "novo"} prefill={tela.prefill} onSalvar={salvarNovoCliente} onCancelar={() => setTela({ nome: tela.prefill ? "leads" : "home" })} />
         ) : tela.nome === "editar" && clienteAtual ? (
           <FormCliente inicial={clienteAtual} onSalvar={salvarEdicaoCliente} onCancelar={() => setTela({ nome: "cliente", id: tela.id })} onExcluir={() => excluirCliente(clienteAtual.id)} />
         ) : ["cliente"].includes(tela.nome) ? (

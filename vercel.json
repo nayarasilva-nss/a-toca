@@ -5,6 +5,10 @@
     {
       "source": "/responder",
       "destination": "/index.html"
+    },
+    {
+      "source": "/aplicar",
+      "destination": "/index.html"
     }
   ]
 }

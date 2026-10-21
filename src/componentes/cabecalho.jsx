@@ -1,6 +1,6 @@
 import { Ilustracao } from "./arvore.jsx";
 
-export function Cabecalho({ onHome, onClientes, usuario, onSair, tema, onTema }) {
+export function Cabecalho({ onHome, onClientes, onLeads, leadsNovos = 0, usuario, onSair, tema, onTema }) {
   return (
     <header className="enz-cabecalho print:hidden">
       <button onClick={onHome} className="enz-cabecalho-marca" aria-label="Início">
@@ -12,6 +12,11 @@ export function Cabecalho({ onHome, onClientes, usuario, onSair, tema, onTema })
       </button>
       <span className="enz-lema">Todo crescimento começa em quem enraíza.</span>
       <div className="enz-cabecalho-acoes">
+        {onLeads && (
+          <button onClick={onLeads} className="enz-botao enz-botao-contorno enz-botao-pequeno" title="Quem chegou pelo site">
+            Leads{leadsNovos > 0 && <span style={{ marginLeft: 6, padding: "1px 7px", borderRadius: 999, background: "var(--alerta)", color: "var(--fundo)", fontSize: 11, fontWeight: 700 }}>{leadsNovos}</span>}
+          </button>
+        )}
         {onClientes && (
           <button onClick={onClientes} className="enz-botao enz-botao-contorno enz-botao-pequeno">
             Clientes
