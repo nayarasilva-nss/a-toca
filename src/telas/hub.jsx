@@ -217,7 +217,7 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
     ? ["temperamentos", "diagslider", "percepcoes", "propostas", "financeiro", "relmentoria"]
     : servicosCliente.consultoria
       ? ["gestao", ...(servicosCliente.sistemas ? ["sistema"] : []), "temperamentos", "propostas", "cronograma", "financeiro"]
-      : ["sistema", "propostas", "financeiro", "temperamentos"];
+      : ["sistema", "propostas", "financeiro"];
   const alaNegocio = [
     { frente: "Transversal", chaves: ["diagnosticos", "cct", "campo"] },
     { frente: "Pessoas", chaves: ["cargos"] },
