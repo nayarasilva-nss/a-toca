@@ -1,7 +1,7 @@
 import { comRetentativa } from "../ia/base.jsx";
 import { resumoCampo } from "../ia/campo.jsx";
 import { gerarProposta, gerarPropostaSistema } from "../ia/proposta.jsx";
-import { gerarContrato, tipoContratoDe } from "../ia/contrato.jsx";
+import { gerarContrato, revisarContrato, tipoContratoDe } from "../ia/contrato.jsx";
 import { contratoVazio } from "../modulos/contrato.jsx";
 import { sistemaVazio } from "../modulos/sistema.jsx";
 import { planoDoEscopo, etapasTexto, somaHoras } from "../nucleo/catalogo.jsx";
@@ -39,6 +39,14 @@ export function TelaPropostas({ app }) {
       const gerado = await comRetentativa(() => gerarContrato(cliente, prop, tipoContratoDe(cliente, prop), partes, (sistemasPorCliente || {})[cliente.id] || null));
       const lista = propostasPorCliente[cliente.id] || [];
       await mudarPropostas(cliente.id, lista.map((p) => (p.id === prop.id ? { ...p, contrato: { ...atual, ...gerado } } : p)));
+    });
+
+  const revisarContratoCliente = (cliente, prop) =>
+    executarGeracao(async () => {
+      const atual = { ...contratoVazio(), ...(prop.contrato || {}) };
+      const revisao = await comRetentativa(() => revisarContrato(cliente, prop, tipoContratoDe(cliente, prop), atual));
+      const lista = propostasPorCliente[cliente.id] || [];
+      await mudarPropostas(cliente.id, lista.map((p) => (p.id === prop.id ? { ...p, contrato: { ...atual, revisao } } : p)));
     });
 
   const mudarPrecificacao = async (nova) => {
@@ -101,6 +109,7 @@ export function TelaPropostas({ app }) {
         contratada={contratada}
         onMudarContratada={mudarContratada}
         onGerarContrato={() => gerarContratoCliente(clienteAtual, propostaAtual)}
+        onRevisarContrato={() => revisarContratoCliente(clienteAtual, propostaAtual)}
         onImprimirContrato={() => exportarImpressao({ seletor: ".area-contrato", nome: `Contrato — ${clienteAtual.negocio}` })}
         onImprimir={exportarImpressao}
         onExcluir={async () => {

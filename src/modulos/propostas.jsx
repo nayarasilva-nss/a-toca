@@ -105,7 +105,7 @@ export function ListaPropostas({ cliente, propostas, onAbrir, onNova, onVoltar }
   );
 }
 
-export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, numEncontros, precificacao, temSistemas, contratada, onMudarContratada, onGerarContrato, onImprimirContrato, onMudarPrecificacao, onMudar, onGerar, onGerarMetas, onImprimir, onExcluir, onVoltar }) {
+export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, numEncontros, precificacao, temSistemas, contratada, onMudarContratada, onGerarContrato, onRevisarContrato, onImprimirContrato, onMudarPrecificacao, onMudar, onGerar, onGerarMetas, onImprimir, onExcluir, onVoltar }) {
   const ehPessoaProp = cliente.tipo === "pessoa";
   const ehSistema = prop.tipo === "sistema";
   const set = (campo) => (v) => onMudar({ ...prop, [campo]: v });
@@ -176,6 +176,7 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
             onMudarContratada={onMudarContratada}
             onMudar={(contrato, extra) => onMudar({ ...prop, ...(extra || {}), contrato })}
             onGerar={onGerarContrato}
+            onRevisar={onRevisarContrato}
             onImprimir={onImprimirContrato}
           />
         )}
