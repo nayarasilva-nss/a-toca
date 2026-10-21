@@ -3,13 +3,27 @@ import { estimarEscopoSistema } from "../ia/proposta.jsx";
 import { ModuloSistema, sistemaVazio } from "../modulos/sistema.jsx";
 import { itemDoBloco } from "../nucleo/catalogo.jsx";
 import { uid } from "../nucleo/base.jsx";
+import { mensalidadesPendentes } from "../nucleo/recorrencia.jsx";
 
 export function TelaSistema({ app }) {
-  const { catalogo, clienteAtual, erro, executarGeracao, gerando, mudarCatalogo, mudarPrecificacaoGlobal, precificacao, propostasAtuais, salvarColecao, setTela, sistemasPorCliente, tela } = app;
+  const { catalogo, clienteAtual, erro, executarGeracao, financeiroAtual, gerando, mudarCatalogo, mudarPrecificacaoGlobal, precificacao, propostasAtuais, salvarColecao, setTela, sistemasPorCliente, tela } = app;
   if (tela.nome !== "sistema" || !clienteAtual) return null;
   const sistema = { ...sistemaVazio(), ...(sistemasPorCliente[clienteAtual.id] || {}) };
   const propostaAceita = (propostasAtuais || []).find((p) => p.status === "aceita" && p.tipo === "sistema") || null;
-  const salvar = (novo) => salvarColecao("sistemas", clienteAtual.id, novo);
+  const salvar = async (novo) => {
+    await salvarColecao("sistemas", clienteAtual.id, novo);
+    // reflexos no financeiro: data da entrega vence o 50% final; mensalidade ativa gera as parcelas do mês
+    const fin = financeiroAtual || { parcelas: [] };
+    let parcelas = fin.parcelas || [];
+    let mudou = false;
+    if (novo.entregueEm && novo.entregueEm !== sistema.entregueEm) {
+      parcelas = parcelas.map((p) => (p.entrega && !p.pago && !p.vencimento ? { ...p, vencimento: novo.entregueEm } : p));
+      mudou = parcelas.some((p, i) => p !== (fin.parcelas || [])[i]);
+    }
+    const novas = mensalidadesPendentes(novo, { parcelas });
+    if (novas.length) { parcelas = [...parcelas, ...novas]; mudou = true; }
+    if (mudou) await salvarColecao("financeiro", clienteAtual.id, { ...fin, parcelas });
+  };
 
   const estimarComIA = () =>
     executarGeracao(async () => {

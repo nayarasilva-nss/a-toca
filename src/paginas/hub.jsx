@@ -67,7 +67,9 @@ export function TelaHub({ app }) {
       total += v;
       if (p.pago) recebido += v;
     }
-    return total > 0 ? `${formatarBR(recebido)} recebido de ${formatarBR(total)}` : null;
+    const sis = (sistemasPorCliente || {})[clienteAtual ? clienteAtual.id : ""];
+    const rec = sis && sis.mensalidadeAtiva && parseValorBR(sis.mensalidade) > 0 ? ` · ${formatarBR(parseValorBR(sis.mensalidade))}/mês` : "";
+    return total > 0 ? `${formatarBR(recebido)} recebido de ${formatarBR(total)}${rec}` : rec ? `Recorrente${rec}` : null;
   })();
 
   if (tela.nome === "cliente" && clienteAtual) {

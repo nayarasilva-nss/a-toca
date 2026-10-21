@@ -1,4 +1,5 @@
 import { TituloSecao, Card, FasesEnraizar, FASES } from "../componentes/enraizar.jsx";
+import { formatarBR } from "../ia/financeiro.jsx";
 import { TEMPERAMENTOS } from "../ia/documentos.jsx";
 import { FOCOS_MENTORIA } from "../nucleo/focos.jsx";
 import { ArvoreEnraizar } from "../componentes/arvore.jsx";
@@ -34,7 +35,7 @@ function LinhaCliente({ cliente, fase, onAbrir, acoes }) {
   );
 }
 
-export function DashboardInicial({ clientes, fases = {}, nomeUsuario, onAbrir, onNovo, onClientes }) {
+export function DashboardInicial({ clientes, fases = {}, nomeUsuario, recorrente = null, onAbrir, onNovo, onClientes }) {
   const total = clientes.length;
   const contagens = {};
   for (const c of clientes) { const f = fases[c.id] === "prospeccao" ? "escuta" : fases[c.id]; if (f) contagens[f] = (contagens[f] || 0) + 1; }
@@ -42,7 +43,7 @@ export function DashboardInicial({ clientes, fases = {}, nomeUsuario, onAbrir, o
   const emAndamento = clientes.filter((c) => ["construcao", "sustentacao"].includes(fases[c.id])).length;
   const atencao = clientes.filter((c) => fases[c.id] === "perigo").length;
   const primeiro = (nomeUsuario || "").split(" ")[0];
-  const kpis = [["Clientes", total], ["Em construção ou sustentação", emAndamento], ["Mentorados", mentorados], ["Precisam de atenção", atencao]];
+  const kpis = [["Clientes", total], ["Em construção ou sustentação", emAndamento], ["Mentorados", mentorados], ["Precisam de atenção", atencao], ...(recorrente && recorrente.ativos ? [["Recorrente por mês", `${formatarBR(recorrente.mensal)} · ${recorrente.ativos} sistema${recorrente.ativos > 1 ? "s" : ""}`]] : [])];
   return (
     <div className="enz-container">
       <TituloSecao
@@ -52,7 +53,7 @@ export function DashboardInicial({ clientes, fases = {}, nomeUsuario, onAbrir, o
         acoes={<BotaoPrimario onClick={onNovo}>Novo cliente</BotaoPrimario>}
       />
 
-      <div className="grid grid-cols-2 md:grid-cols-4" style={{ marginTop: 40, borderTop: "1px solid var(--linha)" }}>
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5" style={{ marginTop: 40, borderTop: "1px solid var(--linha)" }}>
         {kpis.map(([rotulo, valor]) => (
           <div key={rotulo} style={{ padding: "20px 16px 20px 0" }}>
             <span className="enz-rotulo">{rotulo}</span>

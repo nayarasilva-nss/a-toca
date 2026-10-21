@@ -1,6 +1,7 @@
 import { useState, useEffect, useReducer } from "react";
 import { COLECOES, COLECOES_INICIAIS, reduzirColecoes } from "./nucleo/estado.jsx";
 import { CATALOGO_PADRAO } from "./nucleo/catalogo.jsx";
+import { resumoRecorrente } from "./nucleo/recorrencia.jsx";
 import { pessoaVazia } from "./modulos/temperamentos.jsx";
 import { FOCOS_MENTORIA, focoDe } from "./nucleo/focos.jsx";
 import { frameworkMentorado as frameworkDoMentorado } from "./ia/diagnostico.jsx";
@@ -144,13 +145,22 @@ export default function App() {
       const mapaD = {};
       const mapaR = {};
       const mapaF = {};
+      const mapaS = {};
+      const mapaM = {};
       for (const c of cs) {
         mapaG[c.id] = (await stGet(`toca:gestao:${c.id}`)) || { briefing: "", frentes: [] };
         mapaP[c.id] = (await stGet(`toca:propostas:${c.id}`)) || [];
         mapaD[c.id] = (await stGet(`toca:diagnosticos:${c.id}`)) || [];
         mapaR[c.id] = (await stGet(`toca:relatorios:${c.id}`)) || [];
         mapaF[c.id] = (await stGet(`toca:financeiro:${c.id}`)) || { parcelas: [] };
+        // fases da Home dependem destes também
+        const sis = await stGet(`toca:sistemas:${c.id}`);
+        if (sis) mapaS[c.id] = sis;
+        const men = await stGet(`toca:mentoria:${c.id}`);
+        if (men) mapaM[c.id] = { ...mentoriaVazia(), ...men };
       }
+      if (Object.keys(mapaS).length) despachar({ tipo: "atualizar", colecao: "sistemas", valor: (prev) => ({ ...mapaS, ...prev }) });
+      if (Object.keys(mapaM).length) despachar({ tipo: "atualizar", colecao: "mentoria", valor: (prev) => ({ ...mapaM, ...prev }) });
       setGestaoPorCliente(mapaG);
       setPropostasPorCliente(mapaP);
       setDiagsPorCliente(mapaD);
@@ -573,7 +583,7 @@ ${conteudo}
         {!pronto ? (
           <div className="text-center py-20 font-serif italic" style={{ color: CORES.dourado }}>Abrindo Enraizar...</div>
         ) : tela.nome === "home" ? (
-          <DashboardInicial clientes={clientes} fases={fasesClientes} nomeUsuario={auth.usuario?.nome || nomeUsuario} onSetNomeUsuario={setNomeUsuario} onClientes={() => setTela({ nome: "clientes" })} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} />
+          <DashboardInicial clientes={clientes} fases={fasesClientes} recorrente={resumoRecorrente(clientes, sistemasPorCliente)} nomeUsuario={auth.usuario?.nome || nomeUsuario} onSetNomeUsuario={setNomeUsuario} onClientes={() => setTela({ nome: "clientes" })} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} />
         ) : tela.nome === "clientes" ? (
           <ListaClientes clientes={clientes} gestaoPorCliente={gestaoPorCliente} fases={fasesClientes} backupPendente={backupPendente} onAplicarBackup={aplicarBackup} onCancelarBackup={() => setBackupPendente(null)} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} onExcluir={excluirCliente} onExportarBackup={exportarBackup} onImportarBackup={importarBackup} onVoltar={() => setTela({ nome: "home" })} nomeUsuario={nomeUsuario} onSetNomeUsuario={setNomeUsuario} />
         ) : tela.nome === "novo" ? (
