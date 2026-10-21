@@ -4,7 +4,7 @@ import { Card } from "../componentes/enraizar.jsx";
 import { useState } from "react";
 import { AvisoErro, BotaoContorno, BotaoPrimario, InputField, Trabalhando } from "../componentes/ui.jsx";
 import { formatarBR, parseValorBR } from "../ia/financeiro.jsx";
-import { CATEGORIAS_CATALOGO, ETAPAS, horasDe, itemDoBloco, planoDoEscopo, somaHoras } from "../nucleo/catalogo.jsx";
+import { CATEGORIAS_CATALOGO, ETAPAS, horasDe, itemDoBloco, planoDoEscopo, realizadasPorItem, somaHoras, totalRealizadas } from "../nucleo/catalogo.jsx";
 
 // ─── Módulo: Sistema (desenvolvimento de sistema personalizado) ──
 
@@ -38,12 +38,13 @@ export function sistemaVazio() {
     mensalidadeAtiva: false,
     status: "levantamento",
     obs: "",
+    registros: [],
   };
 }
 
 export const linhasPara = (texto) => String(texto || "").split("\n").map((l) => l.trim()).filter(Boolean);
 
-function ListaItens({ itens, onMudar, placeholder, comStatus, comRecebido }) {
+function ListaItens({ itens, onMudar, placeholder, comStatus, comRecebido, realizadas = {} }) {
   const set = (id, campo, valor) => onMudar(itens.map((i) => (i.id === id ? { ...i, [campo]: valor } : i)));
   return (
     <div>
@@ -53,6 +54,9 @@ function ListaItens({ itens, onMudar, placeholder, comStatus, comRecebido }) {
           <input className="enz-input" style={{ flex: 1, minWidth: 200, padding: "8px 10px" }} value={i.texto} placeholder={placeholder} onChange={(e) => set(i.id, "texto", e.target.value)} />
           {comStatus && (
             <input className="enz-input" style={{ width: 64, padding: "8px 8px", textAlign: "right" }} value={i.horas ?? ""} placeholder="h" title="Horas estimadas" onChange={(e) => set(i.id, "horas", e.target.value)} />
+          )}
+          {comStatus && (
+            <span className="enz-legenda" style={{ width: 54, textAlign: "right" }} title="Horas realizadas (dos registros)">{realizadas[i.id] ? `${realizadas[i.id]} h` : "—"}</span>
           )}
           {comStatus && (
             <select className="enz-input" style={{ width: 130, padding: "8px 10px" }} value={i.etapa || "Construção"} title="Etapa" onChange={(e) => set(i.id, "etapa", e.target.value)}>
@@ -74,7 +78,7 @@ function ListaItens({ itens, onMudar, placeholder, comStatus, comRecebido }) {
   );
 }
 
-function Catalogo({ catalogo, onMudarCatalogo, onAdicionar }) {
+function Catalogo({ catalogo, calibracao = {}, onMudarCatalogo, onAdicionar }) {
   const [marcados, setMarcados] = useState({});
   const [editando, setEditando] = useState(false);
   const selecionados = catalogo.filter((b) => marcados[b.id]);
@@ -100,6 +104,7 @@ function Catalogo({ catalogo, onMudarCatalogo, onAdicionar }) {
                 ) : (
                   <>
                     <span style={{ flex: 1 }}>{b.nome}</span>
+                    {calibracao[b.id] && <span className="enz-legenda" title={`média realizada em ${calibracao[b.id].n} projeto(s)`} style={{ color: calibracao[b.id].media > b.horas * 1.2 ? "var(--erro)" : calibracao[b.id].media < b.horas * 0.8 ? "var(--sucesso)" : "var(--tinta-musgo)" }}>real {calibracao[b.id].media} h · {calibracao[b.id].n}×</span>}
                     <span className="enz-legenda">{b.horas} h</span>
                   </>
                 )}
@@ -114,6 +119,7 @@ function Catalogo({ catalogo, onMudarCatalogo, onAdicionar }) {
           Adicionar ao escopo{selecionados.length ? ` · ${selecionados.length} bloco${selecionados.length > 1 ? "s" : ""} · ${somaHoras(selecionados)} h` : ""}
         </BotaoPrimario>
         <button className="enz-link" onClick={() => setEditando(!editando)}>{editando ? "concluir edição" : "editar catálogo"}</button>
+        {Object.keys(calibracao).length > 0 && <span className="enz-nota">"real" é a média de horas registradas nos projetos entregues — use para ajustar o padrão.</span>}
       </div>
     </Card>
   );
@@ -153,7 +159,70 @@ function Plano({ escopo, precificacao, onMudarPrecificacao }) {
   );
 }
 
-export function ModuloSistema({ cliente, sistema, propostaAceita, catalogo = [], precificacao = {}, gerando, erro, onMudar, onMudarCatalogo, onMudarPrecificacao, onEstimarIA, onVoltar, onPropostas }) {
+function Horas({ sistema, precificacao, propostaAceita, onMudar }) {
+  const [novo, setNovo] = useState({ data: new Date().toLocaleDateString("pt-BR"), itemId: "", horas: "", nota: "" });
+  const registros = sistema.registros || [];
+  const escopo = sistema.escopo || [];
+  const real = realizadasPorItem(sistema);
+  const estimadas = somaHoras(escopo);
+  const realizadas = totalRealizadas(sistema);
+  const valorHora = parseValorBR(precificacao.valorHora);
+  const cobrado = propostaAceita ? parseValorBR(propostaAceita.investimento) : 0;
+  const desvio = estimadas ? Math.round(((realizadas - estimadas) / estimadas) * 100) : null;
+  const horaEfetiva = cobrado && realizadas ? cobrado / realizadas : null;
+  const lancar = () => {
+    const h = Number(String(novo.horas).replace(",", ".")) || 0;
+    if (!h) return;
+    onMudar({ ...sistema, registros: [...registros, { id: uid(), ...novo, horas: h }] });
+    setNovo({ ...novo, horas: "", nota: "" });
+  };
+  return (
+    <Card rotulo="Horas" titulo="Estimado × realizado." subtitulo="lance as horas conforme trabalha; o comparativo calibra o catálogo e mostra quanto valeu sua hora de verdade.">
+      <div className="grid grid-cols-2 md:grid-cols-4" style={{ borderTop: "1px solid var(--linha)", marginBottom: 16 }}>
+        {[
+          ["Estimadas", `${estimadas} h`, null],
+          ["Realizadas", `${realizadas} h`, desvio === null ? null : desvio > 10 ? "var(--erro)" : desvio < -10 ? "var(--sucesso)" : null],
+          ["Desvio", desvio === null ? "—" : `${desvio > 0 ? "+" : ""}${desvio}%`, desvio === null ? null : desvio > 10 ? "var(--erro)" : desvio < -10 ? "var(--sucesso)" : null],
+          ["Hora efetiva", horaEfetiva ? formatarBR(horaEfetiva) : "—", horaEfetiva && valorHora ? (horaEfetiva < valorHora * 0.9 ? "var(--erro)" : horaEfetiva > valorHora * 1.1 ? "var(--sucesso)" : null) : null],
+        ].map(([r, v, cor]) => (
+          <div key={r} style={{ padding: "14px 12px 10px 0" }}><span className="enz-rotulo">{r}</span><div className="enz-numero" style={{ fontSize: 26, marginTop: 6, color: cor || "var(--tinta)" }}>{v}</div></div>
+        ))}
+      </div>
+      {horaEfetiva && valorHora ? <p className="enz-nota" style={{ marginBottom: 12 }}>cobrado {formatarBR(cobrado)} ÷ {realizadas} h realizadas = {formatarBR(horaEfetiva)}/h (sua hora: {formatarBR(valorHora)}). custo real das horas: {formatarBR(realizadas * valorHora)}.</p> : null}
+
+      <div className="flex items-end gap-2 flex-wrap" style={{ marginBottom: 12 }}>
+        <div><div className="text-xs mb-0.5">Data</div><input className="enz-input" style={{ width: 110, padding: "8px 10px" }} value={novo.data} onChange={(e) => setNovo({ ...novo, data: e.target.value })} /></div>
+        <div style={{ flex: 1, minWidth: 220 }}><div className="text-xs mb-0.5">Item do escopo</div>
+          <select className="enz-input" style={{ padding: "8px 10px" }} value={novo.itemId} onChange={(e) => setNovo({ ...novo, itemId: e.target.value })}>
+            <option value="">(geral — sem item)</option>
+            {escopo.map((i) => <option key={i.id} value={i.id}>{i.texto}</option>)}
+          </select>
+        </div>
+        <div><div className="text-xs mb-0.5">Horas</div><input className="enz-input" style={{ width: 70, padding: "8px 10px", textAlign: "right" }} value={novo.horas} placeholder="2,5" onChange={(e) => setNovo({ ...novo, horas: e.target.value })} /></div>
+        <div style={{ flex: 1, minWidth: 160 }}><div className="text-xs mb-0.5">Nota (opcional)</div><input className="enz-input" style={{ padding: "8px 10px" }} value={novo.nota} onChange={(e) => setNovo({ ...novo, nota: e.target.value })} /></div>
+        <BotaoPrimario pequeno onClick={lancar} disabled={!Number(String(novo.horas).replace(",", "."))}>Lançar</BotaoPrimario>
+      </div>
+
+      {registros.length > 0 && (
+        <div>
+          {[...registros].reverse().map((r) => {
+            const item = escopo.find((i) => i.id === r.itemId);
+            return (
+              <div key={r.id} className="flex items-center gap-3 flex-wrap" style={{ padding: "5px 0", borderBottom: "1px solid var(--linha)", fontSize: 13 }}>
+                <span className="enz-legenda" style={{ width: 84 }}>{r.data}</span>
+                <span style={{ flex: 1 }}>{item ? item.texto : "geral"}{r.nota ? <span className="enz-legenda"> — {r.nota}</span> : null}</span>
+                <span style={{ width: 54, textAlign: "right" }}>{r.horas} h</span>
+                <button className="enz-link" onClick={() => onMudar({ ...sistema, registros: registros.filter((x) => x.id !== r.id) })}>✕</button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </Card>
+  );
+}
+
+export function ModuloSistema({ cliente, sistema, propostaAceita, catalogo = [], calibracao = {}, precificacao = {}, gerando, erro, onMudar, onMudarCatalogo, onMudarPrecificacao, onEstimarIA, onVoltar, onPropostas }) {
   const set = (campo) => (v) => onMudar({ ...sistema, [campo]: v });
   const escopo = sistema.escopo || [];
   const horasTotal = somaHoras(escopo);
@@ -201,15 +270,19 @@ export function ModuloSistema({ cliente, sistema, propostaAceita, catalogo = [],
         </Card>
 
         <div style={{ marginTop: 24 }}>
-          <Catalogo catalogo={catalogo} onMudarCatalogo={onMudarCatalogo} onAdicionar={(blocos) => set("escopo")([...escopo, ...blocos.map(itemDoBloco)])} />
+          <Catalogo catalogo={catalogo} calibracao={calibracao} onMudarCatalogo={onMudarCatalogo} onAdicionar={(blocos) => set("escopo")([...escopo, ...blocos.map(itemDoBloco)])} />
         </div>
 
         <Card rotulo="Escopo" titulo="O que será construído." subtitulo="cada item vira uma linha da proposta e uma entrega para acompanhar. horas e etapa alimentam a estimativa." style={{ marginTop: 24 }}>
-          <ListaItens itens={escopo} onMudar={set("escopo")} placeholder="Mapa de mesas por praça, com status em tempo real" comStatus />
+          <ListaItens itens={escopo} onMudar={set("escopo")} placeholder="Mapa de mesas por praça, com status em tempo real" comStatus realizadas={realizadasPorItem(sistema)} />
         </Card>
 
         <div style={{ marginTop: 24 }}>
           <Plano escopo={escopo} precificacao={precificacao} onMudarPrecificacao={onMudarPrecificacao} />
+        </div>
+
+        <div style={{ marginTop: 24 }}>
+          <Horas sistema={sistema} precificacao={precificacao} propostaAceita={propostaAceita} onMudar={onMudar} />
         </div>
 
         <div className="grid gap-3 lg:grid-cols-2" style={{ marginTop: 24 }}>

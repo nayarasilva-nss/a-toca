@@ -1,7 +1,7 @@
 import { comRetentativa } from "../ia/base.jsx";
 import { estimarEscopoSistema } from "../ia/proposta.jsx";
 import { ModuloSistema, sistemaVazio } from "../modulos/sistema.jsx";
-import { itemDoBloco } from "../nucleo/catalogo.jsx";
+import { calibracaoCatalogo, itemDoBloco } from "../nucleo/catalogo.jsx";
 import { uid } from "../nucleo/base.jsx";
 import { mensalidadesPendentes } from "../nucleo/recorrencia.jsx";
 
@@ -41,6 +41,7 @@ export function TelaSistema({ app }) {
       sistema={sistema}
       propostaAceita={propostaAceita}
       catalogo={catalogo}
+      calibracao={calibracaoCatalogo(sistemasPorCliente)}
       precificacao={precificacao}
       gerando={gerando}
       erro={erro}

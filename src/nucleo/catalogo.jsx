@@ -81,3 +81,34 @@ export function etapasTexto(plano) {
     return `${e} — ${faixa} — ${d.itens.join("; ")}`;
   });
 }
+
+// ── Horas realizadas: registros por item do escopo e calibração do catálogo
+
+export const realizadasPorItem = (sistema) => {
+  const soma = {};
+  for (const r of sistema.registros || []) {
+    const h = Number(String(r.horas || "").replace(",", ".")) || 0;
+    if (r.itemId) soma[r.itemId] = (soma[r.itemId] || 0) + h;
+  }
+  return soma;
+};
+
+export const totalRealizadas = (sistema) => (sistema.registros || []).reduce((s, r) => s + (Number(String(r.horas || "").replace(",", ".")) || 0), 0);
+
+// média de horas realizadas por bloco do catálogo, somando todos os sistemas que têm registros
+export function calibracaoCatalogo(sistemasPorCliente) {
+  const acc = {};
+  for (const sis of Object.values(sistemasPorCliente || {})) {
+    if (!sis || !(sis.registros || []).length) continue;
+    const real = realizadasPorItem(sis);
+    for (const item of sis.escopo || []) {
+      if (!item.blocoId || !real[item.id]) continue;
+      if (!acc[item.blocoId]) acc[item.blocoId] = { total: 0, n: 0 };
+      acc[item.blocoId].total += real[item.id];
+      acc[item.blocoId].n += 1;
+    }
+  }
+  const out = {};
+  for (const [id, a] of Object.entries(acc)) out[id] = { media: Math.round((a.total / a.n) * 10) / 10, n: a.n };
+  return out;
+}
