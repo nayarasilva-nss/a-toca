@@ -9,6 +9,16 @@
     {
       "source": "/aplicar",
       "destination": "/index.html"
+    },
+    {
+      "source": "/pedir",
+      "destination": "/index.html"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/lembrete",
+      "schedule": "0 10 * * *"
     }
   ]
 }

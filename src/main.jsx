@@ -5,11 +5,12 @@ import './utils/storage.js'
 import App from './App.jsx'
 import { PaginaResponder } from './telas/responder.jsx'
 import { PaginaAplicar } from './telas/aplicar.jsx'
+import { PaginaPedir } from './telas/pedir.jsx'
 
 const caminho = window.location.pathname.replace(/\/$/, '')
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    {caminho === '/responder' ? <PaginaResponder /> : caminho === '/aplicar' ? <PaginaAplicar /> : <App />}
+    {caminho === '/responder' ? <PaginaResponder /> : caminho === '/aplicar' ? <PaginaAplicar /> : caminho === '/pedir' ? <PaginaPedir /> : <App />}
   </StrictMode>,
 )

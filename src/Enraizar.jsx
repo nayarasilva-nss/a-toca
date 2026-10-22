@@ -35,6 +35,7 @@ import { gerarPdfDoNo } from "./pdf/motor.jsx";
 import { FormCliente } from "./telas/clientes.jsx";
 import { DashboardInicial, ListaClientes } from "./telas/hub.jsx";
 import { TelaLeads, clienteDoLead } from "./telas/leads.jsx";
+import { TelaAgenda } from "./telas/agenda.jsx";
 import { TelaHub } from "./paginas/hub.jsx";
 import { TelaGestao } from "./paginas/gestao.jsx";
 import { TelaConselheira } from "./paginas/conselheira.jsx";
@@ -139,6 +140,8 @@ export default function App() {
   useEffect(() => {
     if (!autenticado || auth.usuario?.papel !== "consultora") return;
     fetch("/api/leads?resumo=1").then((r) => (r.ok ? r.json() : null)).then((j) => j && setLeadsNovos(j.novos || 0)).catch(() => {});
+    fetch("/api/pedidos?resumo=1").then((r) => (r.ok ? r.json() : null)).then((j) => j && setPedidosPendentes(j.pendentes || 0)).catch(() => {});
+    stGet("toca:tarefas").then((t) => { if (Array.isArray(t)) setTarefas(t); });
   }, [autenticado]);
 
   useEffect(() => {
@@ -260,7 +263,7 @@ export default function App() {
   const TIPOS_BACKUP = ["tabela", "cargos", "gestao", "estrutura", "manual", "cct", "penseira", "pops", "fluxos", "alcadas", "ritos", "indicadores", "politicas", "checklists", "atas", "temperamentos", "diagnosticos", "propostas", "relatorios", "financeiro", "campo", "treinamentos", "mentoria", "diagslider", "percepcoes", "sistemas", "relmentoria", "anomalias", "painel"];
 
   const exportarBackup = async () => {
-    const dados = { versao: 1, exportadoEm: new Date().toISOString(), clientes, precificacao, catalogo, contratada, porCliente: {} };
+    const dados = { versao: 1, exportadoEm: new Date().toISOString(), clientes, precificacao, catalogo, contratada, tarefas, porCliente: {} };
     for (const c of clientes) {
       dados.porCliente[c.id] = {};
       for (const tipo of TIPOS_BACKUP) {
@@ -278,6 +281,9 @@ export default function App() {
 
   const [backupPendente, setBackupPendente] = useState(null);
   const [leadsNovos, setLeadsNovos] = useState(0);
+  const [tarefas, setTarefas] = useState([]);
+  const [pedidosPendentes, setPedidosPendentes] = useState(0);
+  const mudarTarefas = async (novas) => { setTarefas(novas); await stSet("toca:tarefas", novas); };
   const [gerandoPdf, setGerandoPdf] = useState(false);
   const [precificacao, setPrecificacao] = useState({ base: "", porFrente: "", porSemana: "", porEncontro: "", valorHora: "", mensalidadePadrao: "", horasPorSemana: "" });
   const [catalogo, setCatalogo] = useState(CATALOGO_PADRAO);
@@ -325,6 +331,7 @@ export default function App() {
     if (dados.precificacao) await stSet("toca:precificacao", dados.precificacao);
     if (Array.isArray(dados.catalogo)) await stSet("toca:catalogo", dados.catalogo);
     if (dados.contratada) await stSet("toca:contratada", dados.contratada);
+    if (Array.isArray(dados.tarefas)) await stSet("toca:tarefas", dados.tarefas);
     for (const c of dados.clientes) {
       const pacote = (dados.porCliente || {})[c.id] || {};
       for (const tipo of TIPOS_BACKUP) {
@@ -599,15 +606,17 @@ ${conteudo}
 
   return (
     <div className="min-h-screen">
-      <Cabecalho onHome={() => setTela({ nome: "home" })} onClientes={() => setTela({ nome: "clientes" })} onLeads={() => setTela({ nome: "leads" })} leadsNovos={leadsNovos} usuario={auth.usuario} onSair={auth.usuario ? sair : undefined} tema={tema} onTema={mudarTema} />
+      <Cabecalho onHome={() => setTela({ nome: "home" })} onClientes={() => setTela({ nome: "clientes" })} onLeads={() => setTela({ nome: "leads" })} leadsNovos={leadsNovos} onAgenda={() => setTela({ nome: "agenda" })} pedidosPendentes={pedidosPendentes} usuario={auth.usuario} onSair={auth.usuario ? sair : undefined} tema={tema} onTema={mudarTema} />
 
       <div className="print:hidden">
         {!pronto ? (
           <div className="text-center py-20 font-serif italic" style={{ color: CORES.dourado }}>Abrindo Enraizar...</div>
         ) : tela.nome === "home" ? (
-          <DashboardInicial clientes={clientes} fases={fasesClientes} recorrente={resumoRecorrente(clientes, sistemasPorCliente)} nomeUsuario={auth.usuario?.nome || nomeUsuario} onSetNomeUsuario={setNomeUsuario} onClientes={() => setTela({ nome: "clientes" })} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} />
+          <DashboardInicial clientes={clientes} fases={fasesClientes} tarefas={tarefas} pedidosPendentes={pedidosPendentes} onAgenda={(aba) => setTela({ nome: "agenda", aba })} onConcluirTarefa={(t) => mudarTarefas(tarefas.map((x) => (x.id === t.id ? { ...x, status: "feita", feitoEm: new Date().toISOString() } : x)))} recorrente={resumoRecorrente(clientes, sistemasPorCliente)} nomeUsuario={auth.usuario?.nome || nomeUsuario} onSetNomeUsuario={setNomeUsuario} onClientes={() => setTela({ nome: "clientes" })} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} />
         ) : tela.nome === "clientes" ? (
           <ListaClientes clientes={clientes} gestaoPorCliente={gestaoPorCliente} fases={fasesClientes} backupPendente={backupPendente} onAplicarBackup={aplicarBackup} onCancelarBackup={() => setBackupPendente(null)} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} onExcluir={excluirCliente} onExportarBackup={exportarBackup} onImportarBackup={importarBackup} onVoltar={() => setTela({ nome: "home" })} nomeUsuario={nomeUsuario} onSetNomeUsuario={setNomeUsuario} />
+        ) : tela.nome === "agenda" ? (
+          <TelaAgenda tarefas={tarefas} onMudarTarefas={mudarTarefas} clientes={clientes} financeiroPorCliente={financeiroPorCliente} sistemasPorCliente={sistemasPorCliente} pedidosPendentes={pedidosPendentes} onMudouPendentes={setPedidosPendentes} abaInicial={tela.aba || "tarefas"} onAbrirCliente={abrirCliente} onVoltar={() => setTela({ nome: "home" })} />
         ) : tela.nome === "leads" ? (
           <TelaLeads clientes={clientes} onMudouNovos={setLeadsNovos} onConverter={(lead) => setTela({ nome: "novo", prefill: clienteDoLead(lead) })} onVoltar={() => setTela({ nome: "home" })} />
         ) : tela.nome === "novo" ? (
