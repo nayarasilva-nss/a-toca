@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { TituloSecao } from "../componentes/enraizar.jsx";
 import { BotaoPrimario, InputField } from "../componentes/ui.jsx";
+import { linkWhatsApp } from "../nucleo/contato.js";
 
 // Página pública /pedir?c=CÓDIGO: quem trabalha com a Nay manda um pedido, que cai na caixa de entrada da Agenda.
 
@@ -49,8 +50,11 @@ export function PaginaPedir() {
   if (fase === "enviado") {
     return (
       <Moldura>
-        <TituloSecao rotulo="Recebido" titulo="Anotado." descricao="Seu pedido entrou na lista da Nayara. Ela responde assim que fizer a triagem." />
-        <button className="enz-link" style={{ marginTop: 24 }} onClick={() => { setD({ nome: d.nome, pedido: "", prazo: "", prioridade: "normal", contato: d.contato, site: "" }); setFase("pronto"); }}>mandar outro pedido</button>
+        <TituloSecao rotulo="Recebido" titulo="Anotado." descricao="Seu pedido entrou na lista da Nayara. Se for urgente ou você quiser garantir que ela viu, avise pelo WhatsApp com um toque: a mensagem já vai pronta." />
+        <div className="flex items-center gap-4 flex-wrap" style={{ marginTop: 24 }}>
+          <a className="enz-botao enz-botao-primario" href={linkWhatsApp(`Oi, Nayara! Mandei um pedido pelo seu link${d.prazo ? ` (para ${d.prazo.split("-").reverse().join("/")})` : ""}${d.prioridade === "urgente" ? ", urgente" : ""}: ${d.pedido}`)} target="_blank" rel="noreferrer">Avisar no WhatsApp</a>
+          <button className="enz-link" onClick={() => { setD({ nome: d.nome, pedido: "", prazo: "", prioridade: "normal", contato: d.contato, site: "" }); setFase("pronto"); }}>mandar outro pedido</button>
+        </div>
       </Moldura>
     );
   }

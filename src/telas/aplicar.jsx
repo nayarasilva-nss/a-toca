@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { linkWhatsApp } from "../nucleo/contato.js";
 
 // Página pública /aplicar: o formulário "Aplicação para diagnóstico" do site, falando com /api/leads.
 // Abre sozinha (link) ou dentro do site (iframe com ?embed=1). Visual segue o site: azul-marinho, creme, Montserrat e Playfair.
@@ -93,7 +94,8 @@ export function PaginaAplicar() {
           <div className="ap-ok">
             <div className="ap-rotulo">Recebido</div>
             <h1 className="ap-titulo">Obrigada pela confiança.</h1>
-            <p>Em até dois dias úteis entro em contato pelo WhatsApp para marcar a conversa.</p>
+            <p>Em até dois dias úteis entro em contato pelo WhatsApp para marcar a conversa. Se preferir, me chame agora: a mensagem já vai pronta.</p>
+            <a className="ap-botao" style={{ marginTop: 22 }} href={linkWhatsApp(`Oi, Nayara! Acabei de enviar minha aplicação para o diagnóstico pelo site. Sou ${d.nome}${d.negocio ? `, do ${d.negocio}` : ""}.`)} target="_blank" rel="noreferrer">Falar no WhatsApp</a>
           </div>
         ) : (
           <>
