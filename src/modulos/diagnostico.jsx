@@ -3,6 +3,7 @@ import { ESCALA_DIAG, FRAMEWORK_DIAG, chaveNota, percentualArea } from "../ia/di
 import { emLinhasDoc } from "./documentos.jsx";
 import { RodapeImpressao } from "./tabela.jsx";
 import { CORES, uid } from "../nucleo/base.jsx";
+import { NIVEL_AUTODIAG, autodiagVisto, comparativoAutodiagnostico, leituraDistancia } from "../nucleo/autodiagnostico.jsx";
 
 // ─── Módulo: Diagnóstico de Maturidade ──────────────────────────
 
@@ -80,6 +81,48 @@ export function RadarMaturidade({ notas, tamanho, framework: fw }) {
   );
 }
 
+export function ComparativoAutodiagnostico({ autodiag, notas, framework: fw, compacto = false }) {
+  if (!autodiagVisto(autodiag)) return null;
+  const c = comparativoAutodiagnostico(autodiag, notas, fw || FRAMEWORK_DIAG);
+  const temRaiox = c.geralRaiox !== null;
+  const Barra = ({ pct, cor }) => (
+    <div style={{ height: 6, background: "var(--linha)", borderRadius: 999, overflow: "hidden" }}>
+      <div style={{ width: `${pct === null ? 0 : pct}%`, height: "100%", background: cor, borderRadius: 999 }} />
+    </div>
+  );
+  return (
+    <div className="enz-card" style={{ marginBottom: 20, background: "var(--fundo-recuo)" }}>
+      <div className="flex items-baseline justify-between gap-3 flex-wrap" style={{ marginBottom: 6 }}>
+        <span className="enz-rotulo">Autodiagnóstico × Raio-X</span>
+        <span className="enz-nota">{autodiag.em ? `respondido no site em ${autodiag.em}` : "respondido no site"}</span>
+      </div>
+      <div style={{ fontFamily: "var(--font-display)", fontSize: compacto ? 18 : 21, lineHeight: 1.3, marginBottom: 12 }}>
+        {temRaiox
+          ? <>Na visão do dono, <strong>{autodiag.indice}%</strong> do negócio depende dele. Pelo Raio-X, <strong>{100 - c.geralRaiox}%</strong>. {(() => { const t = leituraDistancia(c.geralDiff); return t.charAt(0).toUpperCase() + t.slice(1); })()}.</>
+          : <>Na visão do dono, <strong>{autodiag.indice}%</strong> do negócio depende dele. Avalie os critérios abaixo para ver a distância entre o que ele vê e o que você encontrou.</>}
+      </div>
+      <div className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+        {c.linhas.map((l) => (
+          <div key={l.area}>
+            <div className="flex justify-between items-baseline gap-2" style={{ fontSize: 13, marginBottom: 4 }}>
+              <span style={{ fontFamily: "var(--font-display)", fontSize: 16 }}>{l.area}</span>
+              {l.diff !== null && <span style={{ fontSize: 11.5, letterSpacing: ".08em", textTransform: "uppercase", color: Math.abs(l.diff) >= 20 ? "var(--alerta)" : "var(--tinta-musgo)" }}>{l.diff > 0 ? `+${l.diff}` : l.diff} pts</span>}
+            </div>
+            <div className="grid gap-1" style={{ gridTemplateColumns: "72px 1fr 44px", alignItems: "center", fontSize: 12 }}>
+              <span style={{ color: "var(--tinta-musgo)" }}>dono</span><Barra pct={l.dono} cor="var(--ouro)" /><span style={{ textAlign: "right" }}>{l.dono === null ? "—" : `${l.dono}%`}</span>
+              <span style={{ color: "var(--tinta-musgo)" }}>Raio-X</span><Barra pct={l.raiox} cor={l.raiox !== null && l.raiox < 50 ? "var(--erro)" : "var(--sucesso)"} /><span style={{ textAlign: "right" }}>{l.raiox === null ? "—" : `${l.raiox}%`}</span>
+            </div>
+            {!compacto && <div className="enz-nota" style={{ marginTop: 3 }}>{l.nivelDono || NIVEL_AUTODIAG(l.dono)}{l.diff !== null ? ` · ${leituraDistancia(l.diff)}` : ""}</div>}
+          </div>
+        ))}
+      </div>
+      {temRaiox && c.maiorDistancia && Math.abs(c.maiorDistancia.diff) >= 20 && (
+        <p className="enz-nota" style={{ marginTop: 12 }}>maior distância em <strong>{c.maiorDistancia.area}</strong>: {leituraDistancia(c.maiorDistancia.diff)}. vale abrir essa conversa na devolutiva.</p>
+      )}
+    </div>
+  );
+}
+
 export function ListaDiagnosticos({ cliente, diagnosticos, titulo, subtitulo, framework: fw, onAbrir, onNovo, onReavaliar, onVoltar }) {
   const FR = fw || FRAMEWORK_DIAG;
   return (
@@ -94,6 +137,7 @@ export function ListaDiagnosticos({ cliente, diagnosticos, titulo, subtitulo, fr
       <p className="enz-titulo-descricao" style={{ marginTop: 0, marginBottom: 24 }}>
         {subtitulo || "A maturidade do negócio em cada área. Avalie 6 áreas e 24 critérios; refaça ao longo do projeto — cada diagnóstico fica datado, e a comparação vira o antes e depois da consultoria."}
       </p>
+      <ComparativoAutodiagnostico autodiag={cliente.autodiagnostico} notas={diagnosticos.length ? diagnosticos[diagnosticos.length - 1].notas : null} framework={FR} compacto />
       {diagnosticos.length === 0 ? (
         <div className="enz-card enz-card-vazado" style={{ padding: "28px 0" }}>
           <p className="enz-nota" style={{ fontSize: 14 }}>
@@ -179,6 +223,7 @@ export function EditorDiagnostico({ cliente, diag, titulo, framework: fw, gerand
 
         {!gerando && (
           <>
+            <ComparativoAutodiagnostico autodiag={cliente.autodiagnostico} notas={diag.notas} framework={FR} />
             {FR.map((a, aIdx) => {
               const pct = percentualArea(diag.notas, aIdx, FR);
               return (

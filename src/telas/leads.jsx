@@ -18,7 +18,7 @@ export function clienteDoLead(lead) {
   const contato = [lead.nome, lead.whatsapp && `WhatsApp ${lead.whatsapp}`, lead.email].filter(Boolean).join(" · ");
   const diag = lead.diagnostico && lead.diagnostico.areas ? `Autodiagnóstico do site: ${lead.diagnostico.indice}% do negócio depende do dono. Por área: ${lead.diagnostico.areas.map((a) => `${a.area} ${a.pct}% (${a.nivel})`).join("; ")}.` : "";
   const contexto = [`Veio pelo ${lead.origem === "autodiagnostico" ? "autodiagnóstico do site" : "site"}${quando ? ` em ${quando}` : ""}. Contato: ${contato}.`, lead.funcionarios && `Funcionários: ${lead.funcionarios}.`, lead.interesse && `Interesse: ${lead.interesse}.`, lead.dor && `Maior dor, nas palavras da pessoa: "${lead.dor}"`, diag].filter(Boolean).join("\n");
-  const base = { contato: { nome: lead.nome, whatsapp: lead.whatsapp, email: lead.email }, contexto, leadId: lead.id };
+  const base = { contato: { nome: lead.nome, whatsapp: lead.whatsapp, email: lead.email }, contexto, leadId: lead.id, ...(lead.diagnostico && lead.diagnostico.areas ? { autodiagnostico: { indice: lead.diagnostico.indice, areas: lead.diagnostico.areas, em: quando } } : {}) };
   if (lead.interesse === "Mentoria") return { ...base, tipo: "pessoa", negocio: lead.nome, segmento: lead.negocio || "", servicos: { consultoria: false, mentoria: true, treinamentos: false, sistemas: false } };
   const servicos = { consultoria: true, mentoria: false, treinamentos: false, sistemas: false };
   if (lead.interesse === "Sistemas personalizados") Object.assign(servicos, { consultoria: false, sistemas: true });

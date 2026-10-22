@@ -156,7 +156,7 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
         : semCrono === 0
           ? "Projeto ainda não iniciado"
           : `Semana ${semCrono}${gestao.duracaoSemanas ? ` de ${gestao.duracaoSemanas}` : ""}${atrasadasCrono ? ` · ${atrasadasCrono} atrasada${atrasadasCrono > 1 ? "s" : ""}` : ""}`,
-    diagnosticos: totalDiagnosticos > 0 ? `${totalDiagnosticos} diagnóstico${totalDiagnosticos > 1 ? "s" : ""}` : "Ainda não avaliado",
+    diagnosticos: totalDiagnosticos > 0 ? `${totalDiagnosticos} diagnóstico${totalDiagnosticos > 1 ? "s" : ""}${cliente.autodiagnostico ? " · comparado com o autodiagnóstico" : ""}` : cliente.autodiagnostico ? `Autodiagnóstico do site: ${cliente.autodiagnostico.indice}% depende do dono — faça o Raio-X para comparar` : "Ainda não avaliado",
     propostas: contratoStatus === "assinado" ? "Contrato assinado" : contratoStatus === "enviado" ? "Contrato enviado para assinatura" : contratoStatus === "rascunho" ? "Contrato em rascunho — revise e envie" : contratoStatus === "aceita-sem-contrato" ? "Proposta aceita — gere o contrato" : totalPropostas > 0 ? `${totalPropostas} proposta${totalPropostas > 1 ? "s" : ""}` : "Nenhuma proposta ainda",
     temperamentos: ehPessoa
       ? (temperamentoMentorado && TEMPERAMENTOS[temperamentoMentorado] ? `${TEMPERAMENTOS[temperamentoMentorado].rotulo}${totalPessoas > 1 ? ` · entorno: ${totalPessoas - 1}` : ""}` : "Ainda não classificado")

@@ -1,4 +1,5 @@
 import { chamarIA, extrairJSON } from "./base.jsx";
+import { resumoAutodiagParaIA } from "../nucleo/autodiagnostico.jsx";
 import { metaFoco, PROMPT_SEM_FOCO } from "../nucleo/focos.jsx";
 import { resumoCampo } from "./campo.jsx";
 import { ESCOLA_LIDERANCA, ESCOLA_TEMPERAMENTOS, TEMPERAMENTOS } from "./documentos.jsx";
@@ -189,8 +190,10 @@ ${evidencias ? `EVIDÊNCIAS DE CAMPO (observação direta — cite-as na leitura
 DIAGNÓSTICO
 ${linhas}
 
+${resumoAutodiagParaIA(cliente.autodiagnostico, notas)}
+
 Responda APENAS com JSON compacto de uma linha:
-{"le":"leitura geral honesta do estágio do negócio (3-5 frases, sem suavizar nem dramatizar)","cr":["2 a 4 pontos críticos — o que mais trava o negócio hoje, citando as áreas"],"pr":["3 a 5 prioridades de ação em ordem de ataque, práticas e específicas"]}
+{"le":"leitura geral honesta do estágio do negócio (3-5 frases, sem suavizar nem dramatizar; se houver autodiagnóstico do dono, uma frase sobre a distância entre como ele se vê e o que o Raio-X mostra)","cr":["2 a 4 pontos críticos — o que mais trava o negócio hoje, citando as áreas"],"pr":["3 a 5 prioridades de ação em ordem de ataque, práticas e específicas"]}
 Sem markdown, sem texto fora do JSON.`;
 
   const texto = await chamarIA(prompt);
