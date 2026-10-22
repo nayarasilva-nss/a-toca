@@ -31,15 +31,27 @@ async function db() {
       origem TEXT NOT NULL DEFAULT '',
       status TEXT NOT NULL DEFAULT 'novo',
       obs TEXT NOT NULL DEFAULT '',
-      cliente_id TEXT
+      cliente_id TEXT,
+      diagnostico TEXT NOT NULL DEFAULT ''
     )`;
+    await sql`ALTER TABLE leads ADD COLUMN IF NOT EXISTS diagnostico TEXT NOT NULL DEFAULT ''`;
     tabelaPronta = true;
   }
   return sql;
 }
 
 const texto = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
-const publico = (l) => ({ id: l.id, criadoEm: l.criado_em, nome: l.nome, whatsapp: l.whatsapp, email: l.email, negocio: l.negocio, funcionarios: l.funcionarios, interesse: l.interesse, dor: l.dor, origem: l.origem, status: l.status, obs: l.obs, clienteId: l.cliente_id });
+const lerDiag = (t) => { try { return t ? JSON.parse(t) : null; } catch { return null; } };
+const publico = (l) => ({ id: l.id, criadoEm: l.criado_em, nome: l.nome, whatsapp: l.whatsapp, email: l.email, negocio: l.negocio, funcionarios: l.funcionarios, interesse: l.interesse, dor: l.dor, origem: l.origem, status: l.status, obs: l.obs, clienteId: l.cliente_id, diagnostico: lerDiag(l.diagnostico) });
+
+// resultado do autodiagnóstico do site: { indice: 0-100, areas: [{ area, nota, max, pct, nivel }] }
+function limparDiagnostico(d) {
+  if (!d || typeof d !== 'object' || !Array.isArray(d.areas) || !d.areas.length || d.areas.length > 12) return '';
+  const num = (v, max) => Math.max(0, Math.min(max, Math.round(Number(v) || 0)));
+  const areas = d.areas.slice(0, 12).map((a) => ({ area: texto(a && a.area, 60), nota: num(a && a.nota, 100), max: num(a && a.max, 100), pct: num(a && a.pct, 100), nivel: texto(a && a.nivel, 40) })).filter((a) => a.area);
+  if (!areas.length) return '';
+  return JSON.stringify({ indice: num(d.indice, 100), areas });
+}
 
 function cors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -83,10 +95,11 @@ export default async (req, res) => {
         id: novoId(), nome, whatsapp, email,
         negocio: texto(b.negocio, 200), funcionarios: texto(b.funcionarios, 40), interesse: texto(b.interesse, 60),
         dor: texto(b.dor, 2000), origem: texto(b.origem, 80) || 'site',
+        diagnostico: limparDiagnostico(b.diagnostico),
       };
-      await sql`INSERT INTO leads (id, nome, whatsapp, email, negocio, funcionarios, interesse, dor, origem)
-                VALUES (${lead.id}, ${lead.nome}, ${lead.whatsapp}, ${lead.email}, ${lead.negocio}, ${lead.funcionarios}, ${lead.interesse}, ${lead.dor}, ${lead.origem})`;
-      const aviso = await enviarWhatsApp(textoLeadNovo(lead));
+      await sql`INSERT INTO leads (id, nome, whatsapp, email, negocio, funcionarios, interesse, dor, origem, diagnostico)
+                VALUES (${lead.id}, ${lead.nome}, ${lead.whatsapp}, ${lead.email}, ${lead.negocio}, ${lead.funcionarios}, ${lead.interesse}, ${lead.dor}, ${lead.origem}, ${lead.diagnostico})`;
+      const aviso = await enviarWhatsApp(textoLeadNovo({ ...lead, diagnostico: lerDiag(lead.diagnostico) }));
       if (!aviso.ok) console.warn('leads: aviso no WhatsApp não enviado —', aviso.motivo);
       return res.status(200).json({ ok: true });
     }

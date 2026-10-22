@@ -8,9 +8,15 @@ export function configurado() {
   return !!(process.env.WHATSAPP_NUMERO && process.env.CALLMEBOT_APIKEY);
 }
 
+function linhaDiagnostico(d) {
+  if (!d || !Array.isArray(d.areas) || !d.areas.length) return null;
+  const fracas = [...d.areas].sort((a, b) => a.pct - b.pct).slice(0, 2).map((a) => `${a.area} ${a.pct}%`);
+  return `Autodiagnóstico: ${d.indice}% depende do dono · mais fracas: ${fracas.join(', ')}`;
+}
+
 export function textoLeadNovo(lead) {
   const linhas = [
-    '🌱 Novo lead pelo site',
+    lead.origem === 'autodiagnostico' ? '🌱 Novo lead pelo autodiagnóstico' : '🌱 Novo lead pelo site',
     `*${lead.nome}*`,
     lead.whatsapp && `WhatsApp: ${lead.whatsapp}`,
     lead.email && `E-mail: ${lead.email}`,
@@ -18,6 +24,7 @@ export function textoLeadNovo(lead) {
     lead.funcionarios && `Funcionários: ${lead.funcionarios}`,
     lead.interesse && `Interesse: ${lead.interesse}`,
     lead.dor && `Dor: "${lead.dor.length > 300 ? lead.dor.slice(0, 300) + '…' : lead.dor}"`,
+    linhaDiagnostico(lead.diagnostico),
     '',
     `Ver no app: ${URL_APP}`,
   ];

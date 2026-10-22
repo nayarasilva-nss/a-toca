@@ -16,7 +16,8 @@ export const URL_APP = "https://enraizar.vercel.app";
 export function clienteDoLead(lead) {
   const quando = lead.criadoEm ? new Date(lead.criadoEm).toLocaleDateString("pt-BR") : "";
   const contato = [lead.nome, lead.whatsapp && `WhatsApp ${lead.whatsapp}`, lead.email].filter(Boolean).join(" · ");
-  const contexto = [`Veio pelo site${quando ? ` em ${quando}` : ""}. Contato: ${contato}.`, lead.funcionarios && `Funcionários: ${lead.funcionarios}.`, lead.interesse && `Interesse: ${lead.interesse}.`, lead.dor && `Maior dor, nas palavras da pessoa: "${lead.dor}"`].filter(Boolean).join("\n");
+  const diag = lead.diagnostico && lead.diagnostico.areas ? `Autodiagnóstico do site: ${lead.diagnostico.indice}% do negócio depende do dono. Por área: ${lead.diagnostico.areas.map((a) => `${a.area} ${a.pct}% (${a.nivel})`).join("; ")}.` : "";
+  const contexto = [`Veio pelo ${lead.origem === "autodiagnostico" ? "autodiagnóstico do site" : "site"}${quando ? ` em ${quando}` : ""}. Contato: ${contato}.`, lead.funcionarios && `Funcionários: ${lead.funcionarios}.`, lead.interesse && `Interesse: ${lead.interesse}.`, lead.dor && `Maior dor, nas palavras da pessoa: "${lead.dor}"`, diag].filter(Boolean).join("\n");
   const base = { contato: { nome: lead.nome, whatsapp: lead.whatsapp, email: lead.email }, contexto, leadId: lead.id };
   if (lead.interesse === "Mentoria") return { ...base, tipo: "pessoa", negocio: lead.nome, segmento: lead.negocio || "", servicos: { consultoria: false, mentoria: true, treinamentos: false, sistemas: false } };
   const servicos = { consultoria: true, mentoria: false, treinamentos: false, sistemas: false };
@@ -76,6 +77,25 @@ function AvisoWhatsApp() {
   );
 }
 
+function Diagnostico({ d }) {
+  return (
+    <div style={{ marginTop: 12, padding: "12px 14px", background: "var(--fundo-recuo)", borderRadius: 8 }}>
+      <div className="flex items-baseline justify-between gap-2 flex-wrap" style={{ marginBottom: 8 }}>
+        <span className="enz-rotulo">Autodiagnóstico</span>
+        <span style={{ fontFamily: "var(--font-display)", fontSize: 18 }}>{d.indice}% depende do dono</span>
+      </div>
+      <div className="grid gap-x-6 gap-y-2 sm:grid-cols-2">
+        {d.areas.map((a) => (
+          <div key={a.area}>
+            <div className="flex justify-between" style={{ fontSize: 12.5, marginBottom: 3 }}><span>{a.area}</span><span style={{ color: a.pct < 34 ? "var(--erro)" : "var(--tinta-musgo)" }}>{a.pct}% · {a.nivel}</span></div>
+            <div style={{ height: 5, background: "var(--linha)", borderRadius: 999 }}><div style={{ width: `${a.pct}%`, height: "100%", background: a.pct < 34 ? "var(--erro)" : "var(--ouro)", borderRadius: 999 }} /></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function LinhaLead({ lead, onMudar, onConverter, onExcluir, clienteNome }) {
   const [obs, setObs] = useState(lead.obs || "");
   const st = STATUS_LEAD[lead.status] || STATUS_LEAD.novo;
@@ -99,8 +119,9 @@ function LinhaLead({ lead, onMudar, onConverter, onExcluir, clienteNome }) {
       <div className="flex gap-4 flex-wrap" style={{ marginTop: 10, fontSize: 13.5 }}>
         {wa && <a className="enz-link" href={wa} target="_blank" rel="noreferrer">WhatsApp {lead.whatsapp}</a>}
         {lead.email && <a className="enz-link" href={`mailto:${lead.email}`}>{lead.email}</a>}
-        <span className="enz-nota">{quando}{lead.origem && lead.origem !== "site" ? ` · origem: ${lead.origem}` : ""}</span>
+        <span className="enz-nota">{quando}{lead.origem === "autodiagnostico" ? " · veio pelo autodiagnóstico" : lead.origem && lead.origem !== "site" ? ` · origem: ${lead.origem}` : ""}</span>
       </div>
+      {lead.diagnostico && lead.diagnostico.areas && <Diagnostico d={lead.diagnostico} />}
       {lead.dor && <blockquote style={{ margin: "12px 0 0", padding: "10px 14px", borderLeft: "2px solid var(--ouro)", fontSize: 14, lineHeight: 1.6, fontStyle: "italic", background: "var(--fundo-recuo)" }}>{lead.dor}</blockquote>}
       <div style={{ marginTop: 12 }}>
         <span className="enz-rotulo" style={{ marginBottom: 6 }}>Anotações</span>
