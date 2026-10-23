@@ -20,6 +20,24 @@ function Tile({ rotulo, valor, cor }) {
   );
 }
 
+// parcela de implantação com valor e vencimento editáveis (salva ao sair do campo)
+function ParcelaImplantacao({ p, onMudar }) {
+  const [valor, setValor] = useState(p.valor || "");
+  const [venc, setVenc] = useState(p.vencimento || "");
+  useEffect(() => { setValor(p.valor || ""); setVenc(p.vencimento || ""); }, [p.valor, p.vencimento]);
+  const atrasada = !p.pago && p.vencimento && (() => { const [d, m, a] = p.vencimento.split("/").map(Number); const dt = new Date(a, m - 1, d); const h = new Date(); h.setHours(0, 0, 0, 0); return dt < h; })();
+  return (
+    <div className="flex items-center gap-2 flex-wrap" style={{ padding: "6px 0", borderTop: "1px solid var(--linha)", fontSize: 13.5, opacity: p.pago ? 0.7 : 1 }}>
+      <span style={{ color: p.pago ? "var(--sucesso)" : atrasada ? "var(--erro)" : "var(--alerta)" }}>●</span>
+      <span style={{ flex: "1 1 220px" }}>{p.descricao.split(" — ")[0]}</span>
+      <input className="enz-input" style={{ width: 120, padding: "4px 8px", fontSize: 13 }} value={valor} onChange={(e) => setValor(e.target.value)} onBlur={() => valor !== (p.valor || "") && onMudar({ valor })} title="valor" />
+      <input className="enz-input" style={{ width: 120, padding: "4px 8px", fontSize: 13 }} value={venc} onChange={(e) => setVenc(e.target.value)} onBlur={() => venc !== (p.vencimento || "") && onMudar({ vencimento: venc })} placeholder="dd/mm/aaaa" title="vencimento" />
+      {p.pago ? <span className="enz-nota">paga{p.pagoEm ? ` em ${p.pagoEm}` : ""} · <button className="enz-link" style={{ fontSize: 13 }} onClick={() => onMudar({ pago: false, pagoEm: "" })}>desfazer</button></span>
+        : <button className="enz-link" style={{ fontSize: 13 }} onClick={() => onMudar({ pago: true, pagoEm: dataHoje() })}>marcar paga</button>}
+    </div>
+  );
+}
+
 function Linha({ l, pix, onParcela, onSistema, onContato, onAbrirCliente }) {
   const [abrir, setAbrir] = useState(false);
   const [valor, setValor] = useState(l.sistema.mensalidade || "");
@@ -64,9 +82,9 @@ function Linha({ l, pix, onParcela, onSistema, onContato, onAbrirCliente }) {
         </div>
       )}
       {l.implantacao && l.implantacao.total > 0 && (
-        <div className="enz-nota" style={{ marginTop: 10 }}>
-          implantação {formatarBR(l.implantacao.total)}: {l.implantacao.geradas ? `${formatarBR(l.implantacao.recebido)} recebidos · ${formatarBR(l.implantacao.aberto)} em aberto` : "parcelas ainda não lançadas no Financeiro do cliente"}
-          {l.implantacao.parcelas.filter((p) => !p.pago).map((p) => <span key={p.id}> · <button className="enz-link" style={{ fontSize: 13 }} onClick={() => onParcela(l.clienteId, p.id, { pago: true, pagoEm: dataHoje() })}>marcar paga: {p.descricao.split(" — ")[0]}{p.vencimento ? ` (${p.vencimento})` : ""}</button></span>)}
+        <div style={{ marginTop: 12 }}>
+          <div className="enz-nota">implantação {formatarBR(l.implantacao.total)}: {l.implantacao.geradas ? `${formatarBR(l.implantacao.recebido)} recebidos · ${formatarBR(l.implantacao.aberto)} em aberto` : "parcelas ainda não lançadas — lance no Financeiro do cliente"}</div>
+          {l.implantacao.parcelas.map((p) => <ParcelaImplantacao key={p.id} p={p} onMudar={(campos) => onParcela(l.clienteId, p.id, campos)} />)}
         </div>
       )}
       <div className="flex items-center gap-1 flex-wrap" style={{ marginTop: 12 }} title="últimos seis meses">
