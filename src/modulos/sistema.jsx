@@ -273,10 +273,6 @@ export function ModuloSistema({ cliente, sistema, totalSistemas = 1, propostaAce
               </select>
             </div>
           </div>
-          <div className="enz-campo">
-            <label className="enz-rotulo">Briefing — o que o cliente precisa resolver</label>
-            <textarea className="enz-input" value={sistema.briefing} onChange={(e) => set("briefing")(e.target.value)} style={{ minHeight: 110 }} placeholder="o problema de hoje, quem usa, o que já existe (planilha, outro sistema), o que precisa sair funcionando" />
-          </div>
           <div className="grid sm:grid-cols-3 gap-x-4">
             <InputField label="Stack / base" value={sistema.stack} onChange={set("stack")} placeholder="Next.js + Supabase + Vercel" />
             <InputField label="Prazo combinado (semanas)" value={sistema.prazoSemanas} onChange={set("prazoSemanas")} placeholder="deixe vazio para usar a estimativa" />
