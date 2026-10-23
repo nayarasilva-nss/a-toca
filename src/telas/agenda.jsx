@@ -130,7 +130,7 @@ function Calendario({ tarefas, eventos, hoje, diaSelecionado, onSelecionar }) {
               {info && (
                 <div style={{ marginTop: 4, display: "grid", gap: 2 }}>
                   {info.tarefas.slice(0, 2).map((t) => <div key={t.id} style={{ fontSize: 11.5, lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: t.prioridade === "urgente" ? "var(--erro)" : "var(--tinta)" }}>• {t.titulo}</div>)}
-                  {info.eventos.slice(0, 2 - Math.min(2, info.tarefas.length)).map((e) => <div key={e.id} style={{ fontSize: 11.5, lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "var(--tinta-salvia)" }}>◦ {e.titulo}</div>)}
+                  {info.eventos.slice(0, 2 - Math.min(2, info.tarefas.length)).map((e) => <div key={e.id} style={{ fontSize: 11.5, lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: e.tipo === "google" ? "var(--info)" : "var(--tinta-salvia)" }}>◦ {e.hora ? e.hora + " " : ""}{e.titulo}</div>)}
                   {n > 2 && <div className="enz-nota" style={{ fontSize: 11 }}>+{n - 2}</div>}
                 </div>
               )}
@@ -230,6 +230,52 @@ function Pedidos({ onAceitar, onMudouPendentes }) {
   );
 }
 
+// ── Google Agenda ────────────────────────────────────────────────
+function GoogleAgenda({ estado, onSalvou }) {
+  const [cfg, setCfg] = useState(null);
+  const [url, setUrl] = useState("");
+  const [msg, setMsg] = useState(null);
+  const [ocupado, setOcupado] = useState(false);
+  const [copiado, setCopiado] = useState(false);
+  useEffect(() => { fetch("/api/agenda").then((r) => (r.ok ? r.json() : null)).then((j) => { if (j) { setCfg(j); setUrl(j.googleUrl || ""); } }).catch(() => {}); }, []);
+  const feed = cfg && cfg.icsToken ? `${URL_APP}/api/agenda?ics=${cfg.icsToken}` : "";
+  const salvar = async () => {
+    setOcupado(true); setMsg(null);
+    try {
+      const r = await fetch("/api/agenda", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ googleUrl: url.trim() }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || `HTTP ${r.status}`);
+      const g = await (await fetch("/api/agenda?google=1")).json();
+      onSalvou(g);
+      setMsg(g.erro ? `salvo, mas não consegui ler: ${g.erro}` : url.trim() ? `conectado: ${g.eventos.length} compromisso${g.eventos.length === 1 ? "" : "s"} nos próximos 3 meses.` : "desconectado.");
+    } catch (e) { setMsg(`não deu: ${e.message}`); }
+    setOcupado(false);
+  };
+  return (
+    <Card rotulo="Google Agenda" titulo="Os dois calendários num lugar só." subtitulo="sem login do Google: cada lado assina o calendário do outro por um link. o Google atualiza o lado dele a cada algumas horas." style={{ marginTop: 32 }}>
+      <div style={{ marginBottom: 18 }}>
+        <span className="enz-rotulo" style={{ marginBottom: 6 }}>1 · Ver a Google Agenda aqui</span>
+        <p className="enz-nota" style={{ marginBottom: 8 }}>na Google Agenda (computador): Configurações → o seu calendário → "Integrar agenda" → copie o <strong>"Endereço secreto no formato iCal"</strong> e cole abaixo.</p>
+        <div className="flex gap-2 flex-wrap items-center">
+          <input className="enz-input" style={{ flex: "1 1 360px" }} value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://calendar.google.com/calendar/ical/…/basic.ics" />
+          <BotaoContorno onClick={salvar} disabled={ocupado}>{ocupado ? "Lendo…" : url.trim() ? "Salvar e ler" : "Desconectar"}</BotaoContorno>
+        </div>
+        {(msg || estado.erro) && <p className="enz-nota" style={{ marginTop: 6, color: (msg || "").startsWith("não") || (!msg && estado.erro) ? "var(--alerta)" : "var(--sucesso)" }}>{msg || `última leitura falhou: ${estado.erro}`}</p>}
+        {!msg && estado.configurado && !estado.erro && <p className="enz-nota" style={{ marginTop: 6 }}>conectado · {estado.eventos.length} compromisso{estado.eventos.length === 1 ? "" : "s"} lidos para os próximos 3 meses. eles aparecem em azul no calendário e no "Hoje".</p>}
+      </div>
+      <div>
+        <span className="enz-rotulo" style={{ marginBottom: 6 }}>2 · Ver as tarefas do Enraizar na Google Agenda</span>
+        <p className="enz-nota" style={{ marginBottom: 8 }}>na Google Agenda: ao lado de "Outras agendas", "+" → "Por URL" → cole este endereço. aparece um calendário "Enraizar" com tarefas datadas, vencimentos e entregas.</p>
+        <div className="flex gap-2 flex-wrap items-center">
+          <code className="enz-input" style={{ flex: "1 1 360px", fontSize: 12.5, fontFamily: "ui-monospace, Menlo, monospace", wordBreak: "break-all" }}>{feed || "gerando…"}</code>
+          <BotaoContorno onClick={async () => { try { await navigator.clipboard.writeText(feed); setCopiado(true); setTimeout(() => setCopiado(false), 1500); } catch {} }} disabled={!feed}>{copiado ? "copiado ✓" : "Copiar"}</BotaoContorno>
+        </div>
+        <p className="enz-nota" style={{ marginTop: 6 }}>o link é secreto: quem tiver vê a sua agenda. para trocar, <button className="enz-link" style={{ fontSize: 13 }} onClick={async () => { const r = await fetch("/api/agenda", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ novoToken: true }) }); const j = await r.json(); setCfg({ ...cfg, icsToken: j.icsToken }); }}>gere um novo</button> e assine de novo no Google.</p>
+      </div>
+    </Card>
+  );
+}
+
 // ── Tela ─────────────────────────────────────────────────────────
 
 // dispara agora o mesmo resumo que o cron manda às 7h
@@ -254,7 +300,12 @@ export function TelaAgenda({ tarefas, onMudarTarefas, clientes = [], financeiroP
   const hoje = hojeISO();
   const [dia, setDia] = useState(hoje);
   const g = useMemo(() => agruparTarefas(tarefas, hoje), [tarefas, hoje]);
-  const eventos = useMemo(() => eventosDoApp({ clientes, financeiroPorCliente, sistemasPorCliente }), [clientes, financeiroPorCliente, sistemasPorCliente]);
+  const eventosApp = useMemo(() => eventosDoApp({ clientes, financeiroPorCliente, sistemasPorCliente }), [clientes, financeiroPorCliente, sistemasPorCliente]);
+  const [google, setGoogle] = useState({ configurado: false, eventos: [], erro: null });
+  useEffect(() => {
+    fetch("/api/agenda?google=1").then((r) => (r.ok ? r.json() : null)).then((j) => { if (j) setGoogle({ configurado: !!j.configurado, eventos: j.eventos || [], erro: j.erro || null }); }).catch(() => {});
+  }, []);
+  const eventos = useMemo(() => [...eventosApp, ...google.eventos], [eventosApp, google.eventos]);
   const abertas = (tarefas || []).filter((t) => t.status !== "feita").length;
 
   const criar = (t) => onMudarTarefas([...(tarefas || []), t]);
@@ -288,6 +339,16 @@ export function TelaAgenda({ tarefas, onMudarTarefas, clientes = [], financeiroP
         <>
           <NovaTarefa clientes={clientes} onCriar={criar} />
           <Grupo titulo="Atrasadas" itens={g.atrasadas} cor="var(--erro)">{lista(g.atrasadas)}</Grupo>
+          {google.eventos.some((e) => e.data === hoje) && (
+            <section style={{ marginTop: 28 }}>
+              <div className="flex items-baseline gap-3"><span className="enz-rotulo">Na Google Agenda hoje</span></div>
+              {google.eventos.filter((e) => e.data === hoje).map((e) => (
+                <div key={e.id} className="flex items-baseline gap-2 flex-wrap" style={{ padding: "8px 0", borderBottom: "1px solid var(--linha)", fontSize: 14.5 }}>
+                  <span style={{ color: "var(--info)" }}>◦</span>{e.hora && <span style={{ color: "var(--tinta-secundaria)" }}>{e.hora}{e.fim ? `–${e.fim}` : ""}</span>}<span>{e.titulo}</span>{e.local && <span className="enz-nota">{e.local}</span>}
+                </div>
+              ))}
+            </section>
+          )}
           <Grupo titulo="Hoje" itens={g.hoje} vazio="nada para hoje.">{lista(g.hoje)}</Grupo>
           <Grupo titulo="Próximos 7 dias" itens={g.semana}>{lista(g.semana)}</Grupo>
           <Grupo titulo="Depois" itens={g.depois}>{lista(g.depois)}</Grupo>
@@ -306,14 +367,17 @@ export function TelaAgenda({ tarefas, onMudarTarefas, clientes = [], financeiroP
             </div>
             {doDia.eventos.map((e) => (
               <div key={e.id} className="flex items-baseline gap-2 flex-wrap" style={{ padding: "8px 0", borderBottom: "1px solid var(--linha)", fontSize: 14 }}>
-                <span style={{ color: "var(--tinta-salvia)" }}>◦</span><span>{e.titulo}</span>
-                <button className="enz-link" style={{ fontSize: 13 }} onClick={() => onAbrirCliente(e.clienteId)}>{e.cliente}</button>
-                <span className="enz-nota">{e.tipo === "parcela" ? "vencimento" : "sistema"}</span>
+                <span style={{ color: e.tipo === "google" ? "var(--info)" : "var(--tinta-salvia)" }}>◦</span>
+                {e.tipo === "google" && e.hora && <span className="num" style={{ color: "var(--tinta-secundaria)" }}>{e.hora}{e.fim ? `–${e.fim}` : ""}</span>}
+                <span>{e.titulo}</span>
+                {e.clienteId && <button className="enz-link" style={{ fontSize: 13 }} onClick={() => onAbrirCliente(e.clienteId)}>{e.cliente}</button>}
+                <span className="enz-nota">{e.tipo === "google" ? `Google Agenda${e.local ? ` · ${e.local}` : ""}` : e.tipo === "parcela" ? "vencimento" : "sistema"}</span>
               </div>
             ))}
             {lista(doDia.tarefas)}
             <div style={{ marginTop: 16 }}><NovaTarefa clientes={clientes} dataInicial={dia} onCriar={criar} /></div>
           </div>
+          <GoogleAgenda estado={google} onSalvou={(j) => setGoogle({ configurado: !!j.configurado, eventos: j.eventos || [], erro: j.erro || null })} />
         </>
       )}
 
