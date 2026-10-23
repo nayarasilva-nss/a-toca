@@ -1,9 +1,27 @@
+import { useState } from "react";
 import { parseDataBR } from "../ia/cronograma.jsx";
 import { formatarBR, parseValorBR } from "../ia/financeiro.jsx";
 import { CORES, uid } from "../nucleo/base.jsx";
+import { parcelasImplantacao, resumoImplantacao } from "../nucleo/recorrencia.jsx";
 import { HeaderModulo } from "../telas/hub.jsx";
 
 // ─── Módulo: Financeiro ─────────────────────────────────────────
+
+function LancarImplantacao({ sistema, sistemas, financeiro, onLancar }) {
+  const [tipo, setTipo] = useState("50-50");
+  const [n, setN] = useState(3);
+  return (
+    <div className="flex items-center gap-2 flex-wrap" style={{ marginTop: 8 }}>
+      <select className="enz-input" style={{ width: 230, padding: "6px 10px" }} value={tipo} onChange={(e) => setTipo(e.target.value)}>
+        <option value="50-50">50% no aceite + 50% na entrega</option>
+        <option value="iguais">parcelas mensais iguais</option>
+      </select>
+      {tipo === "iguais" && <input className="enz-input" type="number" min={1} max={24} style={{ width: 70, padding: "6px 10px" }} value={n} onChange={(e) => setN(e.target.value)} />}
+      <button className="enz-botao enz-botao-contorno enz-botao-pequeno" onClick={() => onLancar(parcelasImplantacao(sistema, financeiro, sistemas, { tipo, n }))}>Lançar parcelas</button>
+      <span className="enz-nota">depois ajuste valor e data de cada uma na lista abaixo.</span>
+    </div>
+  );
+}
 
 export function ModuloFinanceiro({ cliente, financeiro, propostaAceita, sistemas = [], mensalidadesPendentes = [], onMudar, onVoltar }) {
   const parcelas = financeiro.parcelas || [];
@@ -40,18 +58,12 @@ export function ModuloFinanceiro({ cliente, financeiro, propostaAceita, sistemas
           {cliente.tipo === "pessoa" ? "Parcelas da mentoria, vencimentos e o que já entrou. Uso interno — nada disso aparece para o mentorado." : "Parcelas, vencimentos e o que já entrou. Uso interno — nada disso aparece em documentos do cliente."}
         </p>
 
-        {propostaAceita && parcelas.length === 0 && (
+        {propostaAceita && propostaAceita.tipo !== "sistema" && parcelas.length === 0 && (
           <button
             onClick={() =>
               onMudar({
                 ...financeiro,
-                parcelas: propostaAceita.tipo === "sistema"
-                  ? [
-                      { id: uid(), descricao: `50% no aceite — ${propostaAceita.titulo || propostaAceita.rotulo || "sistema"}`, valor: formatarBR(parseValorBR(propostaAceita.investimento) / 2), vencimento: "", pago: false },
-                      { id: uid(), descricao: `50% na entrega — ${propostaAceita.titulo || propostaAceita.rotulo || "sistema"}`, valor: formatarBR(parseValorBR(propostaAceita.investimento) / 2), vencimento: (sistema && sistema.entregueEm) || "", pago: false, entrega: true },
-                      ...(propostaAceita.mensalidade ? [{ id: uid(), descricao: `Mensalidade 1 — ${propostaAceita.titulo || "sistema"}`, valor: `R$ ${propostaAceita.mensalidade}`, vencimento: "", pago: false }] : []),
-                    ]
-                  : [
+                parcelas: [
                   {
                     id: uid(),
                     descricao: `Contrato — ${propostaAceita.rotulo || `proposta de ${propostaAceita.data}`}`,
@@ -65,13 +77,19 @@ export function ModuloFinanceiro({ cliente, financeiro, propostaAceita, sistemas
             className="mb-4 px-4 py-2 rounded text-sm font-semibold"
             style={{ background: "var(--sucesso-fundo)", color: "var(--sucesso)", border: "1px solid var(--linha-forte)" }}
           >
-            Puxar da proposta aceita ({propostaAceita.investimento || "valor a definir"}) — {propostaAceita.tipo === "sistema" ? "cria 50% aceite, 50% entrega e a primeira mensalidade" : "cria a primeira parcela para você dividir"}
+            Puxar da proposta aceita ({propostaAceita.investimento || "valor a definir"}) — cria a primeira parcela para você dividir
           </button>
         )}
 
-        {sistemas.filter((sistema) => sistema.mensalidadeAtiva || sistema.entregueEm).map((sistema) => { const pend = mensalidadesPendentes.filter((p) => !p.sistemaId || p.sistemaId === sistema.id); return (
+        {sistemas.filter((sistema) => sistema.mensalidadeAtiva || sistema.entregueEm || parseValorBR(sistema.implantacao) > 0).map((sistema) => { const pend = mensalidadesPendentes.filter((p) => !p.sistemaId || p.sistemaId === sistema.id); const imp = resumoImplantacao(sistema, financeiro, sistemas); const novasImp = parcelasImplantacao(sistema, financeiro, sistemas); return (
           <div key={sistema.id} className="mb-4 p-4 rounded-lg" style={{ border: "1px solid var(--linha)" }}>
             <div className="enz-rotulo mb-1">Sistema · {sistema.nome || "sem nome"}</div>
+            {imp.total > 0 && (
+              <div className="text-sm" style={{ marginBottom: 6 }}>
+                Implantação de {formatarBR(imp.total)}{imp.geradas ? ` — ${formatarBR(imp.recebido)} recebidos, ${formatarBR(imp.aberto)} em aberto.` : " — parcelas ainda não lançadas."}
+                {novasImp.length > 0 && <LancarImplantacao sistema={sistema} sistemas={sistemas} financeiro={financeiro} onLancar={(novas) => onMudar({ ...financeiro, parcelas: [...parcelas, ...novas] })} />}
+              </div>
+            )}
             <div className="text-sm">
               {sistema.entregueEm ? `Entregue em ${sistema.entregueEm}. ` : ""}
               {sistema.mensalidadeAtiva ? `Mensalidade ativa de R$ ${sistema.mensalidade}/mês — vence todo dia ${(sistema.entregueEm || sistema.inicio || "").slice(0, 2) || "?"}.` : "Mensalidade ainda não ativada no módulo Sistema."}

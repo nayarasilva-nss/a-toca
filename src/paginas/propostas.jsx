@@ -4,6 +4,7 @@ import { gerarProposta, gerarPropostaSistema } from "../ia/proposta.jsx";
 import { gerarContrato, revisarContrato, tipoContratoDe } from "../ia/contrato.jsx";
 import { contratoVazio } from "../modulos/contrato.jsx";
 import { listaSistemas, sistemaDaProposta } from "../nucleo/sistemas.js";
+import { parseValorBR } from "../ia/financeiro.jsx";
 import { planoDoEscopo, etapasTexto, somaHoras } from "../nucleo/catalogo.jsx";
 import { gerarMetasEngajamento, gerarMetasMentorado } from "../ia/treinamentos.jsx";
 import { EditorProposta, ListaPropostas, propostaVazia } from "../modulos/propostas.jsx";
@@ -104,7 +105,21 @@ export function TelaPropostas({ app }) {
         temSistemas={!!(clienteAtual.servicos || {}).sistemas}
         sistemas={listaSistemas(sistemasPorCliente, clienteAtual.id)}
         onMudarPrecificacao={mudarPrecificacao}
-        onMudar={(nova) => mudarPropostas(clienteAtual.id, propostasAtuais.map((p) => (p.id === nova.id ? nova : p)))}
+        onMudar={async (nova) => {
+          await mudarPropostas(clienteAtual.id, propostasAtuais.map((p) => (p.id === nova.id ? nova : p)));
+          // aceitar uma proposta de sistema leva os valores para o sistema (sem sobrescrever o que já estava preenchido)
+          if (nova.tipo === "sistema" && nova.status === "aceita" && propostaAtual.status !== "aceita") {
+            const lista = listaSistemas(sistemasPorCliente, clienteAtual.id);
+            const sis = sistemaDaProposta(lista, nova);
+            if (sis) {
+              const opcao = nova.opcaoEscolhida && (nova.opcoes || []).find((o) => o.id === nova.opcaoEscolhida);
+              const invest = parseValorBR(opcao ? opcao.investimento : nova.investimento);
+              const mens = opcao ? opcao.mensalidade : nova.mensalidade;
+              const atualizado = { ...sis, implantacao: sis.implantacao || (invest > 0 ? String(invest).replace(".", ",") : ""), mensalidade: sis.mensalidade || mens || "", status: ["levantamento", "proposta"].includes(sis.status) ? "construcao" : sis.status };
+              await salvarColecao("sistemas", clienteAtual.id, lista.map((s) => (s.id === sis.id ? atualizado : s)));
+            }
+          }
+        }}
         onGerar={() => gerarPropostaCliente(clienteAtual, propostaAtual)}
         onGerarMetas={() => gerarMetasCliente(clienteAtual, propostaAtual)}
         contratada={contratada}

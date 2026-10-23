@@ -3,7 +3,7 @@
 const uid = () => Math.random().toString(36).slice(2, 9);
 
 export function sistemaVazio() {
-  return { id: uid(), nome: "", briefing: "", escopo: [], foraEscopo: "", fornecidoCliente: [], stack: "", prazoSemanas: "", inicio: "", entregueEm: "", mensalidade: "", mensalidadeAtiva: false, diaVencimento: "", mensalidadeDesde: "", status: "levantamento", obs: "", registros: [] };
+  return { id: uid(), nome: "", briefing: "", escopo: [], foraEscopo: "", fornecidoCliente: [], stack: "", prazoSemanas: "", inicio: "", entregueEm: "", implantacao: "", mensalidade: "", mensalidadeAtiva: false, diaVencimento: "", mensalidadeDesde: "", status: "levantamento", obs: "", registros: [] };
 }
 
 const temConteudo = (s) => (s.nome || "").trim() || (s.escopo || []).length || (s.briefing || "").trim() || (s.registros || []).length;

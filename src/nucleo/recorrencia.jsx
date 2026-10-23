@@ -1,5 +1,5 @@
 import { parseDataBR } from "../ia/cronograma.jsx";
-import { parseValorBR } from "../ia/financeiro.jsx";
+import { formatarBR, parseValorBR } from "../ia/financeiro.jsx";
 import { uid } from "./base.jsx";
 import { listaSistemas, parcelaDoSistema } from "./sistemas.js";
 
@@ -80,7 +80,8 @@ export function visaoMensalidades({ clientes = [], sistemasPorCliente = {}, fina
     const lista = listaSistemas(sistemasPorCliente, c.id);
     for (const s of lista) {
     const parcelas = ((financeiroPorCliente[c.id] || {}).parcelas || []).filter((p) => p.mes && parcelaDoSistema(p, s, lista));
-    if (!s.mensalidadeAtiva && !parcelas.length) continue;
+    const temImplantacao = parseValorBR(s.implantacao) > 0;
+    if (!s.mensalidadeAtiva && !parcelas.length && !temImplantacao) continue;
     const valor = parseValorBR(s.mensalidade);
     const doMes = parcelas.find((p) => p.mes === mes) || null;
     const historico = meses.map((k) => { const p = parcelas.find((x) => x.mes === k); return { mes: k, status: p ? statusParcela(p, h) : (s.mensalidadeAtiva ? "sem" : "sem"), parcela: p }; });
@@ -93,6 +94,7 @@ export function visaoMensalidades({ clientes = [], sistemasPorCliente = {}, fina
       dia: Number(s.diaVencimento) || (primeiro ? primeiro.getDate() : null), desde: primeiro,
       doMes, statusMes: s.mensalidadeAtiva || doMes ? statusParcela(doMes, h) : "sem", historico, atrasadas, recebido, pagas: parcelas.filter((p) => p.pago).length, proxima,
       faltantes: mensalidadesPendentes(s, { parcelas: (financeiroPorCliente[c.id] || {}).parcelas || [] }, hoje, lista),
+      implantacao: resumoImplantacao(s, financeiroPorCliente[c.id], lista),
     });
     }
   }
@@ -106,6 +108,8 @@ export function visaoMensalidades({ clientes = [], sistemasPorCliente = {}, fina
     atrasado: soma(linhas.flatMap((l) => l.atrasadas.map((p) => parseValorBR(p.valor)))),
     naoGeradas: linhas.filter((l) => l.statusMes === "nao_gerada").length,
     faltantes: soma(linhas.map((l) => l.faltantes.length)),
+    implantacaoAberta: soma(linhas.map((l) => l.implantacao.aberto)),
+    implantacaoRecebida: soma(linhas.map((l) => l.implantacao.recebido)),
   };
   return { linhas: linhas.sort((a, b) => (a.ativa === b.ativa ? a.cliente.localeCompare(b.cliente) : a.ativa ? -1 : 1)), resumo, meses };
 }
@@ -114,4 +118,41 @@ export function textoCobranca(linha, parcela, pix) {
   const nome = (linha.contato && linha.contato.nome) || linha.cliente;
   const mesTxt = parcela && parcela.mes ? new Date(Number(parcela.mes.slice(0, 4)), Number(parcela.mes.slice(5)) - 1, 1).toLocaleDateString("pt-BR", { month: "long", year: "numeric" }) : "";
   return `Oi, ${nome.split(" ")[0]}! Passando para lembrar da mensalidade do ${linha.nomeSistema}${mesTxt ? ` de ${mesTxt}` : ""}: ${parcela ? parcela.valor : "R$ " + linha.sistema.mensalidade}${parcela && parcela.vencimento ? `, vencimento ${parcela.vencimento}` : ""}.${pix ? ` Pix: ${pix}.` : ""} Qualquer coisa, me chama. Obrigada!`;
+}
+
+// ── Implantação: 50% no aceite, 50% na entrega, por sistema ───────
+
+const dataHojeBR = () => dataBR(new Date());
+
+// plano: { tipo: "50-50" } (aceite + entrega) ou { tipo: "iguais", n } (N parcelas mensais iguais a partir de hoje)
+export function parcelasImplantacao(sistema, financeiro, lista = null, plano = { tipo: "50-50" }) {
+  const total = parseValorBR(sistema && sistema.implantacao);
+  if (!sistema || total <= 0) return [];
+  const existentes = (financeiro.parcelas || []).filter((p) => p.implantacao && parcelaDoSistema(p, sistema, lista || [sistema]));
+  if (existentes.length) return [];
+  const nome = sistema.nome || "sistema";
+  const comum = { pago: false, implantacao: true, sistemaId: sistema.id };
+  if (plano && plano.tipo === "iguais") {
+    const n = Math.min(24, Math.max(1, Number(plano.n) || 1));
+    const base = Math.floor((total / n) * 100) / 100;
+    const resto = Math.round((total - base * n) * 100) / 100;
+    const hoje = new Date();
+    return Array.from({ length: n }, (_, i) => {
+      const d = new Date(hoje.getFullYear(), hoje.getMonth() + i, Math.min(hoje.getDate(), 28));
+      return { id: uid(), descricao: `Implantação ${i + 1}/${n} — ${nome}`, valor: formatarBR(i === 0 ? base + resto : base), vencimento: dataBR(d), ...comum };
+    });
+  }
+  const metade = formatarBR(total / 2);
+  return [
+    { id: uid(), descricao: `50% no aceite — ${nome}`, valor: metade, vencimento: dataHojeBR(), ...comum },
+    { id: uid(), descricao: `50% na entrega — ${nome}`, valor: metade, vencimento: sistema.entregueEm || "", entrega: true, ...comum },
+  ];
+}
+
+export function resumoImplantacao(sistema, financeiro, lista = null) {
+  const total = parseValorBR(sistema && sistema.implantacao);
+  const parcelas = ((financeiro && financeiro.parcelas) || []).filter((p) => p.implantacao && parcelaDoSistema(p, sistema, lista || [sistema]));
+  const recebido = parcelas.filter((p) => p.pago).reduce((t, p) => t + parseValorBR(p.valor), 0);
+  const lancado = parcelas.reduce((t, p) => t + parseValorBR(p.valor), 0);
+  return { total, recebido, lancado, aberto: Math.max(0, (lancado || total) - recebido), parcelas, geradas: parcelas.length > 0 };
 }

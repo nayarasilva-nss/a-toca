@@ -34,7 +34,7 @@ function Linha({ l, pix, onParcela, onSistema, onContato, onAbrirCliente }) {
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
           <button className="text-left" style={{ font: "inherit", fontFamily: "var(--font-display)", fontSize: 21, lineHeight: 1.2 }} onClick={() => onAbrirCliente(l.clienteId)}>{l.cliente}</button>
-          <div className="enz-nota" style={{ marginTop: 2 }}>{l.nomeSistema} · {l.ativa ? `${formatarBR(l.valor)} por mês` : "mensalidade pausada"}{l.dia ? ` · vence dia ${l.dia}` : ""}{l.pagas ? ` · ${l.pagas} paga${l.pagas > 1 ? "s" : ""}, ${formatarBR(l.recebido)} recebidos` : ""}</div>
+          <div className="enz-nota" style={{ marginTop: 2 }}>{l.nomeSistema} · {l.ativa ? `${formatarBR(l.valor)} por mês` : l.valor ? "mensalidade ainda não ativada" : "sem mensalidade"}{l.dia ? ` · vence dia ${l.dia}` : ""}{l.pagas ? ` · ${l.pagas} paga${l.pagas > 1 ? "s" : ""}, ${formatarBR(l.recebido)} recebidos` : ""}</div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <span className="enz-selo enz-selo-pequeno" style={{ background: "var(--fundo-recuo)", color: COR[st] }}><span className="enz-ponto" />{STATUS_MES[st]}{l.doMes && l.doMes.pago && l.doMes.pagoEm ? ` em ${l.doMes.pagoEm}` : ""}</span>
@@ -45,6 +45,12 @@ function Linha({ l, pix, onParcela, onSistema, onContato, onAbrirCliente }) {
         </div>
       </div>
 
+      {l.implantacao && l.implantacao.total > 0 && (
+        <div className="enz-nota" style={{ marginTop: 10 }}>
+          implantação {formatarBR(l.implantacao.total)}: {l.implantacao.geradas ? `${formatarBR(l.implantacao.recebido)} recebidos · ${formatarBR(l.implantacao.aberto)} em aberto` : "parcelas ainda não lançadas no Financeiro do cliente"}
+          {l.implantacao.parcelas.filter((p) => !p.pago).map((p) => <span key={p.id}> · <button className="enz-link" style={{ fontSize: 13 }} onClick={() => onParcela(l.clienteId, p.id, { pago: true, pagoEm: dataHoje() })}>marcar paga: {p.descricao.split(" — ")[0]}{p.vencimento ? ` (${p.vencimento})` : ""}</button></span>)}
+        </div>
+      )}
       <div className="flex items-center gap-1 flex-wrap" style={{ marginTop: 12 }} title="últimos seis meses">
         {l.historico.map((h) => (
           <span key={h.mes} title={`${rotuloMes(h.mes)}: ${STATUS_MES[h.status]}`} style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 11.5, color: "var(--tinta-musgo)", marginRight: 8 }}>
@@ -117,11 +123,12 @@ export function TelaMensalidades({ clientes, sistemasPorCliente, financeiroPorCl
         <div style={{ fontFamily: "var(--font-display)", fontSize: 24, textTransform: "capitalize" }}>{rotuloMes(mes)}</div>
         <button className="enz-link" onClick={() => mudarMes(1)}>próximo mês →</button>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-4" style={{ marginTop: 8, borderTop: "1px solid var(--linha)", borderBottom: "1px solid var(--linha)", marginBottom: 24 }}>
-        <Tile rotulo="Previsto" valor={formatarBR(resumo.previsto)} />
-        <Tile rotulo="Recebido" valor={formatarBR(resumo.recebido)} cor="var(--sucesso)" />
+      <div className="grid grid-cols-2 md:grid-cols-5" style={{ marginTop: 8, borderTop: "1px solid var(--linha)", borderBottom: "1px solid var(--linha)", marginBottom: 24 }}>
+        <Tile rotulo="Previsto no mês" valor={formatarBR(resumo.previsto)} />
+        <Tile rotulo="Recebido no mês" valor={formatarBR(resumo.recebido)} cor="var(--sucesso)" />
         <Tile rotulo="Pendente" valor={formatarBR(resumo.pendente)} cor={resumo.pendente ? "var(--alerta)" : undefined} />
         <Tile rotulo="Em atraso (todos os meses)" valor={formatarBR(resumo.atrasado)} cor={resumo.atrasado ? "var(--erro)" : undefined} />
+        <Tile rotulo="Implantações a receber" valor={formatarBR(resumo.implantacaoAberta)} cor={resumo.implantacaoAberta ? "var(--alerta)" : undefined} />
       </div>
       {geradas > 0 && <p className="enz-nota" style={{ marginBottom: 16 }}>{geradas} mensalidade{geradas > 1 ? "s" : ""} gerada{geradas > 1 ? "s" : ""} agora, até o mês atual. Elas também aparecem no Financeiro de cada cliente e no calendário da Agenda.</p>}
 
@@ -148,8 +155,9 @@ export function CardMensalidades({ clientes, sistemasPorCliente, financeiroPorCl
   const pagas = linhas.filter((l) => l.statusMes === "paga").length;
   const pend = linhas.filter((l) => l.statusMes === "pendente" || l.statusMes === "nao_gerada").length;
   const atras = linhas.filter((l) => l.atrasadas.length).length;
+  if (!resumo.ativos) return <Card onClick={onAbrir} rotulo="Mensalidades" titulo={resumo.implantacaoAberta ? `${formatarBR(resumo.implantacaoAberta)} de implantações a receber.` : "Nenhuma mensalidade ativa ainda."} subtitulo={resumo.implantacaoAberta ? "mensalidades começam quando os sistemas forem entregues." : "quando um sistema for entregue, ative a mensalidade no módulo Sistema e acompanhe aqui."} style={{ marginTop: 24 }}><span className="enz-link">ver mensalidades →</span></Card>;
   return (
-    <Card onClick={onAbrir} rotulo="Mensalidades" titulo={`${formatarBR(resumo.mensal)} por mês em ${resumo.ativos} sistema${resumo.ativos > 1 ? "s" : ""}.`} subtitulo={`este mês: ${pagas} paga${pagas === 1 ? "" : "s"} · ${pend} pendente${pend === 1 ? "" : "s"}${atras ? ` · ${atras} cliente${atras > 1 ? "s" : ""} em atraso` : ""}`} style={{ marginTop: 24 }}>
+    <Card onClick={onAbrir} rotulo="Mensalidades" titulo={`${formatarBR(resumo.mensal)} por mês em ${resumo.ativos} sistema${resumo.ativos > 1 ? "s" : ""}${resumo.implantacaoAberta ? ` · ${formatarBR(resumo.implantacaoAberta)} de implantações a receber` : ""}.`} subtitulo={`este mês: ${pagas} paga${pagas === 1 ? "" : "s"} · ${pend} pendente${pend === 1 ? "" : "s"}${atras ? ` · ${atras} cliente${atras > 1 ? "s" : ""} em atraso` : ""}`} style={{ marginTop: 24 }}>
       <span className="enz-link">ver mensalidades →</span>
     </Card>
   );

@@ -230,7 +230,7 @@ export function ModuloSistema({ cliente, sistema, totalSistemas = 1, propostaAce
         <div className="grid gap-3 sm:grid-cols-3" style={{ marginBottom: 32 }}>
           <Card variante="vazado" rotulo="Entregas" titulo={`${entregues} de ${escopo.length}`} subtitulo={`itens do escopo entregues · ${horasTotal} h estimadas`} />
           <Card variante="vazado" rotulo="Do cliente" titulo={pendentes.length ? `${pendentes.length} pendente${pendentes.length > 1 ? "s" : ""}` : "tudo recebido"} subtitulo="material que depende do cliente" />
-          <Card variante="vazado" rotulo="Mensalidade" titulo={sistema.mensalidade ? `R$ ${sistema.mensalidade}/mês` : "—"} subtitulo={sistema.mensalidadeAtiva ? "ativa" : "ainda não iniciada"} />
+          <Card variante="vazado" rotulo="Valores" titulo={sistema.implantacao ? `R$ ${sistema.implantacao}` : "—"} subtitulo={`implantação${sistema.mensalidade ? ` · R$ ${sistema.mensalidade}/mês${sistema.mensalidadeAtiva ? " ativa" : ""}` : ""}`} />
         </div>
 
         <Card rotulo="O sistema" titulo="Identificação">
@@ -279,8 +279,9 @@ export function ModuloSistema({ cliente, sistema, totalSistemas = 1, propostaAce
           </Card>
         </div>
 
-        <Card rotulo="Depois da entrega" titulo="Mensalidade e sustentação." style={{ marginTop: 24 }}>
-          <div className="grid sm:grid-cols-3 gap-x-4 items-end">
+        <Card rotulo="Valores e entrega" titulo="Implantação, mensalidade e sustentação." style={{ marginTop: 24 }}>
+          <div className="grid sm:grid-cols-4 gap-x-4 items-end">
+            <InputField label="Implantação (R$)" value={sistema.implantacao} onChange={set("implantacao")} placeholder="6400" ajuda="50% no aceite, 50% na entrega." />
             <InputField label="Mensalidade (R$)" value={sistema.mensalidade} onChange={set("mensalidade")} placeholder="200" ajuda="hospedagem, manutenção, pequenas alterações." />
             <InputField label="Entregue em (dd/mm/aaaa)" value={sistema.entregueEm} onChange={set("entregueEm")} />
             <label className="enz-campo flex items-center gap-2" style={{ paddingBottom: 24 }}>
@@ -288,7 +289,7 @@ export function ModuloSistema({ cliente, sistema, totalSistemas = 1, propostaAce
               <span>mensalidade ativa</span>
             </label>
           </div>
-          {propostaAceita && <p className="enz-nota">proposta aceita: {propostaAceita.investimento || "valor a definir"}{propostaAceita.mensalidade ? ` + R$ ${propostaAceita.mensalidade}/mês` : ""}.</p>}
+          {propostaAceita && <p className="enz-nota">proposta aceita: {propostaAceita.investimento || "valor a definir"}{propostaAceita.mensalidade ? ` + R$ ${propostaAceita.mensalidade}/mês` : ""}.{!sistema.implantacao && propostaAceita.investimento ? <> <button className="enz-link" style={{ fontSize: 13 }} onClick={() => onMudar({ ...sistema, implantacao: String(parseValorBR(propostaAceita.investimento)).replace(".", ","), mensalidade: sistema.mensalidade || propostaAceita.mensalidade || "" })}>usar estes valores</button></> : null}</p>}
           <div className="enz-campo" style={{ marginTop: 12 }}>
             <label className="enz-rotulo">Observações internas</label>
             <textarea className="enz-input" value={sistema.obs} onChange={(e) => set("obs")(e.target.value)} style={{ minHeight: 80 }} placeholder="decisões, pendências antes de começar, o que não falar com o cliente ainda" />
@@ -310,7 +311,7 @@ export function ListaSistemas({ cliente, sistemas, onAbrir, onNovo, onExcluir, o
           {sistemas.map((s) => {
             const e = s.escopo || []; const ok = e.filter((i) => i.status === "entregue").length;
             return (
-              <Card key={s.id} onClick={() => onAbrir(s.id)} rotulo={ROTULO_STATUS_SISTEMA[s.status] || "em levantamento"} titulo={s.nome || "Sem nome"} subtitulo={[e.length ? `${ok}/${e.length} entregas` : "sem escopo", s.mensalidadeAtiva ? `R$ ${s.mensalidade}/mês` : s.mensalidade ? `mensalidade prevista R$ ${s.mensalidade}` : null, s.entregueEm ? `entregue em ${s.entregueEm}` : null].filter(Boolean).join(" · ")}>
+              <Card key={s.id} onClick={() => onAbrir(s.id)} rotulo={ROTULO_STATUS_SISTEMA[s.status] || "em levantamento"} titulo={s.nome || "Sem nome"} subtitulo={[e.length ? `${ok}/${e.length} entregas` : "sem escopo", s.implantacao ? `implantação R$ ${s.implantacao}` : null, s.mensalidadeAtiva ? `R$ ${s.mensalidade}/mês` : s.mensalidade ? `mensalidade prevista R$ ${s.mensalidade}` : null, s.entregueEm ? `entregue em ${s.entregueEm}` : null].filter(Boolean).join(" · ")}>
                 <span className="enz-link">abrir →</span>
               </Card>
             );
