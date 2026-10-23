@@ -142,23 +142,35 @@ Sem markdown, sem texto fora do JSON.`;
 
 // ─── IA: estimativa de escopo a partir do briefing e do catálogo ──
 
-export async function estimarEscopoSistema(cliente, sistema, catalogo) {
-  const lista = (catalogo || []).map((b) => `- [${b.id}] ${b.nome} (${b.horas} h, etapa ${b.etapa})`).join("\n");
-  const prompt = `Você estima projetos de software para pequenos negócios brasileiros, no padrão da desenvolvedora Nayara Silva (stack web moderna; entregas em poucas semanas). Monte o ESCOPO do sistema abaixo escolhendo blocos do catálogo e, só quando o briefing pedir algo que o catálogo não cobre, criando blocos novos com horas realistas.
+// Monta (ou ajusta) o escopo do sistema a partir da descrição que a Nay escreveu.
+// Sem catálogo: cada aplicativo é desenhado do zero; as referências são sistemas anteriores dela, com horas estimadas e realizadas.
+export async function montarEscopoSistema(cliente, sistema, { instrucao = "", referencias = [] } = {}) {
+  const escopoAtual = (sistema.escopo || []).map((i) => `- [${i.id}] ${i.texto} (${i.horas || 0} h, ${i.etapa || "Construção"}${i.status && i.status !== "a_fazer" ? `, ${i.status}` : ""})`).join("\n");
+  const prompt = `Você é a parceira de escopo da desenvolvedora Nayara Silva, que constrói sistemas web sob medida para pequenos negócios brasileiros (stack web moderna, entregas em poucas semanas, uma pessoa construindo). Cada aplicativo é desenhado do zero a partir do que o cliente precisa: não existe catálogo de módulos prontos.
 
 CLIENTE: ${cliente.negocio} (${cliente.segmento})
-Contexto: ${cliente.contexto || "não informado"}
+Contexto do cliente: ${cliente.contexto || "não informado"}
 SISTEMA: ${sistema.nome || "a definir"}
-BRIEFING: ${sistema.briefing || "não registrado"}
+DESCRIÇÃO (o que é, para que serve, quais funções):
+${sistema.briefing || "não registrada"}
 ${sistema.foraEscopo ? `FORA DO ESCOPO (não inclua): ${String(sistema.foraEscopo).split("\n").filter(Boolean).join("; ")}` : ""}
+${sistema.stack ? `Stack combinada: ${sistema.stack}` : ""}
 
-CATÁLOGO (horas padrão por bloco):
-${lista}
+${escopoAtual ? `ESCOPO ATUAL (mantenha os ids dos itens que continuam; mude horas, nome ou etapa quando fizer sentido; remova o que não cabe mais; crie novos sem id):\n${escopoAtual}` : "ESCOPO ATUAL: vazio — monte do zero."}
 
-Regras: inclua sempre a base do sistema (ou a publicação do site, se for site) e a implantação/treinamento; blocos "por página"/"por entidade"/"por tela" podem repetir com um complemento no nome (ex.: "Página interna — Sobre"); ajuste as horas do catálogo só com motivo claro; não invente integrações que o briefing não pediu.
+${instrucao ? `PEDIDO DA NAY AGORA: ${instrucao}` : "PEDIDO DA NAY AGORA: monte o escopo completo a partir da descrição."}
+
+${referencias.length ? `REFERÊNCIAS DE SISTEMAS ANTERIORES DELA (use para calibrar horas; não copie itens que a descrição não pede):\n${referencias.map((r) => "- " + r).join("\n")}` : ""}
+
+Como montar:
+- Itens pequenos e verificáveis, escritos como entregas que o cliente entende ("Cadastro de clientes com histórico de visitas"), um por linha da proposta. Entre 6 e 18 itens.
+- Sempre inclua a base (login, papéis por função, banco e publicação) quando for sistema, ou a publicação quando for site, e a implantação com treinamento. Inclua uma rodada de ajustes após a primeira versão.
+- Horas realistas para uma pessoa construindo com ferramentas modernas: pequeno 2-4 h, médio 5-8 h, grande 10-16 h. Some tudo e confira se o total é coerente com o tamanho descrito.
+- Etapas: Levantamento (desenho com o cliente), Fundação (base e dados), Construção (funções), Entrega (implantação, treinamento, ajustes).
+- Não invente integrações, pagamentos ou automações que a descrição não pediu; se algo ficou ambíguo, deixe fora e aponte em "obs".
 
 Responda APENAS com JSON compacto de uma linha:
-{"e":[{"b":"id do bloco do catálogo ou vazio se novo","n":"nome do item como vai para a proposta","h":horas,"et":"Levantamento|Fundação|Construção|Entrega"}],"obs":"1-2 frases: premissas da estimativa e o que ficou de fora"}
+{"e":[{"id":"id do item atual ou vazio","n":"nome do item","h":horas,"et":"Levantamento|Fundação|Construção|Entrega"}],"obs":"2-3 frases: premissas, o que ficou de fora e o que vale perguntar ao cliente"}
 Sem markdown, sem texto fora do JSON.`;
   const texto = await chamarIA(prompt);
   const obj = extrairJSON(texto, "{", "}");

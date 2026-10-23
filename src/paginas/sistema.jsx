@@ -1,13 +1,14 @@
 import { comRetentativa } from "../ia/base.jsx";
-import { estimarEscopoSistema } from "../ia/proposta.jsx";
+import { montarEscopoSistema } from "../ia/proposta.jsx";
 import { ListaSistemas, ModuloSistema } from "../modulos/sistema.jsx";
-import { calibracaoCatalogo, itemDoBloco } from "../nucleo/catalogo.jsx";
+import { realizadasPorItem } from "../nucleo/catalogo.jsx";
 import { uid } from "../nucleo/base.jsx";
+import { ETAPAS } from "../nucleo/catalogo.jsx";
 import { mensalidadesPendentes } from "../nucleo/recorrencia.jsx";
 import { listaSistemas, sistemaPorId, sistemaVazio } from "../nucleo/sistemas.js";
 
 export function TelaSistema({ app }) {
-  const { catalogo, clienteAtual, erro, executarGeracao, financeiroAtual, gerando, mudarCatalogo, mudarPrecificacaoGlobal, precificacao, propostasAtuais, salvarColecao, setTela, sistemasPorCliente, tela } = app;
+  const { clienteAtual, erro, executarGeracao, financeiroAtual, gerando, mudarPrecificacaoGlobal, precificacao, propostasAtuais, salvarColecao, setTela, sistemasPorCliente, tela } = app;
   if (tela.nome !== "sistema" || !clienteAtual) return null;
   const lista = listaSistemas(sistemasPorCliente, clienteAtual.id);
   const salvarLista = (nova) => salvarColecao("sistemas", clienteAtual.id, nova);
@@ -45,14 +46,32 @@ export function TelaSistema({ app }) {
     if (mudou) await salvarColecao("financeiro", clienteAtual.id, { ...fin, parcelas });
   };
 
-  const estimarComIA = () =>
+  // referências: itens de outros sistemas dela, com horas estimadas e realizadas (calibram a IA)
+  const referencias = () => {
+    const refs = [];
+    for (const [cid, v] of Object.entries(sistemasPorCliente || {})) {
+      for (const s of (Array.isArray(v) ? v : v ? [v] : [])) {
+        if (s.id === sistema.id) continue;
+        const real = realizadasPorItem(s);
+        for (const i of s.escopo || []) {
+          if (!(i.texto || "").trim()) continue;
+          refs.push(`${i.texto}: ${i.horas || 0} h estimadas${real[i.id] ? `, ${real[i.id]} h realizadas` : ""} (${s.nome || "sistema"}${cid === clienteAtual.id ? "" : ", outro cliente"})`);
+        }
+      }
+    }
+    return refs.slice(0, 60);
+  };
+
+  const montarComIA = (instrucao) =>
     executarGeracao(async () => {
-      const { itens, obs } = await comRetentativa(() => estimarEscopoSistema(clienteAtual, sistema, catalogo));
+      const { itens, obs } = await comRetentativa(() => montarEscopoSistema(clienteAtual, sistema, { instrucao, referencias: referencias() }));
+      const atuais = sistema.escopo || [];
       const escopo = itens.map((i) => {
-        const bloco = i.b ? catalogo.find((b) => b.id === i.b) : null;
-        return bloco ? { ...itemDoBloco(bloco), texto: i.n || bloco.nome, horas: Number(i.h) || bloco.horas, etapa: i.et || bloco.etapa } : { id: uid(), texto: i.n, horas: Number(i.h) || 0, etapa: i.et || "Construção", status: "a_fazer" };
+        const existente = i.id ? atuais.find((a) => a.id === i.id) : null;
+        const base = existente || { id: uid(), status: "a_fazer" };
+        return { ...base, texto: i.n, horas: Number(i.h) || base.horas || 0, etapa: ETAPAS.includes(i.et) ? i.et : base.etapa || "Construção" };
       });
-      await salvar({ ...sistema, escopo, obs: [sistema.obs, obs ? `Estimativa da IA: ${obs}` : ""].filter(Boolean).join("\n") });
+      await salvar({ ...sistema, escopo, notaIA: obs || "" });
     });
 
   return (
@@ -61,8 +80,6 @@ export function TelaSistema({ app }) {
       sistema={sistema}
       totalSistemas={lista.length}
       propostaAceita={propostaAceita}
-      catalogo={catalogo}
-      calibracao={calibracaoCatalogo(sistemasPorCliente)}
       financeiro={financeiroAtual || { parcelas: [] }}
       lista={lista}
       onMudarFinanceiro={(fin) => salvarColecao("financeiro", clienteAtual.id, fin)}
@@ -70,9 +87,8 @@ export function TelaSistema({ app }) {
       gerando={gerando}
       erro={erro}
       onMudar={salvar}
-      onMudarCatalogo={mudarCatalogo}
       onMudarPrecificacao={mudarPrecificacaoGlobal}
-      onEstimarIA={estimarComIA}
+      onMontarIA={montarComIA}
       onPropostas={() => setTela({ nome: "propostas", id: tela.id, sistemaId: sistema.id })}
       onLista={() => setTela({ nome: "sistema", id: tela.id, lista: true })}
       onVoltar={() => (lista.length > 1 ? setTela({ nome: "sistema", id: tela.id, lista: true }) : setTela({ nome: "cliente", id: tela.id }))}

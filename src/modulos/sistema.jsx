@@ -6,7 +6,7 @@ import { Card } from "../componentes/enraizar.jsx";
 import { useState } from "react";
 import { AvisoErro, BotaoContorno, BotaoPrimario, InputField, Trabalhando } from "../componentes/ui.jsx";
 import { formatarBR, parseValorBR } from "../ia/financeiro.jsx";
-import { CATEGORIAS_CATALOGO, ETAPAS, horasDe, itemDoBloco, planoDoEscopo, realizadasPorItem, somaHoras, totalRealizadas } from "../nucleo/catalogo.jsx";
+import { ETAPAS, planoDoEscopo, realizadasPorItem, somaHoras, totalRealizadas } from "../nucleo/catalogo.jsx";
 import { redividirImplantacao, resumoImplantacao } from "../nucleo/recorrencia.jsx";
 
 // ─── Módulo: Sistema (desenvolvimento de sistema personalizado) ──
@@ -61,53 +61,6 @@ function ListaItens({ itens, onMudar, placeholder, comStatus, comRecebido, reali
         + item
       </button>
     </div>
-  );
-}
-
-function Catalogo({ catalogo, calibracao = {}, onMudarCatalogo, onAdicionar }) {
-  const [marcados, setMarcados] = useState({});
-  const [editando, setEditando] = useState(false);
-  const selecionados = catalogo.filter((b) => marcados[b.id]);
-  const set = (id, campo, valor) => onMudarCatalogo(catalogo.map((b) => (b.id === id ? { ...b, [campo]: campo === "horas" ? valor : valor } : b)));
-  return (
-    <Card rotulo="Catálogo de blocos" recolhidoInicial titulo="Monte o escopo com o que você já constrói." subtitulo="marque os blocos; as horas são o padrão — ajuste depois no escopo. blocos 'por página' podem entrar mais de uma vez.">
-      {CATEGORIAS_CATALOGO.map((cat) => {
-        const blocos = catalogo.filter((b) => b.categoria === cat);
-        if (!blocos.length) return null;
-        return (
-          <div key={cat} style={{ marginBottom: 14 }}>
-            <span className="enz-rotulo" style={{ marginBottom: 6 }}>{cat}</span>
-            {blocos.map((b) => (
-              <label key={b.id} className="flex items-center gap-3" style={{ padding: "5px 0", borderBottom: "1px solid var(--linha)" }}>
-                <input type="checkbox" checked={!!marcados[b.id]} onChange={(e) => setMarcados({ ...marcados, [b.id]: e.target.checked })} />
-                {editando ? (
-                  <>
-                    <input className="enz-input" style={{ flex: 1, padding: "6px 8px" }} value={b.nome} onChange={(e) => set(b.id, "nome", e.target.value)} />
-                    <input className="enz-input" style={{ width: 64, padding: "6px 8px", textAlign: "right" }} value={b.horas} onChange={(e) => set(b.id, "horas", e.target.value)} />
-                    <select className="enz-input" style={{ width: 130, padding: "6px 8px" }} value={b.etapa} onChange={(e) => set(b.id, "etapa", e.target.value)}>{ETAPAS.map((e) => <option key={e}>{e}</option>)}</select>
-                    <button className="enz-link" onClick={() => onMudarCatalogo(catalogo.filter((x) => x.id !== b.id))}>✕</button>
-                  </>
-                ) : (
-                  <>
-                    <span style={{ flex: 1 }}>{b.nome}</span>
-                    {calibracao[b.id] && <span className="enz-legenda" title={`média realizada em ${calibracao[b.id].n} projeto(s)`} style={{ color: calibracao[b.id].media > b.horas * 1.2 ? "var(--erro)" : calibracao[b.id].media < b.horas * 0.8 ? "var(--sucesso)" : "var(--tinta-musgo)" }}>real {calibracao[b.id].media} h · {calibracao[b.id].n}×</span>}
-                    <span className="enz-legenda">{b.horas} h</span>
-                  </>
-                )}
-              </label>
-            ))}
-            {editando && <button className="enz-link" style={{ marginTop: 6 }} onClick={() => onMudarCatalogo([...catalogo, { id: uid(), categoria: cat, nome: "", horas: 4, etapa: "Construção" }])}>+ bloco em {cat}</button>}
-          </div>
-        );
-      })}
-      <div className="flex items-center gap-4 flex-wrap" style={{ marginTop: 8 }}>
-        <BotaoPrimario disabled={!selecionados.length} onClick={() => { onAdicionar(selecionados); setMarcados({}); }}>
-          Adicionar ao escopo{selecionados.length ? ` · ${selecionados.length} bloco${selecionados.length > 1 ? "s" : ""} · ${somaHoras(selecionados)} h` : ""}
-        </BotaoPrimario>
-        <button className="enz-link" onClick={() => setEditando(!editando)}>{editando ? "concluir edição" : "editar catálogo"}</button>
-        {Object.keys(calibracao).length > 0 && <span className="enz-nota">"real" é a média de horas registradas nos projetos entregues — use para ajustar o padrão.</span>}
-      </div>
-    </Card>
   );
 }
 
@@ -256,7 +209,35 @@ function PagamentoImplantacao({ sistema, financeiro, lista, onMudarFinanceiro })
   );
 }
 
-export function ModuloSistema({ cliente, sistema, totalSistemas = 1, propostaAceita, catalogo = [], calibracao = {}, precificacao = {}, financeiro = { parcelas: [] }, lista = [], onMudarFinanceiro, gerando, erro, onMudar, onMudarCatalogo, onMudarPrecificacao, onEstimarIA, onVoltar, onPropostas, onLista }) {
+// A IA monta o escopo a partir da descrição e ajusta por pedidos em linguagem natural
+function EscopoComIA({ sistema, gerando, onMudarDescricao, onMontar }) {
+  const [pedido, setPedido] = useState("");
+  const temEscopo = (sistema.escopo || []).length > 0;
+  const temDescricao = (sistema.briefing || "").trim().length > 20;
+  const enviar = () => { onMontar(temEscopo ? pedido.trim() : ""); setPedido(""); };
+  return (
+    <Card rotulo="Escopo com IA" titulo={temEscopo ? "Ajuste o escopo conversando." : "Descreva o aplicativo e a IA monta o escopo."} subtitulo={temEscopo ? "peça mudanças em português: incluir, tirar, dividir, trocar horas. os itens continuam editáveis um a um abaixo." : "o que é, para que serve, quem usa e quais funções. quanto mais concreto, melhor a estimativa."} style={{ marginTop: 24 }}>
+      <div className="enz-campo">
+        <label className="enz-rotulo">Descrição do aplicativo</label>
+        <textarea className="enz-input" value={sistema.briefing || ""} onChange={(e) => onMudarDescricao(e.target.value)} style={{ minHeight: 110 }} placeholder="Ex.: Sistema de reservas para o salão do restaurante. A recepção recebe reservas por um link público, vê o mapa de mesas por praça em tempo real e atribui garçons por turno. O gestor acompanha ocupação e no-show. Não precisa de pagamento online." />
+      </div>
+      {temEscopo && (
+        <div className="enz-campo">
+          <label className="enz-rotulo">O que mudar</label>
+          <input className="enz-input" value={pedido} onChange={(e) => setPedido(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !gerando && pedido.trim()) enviar(); }} placeholder="Ex.: inclui exportação em planilha; tira o painel; divide o mapa de mesas em duas entregas" />
+        </div>
+      )}
+      <div className="flex items-center gap-3 flex-wrap">
+        <BotaoPrimario onClick={enviar} disabled={gerando || !temDescricao || (temEscopo && !pedido.trim())}>{gerando ? "Montando…" : temEscopo ? "Ajustar com IA" : "Montar escopo com IA"}</BotaoPrimario>
+        {temEscopo && <BotaoContorno onClick={() => onMontar("")} disabled={gerando || !temDescricao}>Remontar do zero pela descrição</BotaoContorno>}
+        {!temDescricao && <span className="enz-nota">escreva a descrição primeiro.</span>}
+      </div>
+      {sistema.notaIA && <p className="enz-nota" style={{ marginTop: 12 }}>IA: {sistema.notaIA}</p>}
+    </Card>
+  );
+}
+
+export function ModuloSistema({ cliente, sistema, totalSistemas = 1, propostaAceita, precificacao = {}, financeiro = { parcelas: [] }, lista = [], onMudarFinanceiro, gerando, erro, onMudar, onMudarPrecificacao, onMontarIA, onVoltar, onPropostas, onLista }) {
   const set = (campo) => (v) => onMudar({ ...sistema, [campo]: v });
   const escopo = sistema.escopo || [];
   const horasTotal = somaHoras(escopo);
@@ -271,11 +252,11 @@ export function ModuloSistema({ cliente, sistema, totalSistemas = 1, propostaAce
         subtitulo="O que será construído, o que fica de fora, o que o cliente precisa entregar — e o andamento de cada parte."
         cliente={cliente}
         onVoltar={onVoltar}
-        acoes={<>{totalSistemas > 1 && onLista && <BotaoContorno pequeno onClick={onLista}>Todos os sistemas ({totalSistemas})</BotaoContorno>}<BotaoContorno pequeno onClick={onEstimarIA} disabled={gerando || !(sistema.briefing || "").trim()}>{gerando ? "Estimando…" : "Estimar com IA"}</BotaoContorno><BotaoContorno pequeno onClick={onPropostas}>Propostas</BotaoContorno></>}
+        acoes={<>{totalSistemas > 1 && onLista && <BotaoContorno pequeno onClick={onLista}>Todos os sistemas ({totalSistemas})</BotaoContorno>}<BotaoContorno pequeno onClick={onPropostas}>Propostas</BotaoContorno></>}
       />
       <div className="enz-container" style={{ paddingTop: 0 }}>
         <AvisoErro erro={erro} />
-        {gerando && <Trabalhando frase="lendo o briefing e montando o escopo" />}
+        {gerando && <Trabalhando frase="lendo a descrição e desenhando o escopo" />}
         <div className="grid gap-3 sm:grid-cols-3" style={{ marginBottom: 32 }}>
           <Card variante="vazado" rotulo="Entregas" titulo={`${entregues} de ${escopo.length}`} subtitulo={`itens do escopo entregues · ${horasTotal} h estimadas`} />
           <Card variante="vazado" rotulo="Do cliente" titulo={pendentes.length ? `${pendentes.length} pendente${pendentes.length > 1 ? "s" : ""}` : "tudo recebido"} subtitulo="material que depende do cliente" />
@@ -303,9 +284,7 @@ export function ModuloSistema({ cliente, sistema, totalSistemas = 1, propostaAce
           </div>
         </Card>
 
-        <div style={{ marginTop: 24 }}>
-          <Catalogo catalogo={catalogo} calibracao={calibracao} onMudarCatalogo={onMudarCatalogo} onAdicionar={(blocos) => set("escopo")([...escopo, ...blocos.map(itemDoBloco)])} />
-        </div>
+        <EscopoComIA sistema={sistema} gerando={gerando} onMudarDescricao={set("briefing")} onMontar={onMontarIA} />
 
         <Card rotulo="Escopo" titulo="O que será construído." subtitulo="cada item vira uma linha da proposta e uma entrega para acompanhar. horas e etapa alimentam a estimativa." style={{ marginTop: 24 }}>
           <ListaItens itens={escopo} onMudar={set("escopo")} placeholder="Mapa de mesas por praça, com status em tempo real" comStatus realizadas={realizadasPorItem(sistema)} />
