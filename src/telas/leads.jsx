@@ -53,30 +53,51 @@ function Bloco({ titulo, nota, codigo }) {
   );
 }
 
-function AvisoWhatsApp() {
+function AvisosCelular() {
+  const [canais, setCanais] = useState(null);
   const [resultado, setResultado] = useState(null);
-  const [testando, setTestando] = useState(false);
-  const testar = async () => {
-    setTestando(true);
-    try { setResultado(await api("GET", null, "?aviso=testar")); } catch (e) { setResultado({ ok: false, motivo: e.message }); }
-    setTestando(false);
+  const [ocupado, setOcupado] = useState("");
+  const carregar = () => api("GET", null, "?aviso=canais").then(setCanais).catch(() => setCanais({}));
+  useEffect(() => { carregar(); }, []);
+  const rodar = async (acao, query) => {
+    setOcupado(acao); setResultado(null);
+    try { const r = await api("GET", null, query); setResultado(r); if (acao === "conectar" && r.ok) carregar(); } catch (e) { setResultado({ ok: false, motivo: e.message }); }
+    setOcupado("");
   };
+  const tg = canais ? canais.telegram : null;
+  const wa = canais ? canais.whatsapp : null;
   return (
     <div style={{ marginTop: 20, paddingTop: 16, borderTop: "1px solid var(--linha)" }}>
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <span className="enz-rotulo">Aviso no seu WhatsApp</span>
-        <BotaoContorno onClick={testar} disabled={testando}>{testando ? "Enviando…" : "Enviar aviso de teste"}</BotaoContorno>
+        <span className="enz-rotulo">Avisos no seu celular</span>
+        <BotaoContorno onClick={() => rodar("testar", "?aviso=testar")} disabled={!!ocupado}>{ocupado === "testar" ? "Enviando…" : "Enviar aviso de teste"}</BotaoContorno>
       </div>
-      <p className="enz-nota" style={{ margin: "6px 0 0" }}>lead novo, pedido novo e o resumo diário das 7h chegam como mensagem no seu WhatsApp. canal preferido: a API oficial do WhatsApp (Meta), com as variáveis WHATSAPP_NUMERO, WHATSAPP_CLOUD_TOKEN, WHATSAPP_CLOUD_PHONE_ID e WHATSAPP_CLOUD_TEMPLATE na Vercel. alternativa gratuita: CallMeBot, com CALLMEBOT_APIKEY.</p>
+      <p className="enz-nota" style={{ margin: "6px 0 10px" }}>lead novo, pedido novo e o resumo diário das 7h chegam como mensagem. dois canais possíveis, pode ter os dois.</p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="enz-card enz-card-vazado" style={{ padding: "12px 0" }}>
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <strong>Telegram</strong>
+            <span className="enz-nota" style={{ color: tg === "conectado" ? "var(--sucesso)" : "var(--alerta)" }}>{canais ? (tg === "conectado" ? "conectado" : tg === "sem chat" ? "token ok, falta conectar" : "sem token na Vercel") : "…"}</span>
+          </div>
+          <p className="enz-nota" style={{ marginTop: 4 }}>1) no Telegram, fale com @BotFather, /newbot, e grave o token na Vercel como TELEGRAM_BOT_TOKEN. 2) abra o seu bot e mande "oi". 3) clique em conectar.</p>
+          {tg && tg !== "conectado" && <BotaoContorno onClick={() => rodar("conectar", "?aviso=telegram-conectar")} disabled={!!ocupado}>{ocupado === "conectar" ? "Conectando…" : "Conectar Telegram"}</BotaoContorno>}
+        </div>
+        <div className="enz-card enz-card-vazado" style={{ padding: "12px 0" }}>
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <strong>WhatsApp</strong>
+            <span className="enz-nota" style={{ color: wa ? "var(--sucesso)" : "var(--tinta-musgo)" }}>{canais ? (wa === "cloud" ? "API oficial" : wa === "callmebot" ? "CallMeBot" : "não configurado") : "…"}</span>
+          </div>
+          <p className="enz-nota" style={{ marginTop: 4 }}>API oficial da Meta: WHATSAPP_NUMERO, WHATSAPP_CLOUD_TOKEN, WHATSAPP_CLOUD_PHONE_ID e WHATSAPP_CLOUD_TEMPLATE na Vercel. alternativa: CALLMEBOT_APIKEY.</p>
+        </div>
+      </div>
       {resultado && (
-        <p style={{ marginTop: 8, fontSize: 13.5, color: resultado.ok ? "var(--sucesso)" : "var(--alerta)" }}>
-          {resultado.ok ? `enviado pelo canal ${resultado.canal || "configurado"}. confira o WhatsApp.` : `não enviado: ${resultado.motivo}`}
+        <p style={{ marginTop: 10, fontSize: 13.5, color: resultado.ok ? "var(--sucesso)" : "var(--alerta)" }}>
+          {resultado.ok ? (resultado.chat ? `conectado ao Telegram de ${resultado.chat.nome}.` : `enviado por ${resultado.canal || "canal configurado"}. confira o celular.${resultado.falhas && resultado.falhas.length ? ` (${resultado.falhas.join("; ")})` : ""}`) : `não deu: ${resultado.motivo}`}
         </p>
       )}
     </div>
   );
 }
-
 function Diagnostico({ d }) {
   return (
     <div style={{ marginTop: 12, padding: "12px 14px", background: "var(--fundo-recuo)", borderRadius: 8 }}>
@@ -184,7 +205,7 @@ fetch("${URL_APP}/api/leads", {
           <Bloco titulo="2 · Formulário embutido (iframe)" nota="cole onde o formulário deve aparecer no site. o script ajusta a altura sozinho." codigo={iframe} />
           <Bloco titulo="3 · Seu próprio formulário" nota="se o site já tem o formulário desenhado, só troque o envio por esta chamada. nomes dos campos iguais aos do site." codigo={fetchSnippet} />
           <p className="enz-nota" style={{ marginTop: 14 }}>o endereço aceita envios de qualquer domínio. há limite de envios por conexão e um campo-armadilha contra robôs.</p>
-          <AvisoWhatsApp />
+          <AvisosCelular />
         </Card>
       )}
 

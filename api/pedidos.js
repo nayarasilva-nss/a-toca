@@ -1,6 +1,6 @@
 import { neon } from '@neondatabase/serverless';
 import { exigirSessao, novoId } from './_lib/sessao.js';
-import { enviarWhatsApp } from './_lib/whatsapp.js';
+import { enviarAviso } from './_lib/avisos.js';
 
 // Pedidos dos liderados: POST público com o código do link (toca:pedidos:codigo); o resto exige a consultora.
 
@@ -87,7 +87,7 @@ export default async (req, res) => {
       const contato = texto(b.contato, 120);
       const id = novoId();
       await sql`INSERT INTO pedidos (id, nome, contato, pedido, prazo, prioridade) VALUES (${id}, ${nome}, ${contato}, ${pedido}, ${prazo}, ${prioridade})`;
-      const aviso = await enviarWhatsApp(`📥 Novo pedido de *${nome}*${prioridade === 'urgente' ? ' ⚠️ urgente' : ''}${prazo ? ` · prazo ${prazo.split('-').reverse().join('/')}` : ''}\n${pedido.length > 400 ? pedido.slice(0, 400) + '…' : pedido}${contato ? `\nContato: ${contato}` : ''}\n\nTriar: https://enraizar.vercel.app`);
+      const aviso = await enviarAviso(`📥 Novo pedido de *${nome}*${prioridade === 'urgente' ? ' ⚠️ urgente' : ''}${prazo ? ` · prazo ${prazo.split('-').reverse().join('/')}` : ''}\n${pedido.length > 400 ? pedido.slice(0, 400) + '…' : pedido}${contato ? `\nContato: ${contato}` : ''}\n\nTriar: https://enraizar.vercel.app`);
       if (!aviso.ok) console.warn('pedidos: aviso no WhatsApp não enviado —', aviso.motivo);
       return res.status(200).json({ ok: true });
     }

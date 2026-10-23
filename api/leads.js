@@ -1,6 +1,7 @@
 import { neon } from '@neondatabase/serverless';
 import { exigirSessao, novoId } from './_lib/sessao.js';
-import { canalAtivo, configurado, enviarWhatsApp, textoLeadNovo } from './_lib/whatsapp.js';
+import { textoLeadNovo } from './_lib/whatsapp.js';
+import { algumConfigurado, canais, conectarTelegram, enviarAviso } from './_lib/avisos.js';
 
 // Leads do site: POST é público (o formulário do site envia para cá); o resto exige a consultora logada.
 
@@ -99,17 +100,19 @@ export default async (req, res) => {
       };
       await sql`INSERT INTO leads (id, nome, whatsapp, email, negocio, funcionarios, interesse, dor, origem, diagnostico)
                 VALUES (${lead.id}, ${lead.nome}, ${lead.whatsapp}, ${lead.email}, ${lead.negocio}, ${lead.funcionarios}, ${lead.interesse}, ${lead.dor}, ${lead.origem}, ${lead.diagnostico})`;
-      const aviso = await enviarWhatsApp(textoLeadNovo({ ...lead, diagnostico: lerDiag(lead.diagnostico) }));
-      if (!aviso.ok) console.warn('leads: aviso no WhatsApp não enviado —', aviso.motivo);
+      const aviso = await enviarAviso(textoLeadNovo({ ...lead, diagnostico: lerDiag(lead.diagnostico) }));
+      if (!aviso.ok) console.warn('leads: aviso não enviado —', aviso.motivo);
       return res.status(200).json({ ok: true });
     }
 
     if (!exigirSessao(req, res, ['consultora'])) return;
 
+    if (req.method === 'GET' && req.query?.aviso === 'canais') return res.status(200).json(await canais());
+    if (req.method === 'GET' && req.query?.aviso === 'telegram-conectar') return res.status(200).json(await conectarTelegram(sql));
     if (req.method === 'GET' && req.query?.aviso === 'testar') {
-      if (!configurado()) return res.status(200).json({ ok: false, configurado: false, motivo: 'Falta configurar na Vercel: WHATSAPP_NUMERO e WHATSAPP_CLOUD_TOKEN + WHATSAPP_CLOUD_PHONE_ID (API oficial) ou CALLMEBOT_APIKEY.' });
-      const r = await enviarWhatsApp('✅ Teste do Enraizar: os avisos de lead, pedido e o resumo diário vão chegar aqui.');
-      return res.status(200).json({ ...r, configurado: true, canal: canalAtivo() });
+      if (!algumConfigurado()) return res.status(200).json({ ok: false, configurado: false, motivo: 'Nenhum canal configurado: Telegram (TELEGRAM_BOT_TOKEN) ou WhatsApp (WHATSAPP_NUMERO + WHATSAPP_CLOUD_TOKEN/PHONE_ID ou CALLMEBOT_APIKEY).' });
+      const r = await enviarAviso('✅ Teste do Enraizar: os avisos de lead, pedido e o resumo diário vão chegar aqui.');
+      return res.status(200).json({ ...r, configurado: true });
     }
 
     if (req.method === 'GET') {
