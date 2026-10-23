@@ -36,6 +36,7 @@ import { FormCliente } from "./telas/clientes.jsx";
 import { DashboardInicial, ListaClientes } from "./telas/hub.jsx";
 import { TelaLeads, clienteDoLead } from "./telas/leads.jsx";
 import { TelaAgenda } from "./telas/agenda.jsx";
+import { TelaMensalidades } from "./telas/mensalidades.jsx";
 import { TelaHub } from "./paginas/hub.jsx";
 import { TelaGestao } from "./paginas/gestao.jsx";
 import { TelaConselheira } from "./paginas/conselheira.jsx";
@@ -238,6 +239,12 @@ export default function App() {
       await salvarColecao("mentoria", novo.id, { ...mentoriaVazia(), foco: novo.focoMentoria || "", mentoradoId: ficha.id });
     }
     abrirCliente(novo.id);
+  };
+
+  const atualizarCliente = async (id, campos) => {
+    const lista = clientes.map((c) => (c.id === id ? { ...c, ...campos } : c));
+    setClientes(lista);
+    await stSet("toca:clientes", lista);
   };
 
   const salvarEdicaoCliente = async (dados) => {
@@ -612,9 +619,11 @@ ${conteudo}
         {!pronto ? (
           <div className="text-center py-20 font-serif italic" style={{ color: CORES.dourado }}>Abrindo Enraizar...</div>
         ) : tela.nome === "home" ? (
-          <DashboardInicial clientes={clientes} fases={fasesClientes} tarefas={tarefas} pedidosPendentes={pedidosPendentes} onAgenda={(aba) => setTela({ nome: "agenda", aba })} onConcluirTarefa={(t) => mudarTarefas(tarefas.map((x) => (x.id === t.id ? { ...x, status: "feita", feitoEm: new Date().toISOString() } : x)))} recorrente={resumoRecorrente(clientes, sistemasPorCliente)} nomeUsuario={auth.usuario?.nome || nomeUsuario} onSetNomeUsuario={setNomeUsuario} onClientes={() => setTela({ nome: "clientes" })} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} />
+          <DashboardInicial clientes={clientes} fases={fasesClientes} sistemasPorCliente={sistemasPorCliente} financeiroPorCliente={financeiroPorCliente} onMensalidades={() => setTela({ nome: "mensalidades" })} tarefas={tarefas} pedidosPendentes={pedidosPendentes} onAgenda={(aba) => setTela({ nome: "agenda", aba })} onConcluirTarefa={(t) => mudarTarefas(tarefas.map((x) => (x.id === t.id ? { ...x, status: "feita", feitoEm: new Date().toISOString() } : x)))} recorrente={resumoRecorrente(clientes, sistemasPorCliente)} nomeUsuario={auth.usuario?.nome || nomeUsuario} onSetNomeUsuario={setNomeUsuario} onClientes={() => setTela({ nome: "clientes" })} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} />
         ) : tela.nome === "clientes" ? (
           <ListaClientes clientes={clientes} gestaoPorCliente={gestaoPorCliente} fases={fasesClientes} backupPendente={backupPendente} onAplicarBackup={aplicarBackup} onCancelarBackup={() => setBackupPendente(null)} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} onExcluir={excluirCliente} onExportarBackup={exportarBackup} onImportarBackup={importarBackup} onVoltar={() => setTela({ nome: "home" })} nomeUsuario={nomeUsuario} onSetNomeUsuario={setNomeUsuario} />
+        ) : tela.nome === "mensalidades" ? (
+          <TelaMensalidades clientes={clientes} sistemasPorCliente={sistemasPorCliente} financeiroPorCliente={financeiroPorCliente} contratada={contratada} onMudarContratada={mudarContratada} onMudarFinanceiro={(id, fin) => salvarColecao("financeiro", id, fin)} onMudarSistema={(id, sis) => salvarColecao("sistemas", id, sis)} onMudarContato={(id, contato) => atualizarCliente(id, { contato })} onAbrirCliente={abrirCliente} onVoltar={() => setTela({ nome: "home" })} />
         ) : tela.nome === "agenda" ? (
           <TelaAgenda tarefas={tarefas} onMudarTarefas={mudarTarefas} clientes={clientes} financeiroPorCliente={financeiroPorCliente} sistemasPorCliente={sistemasPorCliente} pedidosPendentes={pedidosPendentes} onMudouPendentes={setPedidosPendentes} abaInicial={tela.aba || "tarefas"} onAbrirCliente={abrirCliente} onVoltar={() => setTela({ nome: "home" })} />
         ) : tela.nome === "leads" ? (

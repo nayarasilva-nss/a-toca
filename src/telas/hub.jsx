@@ -6,6 +6,7 @@ import { ArvoreEnraizar } from "../componentes/arvore.jsx";
 import { BotaoPrimario, ConfirmarAcao } from "../componentes/ui.jsx";
 import { acoesNumeradas, semanaAtualDe } from "../ia/cronograma.jsx";
 import { BlocoHoje } from "./agenda.jsx";
+import { CardMensalidades } from "./mensalidades.jsx";
 
 // ─── Header Padrão para Módulos ────────────────────────────────
 export function HeaderModulo({ titulo, subtitulo, cliente, onVoltar, acoes }) {
@@ -36,7 +37,7 @@ function LinhaCliente({ cliente, fase, onAbrir, acoes }) {
   );
 }
 
-export function DashboardInicial({ clientes, fases = {}, nomeUsuario, recorrente = null, tarefas = [], pedidosPendentes = 0, onAgenda, onConcluirTarefa, onAbrir, onNovo, onClientes }) {
+export function DashboardInicial({ clientes, fases = {}, nomeUsuario, recorrente = null, tarefas = [], pedidosPendentes = 0, sistemasPorCliente = {}, financeiroPorCliente = {}, onMensalidades, onAgenda, onConcluirTarefa, onAbrir, onNovo, onClientes }) {
   const total = clientes.length;
   const contagens = {};
   for (const c of clientes) { const f = fases[c.id] === "prospeccao" ? "escuta" : fases[c.id]; if (f) contagens[f] = (contagens[f] || 0) + 1; }
@@ -55,6 +56,7 @@ export function DashboardInicial({ clientes, fases = {}, nomeUsuario, recorrente
       />
 
       {onAgenda && <BlocoHoje tarefas={tarefas} pedidosPendentes={pedidosPendentes} onAgenda={() => onAgenda(pedidosPendentes && !tarefas.length ? "pedidos" : "tarefas")} onConcluir={onConcluirTarefa} />}
+      {onMensalidades && <CardMensalidades clientes={clientes} sistemasPorCliente={sistemasPorCliente} financeiroPorCliente={financeiroPorCliente} onAbrir={onMensalidades} />}
 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5" style={{ marginTop: 40, borderTop: "1px solid var(--linha)" }}>
         {kpis.map(([rotulo, valor]) => (
