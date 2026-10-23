@@ -40,7 +40,7 @@ export function TelaSistema({ app }) {
       parcelas = parcelas.map((p) => (p.entrega && !p.pago && !p.vencimento && (!p.sistemaId || p.sistemaId === novo.id) ? { ...p, vencimento: novo.entregueEm } : p));
       mudou = parcelas.some((p, i) => p !== (fin.parcelas || [])[i]);
     }
-    const novas = mensalidadesPendentes(novo, { parcelas }, new Date(), lista);
+    const novas = mensalidadesPendentes(novo, { parcelas }, new Date(), lista, clienteAtual);
     if (novas.length) { parcelas = [...parcelas, ...novas]; mudou = true; }
     if (mudou) await salvarColecao("financeiro", clienteAtual.id, { ...fin, parcelas });
   };

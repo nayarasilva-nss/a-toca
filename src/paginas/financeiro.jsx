@@ -15,7 +15,7 @@ export function TelaFinanceiro({ app }) {
         financeiro={financeiroAtual}
         propostaAceita={(propostasPorCliente[clienteAtual.id] || []).find((p) => p.status === "aceita") || null}
         sistemas={lista}
-        mensalidadesPendentes={lista.flatMap((s) => mensalidadesPendentes(s, financeiroAtual, new Date(), lista))}
+        mensalidadesPendentes={lista.flatMap((s) => mensalidadesPendentes(s, financeiroAtual, new Date(), lista, clienteAtual))}
         onMudar={(novo) => mudarFinanceiro(clienteAtual.id, novo)}
         onVoltar={() => setTela({ nome: "cliente", id: tela.id })}
       />

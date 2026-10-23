@@ -2,6 +2,7 @@ import { useState } from "react";
 import { TituloSecao } from "../componentes/enraizar.jsx";
 import { InputField, BotaoPrimario, BotaoContorno, ConfirmarAcao } from "../componentes/ui.jsx";
 import { FOCOS_MENTORIA } from "../nucleo/focos.jsx";
+import { unidadeVazia } from "../nucleo/sistemas.js";
 
 const SERVICOS_PADRAO = { empresa: { consultoria: true, mentoria: false, treinamentos: false, sistemas: false }, pessoa: { consultoria: false, mentoria: true, treinamentos: false, sistemas: false } };
 
@@ -77,6 +78,26 @@ export function FormCliente({ inicial, prefill, onSalvar, onCancelar, onExcluir 
             ))}
           </div>
           <div className="enz-ajuda">{c.focoMentoria ? FOCOS_MENTORIA[c.focoMentoria].nota : "opcional agora: dá para definir depois, em Mentoria. nenhum foco é padrão."}</div>
+        </div>
+      )}
+
+      {!ehPessoa && (
+        <div className="enz-campo">
+          <span className="enz-rotulo" style={{ marginBottom: 6 }}>Unidades (CNPJs)</span>
+          <div className="enz-ajuda" style={{ marginTop: 0, marginBottom: 10 }}>só para quem tem mais de um CNPJ: cada sistema pode cobrar a mensalidade por unidade, e a cobrança vai no WhatsApp de cada uma.</div>
+          {(c.unidades || []).map((u, i) => {
+            const mudar = (campo) => (e) => setC({ ...c, unidades: c.unidades.map((x, k) => (k === i ? { ...x, [campo]: e.target.value } : x)) });
+            return (
+              <div key={u.id} className="grid gap-2 sm:grid-cols-5" style={{ marginBottom: 8, alignItems: "center" }}>
+                <input className="enz-input" placeholder="nome da unidade" value={u.nome} onChange={mudar("nome")} />
+                <input className="enz-input" placeholder="CNPJ" value={u.cnpj} onChange={mudar("cnpj")} />
+                <input className="enz-input" placeholder="WhatsApp da unidade" value={u.whatsapp} onChange={mudar("whatsapp")} />
+                <input className="enz-input" placeholder="quem recebe a cobrança" value={u.contato} onChange={mudar("contato")} />
+                <button type="button" className="enz-link" onClick={() => setC({ ...c, unidades: c.unidades.filter((_, k) => k !== i) })}>remover</button>
+              </div>
+            );
+          })}
+          <button type="button" className="enz-link" onClick={() => setC({ ...c, unidades: [...(c.unidades || []), unidadeVazia()] })}>+ unidade</button>
         </div>
       )}
 

@@ -3,7 +3,7 @@
 const uid = () => Math.random().toString(36).slice(2, 9);
 
 export function sistemaVazio() {
-  return { id: uid(), nome: "", briefing: "", escopo: [], foraEscopo: "", fornecidoCliente: [], stack: "", prazoSemanas: "", inicio: "", entregueEm: "", implantacao: "", mensalidade: "", mensalidadeAtiva: false, diaVencimento: "", mensalidadeDesde: "", status: "levantamento", obs: "", registros: [] };
+  return { id: uid(), nome: "", briefing: "", escopo: [], foraEscopo: "", fornecidoCliente: [], stack: "", prazoSemanas: "", inicio: "", entregueEm: "", implantacao: "", mensalidade: "", mensalidadeAtiva: false, cobranca: "unica", unidadesIds: [], diaVencimento: "", mensalidadeDesde: "", status: "levantamento", obs: "", registros: [] };
 }
 
 const temConteudo = (s) => (s.nome || "").trim() || (s.escopo || []).length || (s.briefing || "").trim() || (s.registros || []).length;
@@ -31,5 +31,14 @@ export function sistemaPrincipal(lista) {
   for (const st of ORDEM_ATENCAO) { const s = l.find((x) => (x.status || "levantamento") === st); if (s) return s; }
   return l[0] || null;
 }
+
+// unidades (CNPJs) do cliente que pagam este sistema; lista vazia em "por unidade" = todas
+export function unidadesCobradas(sistema, cliente) {
+  if (!sistema || sistema.cobranca !== "unidade") return [];
+  const todas = (cliente && cliente.unidades) || [];
+  const ids = sistema.unidadesIds || [];
+  return ids.length ? todas.filter((u) => ids.includes(u.id)) : todas;
+}
+export const unidadeVazia = () => ({ id: uid(), nome: "", cnpj: "", whatsapp: "", contato: "" });
 
 export const ROTULO_STATUS_SISTEMA = { levantamento: "em levantamento", proposta: "proposta", construcao: "em construção", entregue: "entregue", sustentacao: "em sustentação", encerrado: "encerrado" };

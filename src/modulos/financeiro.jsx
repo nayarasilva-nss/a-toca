@@ -3,6 +3,7 @@ import { parseDataBR } from "../ia/cronograma.jsx";
 import { formatarBR, parseValorBR } from "../ia/financeiro.jsx";
 import { CORES, uid } from "../nucleo/base.jsx";
 import { parcelasImplantacao, resumoImplantacao } from "../nucleo/recorrencia.jsx";
+import { unidadesCobradas } from "../nucleo/sistemas.js";
 import { HeaderModulo } from "../telas/hub.jsx";
 
 // ─── Módulo: Financeiro ─────────────────────────────────────────
@@ -92,7 +93,7 @@ export function ModuloFinanceiro({ cliente, financeiro, propostaAceita, sistemas
             )}
             <div className="text-sm">
               {sistema.entregueEm ? `Entregue em ${sistema.entregueEm}. ` : ""}
-              {sistema.mensalidadeAtiva ? `Mensalidade ativa de R$ ${sistema.mensalidade}/mês — vence todo dia ${(sistema.entregueEm || sistema.inicio || "").slice(0, 2) || "?"}.` : "Mensalidade ainda não ativada no módulo Sistema."}
+              {sistema.mensalidadeAtiva ? `Mensalidade ativa de R$ ${sistema.mensalidade}/mês${sistema.cobranca === "unidade" ? ` por unidade (${unidadesCobradas(sistema, cliente).length} unidades)` : ""} — vence todo dia ${sistema.diaVencimento || (sistema.entregueEm || sistema.inicio || "").slice(0, 2) || "?"}.` : "Mensalidade ainda não ativada no módulo Sistema."}
             </div>
             {pend.length > 0 && (
               <button

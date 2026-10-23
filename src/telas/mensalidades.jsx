@@ -34,17 +34,35 @@ function Linha({ l, pix, onParcela, onSistema, onContato, onAbrirCliente }) {
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
           <button className="text-left" style={{ font: "inherit", fontFamily: "var(--font-display)", fontSize: 21, lineHeight: 1.2 }} onClick={() => onAbrirCliente(l.clienteId)}>{l.cliente}</button>
-          <div className="enz-nota" style={{ marginTop: 2 }}>{l.nomeSistema} · {l.ativa ? `${formatarBR(l.valor)} por mês` : l.valor ? "mensalidade ainda não ativada" : "sem mensalidade"}{l.dia ? ` · vence dia ${l.dia}` : ""}{l.pagas ? ` · ${l.pagas} paga${l.pagas > 1 ? "s" : ""}, ${formatarBR(l.recebido)} recebidos` : ""}</div>
+          <div className="enz-nota" style={{ marginTop: 2 }}>{l.nomeSistema} · {l.ativa ? `${formatarBR(l.valor)} por mês${l.porUnidade ? ` (${formatarBR(l.valorUnidade)} × ${l.unidades.length} unidade${l.unidades.length === 1 ? "" : "s"})` : ""}` : l.valor ? "mensalidade ainda não ativada" : "sem mensalidade"}{l.dia ? ` · vence dia ${l.dia}` : ""}{l.pagas ? ` · ${l.pagas} paga${l.pagas > 1 ? "s" : ""}, ${formatarBR(l.recebido)} recebidos` : ""}</div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <span className="enz-selo enz-selo-pequeno" style={{ background: "var(--fundo-recuo)", color: COR[st] }}><span className="enz-ponto" />{STATUS_MES[st]}{l.doMes && l.doMes.pago && l.doMes.pagoEm ? ` em ${l.doMes.pagoEm}` : ""}</span>
-          {l.doMes && !l.doMes.pago && <BotaoPrimario pequeno onClick={() => onParcela(l.clienteId, l.doMes.id, { pago: true, pagoEm: dataHoje() })}>Marcar paga</BotaoPrimario>}
-          {l.doMes && l.doMes.pago && <button className="enz-link" onClick={() => onParcela(l.clienteId, l.doMes.id, { pago: false, pagoEm: "" })}>desfazer</button>}
-          {l.doMes && !l.doMes.pago && cobrar && <a className="enz-botao enz-botao-contorno enz-botao-pequeno" href={cobrar} target="_blank" rel="noreferrer">Cobrar no WhatsApp</a>}
+          {!l.porUnidade && l.doMes && !l.doMes.pago && <BotaoPrimario pequeno onClick={() => onParcela(l.clienteId, l.doMes.id, { pago: true, pagoEm: dataHoje() })}>Marcar paga</BotaoPrimario>}
+          {!l.porUnidade && l.doMes && l.doMes.pago && <button className="enz-link" onClick={() => onParcela(l.clienteId, l.doMes.id, { pago: false, pagoEm: "" })}>desfazer</button>}
+          {!l.porUnidade && l.doMes && !l.doMes.pago && cobrar && <a className="enz-botao enz-botao-contorno enz-botao-pequeno" href={cobrar} target="_blank" rel="noreferrer">Cobrar no WhatsApp</a>}
           <button className="enz-link" onClick={() => setAbrir(!abrir)}>{abrir ? "fechar" : "ajustes"}</button>
         </div>
       </div>
 
+      {l.porUnidade && l.porUnidadeLinhas.length > 0 && (
+        <div style={{ marginTop: 12, display: "grid", gap: 6 }}>
+          {l.porUnidadeLinhas.map(({ unidade, parcela, status }) => {
+            const zapU = linkZap(unidade.whatsapp, textoCobranca(l, parcela, pix, unidade));
+            return (
+              <div key={unidade.id} className="flex items-center justify-between gap-3 flex-wrap" style={{ padding: "6px 0", borderTop: "1px solid var(--linha)", fontSize: 13.5 }}>
+                <span><span style={{ color: COR[status], marginRight: 8 }}>●</span>{unidade.nome}{unidade.cnpj ? <span className="enz-nota"> · {unidade.cnpj}</span> : null}</span>
+                <span className="flex items-center gap-2 flex-wrap">
+                  <span className="enz-nota" style={{ color: COR[status] }}>{STATUS_MES[status]}{parcela && parcela.pago && parcela.pagoEm ? ` em ${parcela.pagoEm}` : parcela && !parcela.pago && parcela.vencimento ? ` · vence ${parcela.vencimento}` : ""}</span>
+                  {parcela && !parcela.pago && <button className="enz-link" style={{ fontSize: 13 }} onClick={() => onParcela(l.clienteId, parcela.id, { pago: true, pagoEm: dataHoje() })}>marcar paga</button>}
+                  {parcela && parcela.pago && <button className="enz-link" style={{ fontSize: 13 }} onClick={() => onParcela(l.clienteId, parcela.id, { pago: false, pagoEm: "" })}>desfazer</button>}
+                  {parcela && !parcela.pago && zapU && <a className="enz-link" style={{ fontSize: 13 }} href={zapU} target="_blank" rel="noreferrer">cobrar no WhatsApp</a>}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
       {l.implantacao && l.implantacao.total > 0 && (
         <div className="enz-nota" style={{ marginTop: 10 }}>
           implantação {formatarBR(l.implantacao.total)}: {l.implantacao.geradas ? `${formatarBR(l.implantacao.recebido)} recebidos · ${formatarBR(l.implantacao.aberto)} em aberto` : "parcelas ainda não lançadas no Financeiro do cliente"}
@@ -63,7 +81,7 @@ function Linha({ l, pix, onParcela, onSistema, onContato, onAbrirCliente }) {
       {abrir && (
         <div style={{ marginTop: 16, paddingTop: 14, borderTop: "1px solid var(--linha)" }}>
           <div className="grid gap-x-4 sm:grid-cols-3">
-            <InputField label="Valor (R$/mês)" value={valor} onChange={setValor} placeholder="200" />
+            <InputField label={l.porUnidade ? "Valor por unidade (R$/mês)" : "Valor (R$/mês)"} value={valor} onChange={setValor} placeholder="200" ajuda={l.porUnidade ? "cobrança por unidade: ajuste as unidades no módulo Sistema" : undefined} />
             <InputField label="Dia do vencimento" value={dia} onChange={setDia} placeholder="10" ajuda="1 a 28" />
             <InputField label="Primeira mensalidade" value={desde} onChange={setDesde} placeholder="dd/mm/aaaa" ajuda={l.desde ? `hoje: ${l.desde.toLocaleDateString("pt-BR")}` : "um mês após a entrega, se vazio"} />
           </div>

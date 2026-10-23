@@ -1,4 +1,5 @@
 import { listaSistemas, sistemaPrincipal } from "../nucleo/sistemas.js";
+import { valorMensal } from "../nucleo/recorrencia.jsx";
 import { parseDataBR } from "../ia/cronograma.jsx";
 import { formatarBR, parseValorBR } from "../ia/financeiro.jsx";
 import { HubCliente } from "../telas/hub.jsx";
@@ -70,7 +71,7 @@ export function TelaHub({ app }) {
       total += v;
       if (p.pago) recebido += v;
     }
-    const mensal = listaSistemas(sistemasPorCliente, clienteAtual ? clienteAtual.id : "").filter((s) => s.mensalidadeAtiva).reduce((t, s) => t + parseValorBR(s.mensalidade), 0);
+    const mensal = listaSistemas(sistemasPorCliente, clienteAtual ? clienteAtual.id : "").filter((s) => s.mensalidadeAtiva).reduce((t, s) => t + valorMensal(s, clienteAtual), 0);
     const rec = mensal > 0 ? ` · ${formatarBR(mensal)}/mês` : "";
     return total > 0 ? `${formatarBR(recebido)} recebido de ${formatarBR(total)}${rec}` : rec ? `Recorrente${rec}` : null;
   })();

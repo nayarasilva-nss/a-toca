@@ -1,5 +1,5 @@
 import { uid } from "../nucleo/base.jsx";
-import { ROTULO_STATUS_SISTEMA, sistemaVazio } from "../nucleo/sistemas.js";
+import { ROTULO_STATUS_SISTEMA, sistemaVazio, unidadesCobradas } from "../nucleo/sistemas.js";
 import { ConfirmarAcao } from "../componentes/ui.jsx";
 import { HeaderModulo } from "../telas/hub.jsx";
 import { Card } from "../componentes/enraizar.jsx";
@@ -230,7 +230,7 @@ export function ModuloSistema({ cliente, sistema, totalSistemas = 1, propostaAce
         <div className="grid gap-3 sm:grid-cols-3" style={{ marginBottom: 32 }}>
           <Card variante="vazado" rotulo="Entregas" titulo={`${entregues} de ${escopo.length}`} subtitulo={`itens do escopo entregues · ${horasTotal} h estimadas`} />
           <Card variante="vazado" rotulo="Do cliente" titulo={pendentes.length ? `${pendentes.length} pendente${pendentes.length > 1 ? "s" : ""}` : "tudo recebido"} subtitulo="material que depende do cliente" />
-          <Card variante="vazado" rotulo="Valores" titulo={sistema.implantacao ? `R$ ${sistema.implantacao}` : "—"} subtitulo={`implantação${sistema.mensalidade ? ` · R$ ${sistema.mensalidade}/mês${sistema.mensalidadeAtiva ? " ativa" : ""}` : ""}`} />
+          <Card variante="vazado" rotulo="Valores" titulo={sistema.implantacao ? `R$ ${sistema.implantacao}` : "—"} subtitulo={`implantação${sistema.mensalidade ? ` · R$ ${sistema.mensalidade}/mês${sistema.cobranca === "unidade" ? ` por unidade (${unidadesCobradas(sistema, cliente).length})` : ""}${sistema.mensalidadeAtiva ? " · ativa" : ""}` : ""}`} />
         </div>
 
         <Card rotulo="O sistema" titulo="Identificação">
@@ -282,12 +282,37 @@ export function ModuloSistema({ cliente, sistema, totalSistemas = 1, propostaAce
         <Card rotulo="Valores e entrega" titulo="Implantação, mensalidade e sustentação." style={{ marginTop: 24 }}>
           <div className="grid sm:grid-cols-4 gap-x-4 items-end">
             <InputField label="Implantação (R$)" value={sistema.implantacao} onChange={set("implantacao")} placeholder="6400" ajuda="50% no aceite, 50% na entrega." />
-            <InputField label="Mensalidade (R$)" value={sistema.mensalidade} onChange={set("mensalidade")} placeholder="200" ajuda="hospedagem, manutenção, pequenas alterações." />
+            <InputField label={sistema.cobranca === "unidade" ? "Mensalidade por unidade (R$)" : "Mensalidade (R$)"} value={sistema.mensalidade} onChange={set("mensalidade")} placeholder="200" ajuda="hospedagem, manutenção, pequenas alterações." />
             <InputField label="Entregue em (dd/mm/aaaa)" value={sistema.entregueEm} onChange={set("entregueEm")} />
             <label className="enz-campo flex items-center gap-2" style={{ paddingBottom: 24 }}>
               <input type="checkbox" checked={!!sistema.mensalidadeAtiva} onChange={(e) => set("mensalidadeAtiva")(e.target.checked)} />
               <span>mensalidade ativa</span>
             </label>
+          </div>
+          <div className="flex items-start gap-6 flex-wrap" style={{ marginBottom: 12 }}>
+            <div className="enz-campo" style={{ marginBottom: 0 }}>
+              <label className="enz-rotulo">Cobrança da mensalidade</label>
+              <select className="enz-input" style={{ width: 240 }} value={sistema.cobranca || "unica"} onChange={(e) => set("cobranca")(e.target.value)}>
+                <option value="unica">única, do cliente</option>
+                <option value="unidade">por unidade (CNPJ)</option>
+              </select>
+            </div>
+            {sistema.cobranca === "unidade" && (
+              <div className="enz-campo" style={{ marginBottom: 0 }}>
+                <label className="enz-rotulo">Unidades que pagam</label>
+                {(cliente.unidades || []).length === 0 ? <p className="enz-nota">cadastre as unidades em "editar dados" do cliente.</p> : (
+                  <div className="flex gap-3 flex-wrap" style={{ marginTop: 4 }}>
+                    {cliente.unidades.map((u) => { const ids = sistema.unidadesIds || []; const marcada = !ids.length || ids.includes(u.id); return (
+                      <label key={u.id} className="flex items-center gap-2" style={{ fontSize: 14 }}>
+                        <input type="checkbox" checked={marcada} onChange={(e) => { const todas = cliente.unidades.map((x) => x.id); const atual = ids.length ? ids : todas; set("unidadesIds")(e.target.checked ? [...new Set([...atual, u.id])] : atual.filter((x) => x !== u.id)); }} />
+                        <span>{u.nome}</span>
+                      </label>
+                    ); })}
+                  </div>
+                )}
+                {sistema.cobranca === "unidade" && sistema.mensalidade && <p className="enz-nota" style={{ marginTop: 6 }}>total: R$ {sistema.mensalidade} × {unidadesCobradas(sistema, cliente).length} = {formatarBR(parseValorBR(sistema.mensalidade) * unidadesCobradas(sistema, cliente).length)} por mês.</p>}
+              </div>
+            )}
           </div>
           {propostaAceita && <p className="enz-nota">proposta aceita: {propostaAceita.investimento || "valor a definir"}{propostaAceita.mensalidade ? ` + R$ ${propostaAceita.mensalidade}/mês` : ""}.{!sistema.implantacao && propostaAceita.investimento ? <> <button className="enz-link" style={{ fontSize: 13 }} onClick={() => onMudar({ ...sistema, implantacao: String(parseValorBR(propostaAceita.investimento)).replace(".", ","), mensalidade: sistema.mensalidade || propostaAceita.mensalidade || "" })}>usar estes valores</button></> : null}</p>}
           <div className="enz-campo" style={{ marginTop: 12 }}>
