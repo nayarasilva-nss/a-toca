@@ -63,6 +63,9 @@ export function TelaSistema({ app }) {
       propostaAceita={propostaAceita}
       catalogo={catalogo}
       calibracao={calibracaoCatalogo(sistemasPorCliente)}
+      financeiro={financeiroAtual || { parcelas: [] }}
+      lista={lista}
+      onMudarFinanceiro={(fin) => salvarColecao("financeiro", clienteAtual.id, fin)}
       precificacao={precificacao}
       gerando={gerando}
       erro={erro}

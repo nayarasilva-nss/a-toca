@@ -7,6 +7,7 @@ import { useState } from "react";
 import { AvisoErro, BotaoContorno, BotaoPrimario, InputField, Trabalhando } from "../componentes/ui.jsx";
 import { formatarBR, parseValorBR } from "../ia/financeiro.jsx";
 import { CATEGORIAS_CATALOGO, ETAPAS, horasDe, itemDoBloco, planoDoEscopo, realizadasPorItem, somaHoras, totalRealizadas } from "../nucleo/catalogo.jsx";
+import { redividirImplantacao, resumoImplantacao } from "../nucleo/recorrencia.jsx";
 
 // ─── Módulo: Sistema (desenvolvimento de sistema personalizado) ──
 
@@ -207,7 +208,55 @@ function Horas({ sistema, precificacao, propostaAceita, onMudar }) {
   );
 }
 
-export function ModuloSistema({ cliente, sistema, totalSistemas = 1, propostaAceita, catalogo = [], calibracao = {}, precificacao = {}, gerando, erro, onMudar, onMudarCatalogo, onMudarPrecificacao, onEstimarIA, onVoltar, onPropostas, onLista }) {
+// Pagamento da implantação: parcelas editáveis e redivisão do que falta
+function PagamentoImplantacao({ sistema, financeiro, lista, onMudarFinanceiro }) {
+  const [n, setN] = useState(2);
+  const [primeira, setPrimeira] = useState("");
+  const [tipo, setTipo] = useState("iguais");
+  const resumo = resumoImplantacao(sistema, financeiro, lista);
+  const parcelas = resumo.parcelas;
+  const mudar = (id, campos) => onMudarFinanceiro({ ...financeiro, parcelas: (financeiro.parcelas || []).map((p) => (p.id === id ? { ...p, ...campos } : p)) });
+  const remover = (id) => onMudarFinanceiro({ ...financeiro, parcelas: (financeiro.parcelas || []).filter((p) => p.id !== id) });
+  const adicionar = () => onMudarFinanceiro({ ...financeiro, parcelas: [...(financeiro.parcelas || []), { id: uid(), descricao: `Implantação — ${sistema.nome || "sistema"}`, valor: "", vencimento: "", pago: false, implantacao: true, sistemaId: sistema.id }] });
+  const redividir = () => { const { parcelas: novas } = redividirImplantacao(sistema, financeiro, lista, { tipo, n, primeira }); onMudarFinanceiro({ ...financeiro, parcelas: novas }); };
+  const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+  const cor = (p) => { if (p.pago) return "var(--sucesso)"; const m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(p.vencimento || ""); return m && new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])) < hoje ? "var(--erro)" : "var(--alerta)"; };
+  if (!resumo.total) return <p className="enz-nota" style={{ marginTop: 12 }}>preencha o valor da implantação para montar o pagamento.</p>;
+  return (
+    <div style={{ marginTop: 16, paddingTop: 14, borderTop: "1px solid var(--linha)" }}>
+      <div className="flex items-baseline justify-between gap-3 flex-wrap">
+        <span className="enz-rotulo">Pagamento da implantação</span>
+        <span className="enz-nota">{formatarBR(resumo.total)} · {formatarBR(resumo.recebido)} recebidos · {formatarBR(resumo.aberto)} em aberto</span>
+      </div>
+      {parcelas.length > 0 && (
+        <div style={{ marginTop: 8 }}>
+          {parcelas.map((p) => (
+            <div key={p.id} className="flex items-center gap-2 flex-wrap" style={{ padding: "6px 0", borderBottom: "1px solid var(--linha)", fontSize: 13.5, opacity: p.pago ? 0.7 : 1 }}>
+              <span style={{ color: cor(p) }}>●</span>
+              <input className="enz-input" style={{ flex: "1 1 200px", padding: "4px 8px", fontSize: 13 }} value={p.descricao} onChange={(e) => mudar(p.id, { descricao: e.target.value })} />
+              <input className="enz-input" style={{ width: 120, padding: "4px 8px", fontSize: 13 }} value={p.valor} onChange={(e) => mudar(p.id, { valor: e.target.value })} placeholder="R$" />
+              <input className="enz-input" style={{ width: 120, padding: "4px 8px", fontSize: 13 }} value={p.vencimento || ""} onChange={(e) => mudar(p.id, { vencimento: e.target.value })} placeholder="dd/mm/aaaa" />
+              <label className="flex items-center gap-1" style={{ fontSize: 13 }}><input type="checkbox" checked={!!p.pago} onChange={(e) => mudar(p.id, { pago: e.target.checked, pagoEm: e.target.checked ? new Date().toLocaleDateString("pt-BR") : "" })} /> paga</label>
+              {!p.pago && <button type="button" className="enz-link" style={{ fontSize: 13 }} onClick={() => remover(p.id)}>✕</button>}
+            </div>
+          ))}
+        </div>
+      )}
+      <div className="flex items-center gap-2 flex-wrap" style={{ marginTop: 10 }}>
+        <select className="enz-input" style={{ width: 220, padding: "6px 10px" }} value={tipo} onChange={(e) => setTipo(e.target.value)}>
+          <option value="iguais">dividir o que falta em</option>
+          <option value="50-50">50% no aceite + 50% na entrega</option>
+        </select>
+        {tipo === "iguais" && <><input className="enz-input" type="number" min={1} max={36} style={{ width: 64, padding: "6px 8px" }} value={n} onChange={(e) => setN(e.target.value)} /><span className="enz-nota">parcelas mensais a partir de</span><input className="enz-input" style={{ width: 120, padding: "6px 8px" }} value={primeira} onChange={(e) => setPrimeira(e.target.value)} placeholder="hoje" title="dd/mm/aaaa" /></>}
+        <BotaoContorno onClick={redividir}>{parcelas.some((p) => !p.pago) ? "Redividir" : "Gerar parcelas"}</BotaoContorno>
+        <button type="button" className="enz-link" onClick={adicionar}>+ parcela avulsa</button>
+      </div>
+      <p className="enz-nota" style={{ marginTop: 6 }}>as parcelas pagas ficam; só o que está em aberto é redividido. valores e datas podem ser ajustados um a um.</p>
+    </div>
+  );
+}
+
+export function ModuloSistema({ cliente, sistema, totalSistemas = 1, propostaAceita, catalogo = [], calibracao = {}, precificacao = {}, financeiro = { parcelas: [] }, lista = [], onMudarFinanceiro, gerando, erro, onMudar, onMudarCatalogo, onMudarPrecificacao, onEstimarIA, onVoltar, onPropostas, onLista }) {
   const set = (campo) => (v) => onMudar({ ...sistema, [campo]: v });
   const escopo = sistema.escopo || [];
   const horasTotal = somaHoras(escopo);
@@ -281,7 +330,7 @@ export function ModuloSistema({ cliente, sistema, totalSistemas = 1, propostaAce
 
         <Card rotulo="Valores e entrega" titulo="Implantação, mensalidade e sustentação." style={{ marginTop: 24 }}>
           <div className="grid sm:grid-cols-4 gap-x-4 items-end">
-            <InputField label="Implantação (R$)" value={sistema.implantacao} onChange={set("implantacao")} placeholder="6400" ajuda="50% no aceite, 50% na entrega." />
+            <InputField label="Implantação (R$)" value={sistema.implantacao} onChange={set("implantacao")} placeholder="6400" ajuda="o plano de pagamento fica logo abaixo." />
             <InputField label={sistema.cobranca === "unidade" ? "Mensalidade por unidade (R$)" : "Mensalidade (R$)"} value={sistema.mensalidade} onChange={set("mensalidade")} placeholder="200" ajuda="hospedagem, manutenção, pequenas alterações." />
             <InputField label="Entregue em (dd/mm/aaaa)" value={sistema.entregueEm} onChange={set("entregueEm")} />
             <label className="enz-campo flex items-center gap-2" style={{ paddingBottom: 24 }}>
@@ -315,6 +364,7 @@ export function ModuloSistema({ cliente, sistema, totalSistemas = 1, propostaAce
             )}
           </div>
           {propostaAceita && <p className="enz-nota">proposta aceita: {propostaAceita.investimento || "valor a definir"}{propostaAceita.mensalidade ? ` + R$ ${propostaAceita.mensalidade}/mês` : ""}.{!sistema.implantacao && propostaAceita.investimento ? <> <button className="enz-link" style={{ fontSize: 13 }} onClick={() => onMudar({ ...sistema, implantacao: String(parseValorBR(propostaAceita.investimento)).replace(".", ","), mensalidade: sistema.mensalidade || propostaAceita.mensalidade || "" })}>usar estes valores</button></> : null}</p>}
+          {onMudarFinanceiro && <PagamentoImplantacao sistema={sistema} financeiro={financeiro || { parcelas: [] }} lista={lista} onMudarFinanceiro={onMudarFinanceiro} />}
           <div className="enz-campo" style={{ marginTop: 12 }}>
             <label className="enz-rotulo">Observações internas</label>
             <textarea className="enz-input" value={sistema.obs} onChange={(e) => set("obs")(e.target.value)} style={{ minHeight: 80 }} placeholder="decisões, pendências antes de começar, o que não falar com o cliente ainda" />

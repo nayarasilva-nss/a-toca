@@ -176,3 +176,35 @@ export function resumoImplantacao(sistema, financeiro, lista = null) {
   const lancado = parcelas.reduce((t, p) => t + parseValorBR(p.valor), 0);
   return { total, recebido, lancado, aberto: Math.max(0, (lancado || total) - recebido), parcelas, geradas: parcelas.length > 0 };
 }
+
+// Redivide o que ainda não foi pago da implantação em N parcelas mensais iguais a partir de uma data,
+// ou em "50/50" (aceite hoje + entrega). Parcelas pagas ficam; as em aberto são substituídas.
+export function redividirImplantacao(sistema, financeiro, lista = null, plano = { tipo: "iguais", n: 2, primeira: "" }) {
+  const todas = (financeiro && financeiro.parcelas) || [];
+  const minhas = todas.filter((p) => p.implantacao && parcelaDoSistema(p, sistema, lista || [sistema]));
+  const pagas = minhas.filter((p) => p.pago);
+  const total = parseValorBR(sistema && sistema.implantacao);
+  const restante = Math.max(0, total - pagas.reduce((t, p) => t + parseValorBR(p.valor), 0));
+  const outras = todas.filter((p) => !minhas.includes(p) || p.pago);
+  if (restante <= 0) return { parcelas: outras, novas: [] };
+  const nome = sistema.nome || "sistema";
+  const comum = { pago: false, implantacao: true, sistemaId: sistema.id };
+  let novas = [];
+  if (plano.tipo === "50-50") {
+    const metade = formatarBR(restante / 2);
+    novas = [
+      { id: uid(), descricao: `50% no aceite — ${nome}`, valor: metade, vencimento: plano.primeira || dataHojeBR(), ...comum },
+      { id: uid(), descricao: `50% na entrega — ${nome}`, valor: metade, vencimento: sistema.entregueEm || "", entrega: true, ...comum },
+    ];
+  } else {
+    const n = Math.min(36, Math.max(1, Number(plano.n) || 1));
+    const base = Math.floor((restante / n) * 100) / 100;
+    const resto = Math.round((restante - base * n) * 100) / 100;
+    const inicio = parseDataBR(plano.primeira) || new Date();
+    novas = Array.from({ length: n }, (_, i) => {
+      const d = new Date(inicio.getFullYear(), inicio.getMonth() + i, Math.min(inicio.getDate(), 28));
+      return { id: uid(), descricao: `Implantação ${pagas.length + i + 1}/${pagas.length + n} — ${nome}`, valor: formatarBR(i === 0 ? base + resto : base), vencimento: dataBR(d), ...comum };
+    });
+  }
+  return { parcelas: [...outras, ...novas], novas };
+}
