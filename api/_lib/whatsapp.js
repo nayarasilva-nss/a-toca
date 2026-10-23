@@ -1,18 +1,18 @@
-// Aviso no WhatsApp da consultora via CallMeBot (gratuito para uso pessoal).
-// Configuração: WHATSAPP_NUMERO (DDI+DDD+número, só dígitos, ex.: 5511999990000) e CALLMEBOT_APIKEY
-// (a chave chega no seu WhatsApp depois de mandar "I allow callmebot to send me messages" para +34 644 71 81 99).
+// Aviso no WhatsApp da consultora. Dois canais, nesta ordem:
+// 1) API oficial do WhatsApp (Meta Cloud API): WHATSAPP_CLOUD_TOKEN + WHATSAPP_CLOUD_PHONE_ID (+ WHATSAPP_CLOUD_TEMPLATE opcional)
+// 2) CallMeBot (gratuito, uso pessoal): CALLMEBOT_APIKEY
+// Em ambos, WHATSAPP_NUMERO é o número que recebe (DDI+DDD+número, só dígitos, ex.: 5562999990000).
 
 const URL_APP = 'https://enraizar.vercel.app';
+const VERSAO_GRAPH = 'v21.0';
 
+const numeroDestino = () => String(process.env.WHATSAPP_NUMERO || '').replace(/\D/g, '');
+export const cloudConfigurado = () => !!(process.env.WHATSAPP_CLOUD_TOKEN && process.env.WHATSAPP_CLOUD_PHONE_ID && numeroDestino());
+export const callmebotConfigurado = () => !!(process.env.CALLMEBOT_APIKEY && numeroDestino());
 export function configurado() {
-  return !!(process.env.WHATSAPP_NUMERO && process.env.CALLMEBOT_APIKEY);
+  return cloudConfigurado() || callmebotConfigurado();
 }
-
-function linhaDiagnostico(d) {
-  if (!d || !Array.isArray(d.areas) || !d.areas.length) return null;
-  const fracas = [...d.areas].sort((a, b) => a.pct - b.pct).slice(0, 2).map((a) => `${a.area} ${a.pct}%`);
-  return `Autodiagnóstico: ${d.indice}% depende do dono · mais fracas: ${fracas.join(', ')}`;
-}
+export const canalAtivo = () => (cloudConfigurado() ? 'cloud' : callmebotConfigurado() ? 'callmebot' : null);
 
 export function textoLeadNovo(lead) {
   const linhas = [
@@ -31,21 +31,61 @@ export function textoLeadNovo(lead) {
   return linhas.filter((l) => l !== undefined && l !== null && l !== false).join('\n');
 }
 
-// Devolve { ok, motivo }. Nunca lança: o lead já está salvo e o aviso é um extra.
-export async function enviarWhatsApp(texto) {
-  if (!configurado()) return { ok: false, motivo: 'WHATSAPP_NUMERO ou CALLMEBOT_APIKEY não configurados' };
-  const numero = String(process.env.WHATSAPP_NUMERO).replace(/\D/g, '');
-  const url = `https://api.callmebot.com/whatsapp.php?phone=${numero}&text=${encodeURIComponent(texto)}&apikey=${encodeURIComponent(process.env.CALLMEBOT_APIKEY)}`;
+function linhaDiagnostico(d) {
+  if (!d || !Array.isArray(d.areas) || !d.areas.length) return null;
+  const fracas = [...d.areas].sort((a, b) => a.pct - b.pct).slice(0, 2).map((a) => `${a.area} ${a.pct}%`);
+  return `Autodiagnóstico: ${d.indice}% depende do dono · mais fracas: ${fracas.join(', ')}`;
+}
+
+async function comTimeout(fn, ms = 10000) {
+  const controle = new AbortController();
+  const t = setTimeout(() => controle.abort(), ms);
+  try { return await fn(controle.signal); } finally { clearTimeout(t); }
+}
+
+// ── Meta Cloud API ───────────────────────────────────────────────
+// Mensagem de texto livre só chega se a Nay falou com o número do bot nas últimas 24 h.
+// Fora da janela, a API exige um modelo aprovado: WHATSAPP_CLOUD_TEMPLATE (modelo com um parâmetro de texto no corpo).
+async function enviarCloud(texto) {
+  const url = `https://graph.facebook.com/${VERSAO_GRAPH}/${process.env.WHATSAPP_CLOUD_PHONE_ID}/messages`;
+  const cabecalhos = { Authorization: `Bearer ${process.env.WHATSAPP_CLOUD_TOKEN}`, 'Content-Type': 'application/json' };
+  const chamar = async (corpo) => {
+    const r = await comTimeout((signal) => fetch(url, { method: 'POST', headers: cabecalhos, body: JSON.stringify(corpo), signal }));
+    const j = await r.json().catch(() => ({}));
+    return { ok: r.ok, codigo: j && j.error && j.error.code, motivo: j && j.error ? `${j.error.code || ''} ${j.error.message || ''}`.trim() : '' };
+  };
+  const texto1 = await chamar({ messaging_product: 'whatsapp', to: numeroDestino(), type: 'text', text: { body: texto } });
+  if (texto1.ok) return { ok: true, canal: 'cloud' };
+  const modelo = process.env.WHATSAPP_CLOUD_TEMPLATE;
+  // 131047 = fora da janela de 24 h; 131026/132000 = precisa de modelo
+  if (modelo && [131047, 131026, 132000, 131051].includes(Number(texto1.codigo))) {
+    const umaLinha = texto.replace(/[\r\n\t]+/g, ' · ').replace(/\s{2,}/g, ' ').slice(0, 1000);
+    const t = await chamar({ messaging_product: 'whatsapp', to: numeroDestino(), type: 'template', template: { name: modelo, language: { code: process.env.WHATSAPP_CLOUD_IDIOMA || 'pt_BR' }, components: [{ type: 'body', parameters: [{ type: 'text', text: umaLinha }] }] } });
+    if (t.ok) return { ok: true, canal: 'cloud-modelo' };
+    return { ok: false, motivo: `Cloud API (modelo): ${t.motivo || 'erro'}` };
+  }
+  return { ok: false, motivo: `Cloud API: ${texto1.motivo || 'erro'}${!modelo ? ' — sem WHATSAPP_CLOUD_TEMPLATE para mandar fora da janela de 24 h' : ''}` };
+}
+
+// ── CallMeBot ────────────────────────────────────────────────────
+async function enviarCallMeBot(texto) {
+  const url = `https://api.callmebot.com/whatsapp.php?phone=${numeroDestino()}&text=${encodeURIComponent(texto)}&apikey=${encodeURIComponent(process.env.CALLMEBOT_APIKEY)}`;
   try {
-    const controle = new AbortController();
-    const t = setTimeout(() => controle.abort(), 8000);
-    const r = await fetch(url, { signal: controle.signal });
-    clearTimeout(t);
+    const r = await comTimeout((signal) => fetch(url, { signal }), 8000);
     const corpo = await r.text().catch(() => '');
     if (!r.ok) return { ok: false, motivo: `CallMeBot respondeu ${r.status}: ${corpo.slice(0, 160)}` };
     if (/error|invalid|not allowed/i.test(corpo) && !/queued|sent|success/i.test(corpo)) return { ok: false, motivo: corpo.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200) };
-    return { ok: true };
+    return { ok: true, canal: 'callmebot' };
   } catch (e) {
     return { ok: false, motivo: e.name === 'AbortError' ? 'CallMeBot não respondeu em 8 s' : e.message };
   }
+}
+
+// Devolve { ok, canal?, motivo? }. Nunca lança: o registro já está salvo e o aviso é um extra.
+export async function enviarWhatsApp(texto) {
+  if (cloudConfigurado()) {
+    try { return await enviarCloud(texto); } catch (e) { return { ok: false, motivo: e.name === 'AbortError' ? 'Cloud API não respondeu em 10 s' : e.message }; }
+  }
+  if (callmebotConfigurado()) return enviarCallMeBot(texto);
+  return { ok: false, motivo: 'WhatsApp não configurado: defina WHATSAPP_NUMERO e, para a API oficial, WHATSAPP_CLOUD_TOKEN + WHATSAPP_CLOUD_PHONE_ID (ou CALLMEBOT_APIKEY)' };
 }

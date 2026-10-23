@@ -232,6 +232,23 @@ function Pedidos({ onAceitar, onMudouPendentes }) {
 
 // ── Tela ─────────────────────────────────────────────────────────
 
+// dispara agora o mesmo resumo que o cron manda às 7h
+function BotaoResumo() {
+  const [estado, setEstado] = useState(null);
+  const [enviando, setEnviando] = useState(false);
+  const enviar = async () => {
+    setEnviando(true);
+    try { const r = await fetch("/api/lembrete"); const j = await r.json().catch(() => ({})); setEstado(j.ok ? `enviado pelo canal ${j.canal || "configurado"}` : `não enviado: ${j.motivo || j.error || "erro"}`); } catch (e) { setEstado(`não enviado: ${e.message}`); }
+    setEnviando(false);
+  };
+  return (
+    <span className="flex items-center gap-2 flex-wrap">
+      <BotaoContorno onClick={enviar} disabled={enviando}>{enviando ? "Enviando…" : "Receber o resumo de hoje no WhatsApp"}</BotaoContorno>
+      {estado && <span className="enz-nota" style={{ color: estado.startsWith("enviado") ? "var(--sucesso)" : "var(--alerta)" }}>{estado}</span>}
+    </span>
+  );
+}
+
 export function TelaAgenda({ tarefas, onMudarTarefas, clientes = [], financeiroPorCliente = {}, sistemasPorCliente = {}, pedidosPendentes = 0, onMudouPendentes, abaInicial = "tarefas", onAbrirCliente, onVoltar }) {
   const [aba, setAba] = useState(abaInicial);
   const hoje = hojeISO();
@@ -257,6 +274,7 @@ export function TelaAgenda({ tarefas, onMudarTarefas, clientes = [], financeiroP
       <button onClick={onVoltar} className="enz-link" style={{ marginBottom: 20 }}>← início</button>
       <TituloSecao
         rotulo="Agenda"
+        acoes={<BotaoResumo />}
         titulo="O que é seu, fora dos clientes."
         virada={g.hoje.length || g.atrasadas.length ? `${g.hoje.length} para hoje${g.atrasadas.length ? ` · ${g.atrasadas.length} atrasada${g.atrasadas.length > 1 ? "s" : ""}` : ""}.` : abertas ? `${abertas} tarefa${abertas > 1 ? "s" : ""} em aberto, nada para hoje.` : "Nada pendente."}
       />

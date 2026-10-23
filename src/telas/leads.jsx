@@ -67,10 +67,10 @@ function AvisoWhatsApp() {
         <span className="enz-rotulo">Aviso no seu WhatsApp</span>
         <BotaoContorno onClick={testar} disabled={testando}>{testando ? "Enviando…" : "Enviar aviso de teste"}</BotaoContorno>
       </div>
-      <p className="enz-nota" style={{ margin: "6px 0 0" }}>cada lead novo chega como mensagem no seu WhatsApp, com nome, contato, negócio e a dor. configuração: no WhatsApp, mande "I allow callmebot to send me messages" para +34 644 71 81 99, receba a chave e grave na Vercel as variáveis WHATSAPP_NUMERO e CALLMEBOT_APIKEY.</p>
+      <p className="enz-nota" style={{ margin: "6px 0 0" }}>lead novo, pedido novo e o resumo diário das 7h chegam como mensagem no seu WhatsApp. canal preferido: a API oficial do WhatsApp (Meta), com as variáveis WHATSAPP_NUMERO, WHATSAPP_CLOUD_TOKEN, WHATSAPP_CLOUD_PHONE_ID e WHATSAPP_CLOUD_TEMPLATE na Vercel. alternativa gratuita: CallMeBot, com CALLMEBOT_APIKEY.</p>
       {resultado && (
         <p style={{ marginTop: 8, fontSize: 13.5, color: resultado.ok ? "var(--sucesso)" : "var(--alerta)" }}>
-          {resultado.ok ? "enviado. confira o WhatsApp." : `não enviado: ${resultado.motivo}`}
+          {resultado.ok ? `enviado pelo canal ${resultado.canal || "configurado"}. confira o WhatsApp.` : `não enviado: ${resultado.motivo}`}
         </p>
       )}
     </div>

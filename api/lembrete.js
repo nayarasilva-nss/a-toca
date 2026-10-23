@@ -22,7 +22,7 @@ export default async (req, res) => {
     const s = sessaoDe(req);
     if (!s || s.papel !== 'consultora') return res.status(401).json({ error: 'não autorizado' });
   }
-  if (!configurado()) return res.status(200).json({ ok: false, motivo: 'WhatsApp não configurado (WHATSAPP_NUMERO e CALLMEBOT_APIKEY)' });
+  if (!configurado()) return res.status(200).json({ ok: false, motivo: 'WhatsApp não configurado: WHATSAPP_NUMERO e WHATSAPP_CLOUD_TOKEN + WHATSAPP_CLOUD_PHONE_ID (API oficial) ou CALLMEBOT_APIKEY' });
 
   const url = process.env.DATABASE_URL || process.env.POSTGRES_URL;
   if (!url) return res.status(503).json({ error: 'DATABASE_URL não configurada' });
