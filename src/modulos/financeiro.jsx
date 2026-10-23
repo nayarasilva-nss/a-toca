@@ -5,7 +5,7 @@ import { HeaderModulo } from "../telas/hub.jsx";
 
 // ─── Módulo: Financeiro ─────────────────────────────────────────
 
-export function ModuloFinanceiro({ cliente, financeiro, propostaAceita, sistema = null, mensalidadesPendentes = [], onMudar, onVoltar }) {
+export function ModuloFinanceiro({ cliente, financeiro, propostaAceita, sistemas = [], mensalidadesPendentes = [], onMudar, onVoltar }) {
   const parcelas = financeiro.parcelas || [];
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
@@ -69,25 +69,25 @@ export function ModuloFinanceiro({ cliente, financeiro, propostaAceita, sistema 
           </button>
         )}
 
-        {sistema && (sistema.mensalidadeAtiva || sistema.entregueEm) && (
-          <div className="mb-4 p-4 rounded-lg" style={{ border: "1px solid var(--linha)" }}>
+        {sistemas.filter((sistema) => sistema.mensalidadeAtiva || sistema.entregueEm).map((sistema) => { const pend = mensalidadesPendentes.filter((p) => !p.sistemaId || p.sistemaId === sistema.id); return (
+          <div key={sistema.id} className="mb-4 p-4 rounded-lg" style={{ border: "1px solid var(--linha)" }}>
             <div className="enz-rotulo mb-1">Sistema · {sistema.nome || "sem nome"}</div>
             <div className="text-sm">
               {sistema.entregueEm ? `Entregue em ${sistema.entregueEm}. ` : ""}
               {sistema.mensalidadeAtiva ? `Mensalidade ativa de R$ ${sistema.mensalidade}/mês — vence todo dia ${(sistema.entregueEm || sistema.inicio || "").slice(0, 2) || "?"}.` : "Mensalidade ainda não ativada no módulo Sistema."}
             </div>
-            {mensalidadesPendentes.length > 0 && (
+            {pend.length > 0 && (
               <button
-                onClick={() => onMudar({ ...financeiro, parcelas: [...parcelas, ...mensalidadesPendentes] })}
+                onClick={() => onMudar({ ...financeiro, parcelas: [...parcelas, ...pend] })}
                 className="mt-3 px-4 py-2 rounded text-sm font-semibold"
                 style={{ background: "var(--sucesso-fundo)", color: "var(--sucesso)", border: "1px solid var(--linha-forte)" }}
               >
-                Gerar {mensalidadesPendentes.length} mensalidade{mensalidadesPendentes.length > 1 ? "s" : ""} até este mês
+                Gerar {pend.length} mensalidade{pend.length > 1 ? "s" : ""} até este mês
               </button>
             )}
-            {sistema.mensalidadeAtiva && !mensalidadesPendentes.length && <div className="enz-nota" style={{ marginTop: 6 }}>mensalidades em dia até este mês. volte aqui no mês que vem.</div>}
+            {sistema.mensalidadeAtiva && !pend.length && <div className="enz-nota" style={{ marginTop: 6 }}>mensalidades em dia até este mês. volte aqui no mês que vem.</div>}
           </div>
-        )}
+        ); })}
 
         <div className="flex gap-3 flex-wrap mb-5">
           <div className="px-4 py-2 rounded-lg text-sm" style={{ background: "var(--sucesso-fundo)", color: "var(--sucesso)" }}>

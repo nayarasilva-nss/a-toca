@@ -105,7 +105,7 @@ export function ListaPropostas({ cliente, propostas, onAbrir, onNova, onVoltar }
   );
 }
 
-export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, numEncontros, precificacao, temSistemas, contratada, onMudarContratada, onGerarContrato, onRevisarContrato, onImprimirContrato, onMudarPrecificacao, onMudar, onGerar, onGerarMetas, onImprimir, onExcluir, onVoltar }) {
+export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasPadrao, numEncontros, precificacao, temSistemas, sistemas = [], contratada, onMudarContratada, onGerarContrato, onRevisarContrato, onImprimirContrato, onMudarPrecificacao, onMudar, onGerar, onGerarMetas, onImprimir, onExcluir, onVoltar }) {
   const ehPessoaProp = cliente.tipo === "pessoa";
   const ehSistema = prop.tipo === "sistema";
   const set = (campo) => (v) => onMudar({ ...prop, [campo]: v });
@@ -140,6 +140,12 @@ export function EditorProposta({ cliente, prop, gerando, erro, frentes, semanasP
               <select className="ml-3 px-2 py-1 text-xs rounded border" style={{ borderColor: "var(--linha)", verticalAlign: "middle" }} value={prop.tipo || "consultoria"} onChange={(e) => onMudar({ ...prop, tipo: e.target.value })} title="Tipo da proposta">
                 <option value="consultoria">Consultoria</option>
                 <option value="sistema">Sistema</option>
+              </select>
+            )}
+            {ehSistema && sistemas.length > 1 && (
+              <select className="ml-3 px-2 py-1 text-xs rounded border" style={{ borderColor: "var(--linha)", verticalAlign: "middle" }} value={prop.sistemaId || ""} onChange={(e) => onMudar({ ...prop, sistemaId: e.target.value })} title="Sistema desta proposta">
+                <option value="">qual sistema?</option>
+                {sistemas.map((s) => <option key={s.id} value={s.id}>{s.nome || "sem nome"}</option>)}
               </select>
             )}
           </h2>

@@ -141,7 +141,7 @@ export function ListaClientes({ clientes, fases = {}, backupPendente, onAplicarB
   );
 }
 
-export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, temperamentoMentorado, totalPercepcoes = 0, sistema = null, contratoStatus = null, totalCampo, totalDiagsLider, temRelMentoria, totalAnomalias, totalAnomaliasTratadas, totalTreinamentos, totalTreinamentosRealizados, totalEncontros, totalEncontrosRealizados, totalCargos, temTabela, gestao, totalPosicoes, totalAlcadas, totalRitos, totalIndicadores, totalSecoesManual, totalPontosCCT, totalPops, totalFluxos, totalPoliticas, totalChecklists, totalPessoas, totalDiagnosticos, totalPropostas, totalRelatorios, resumoFinanceiro, onModulo, onEditarCliente, onVoltar }) {
+export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, temperamentoMentorado, totalPercepcoes = 0, sistemas = [], contratoStatus = null, totalCampo, totalDiagsLider, temRelMentoria, totalAnomalias, totalAnomaliasTratadas, totalTreinamentos, totalTreinamentosRealizados, totalEncontros, totalEncontrosRealizados, totalCargos, temTabela, gestao, totalPosicoes, totalAlcadas, totalRitos, totalIndicadores, totalSecoesManual, totalPontosCCT, totalPops, totalFluxos, totalPoliticas, totalChecklists, totalPessoas, totalDiagnosticos, totalPropostas, totalRelatorios, resumoFinanceiro, onModulo, onEditarCliente, onVoltar }) {
   const servicosCliente = cliente.servicos || { consultoria: true, mentoria: false, treinamentos: false };
   const ehPessoa = cliente.tipo === "pessoa";
   const frentes = (gestao && gestao.frentes) || [];
@@ -170,7 +170,7 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
     campo: totalCampo > 0 ? `${totalCampo} registro${totalCampo > 1 ? "s" : ""} no caderno` : "O caderno está em branco",
     diagslider: totalDiagsLider > 0 ? `${totalDiagsLider} avaliaç${totalDiagsLider > 1 ? "ões" : "ão"}` : "Ainda não avaliado",
     relmentoria: temRelMentoria ? "Relatório pronto" : "A prova da jornada",
-    sistema: (() => { if (!sistema) return "Levantamento ainda não registrado"; const e = sistema.escopo || []; const ok = e.filter((i) => i.status === "entregue").length; const sit = sistema.mensalidadeAtiva ? "mensalidade ativa" : ({ levantamento: "em levantamento", proposta: "proposta", construcao: "em construção", entregue: "entregue", sustentacao: "em sustentação", encerrado: "encerrado" })[sistema.status] || "em levantamento"; return e.length ? `${ok}/${e.length} entregas · ${sit}` : (sistema.briefing || "").trim() ? "Briefing registrado — defina o escopo" : "Levantamento ainda não registrado"; })(),
+    sistema: (() => { if (sistemas.length > 1) { const n = (st) => sistemas.filter((s) => s.status === st || (st === "sustentacao" && s.mensalidadeAtiva)).length; const partes = [n("construcao") && `${n("construcao")} em construção`, n("sustentacao") && `${n("sustentacao")} em sustentação`, n("proposta") && `${n("proposta")} em proposta`, n("levantamento") && `${n("levantamento")} em levantamento`].filter(Boolean); return `${sistemas.length} sistemas${partes.length ? " · " + partes.join(" · ") : ""}`; } const sistema = sistemas[0]; if (!sistema) return "Levantamento ainda não registrado"; const e = sistema.escopo || []; const ok = e.filter((i) => i.status === "entregue").length; const sit = sistema.mensalidadeAtiva ? "mensalidade ativa" : ({ levantamento: "em levantamento", proposta: "proposta", construcao: "em construção", entregue: "entregue", sustentacao: "em sustentação", encerrado: "encerrado" })[sistema.status] || "em levantamento"; return e.length ? `${ok}/${e.length} entregas · ${sit}` : (sistema.briefing || "").trim() ? "Briefing registrado — defina o escopo" : "Levantamento ainda não registrado"; })(),
     percepcoes: totalPercepcoes > 0 ? `${totalPercepcoes} resposta${totalPercepcoes > 1 ? "s" : ""} do entorno` : "Como o entorno vê o mentorado",
     anomalias: totalAnomalias > 0 ? `${totalAnomaliasTratadas}/${totalAnomalias} tratadas` : "Nenhuma anomalia registrada",
     painel: "Controle e verificação do método",
@@ -196,7 +196,7 @@ export function HubCliente({ cliente, proximoPasso, metasAceitas, focoMentoria, 
     diagslider: focoMentoria && FOCOS_MENTORIA[focoMentoria] ? FOCOS_MENTORIA[focoMentoria].diagnostico : "Diagnóstico do Mentorado",
     relmentoria: "Relatório de Evolução",
     percepcoes: "Percepção do entorno",
-    sistema: sistema && sistema.nome ? sistema.nome : "Sistema",
+    sistema: sistemas.length > 1 ? "Sistemas" : sistemas[0] && sistemas[0].nome ? sistemas[0].nome : "Sistema",
     anomalias: "Tratamento de Anomalias",
     painel: "Painel do Projeto",
     propostas: "Propostas Comerciais",

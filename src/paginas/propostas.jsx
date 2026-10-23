@@ -3,7 +3,7 @@ import { resumoCampo } from "../ia/campo.jsx";
 import { gerarProposta, gerarPropostaSistema } from "../ia/proposta.jsx";
 import { gerarContrato, revisarContrato, tipoContratoDe } from "../ia/contrato.jsx";
 import { contratoVazio } from "../modulos/contrato.jsx";
-import { sistemaVazio } from "../modulos/sistema.jsx";
+import { listaSistemas, sistemaDaProposta } from "../nucleo/sistemas.js";
 import { planoDoEscopo, etapasTexto, somaHoras } from "../nucleo/catalogo.jsx";
 import { gerarMetasEngajamento, gerarMetasMentorado } from "../ia/treinamentos.jsx";
 import { EditorProposta, ListaPropostas, propostaVazia } from "../modulos/propostas.jsx";
@@ -17,7 +17,7 @@ export function TelaPropostas({ app }) {
   const gerarPropostaCliente = (cliente, prop) =>
     executarGeracao(async () => {
       const gerado = prop.tipo === "sistema"
-        ? await comRetentativa(() => gerarPropostaSistema(cliente, prop, { ...sistemaVazio(), ...((sistemasPorCliente || {})[cliente.id] || {}) }))
+        ? await comRetentativa(() => gerarPropostaSistema(cliente, prop, sistemaDaProposta(listaSistemas(sistemasPorCliente, cliente.id), prop) || { escopo: [] }))
         : await comRetentativa(() => gerarProposta(
         cliente,
         prop,
@@ -36,7 +36,7 @@ export function TelaPropostas({ app }) {
     executarGeracao(async () => {
       const atual = { ...contratoVazio(), ...(prop.contrato || {}) };
       const partes = { contratada, contratante: { nome: cliente.negocio, ...atual.contratante } };
-      const gerado = await comRetentativa(() => gerarContrato(cliente, prop, tipoContratoDe(cliente, prop), partes, (sistemasPorCliente || {})[cliente.id] || null));
+      const gerado = await comRetentativa(() => gerarContrato(cliente, prop, tipoContratoDe(cliente, prop), partes, sistemaDaProposta(listaSistemas(sistemasPorCliente, cliente.id), prop)));
       const lista = propostasPorCliente[cliente.id] || [];
       await mudarPropostas(cliente.id, lista.map((p) => (p.id === prop.id ? { ...p, contrato: { ...atual, ...gerado } } : p)));
     });
@@ -78,9 +78,9 @@ export function TelaPropostas({ app }) {
           const servicos = clienteAtual.servicos || {};
           const nova = propostaVazia(servicos.sistemas && !servicos.consultoria ? "sistema" : "consultoria");
           if (nova.tipo === "sistema") {
-            const sis = { ...sistemaVazio(), ...((sistemasPorCliente || {})[clienteAtual.id] || {}) };
+            const sis = sistemaDaProposta(listaSistemas(sistemasPorCliente, clienteAtual.id), { sistemaId: tela.sistemaId }) || { escopo: [] };
             const plano = planoDoEscopo(sis.escopo, precificacao.horasPorSemana);
-            Object.assign(nova, { titulo: sis.nome, mensalidade: sis.mensalidade || precificacao.mensalidadePadrao || "", horasEstimadas: somaHoras(sis.escopo) ? String(somaHoras(sis.escopo)) : "", fases: etapasTexto(plano).join("\n"), duracao: sis.prazoSemanas ? `${sis.prazoSemanas} semanas` : (somaHoras(sis.escopo) ? plano.prazoTexto : ""), condicoesPagamento: "50% no aceite e 50% na entrega", validade: "15 dias", entregaveis: (sis.escopo || []).map((i) => i.texto).filter(Boolean).join("\n"), foraEscopo: sis.foraEscopo || "", fornecidoCliente: (sis.fornecidoCliente || []).map((i) => i.texto).filter(Boolean).join("\n") });
+            Object.assign(nova, { sistemaId: sis.id || "", titulo: sis.nome, mensalidade: sis.mensalidade || precificacao.mensalidadePadrao || "", horasEstimadas: somaHoras(sis.escopo) ? String(somaHoras(sis.escopo)) : "", fases: etapasTexto(plano).join("\n"), duracao: sis.prazoSemanas ? `${sis.prazoSemanas} semanas` : (somaHoras(sis.escopo) ? plano.prazoTexto : ""), condicoesPagamento: "50% no aceite e 50% na entrega", validade: "15 dias", entregaveis: (sis.escopo || []).map((i) => i.texto).filter(Boolean).join("\n"), foraEscopo: sis.foraEscopo || "", fornecidoCliente: (sis.fornecidoCliente || []).map((i) => i.texto).filter(Boolean).join("\n") });
           }
           await mudarPropostas(clienteAtual.id, [...propostasAtuais, nova]);
           setErro(null);
@@ -102,6 +102,7 @@ export function TelaPropostas({ app }) {
         numEncontros={(mentoriaAtual.encontros || []).length}
         precificacao={precificacao}
         temSistemas={!!(clienteAtual.servicos || {}).sistemas}
+        sistemas={listaSistemas(sistemasPorCliente, clienteAtual.id)}
         onMudarPrecificacao={mudarPrecificacao}
         onMudar={(nova) => mudarPropostas(clienteAtual.id, propostasAtuais.map((p) => (p.id === nova.id ? nova : p)))}
         onGerar={() => gerarPropostaCliente(clienteAtual, propostaAtual)}

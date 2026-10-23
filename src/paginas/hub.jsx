@@ -1,3 +1,4 @@
+import { listaSistemas, sistemaPrincipal } from "../nucleo/sistemas.js";
 import { parseDataBR } from "../ia/cronograma.jsx";
 import { formatarBR, parseValorBR } from "../ia/financeiro.jsx";
 import { HubCliente } from "../telas/hub.jsx";
@@ -25,15 +26,17 @@ export function TelaHub({ app }) {
     }
     const soSistemas = !(c.servicos || {}).consultoria && (c.servicos || {}).sistemas && c.tipo !== "pessoa";
     if (soSistemas) {
+      const principal = sistemaPrincipal(listaSistemas(sistemasPorCliente, c.id));
+      const qual = principal && principal.nome && listaSistemas(sistemasPorCliente, c.id).length > 1 ? ` (${principal.nome})` : "";
       if (fase === "prospeccao") return { texto: "Escuta: registre o briefing — o problema que o sistema resolve", modulo: "sistema" };
       if (fase === "escuta") return { texto: "Raio-X: defina o escopo item a item, e o que fica de fora", modulo: "sistema" };
       if (fase === "raiox") return { texto: "Acordo: gere a proposta por hora, com mensalidade e prazo", modulo: "propostas" };
       if (fase === "acordo") return { texto: "Proposta na rua — quando o cliente fechar, marque como Aceita e registre o 50% do aceite", modulo: "propostas" };
       if (fase === "construcao") {
         if (!(fin.parcelas || []).length) return { texto: "Registre as parcelas no Financeiro (50% aceite, 50% entrega)", modulo: "financeiro" };
-        return { texto: "Construção: atualize o status de cada entrega e cobre o material do cliente", modulo: "sistema" };
+        return { texto: `Construção${qual}: atualize o status de cada entrega e cobre o material do cliente`, modulo: "sistema" };
       }
-      if (fase === "prova") return { texto: "Entregue: registre a data, cobre o 50% da entrega e ative a mensalidade", modulo: "sistema" };
+      if (fase === "prova") return { texto: `Entregue${qual}: registre a data, cobre o 50% da entrega e ative a mensalidade`, modulo: "sistema" };
       if (fase === "sustentacao") return { texto: "Sustentação: mensalidade ativa — registre as alterações e cobre mensalmente", modulo: "financeiro" };
       return null;
     }
@@ -67,8 +70,8 @@ export function TelaHub({ app }) {
       total += v;
       if (p.pago) recebido += v;
     }
-    const sis = (sistemasPorCliente || {})[clienteAtual ? clienteAtual.id : ""];
-    const rec = sis && sis.mensalidadeAtiva && parseValorBR(sis.mensalidade) > 0 ? ` · ${formatarBR(parseValorBR(sis.mensalidade))}/mês` : "";
+    const mensal = listaSistemas(sistemasPorCliente, clienteAtual ? clienteAtual.id : "").filter((s) => s.mensalidadeAtiva).reduce((t, s) => t + parseValorBR(s.mensalidade), 0);
+    const rec = mensal > 0 ? ` · ${formatarBR(mensal)}/mês` : "";
     return total > 0 ? `${formatarBR(recebido)} recebido de ${formatarBR(total)}${rec}` : rec ? `Recorrente${rec}` : null;
   })();
 
@@ -102,7 +105,7 @@ export function TelaHub({ app }) {
         totalPoliticas={docsDe("politicas", clienteAtual.id).length}
         totalChecklists={docsDe("checklists", clienteAtual.id).length}
         totalPessoas={pessoasAtuais.length}
-        sistema={(sistemasPorCliente || {})[clienteAtual.id] || null}
+        sistemas={listaSistemas(sistemasPorCliente, clienteAtual.id)}
         contratoStatus={(() => { const a = propostasAtuais.find((p) => p.status === "aceita"); if (!a) return null; const c = a.contrato; return c && (c.clausulas || []).length ? c.status || "rascunho" : "aceita-sem-contrato"; })()}
         totalPercepcoes={((percepcoesPorCliente || {})[clienteAtual.id] || []).filter((c) => c.respostas).length}
         temperamentoMentorado={(pessoasAtuais.find((p) => p.id === (mentoriaAtual || {}).mentoradoId) || pessoasAtuais.find((p) => p.contratante) || {}).dominante || ""}

@@ -1,4 +1,6 @@
 import { uid } from "../nucleo/base.jsx";
+import { ROTULO_STATUS_SISTEMA, sistemaVazio } from "../nucleo/sistemas.js";
+import { ConfirmarAcao } from "../componentes/ui.jsx";
 import { HeaderModulo } from "../telas/hub.jsx";
 import { Card } from "../componentes/enraizar.jsx";
 import { useState } from "react";
@@ -23,24 +25,7 @@ export const STATUS_SISTEMA = {
   encerrado: "Encerrado",
 };
 
-export function sistemaVazio() {
-  return {
-    nome: "",
-    briefing: "",
-    escopo: [],
-    foraEscopo: "",
-    fornecidoCliente: [],
-    stack: "",
-    prazoSemanas: "",
-    inicio: "",
-    entregueEm: "",
-    mensalidade: "",
-    mensalidadeAtiva: false,
-    status: "levantamento",
-    obs: "",
-    registros: [],
-  };
-}
+export { sistemaVazio };
 
 export const linhasPara = (texto) => String(texto || "").split("\n").map((l) => l.trim()).filter(Boolean);
 
@@ -222,7 +207,7 @@ function Horas({ sistema, precificacao, propostaAceita, onMudar }) {
   );
 }
 
-export function ModuloSistema({ cliente, sistema, propostaAceita, catalogo = [], calibracao = {}, precificacao = {}, gerando, erro, onMudar, onMudarCatalogo, onMudarPrecificacao, onEstimarIA, onVoltar, onPropostas }) {
+export function ModuloSistema({ cliente, sistema, totalSistemas = 1, propostaAceita, catalogo = [], calibracao = {}, precificacao = {}, gerando, erro, onMudar, onMudarCatalogo, onMudarPrecificacao, onEstimarIA, onVoltar, onPropostas, onLista }) {
   const set = (campo) => (v) => onMudar({ ...sistema, [campo]: v });
   const escopo = sistema.escopo || [];
   const horasTotal = somaHoras(escopo);
@@ -237,7 +222,7 @@ export function ModuloSistema({ cliente, sistema, propostaAceita, catalogo = [],
         subtitulo="O que será construído, o que fica de fora, o que o cliente precisa entregar — e o andamento de cada parte."
         cliente={cliente}
         onVoltar={onVoltar}
-        acoes={<><BotaoContorno pequeno onClick={onEstimarIA} disabled={gerando || !(sistema.briefing || "").trim()}>{gerando ? "Estimando…" : "Estimar com IA"}</BotaoContorno><BotaoContorno pequeno onClick={onPropostas}>Propostas</BotaoContorno></>}
+        acoes={<>{totalSistemas > 1 && onLista && <BotaoContorno pequeno onClick={onLista}>Todos os sistemas ({totalSistemas})</BotaoContorno>}<BotaoContorno pequeno onClick={onEstimarIA} disabled={gerando || !(sistema.briefing || "").trim()}>{gerando ? "Estimando…" : "Estimar com IA"}</BotaoContorno><BotaoContorno pequeno onClick={onPropostas}>Propostas</BotaoContorno></>}
       />
       <div className="enz-container" style={{ paddingTop: 0 }}>
         <AvisoErro erro={erro} />
@@ -309,6 +294,33 @@ export function ModuloSistema({ cliente, sistema, propostaAceita, catalogo = [],
             <textarea className="enz-input" value={sistema.obs} onChange={(e) => set("obs")(e.target.value)} style={{ minHeight: 80 }} placeholder="decisões, pendências antes de começar, o que não falar com o cliente ainda" />
           </div>
         </Card>
+      </div>
+    </div>
+  );
+}
+
+// ── Lista de sistemas do cliente ───────────────────────────────────
+export function ListaSistemas({ cliente, sistemas, onAbrir, onNovo, onExcluir, onVoltar }) {
+  return (
+    <div className="pb-16">
+      <HeaderModulo titulo="Sistemas" subtitulo="Cada sistema tem o próprio escopo, proposta, entrega e mensalidade." cliente={cliente} onVoltar={onVoltar} acoes={<BotaoPrimario pequeno onClick={onNovo}>+ Novo sistema</BotaoPrimario>} />
+      <div className="enz-container" style={{ paddingTop: 0 }}>
+        {sistemas.length === 0 && <div className="enz-card enz-card-vazado enz-nota">nenhum sistema ainda. crie o primeiro e registre o briefing.</div>}
+        <div className="grid gap-3 sm:grid-cols-2">
+          {sistemas.map((s) => {
+            const e = s.escopo || []; const ok = e.filter((i) => i.status === "entregue").length;
+            return (
+              <Card key={s.id} onClick={() => onAbrir(s.id)} rotulo={ROTULO_STATUS_SISTEMA[s.status] || "em levantamento"} titulo={s.nome || "Sem nome"} subtitulo={[e.length ? `${ok}/${e.length} entregas` : "sem escopo", s.mensalidadeAtiva ? `R$ ${s.mensalidade}/mês` : s.mensalidade ? `mensalidade prevista R$ ${s.mensalidade}` : null, s.entregueEm ? `entregue em ${s.entregueEm}` : null].filter(Boolean).join(" · ")}>
+                <span className="enz-link">abrir →</span>
+              </Card>
+            );
+          })}
+        </div>
+        {sistemas.length > 0 && (
+          <div className="flex gap-4 flex-wrap" style={{ marginTop: 24 }}>
+            {sistemas.map((s) => <ConfirmarAcao key={s.id} rotulo={`excluir ${s.nome || "sem nome"}`} aviso="apaga o escopo e as horas deste sistema; parcelas no Financeiro ficam" onConfirmar={() => onExcluir(s.id)} />)}
+          </div>
+        )}
       </div>
     </div>
   );

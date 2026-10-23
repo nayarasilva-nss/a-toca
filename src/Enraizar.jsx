@@ -37,6 +37,7 @@ import { DashboardInicial, ListaClientes } from "./telas/hub.jsx";
 import { TelaLeads, clienteDoLead } from "./telas/leads.jsx";
 import { TelaAgenda } from "./telas/agenda.jsx";
 import { TelaMensalidades } from "./telas/mensalidades.jsx";
+import { listaSistemas, normalizarSistemas } from "./nucleo/sistemas.js";
 import { TelaHub } from "./paginas/hub.jsx";
 import { TelaGestao } from "./paginas/gestao.jsx";
 import { TelaConselheira } from "./paginas/conselheira.jsx";
@@ -166,7 +167,7 @@ export default function App() {
         mapaF[c.id] = (await stGet(`toca:financeiro:${c.id}`)) || { parcelas: [] };
         // fases da Home dependem destes também
         const sis = await stGet(`toca:sistemas:${c.id}`);
-        if (sis) mapaS[c.id] = sis;
+        if (sis) mapaS[c.id] = normalizarSistemas(sis);
         const men = await stGet(`toca:mentoria:${c.id}`);
         if (men) mapaM[c.id] = { ...mentoriaVazia(), ...men };
       }
@@ -429,16 +430,24 @@ export default function App() {
     if (encerrado) return "encerrado";
     if (atrasadas > 0 || vencidas) return "perigo";
     if (!servicosC.consultoria && servicosC.sistemas && c.tipo !== "pessoa") {
-      const sis = sistemasPorCliente[c.id] || {};
-      const props = propostasPorCliente[c.id] || [];
-      const escopo = sis.escopo || [];
-      if (sis.status === "encerrado") return "encerrado";
-      if (sis.status === "sustentacao" || sis.mensalidadeAtiva) return "sustentacao";
-      if (sis.status === "entregue" || (escopo.length > 0 && escopo.every((i) => i.status === "entregue"))) return "prova";
-      if (props.some((p) => p.status === "aceita") || escopo.some((i) => i.status !== "a_fazer")) return "construcao";
-      if (props.some((p) => p.apresentacao || p.status === "enviada")) return "acordo";
-      if (escopo.length > 0) return "raiox";
-      if ((sis.briefing || "").trim() || (sis.nome || "").trim()) return "escuta";
+      const lista = listaSistemas(sistemasPorCliente, c.id);
+      const todas = propostasPorCliente[c.id] || [];
+      const faseDoSistema = (sis) => {
+        const props = todas.filter((p) => !p.sistemaId || p.sistemaId === sis.id);
+        const escopo = sis.escopo || [];
+        if (sis.status === "encerrado") return "encerrado";
+        if (sis.status === "sustentacao" || sis.mensalidadeAtiva) return "sustentacao";
+        if (sis.status === "entregue" || (escopo.length > 0 && escopo.every((i) => i.status === "entregue"))) return "prova";
+        if (sis.status === "construcao" || props.some((p) => p.status === "aceita") || escopo.some((i) => i.status !== "a_fazer")) return "construcao";
+        if (props.some((p) => p.apresentacao || p.status === "enviada")) return "acordo";
+        if (escopo.length > 0) return "raiox";
+        if ((sis.briefing || "").trim() || (sis.nome || "").trim()) return "escuta";
+        return "prospeccao";
+      };
+      if (!lista.length) return todas.some((p) => p.apresentacao || p.status === "enviada") ? "acordo" : "prospeccao";
+      // com vários sistemas, vale o que mais pede trabalho agora
+      const fases = lista.map(faseDoSistema);
+      for (const f of ["construcao", "acordo", "raiox", "escuta", "prova", "sustentacao", "encerrado"]) if (fases.includes(f)) return f;
       return "prospeccao";
     }
     if (!servicosC.consultoria) {
@@ -623,7 +632,7 @@ ${conteudo}
         ) : tela.nome === "clientes" ? (
           <ListaClientes clientes={clientes} gestaoPorCliente={gestaoPorCliente} fases={fasesClientes} backupPendente={backupPendente} onAplicarBackup={aplicarBackup} onCancelarBackup={() => setBackupPendente(null)} onAbrir={abrirCliente} onNovo={() => setTela({ nome: "novo" })} onExcluir={excluirCliente} onExportarBackup={exportarBackup} onImportarBackup={importarBackup} onVoltar={() => setTela({ nome: "home" })} nomeUsuario={nomeUsuario} onSetNomeUsuario={setNomeUsuario} />
         ) : tela.nome === "mensalidades" ? (
-          <TelaMensalidades clientes={clientes} sistemasPorCliente={sistemasPorCliente} financeiroPorCliente={financeiroPorCliente} contratada={contratada} onMudarContratada={mudarContratada} onMudarFinanceiro={(id, fin) => salvarColecao("financeiro", id, fin)} onMudarSistema={(id, sis) => salvarColecao("sistemas", id, sis)} onMudarContato={(id, contato) => atualizarCliente(id, { contato })} onAbrirCliente={abrirCliente} onVoltar={() => setTela({ nome: "home" })} />
+          <TelaMensalidades clientes={clientes} sistemasPorCliente={sistemasPorCliente} financeiroPorCliente={financeiroPorCliente} contratada={contratada} onMudarContratada={mudarContratada} onMudarFinanceiro={(id, fin) => salvarColecao("financeiro", id, fin)} onMudarSistema={(id, sistemaId, sis) => salvarColecao("sistemas", id, listaSistemas(sistemasPorCliente, id).map((s) => (s.id === sistemaId ? sis : s)))} onMudarContato={(id, contato) => atualizarCliente(id, { contato })} onAbrirCliente={abrirCliente} onVoltar={() => setTela({ nome: "home" })} />
         ) : tela.nome === "agenda" ? (
           <TelaAgenda tarefas={tarefas} onMudarTarefas={mudarTarefas} clientes={clientes} financeiroPorCliente={financeiroPorCliente} sistemasPorCliente={sistemasPorCliente} pedidosPendentes={pedidosPendentes} onMudouPendentes={setPedidosPendentes} abaInicial={tela.aba || "tarefas"} onAbrirCliente={abrirCliente} onVoltar={() => setTela({ nome: "home" })} />
         ) : tela.nome === "leads" ? (

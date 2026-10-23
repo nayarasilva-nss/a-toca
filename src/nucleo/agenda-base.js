@@ -73,12 +73,12 @@ export function eventosDoApp({ clientes = [], financeiroPorCliente = {}, sistema
       const d = isoDeBR(p.vencimento);
       if (d && !p.pago) eventos.push({ id: `parcela-${p.id}`, data: d, tipo: "parcela", titulo: `${p.descricao || "Parcela"} · ${p.valor || ""}`.trim(), clienteId: c.id, cliente: nome(c.id) });
     }
-    const sis = sistemasPorCliente[c.id];
-    if (sis) {
+    const v = sistemasPorCliente[c.id];
+    for (const sis of (Array.isArray(v) ? v : v ? [v] : [])) {
       const ini = isoDeBR(sis.inicio);
       const ent = isoDeBR(sis.entregueEm);
-      if (ini) eventos.push({ id: `inicio-${c.id}`, data: ini, tipo: "sistema", titulo: `Início · ${sis.nome || "sistema"}`, clienteId: c.id, cliente: nome(c.id) });
-      if (ent) eventos.push({ id: `entrega-${c.id}`, data: ent, tipo: "sistema", titulo: `Entrega · ${sis.nome || "sistema"}`, clienteId: c.id, cliente: nome(c.id) });
+      if (ini) eventos.push({ id: `inicio-${c.id}-${sis.id || ""}`, data: ini, tipo: "sistema", titulo: `Início · ${sis.nome || "sistema"}`, clienteId: c.id, cliente: nome(c.id) });
+      if (ent) eventos.push({ id: `entrega-${c.id}-${sis.id || ""}`, data: ent, tipo: "sistema", titulo: `Entrega · ${sis.nome || "sistema"}`, clienteId: c.id, cliente: nome(c.id) });
     }
   }
   return eventos;

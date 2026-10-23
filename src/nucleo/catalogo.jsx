@@ -98,7 +98,7 @@ export const totalRealizadas = (sistema) => (sistema.registros || []).reduce((s,
 // média de horas realizadas por bloco do catálogo, somando todos os sistemas que têm registros
 export function calibracaoCatalogo(sistemasPorCliente) {
   const acc = {};
-  for (const sis of Object.values(sistemasPorCliente || {})) {
+  for (const v of Object.values(sistemasPorCliente || {})) for (const sis of (Array.isArray(v) ? v : [v])) {
     if (!sis || !(sis.registros || []).length) continue;
     const real = realizadasPorItem(sis);
     for (const item of sis.escopo || []) {

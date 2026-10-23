@@ -66,8 +66,8 @@ function Linha({ l, pix, onParcela, onSistema, onContato, onAbrirCliente }) {
             <InputField label="WhatsApp do cliente" value={zap} onChange={setZap} placeholder="(62) 90000-0000" ajuda="para o botão de cobrança" />
           </div>
           <div className="flex items-center gap-3 flex-wrap">
-            <BotaoPrimario pequeno onClick={() => { onSistema(l.clienteId, { ...l.sistema, mensalidade: valor, diaVencimento: dia ? Math.min(28, Math.max(1, Number(dia))) : "", mensalidadeDesde: desde }); onContato(l.clienteId, { ...(l.contato || {}), nome: quem, whatsapp: zap }); setAbrir(false); }}>Salvar ajustes</BotaoPrimario>
-            <BotaoContorno onClick={() => onSistema(l.clienteId, { ...l.sistema, mensalidadeAtiva: !l.ativa })}>{l.ativa ? "Pausar mensalidade" : "Reativar mensalidade"}</BotaoContorno>
+            <BotaoPrimario pequeno onClick={() => { onSistema(l.clienteId, l.sistemaId, { ...l.sistema, mensalidade: valor, diaVencimento: dia ? Math.min(28, Math.max(1, Number(dia))) : "", mensalidadeDesde: desde }); onContato(l.clienteId, { ...(l.contato || {}), nome: quem, whatsapp: zap }); setAbrir(false); }}>Salvar ajustes</BotaoPrimario>
+            <BotaoContorno onClick={() => onSistema(l.clienteId, l.sistemaId, { ...l.sistema, mensalidadeAtiva: !l.ativa })}>{l.ativa ? "Pausar mensalidade" : "Reativar mensalidade"}</BotaoContorno>
             <span className="enz-nota">mudar o valor vale para as próximas mensalidades; as já geradas ficam como estão.</span>
           </div>
         </div>
@@ -126,7 +126,7 @@ export function TelaMensalidades({ clientes, sistemasPorCliente, financeiroPorCl
       {geradas > 0 && <p className="enz-nota" style={{ marginBottom: 16 }}>{geradas} mensalidade{geradas > 1 ? "s" : ""} gerada{geradas > 1 ? "s" : ""} agora, até o mês atual. Elas também aparecem no Financeiro de cada cliente e no calendário da Agenda.</p>}
 
       {linhas.length === 0 && <div className="enz-card enz-card-vazado enz-nota">nenhum sistema com mensalidade. no módulo Sistema do cliente, preencha o valor, marque "mensalidade ativa" e registre a data de entrega.</div>}
-      {linhas.map((l) => <Linha key={l.clienteId} l={l} pix={pix} onParcela={mudarParcela} onSistema={onMudarSistema} onContato={onMudarContato} onAbrirCliente={onAbrirCliente} />)}
+      {linhas.map((l) => <Linha key={l.chave} l={l} pix={pix} onParcela={mudarParcela} onSistema={onMudarSistema} onContato={onMudarContato} onAbrirCliente={onAbrirCliente} />)}
 
       <Card rotulo="Cobrança" titulo="Sua chave Pix." subtitulo="entra na mensagem do botão Cobrar no WhatsApp." style={{ marginTop: 32 }}>
         <div className="flex items-end gap-3 flex-wrap">

@@ -1,5 +1,5 @@
 import { mentoriaVazia } from "../modulos/treinamentos.jsx";
-import { sistemaVazio } from "../modulos/sistema.jsx";
+import { normalizarSistemas } from "./sistemas.js";
 
 // Coleções guardadas por cliente: nome no estado → chave no storage e valor-padrão
 export const COLECOES = {
@@ -27,7 +27,7 @@ export const COLECOES = {
   relatorios: { chave: "relatorios", padrao: () => [] },
   financeiro: { chave: "financeiro", padrao: () => ({ parcelas: [] }) },
   percepcoes: { chave: "percepcoes", padrao: () => [] },
-  sistemas: { chave: "sistemas", padrao: () => sistemaVazio() },
+  sistemas: { chave: "sistemas", padrao: () => [], normalizar: normalizarSistemas },
 };
 
 export const COLECOES_INICIAIS = Object.fromEntries(Object.keys(COLECOES).map((k) => [k, {}]));
