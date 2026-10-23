@@ -69,7 +69,7 @@ function Catalogo({ catalogo, calibracao = {}, onMudarCatalogo, onAdicionar }) {
   const selecionados = catalogo.filter((b) => marcados[b.id]);
   const set = (id, campo, valor) => onMudarCatalogo(catalogo.map((b) => (b.id === id ? { ...b, [campo]: campo === "horas" ? valor : valor } : b)));
   return (
-    <Card rotulo="Catálogo de blocos" titulo="Monte o escopo com o que você já constrói." subtitulo="marque os blocos; as horas são o padrão — ajuste depois no escopo. blocos 'por página' podem entrar mais de uma vez.">
+    <Card rotulo="Catálogo de blocos" recolhidoInicial titulo="Monte o escopo com o que você já constrói." subtitulo="marque os blocos; as horas são o padrão — ajuste depois no escopo. blocos 'por página' podem entrar mais de uma vez.">
       {CATEGORIAS_CATALOGO.map((cat) => {
         const blocos = catalogo.filter((b) => b.categoria === cat);
         if (!blocos.length) return null;

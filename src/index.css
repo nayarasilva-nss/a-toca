@@ -137,6 +137,12 @@
 .enz-card-clicavel { cursor: pointer; transition: border-color .2s ease, transform .2s ease; }
 .enz-card-clicavel:hover { border-color: var(--linha-forte); transform: translateY(-2px); }
 .enz-card .enz-rotulo { margin-bottom: var(--esp-2); }
+.enz-card-cabecalho { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; cursor: pointer; border-radius: var(--raio-1); }
+.enz-card-cabecalho:hover .enz-card-titulo { color: var(--ouro-texto); }
+.enz-card-cabecalho:focus-visible { outline: 2px solid var(--foco); outline-offset: 4px; }
+.enz-card-seta { flex: none; width: 26px; height: 26px; border: 1px solid var(--linha-forte); border-radius: 999px; display: grid; place-items: center; font-family: var(--font-body); font-size: 15px; line-height: 1; color: var(--tinta-musgo); margin-top: 2px; }
+.enz-card.is-recolhido { padding-top: var(--esp-4); padding-bottom: var(--esp-4); }
+.enz-card.is-recolhido .enz-card-titulo { font-size: 19px; }
 .enz-card-titulo { font-family: var(--font-display); font-size: 24px; line-height: 1.25; font-weight: 500; color: var(--tinta); }
 .enz-card-subtitulo { margin-top: 6px; font-family: var(--font-body); font-size: 13.5px; line-height: 1.5; color: var(--tinta-musgo); }
 .enz-card-corpo { margin-top: var(--esp-4); font-family: var(--font-body); font-size: 14.5px; line-height: 1.65; color: var(--tinta); }

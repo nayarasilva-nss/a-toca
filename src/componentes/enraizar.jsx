@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Ilustracao } from "./arvore.jsx";
 
 export function TituloSecao({ rotulo, titulo, virada, descricao, nivel = 1, alinhamento = "esquerda", acoes, className = "" }) {
@@ -17,14 +18,37 @@ export function TituloSecao({ rotulo, titulo, virada, descricao, nivel = 1, alin
   );
 }
 
-export function Card({ children, rotulo, titulo, subtitulo, variante = "padrao", className = "", style, onClick }) {
+// Cards com conteúdo são recolhíveis pelo cabeçalho; o estado fica no navegador, por rótulo (ou por `chave`).
+const CHAVE_RECOLHIDO = "enraizar:recolhido:";
+function lerRecolhido(id, padrao) {
+  try { const v = localStorage.getItem(CHAVE_RECOLHIDO + id); return v === null ? padrao : v === "1"; } catch { return padrao; }
+}
+function gravarRecolhido(id, valor) {
+  try { localStorage.setItem(CHAVE_RECOLHIDO + id, valor ? "1" : "0"); } catch {}
+}
+
+export function Card({ children, rotulo, titulo, subtitulo, variante = "padrao", className = "", style, onClick, recolhivel, recolhidoInicial = false, chave }) {
   const Tag = onClick ? "button" : "div";
-  return (
-    <Tag type={onClick ? "button" : undefined} onClick={onClick} style={style} className={`enz-card ${variante === "vazado" ? "enz-card-vazado" : ""} ${onClick ? "enz-card-clicavel" : ""} ${className}`}>
+  const id = chave || rotulo || (typeof titulo === "string" ? titulo : "");
+  const podeRecolher = !onClick && !!children && !!id && (recolhivel !== false);
+  const [recolhido, setRecolhido] = useState(() => (podeRecolher ? lerRecolhido(id, recolhidoInicial) : false));
+  const alternar = () => { if (!podeRecolher) return; setRecolhido((r) => { gravarRecolhido(id, !r); return !r; }); };
+  const cabecalho = (
+    <>
       {rotulo && <span className="enz-rotulo">{rotulo}</span>}
       {titulo && <div className="enz-card-titulo">{titulo}</div>}
-      {subtitulo && <div className="enz-card-subtitulo">{subtitulo}</div>}
-      {children && <div className="enz-card-corpo">{children}</div>}
+      {subtitulo && !recolhido && <div className="enz-card-subtitulo">{subtitulo}</div>}
+    </>
+  );
+  return (
+    <Tag type={onClick ? "button" : undefined} onClick={onClick} style={style} className={`enz-card ${variante === "vazado" ? "enz-card-vazado" : ""} ${onClick ? "enz-card-clicavel" : ""} ${recolhido ? "is-recolhido" : ""} ${className}`}>
+      {podeRecolher ? (
+        <div className="enz-card-cabecalho" role="button" tabIndex={0} aria-expanded={!recolhido} onClick={alternar} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); alternar(); } }} title={recolhido ? "abrir" : "recolher"}>
+          <div style={{ minWidth: 0 }}>{cabecalho}</div>
+          <span className="enz-card-seta" aria-hidden="true">{recolhido ? "+" : "−"}</span>
+        </div>
+      ) : cabecalho}
+      {children && !recolhido && <div className="enz-card-corpo">{children}</div>}
     </Tag>
   );
 }
