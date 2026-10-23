@@ -252,20 +252,20 @@ function GoogleAgenda({ estado, onSalvou }) {
     setOcupado(false);
   };
   return (
-    <Card rotulo="Google Agenda" titulo="Os dois calendários num lugar só." subtitulo="sem login do Google: cada lado assina o calendário do outro por um link. o Google atualiza o lado dele a cada algumas horas." style={{ marginTop: 32 }}>
+    <Card rotulo="Google Agenda ou Calendário da Apple" titulo="Os dois calendários num lugar só." subtitulo="sem login: cada lado assina o calendário do outro por um link. Google e iCloud atualizam o lado deles a cada algumas horas." style={{ marginTop: 32 }}>
       <div style={{ marginBottom: 18 }}>
-        <span className="enz-rotulo" style={{ marginBottom: 6 }}>1 · Ver a Google Agenda aqui</span>
-        <p className="enz-nota" style={{ marginBottom: 8 }}>na Google Agenda (computador): Configurações → o seu calendário → "Integrar agenda" → copie o <strong>"Endereço secreto no formato iCal"</strong> e cole abaixo.</p>
+        <span className="enz-rotulo" style={{ marginBottom: 6 }}>1 · Ver a sua agenda aqui</span>
+        <p className="enz-nota" style={{ marginBottom: 8 }}><strong>Apple (iCloud):</strong> no Calendário do Mac, botão direito no calendário → "Compartilhar calendário" → marque "Calendário público" → copie o link (começa com webcal://). <strong>Google:</strong> Configurações → o seu calendário → "Integrar agenda" → "Endereço secreto no formato iCal". Cole abaixo.</p>
         <div className="flex gap-2 flex-wrap items-center">
-          <input className="enz-input" style={{ flex: "1 1 360px" }} value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://calendar.google.com/calendar/ical/…/basic.ics" />
+          <input className="enz-input" style={{ flex: "1 1 360px" }} value={url} onChange={(e) => setUrl(e.target.value)} placeholder="webcal://p…-caldav.icloud.com/published/… ou https://calendar.google.com/calendar/ical/…" />
           <BotaoContorno onClick={salvar} disabled={ocupado}>{ocupado ? "Lendo…" : url.trim() ? "Salvar e ler" : "Desconectar"}</BotaoContorno>
         </div>
         {(msg || estado.erro) && <p className="enz-nota" style={{ marginTop: 6, color: (msg || "").startsWith("não") || (!msg && estado.erro) ? "var(--alerta)" : "var(--sucesso)" }}>{msg || `última leitura falhou: ${estado.erro}`}</p>}
         {!msg && estado.configurado && !estado.erro && <p className="enz-nota" style={{ marginTop: 6 }}>conectado · {estado.eventos.length} compromisso{estado.eventos.length === 1 ? "" : "s"} lidos para os próximos 3 meses. eles aparecem em azul no calendário e no "Hoje".</p>}
       </div>
       <div>
-        <span className="enz-rotulo" style={{ marginBottom: 6 }}>2 · Ver as tarefas do Enraizar na Google Agenda</span>
-        <p className="enz-nota" style={{ marginBottom: 8 }}>na Google Agenda: ao lado de "Outras agendas", "+" → "Por URL" → cole este endereço. aparece um calendário "Enraizar" com tarefas datadas, vencimentos e entregas.</p>
+        <span className="enz-rotulo" style={{ marginBottom: 6 }}>2 · Ver as tarefas do Enraizar na sua agenda</span>
+        <p className="enz-nota" style={{ marginBottom: 8 }}><strong>Apple:</strong> no Calendário do Mac, Arquivo → "Nova Assinatura de Calendário" → cole este endereço, e em "Local" escolha iCloud para aparecer no iPhone também. <strong>Google:</strong> ao lado de "Outras agendas", "+" → "Por URL". Aparece um calendário "Enraizar" com tarefas datadas, vencimentos e entregas.</p>
         <div className="flex gap-2 flex-wrap items-center">
           <code className="enz-input" style={{ flex: "1 1 360px", fontSize: 12.5, fontFamily: "ui-monospace, Menlo, monospace", wordBreak: "break-all" }}>{feed || "gerando…"}</code>
           <BotaoContorno onClick={async () => { try { await navigator.clipboard.writeText(feed); setCopiado(true); setTimeout(() => setCopiado(false), 1500); } catch {} }} disabled={!feed}>{copiado ? "copiado ✓" : "Copiar"}</BotaoContorno>
@@ -341,7 +341,7 @@ export function TelaAgenda({ tarefas, onMudarTarefas, clientes = [], financeiroP
           <Grupo titulo="Atrasadas" itens={g.atrasadas} cor="var(--erro)">{lista(g.atrasadas)}</Grupo>
           {google.eventos.some((e) => e.data === hoje) && (
             <section style={{ marginTop: 28 }}>
-              <div className="flex items-baseline gap-3"><span className="enz-rotulo">Na Google Agenda hoje</span></div>
+              <div className="flex items-baseline gap-3"><span className="enz-rotulo">Na sua agenda hoje</span></div>
               {google.eventos.filter((e) => e.data === hoje).map((e) => (
                 <div key={e.id} className="flex items-baseline gap-2 flex-wrap" style={{ padding: "8px 0", borderBottom: "1px solid var(--linha)", fontSize: 14.5 }}>
                   <span style={{ color: "var(--info)" }}>◦</span>{e.hora && <span style={{ color: "var(--tinta-secundaria)" }}>{e.hora}{e.fim ? `–${e.fim}` : ""}</span>}<span>{e.titulo}</span>{e.local && <span className="enz-nota">{e.local}</span>}
@@ -371,7 +371,7 @@ export function TelaAgenda({ tarefas, onMudarTarefas, clientes = [], financeiroP
                 {e.tipo === "google" && e.hora && <span className="num" style={{ color: "var(--tinta-secundaria)" }}>{e.hora}{e.fim ? `–${e.fim}` : ""}</span>}
                 <span>{e.titulo}</span>
                 {e.clienteId && <button className="enz-link" style={{ fontSize: 13 }} onClick={() => onAbrirCliente(e.clienteId)}>{e.cliente}</button>}
-                <span className="enz-nota">{e.tipo === "google" ? `Google Agenda${e.local ? ` · ${e.local}` : ""}` : e.tipo === "parcela" ? "vencimento" : "sistema"}</span>
+                <span className="enz-nota">{e.tipo === "google" ? `sua agenda${e.local ? ` · ${e.local}` : ""}` : e.tipo === "parcela" ? "vencimento" : "sistema"}</span>
               </div>
             ))}
             {lista(doDia.tarefas)}

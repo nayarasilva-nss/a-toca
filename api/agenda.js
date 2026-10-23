@@ -4,7 +4,7 @@ import { eventosDoApp } from '../src/nucleo/agenda-base.js';
 
 // Agenda ↔ Google Agenda, sem OAuth, pelo formato iCal:
 //  GET ?ics=<token>   público: calendário do Enraizar (tarefas, vencimentos, entregas) para assinar no Google
-//  GET ?google=1      consultora: eventos da Google Agenda dela (endereço secreto iCal guardado em kv)
+//  GET ?google=1      consultora: eventos da agenda dela — Google (endereço secreto iCal) ou Apple/iCloud (calendário publicado)
 //  POST {googleUrl}   consultora: grava/limpa o endereço secreto;  POST {novoToken:true} gera outro token do feed
 
 const FUSO = 'America/Sao_Paulo';
@@ -179,8 +179,8 @@ export default async (req, res) => {
       const b = req.body || {};
       if (b.novoToken) { const ics = { token: novoToken(), em: new Date().toISOString() }; await gravarKV(sql, 'toca:agenda:ics', ics); return res.status(200).json({ icsToken: ics.token }); }
       if (b.googleUrl !== undefined) {
-        const url = String(b.googleUrl || '').trim();
-        if (url && !/^https:\/\/calendar\.google\.com\/calendar\/ical\/.+\.ics$/.test(url)) return res.status(400).json({ error: 'Cole o "endereço secreto no formato iCal" da Google Agenda (começa com https://calendar.google.com/calendar/ical/ e termina em .ics).' });
+        let url = String(b.googleUrl || '').trim().replace(/^webcal:\/\//i, 'https://');
+        if (url && !/^https:\/\/([a-z0-9-]+\.)*(calendar\.google\.com|icloud\.com)\//i.test(url)) return res.status(400).json({ error: 'Cole o endereço iCal da Google Agenda (https://calendar.google.com/calendar/ical/…) ou do Calendário da Apple (webcal://…icloud.com/published/…).' });
         await gravarKV(sql, 'toca:agenda:google', { url, em: new Date().toISOString() });
         return res.status(200).json({ ok: true, googleUrl: url });
       }
