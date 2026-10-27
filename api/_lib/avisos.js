@@ -80,6 +80,6 @@ export async function enviarAviso(texto) {
   if (telegramTemToken()) resultados.push(await enviarTelegram(texto));
   if (!resultados.length) return { ok: false, motivo: 'nenhum canal configurado (WhatsApp ou Telegram)' };
   const ok = resultados.filter((r) => r.ok);
-  if (ok.length) return { ok: true, canal: ok.map((r) => r.canal).join('+'), falhas: resultados.filter((r) => !r.ok).map((r) => r.motivo) };
+  if (ok.length) return { ok: true, canal: ok.map((r) => r.canal).join('+'), falhas: [...resultados.filter((r) => !r.ok).map((r) => r.motivo), ...ok.filter((r) => r.aviso).map((r) => `${r.canal}: ${r.aviso}`)] };
   return { ok: false, motivo: resultados.map((r) => r.motivo).join(' | ') };
 }

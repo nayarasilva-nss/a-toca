@@ -54,17 +54,19 @@ async function enviarCloud(texto) {
     const j = await r.json().catch(() => ({}));
     return { ok: r.ok, codigo: j && j.error && j.error.code, motivo: j && j.error ? `${j.error.code || ''} ${j.error.message || ''}`.trim() : '' };
   };
-  const texto1 = await chamar({ messaging_product: 'whatsapp', to: numeroDestino(), type: 'text', text: { body: texto } });
-  if (texto1.ok) return { ok: true, canal: 'cloud' };
   const modelo = process.env.WHATSAPP_CLOUD_TEMPLATE;
-  // 131047 = fora da janela de 24 h; 131026/132000 = precisa de modelo
-  if (modelo && [131047, 131026, 132000, 131051].includes(Number(texto1.codigo))) {
+  // Com modelo configurado, ele vai primeiro: é o único caminho que entrega fora da janela de 24 h.
+  // A API aceita texto livre (200) e só avisa a falha depois, pelo webhook (131047), então texto fica como reserva.
+  let erroModelo = '';
+  if (modelo) {
     const umaLinha = texto.replace(/[\r\n\t]+/g, ' · ').replace(/\s{2,}/g, ' ').slice(0, 1000);
     const t = await chamar({ messaging_product: 'whatsapp', to: numeroDestino(), type: 'template', template: { name: modelo, language: { code: process.env.WHATSAPP_CLOUD_IDIOMA || 'pt_BR' }, components: [{ type: 'body', parameters: [{ type: 'text', text: umaLinha }] }] } });
     if (t.ok) return { ok: true, canal: 'cloud-modelo' };
-    return { ok: false, motivo: `Cloud API (modelo): ${t.motivo || 'erro'}` };
+    erroModelo = t.motivo || 'erro';
   }
-  return { ok: false, motivo: `Cloud API: ${texto1.motivo || 'erro'}${!modelo ? ' — sem WHATSAPP_CLOUD_TEMPLATE para mandar fora da janela de 24 h' : ''}` };
+  const texto1 = await chamar({ messaging_product: 'whatsapp', to: numeroDestino(), type: 'text', text: { body: texto } });
+  if (texto1.ok) return { ok: true, canal: 'cloud-texto', aviso: modelo ? `modelo "${modelo}" recusado (${erroModelo}); texto só chega se você falou com o número de teste nas últimas 24 h` : 'texto só chega se você falou com o número de teste nas últimas 24 h' };
+  return { ok: false, motivo: `Cloud API: ${texto1.motivo || 'erro'}${modelo ? ` | modelo: ${erroModelo}` : ' — sem WHATSAPP_CLOUD_TEMPLATE para mandar fora da janela de 24 h'}` };
 }
 
 // ── CallMeBot ────────────────────────────────────────────────────
