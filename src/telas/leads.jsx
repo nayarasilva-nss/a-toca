@@ -174,7 +174,7 @@ function Conversa({ lead, numero, onMudar, onTarefa, onConverter }) {
   const hoje = hojeISO();
   const passo = proximoPasso(lead, hoje);
   const [dataDiag, setDataDiag] = useState("");
-  const [horaDiag, setHoraDiag] = useState("10:00");
+  const [horaDiag, setHoraDiag] = useState("14:00");
   if (!passo) return null;
   const primeiro = (lead.nome || "").split(/\s+/)[0];
 

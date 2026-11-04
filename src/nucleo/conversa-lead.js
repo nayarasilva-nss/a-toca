@@ -30,7 +30,7 @@ export function proximosHorarios(hoje = hojeISO()) {
   while (out.length < 2) {
     d.setDate(d.getDate() + 1);
     if (d.getDay() === 0 || d.getDay() === 6) continue;
-    out.push({ dia: DIAS[d.getDay()], data: `${d.getDate()}/${d.getMonth() + 1}`, iso: iso(d), hora: out.length === 0 ? "10h" : "15h" });
+    out.push({ dia: DIAS[d.getDay()], data: `${d.getDate()}/${d.getMonth() + 1}`, iso: iso(d), hora: out.length === 0 ? "14h" : "16h" });
   }
   return out;
 }
