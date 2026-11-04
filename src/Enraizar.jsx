@@ -36,6 +36,7 @@ import { FormCliente } from "./telas/clientes.jsx";
 import { DashboardInicial, ListaClientes } from "./telas/hub.jsx";
 import { TelaLeads, clienteDoLead } from "./telas/leads.jsx";
 import { TelaAgenda } from "./telas/agenda.jsx";
+import { tarefaVazia } from "./nucleo/agenda-base.js";
 import { TelaMensalidades } from "./telas/mensalidades.jsx";
 import { listaSistemas, normalizarSistemas } from "./nucleo/sistemas.js";
 import { TelaHub } from "./paginas/hub.jsx";
@@ -292,6 +293,13 @@ export default function App() {
   const [tarefas, setTarefas] = useState([]);
   const [pedidosPendentes, setPedidosPendentes] = useState(0);
   const mudarTarefas = async (novas) => { setTarefas(novas); await stSet("toca:tarefas", novas); };
+  // conversa com lead: fecha as tarefas abertas daquele lead e, se vier uma nova, agenda o próximo toque
+  const tarefaDoLead = async (lead, nova) => {
+    const agora = new Date().toISOString();
+    let lista = tarefas.map((t) => (t.leadId === lead.id && t.status !== "feita" ? { ...t, status: "feita", feitoEm: agora } : t));
+    if (nova) lista = [...lista, tarefaVazia({ ...nova, origem: "lead", leadId: lead.id })];
+    await mudarTarefas(lista);
+  };
   const [gerandoPdf, setGerandoPdf] = useState(false);
   const [precificacao, setPrecificacao] = useState({ base: "", porFrente: "", porSemana: "", porEncontro: "", valorHora: "", mensalidadePadrao: "", horasPorSemana: "" });
   const [catalogo, setCatalogo] = useState(CATALOGO_PADRAO);
@@ -636,7 +644,7 @@ ${conteudo}
         ) : tela.nome === "agenda" ? (
           <TelaAgenda tarefas={tarefas} onMudarTarefas={mudarTarefas} clientes={clientes} financeiroPorCliente={financeiroPorCliente} sistemasPorCliente={sistemasPorCliente} pedidosPendentes={pedidosPendentes} onMudouPendentes={setPedidosPendentes} abaInicial={tela.aba || "tarefas"} onAbrirCliente={abrirCliente} onVoltar={() => setTela({ nome: "home" })} />
         ) : tela.nome === "leads" ? (
-          <TelaLeads clientes={clientes} onMudouNovos={setLeadsNovos} onConverter={(lead) => setTela({ nome: "novo", prefill: clienteDoLead(lead) })} onVoltar={() => setTela({ nome: "home" })} />
+          <TelaLeads clientes={clientes} onMudouNovos={setLeadsNovos} onTarefaLead={tarefaDoLead} onConverter={(lead) => setTela({ nome: "novo", prefill: clienteDoLead(lead) })} onVoltar={() => setTela({ nome: "home" })} />
         ) : tela.nome === "novo" ? (
           <FormCliente key={tela.prefill ? tela.prefill.leadId : "novo"} prefill={tela.prefill} onSalvar={salvarNovoCliente} onCancelar={() => setTela({ nome: tela.prefill ? "leads" : "home" })} />
         ) : tela.nome === "editar" && clienteAtual ? (

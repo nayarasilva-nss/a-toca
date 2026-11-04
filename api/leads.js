@@ -36,6 +36,10 @@ async function db() {
       diagnostico TEXT NOT NULL DEFAULT ''
     )`;
     await sql`ALTER TABLE leads ADD COLUMN IF NOT EXISTS diagnostico TEXT NOT NULL DEFAULT ''`;
+    await sql`ALTER TABLE leads ADD COLUMN IF NOT EXISTS toques INT NOT NULL DEFAULT 0`;
+    await sql`ALTER TABLE leads ADD COLUMN IF NOT EXISTS ultimo_toque TIMESTAMPTZ`;
+    await sql`ALTER TABLE leads ADD COLUMN IF NOT EXISTS proximo_toque TEXT NOT NULL DEFAULT ''`;
+    await sql`ALTER TABLE leads ADD COLUMN IF NOT EXISTS resposta TEXT NOT NULL DEFAULT ''`;
     tabelaPronta = true;
   }
   return sql;
@@ -43,7 +47,7 @@ async function db() {
 
 const texto = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
 const lerDiag = (t) => { try { return t ? JSON.parse(t) : null; } catch { return null; } };
-const publico = (l) => ({ id: l.id, criadoEm: l.criado_em, nome: l.nome, whatsapp: l.whatsapp, email: l.email, negocio: l.negocio, funcionarios: l.funcionarios, interesse: l.interesse, dor: l.dor, origem: l.origem, status: l.status, obs: l.obs, clienteId: l.cliente_id, diagnostico: lerDiag(l.diagnostico) });
+const publico = (l) => ({ id: l.id, criadoEm: l.criado_em, nome: l.nome, whatsapp: l.whatsapp, email: l.email, negocio: l.negocio, funcionarios: l.funcionarios, interesse: l.interesse, dor: l.dor, origem: l.origem, status: l.status, obs: l.obs, clienteId: l.cliente_id, diagnostico: lerDiag(l.diagnostico), toques: l.toques || 0, ultimoToque: l.ultimo_toque, proximoToque: l.proximo_toque || '', resposta: l.resposta || '' });
 
 // resultado do autodiagnóstico do site: { indice: 0-100, areas: [{ area, nota, max, pct, nivel }] }
 function limparDiagnostico(d) {
@@ -125,13 +129,22 @@ export default async (req, res) => {
     }
 
     if (req.method === 'PATCH') {
-      const { id, status, obs, clienteId } = req.body || {};
+      const { id, status, obs, clienteId, toques, ultimoToque, proximoToque, resposta } = req.body || {};
       if (!id) return res.status(400).json({ error: 'id obrigatório' });
       if (status !== undefined && !STATUS_LEAD.includes(status)) return res.status(400).json({ error: 'status inválido' });
+      if (resposta !== undefined && !['', 'topou', 'vago', 'nao'].includes(resposta)) return res.status(400).json({ error: 'resposta inválida' });
       const [atual] = await sql`SELECT * FROM leads WHERE id = ${id}`;
       if (!atual) return res.status(404).json({ error: 'Lead não encontrado' });
-      const novo = { status: status ?? atual.status, obs: obs !== undefined ? texto(obs, 4000) : atual.obs, cliente_id: clienteId !== undefined ? clienteId : atual.cliente_id };
-      await sql`UPDATE leads SET status = ${novo.status}, obs = ${novo.obs}, cliente_id = ${novo.cliente_id} WHERE id = ${id}`;
+      const novo = {
+        status: status ?? atual.status,
+        obs: obs !== undefined ? texto(obs, 4000) : atual.obs,
+        cliente_id: clienteId !== undefined ? clienteId : atual.cliente_id,
+        toques: toques !== undefined ? Math.max(0, Math.min(20, Number(toques) || 0)) : atual.toques || 0,
+        ultimo_toque: ultimoToque !== undefined ? (ultimoToque ? new Date(ultimoToque) : null) : atual.ultimo_toque,
+        proximo_toque: proximoToque !== undefined ? (/^\d{4}-\d{2}-\d{2}$/.test(proximoToque) ? proximoToque : '') : atual.proximo_toque || '',
+        resposta: resposta !== undefined ? resposta : atual.resposta || '',
+      };
+      await sql`UPDATE leads SET status = ${novo.status}, obs = ${novo.obs}, cliente_id = ${novo.cliente_id}, toques = ${novo.toques}, ultimo_toque = ${novo.ultimo_toque}, proximo_toque = ${novo.proximo_toque}, resposta = ${novo.resposta} WHERE id = ${id}`;
       return res.status(200).json({ lead: publico({ ...atual, ...novo }) });
     }
 

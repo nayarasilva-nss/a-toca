@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, TituloSecao } from "../componentes/enraizar.jsx";
 import { AvisoErro, BotaoContorno, ConfirmarAcao } from "../componentes/ui.jsx";
+import { CADENCIA, ROTEIRO_DIAGNOSTICO, dataProximoToque, hojeISO, mensagemConfirmacao, proximoPasso } from "../nucleo/conversa-lead.js";
 
 export const STATUS_LEAD = {
   novo: { rotulo: "Novo", cor: "var(--alerta)", fundo: "var(--alerta-fundo)" },
@@ -146,7 +147,143 @@ function Diagnostico({ d }) {
   );
 }
 
-function LinhaLead({ lead, onMudar, onConverter, onExcluir, clienteNome }) {
+// bloco "Conversa": o que fazer agora com este lead, a mensagem pronta e o registro do toque (que vai para a Agenda)
+function MensagemPronta({ numero, texto, rotulo, onAbrir, nota }) {
+  const [t, setT] = useState(texto);
+  const [ver, setVer] = useState(false);
+  useEffect(() => { setT(texto); }, [texto]);
+  const link = numero ? `https://wa.me/${numero}?text=${encodeURIComponent(t)}` : null;
+  return (
+    <div>
+      <div className="flex items-center gap-3 flex-wrap">
+        {link ? (
+          <a className="enz-botao enz-botao-contorno" style={{ textDecoration: "none" }} href={link} target="_blank" rel="noreferrer" onClick={onAbrir}>{rotulo}</a>
+        ) : (
+          <BotaoContorno onClick={onAbrir}>{rotulo} (sem WhatsApp: copie o texto)</BotaoContorno>
+        )}
+        <button className="enz-link" onClick={() => setVer((v) => !v)}>{ver ? "esconder texto" : "ver e ajustar o texto"}</button>
+        <Copiar texto={t} rotulo="copiar texto" />
+      </div>
+      {ver && <textarea className="enz-input" rows={5} style={{ marginTop: 8 }} value={t} onChange={(e) => setT(e.target.value)} />}
+      {nota && <div className="enz-nota" style={{ marginTop: 6 }}>{nota}</div>}
+    </div>
+  );
+}
+
+function Conversa({ lead, numero, onMudar, onTarefa, onConverter }) {
+  const hoje = hojeISO();
+  const passo = proximoPasso(lead, hoje);
+  const [dataDiag, setDataDiag] = useState("");
+  const [horaDiag, setHoraDiag] = useState("10:00");
+  if (!passo) return null;
+  const primeiro = (lead.nome || "").split(/\s+/)[0];
+
+  const registrarToque = (n) => {
+    // n = toque enviado agora (0 = primeiro contato); programa o seguinte e leva para a Agenda
+    const proxima = dataProximoToque(n, hoje);
+    const campos = { toques: n, ultimoToque: new Date().toISOString(), proximoToque: proxima, resposta: "nao" };
+    if (lead.status === "novo") campos.status = "contatado";
+    onMudar(campos);
+    const seguinte = CADENCIA[n];
+    onTarefa(lead, seguinte ? { titulo: `${seguinte.rotulo.split(" · ")[0]} com ${primeiro} (lead)`, data: proxima, detalhe: `${lead.nome}${lead.negocio ? ` · ${lead.negocio}` : ""}. ${seguinte.rotulo.split(" · ")[1]}. Abra o lead em Leads para a mensagem pronta.` } : { titulo: `Decidir: ${primeiro} vira "Não seguiu"? (lead)`, data: proxima || hoje, detalhe: `${lead.nome}: três toques sem resposta. Marque "Não seguiu" em Leads ou mude a abordagem.` });
+  };
+  const responder = (resposta) => { onMudar({ resposta, proximoToque: "" }); onTarefa(lead, null); };
+  const marcarDiagnostico = () => {
+    if (!dataDiag) return;
+    onMudar({ status: "diagnostico", proximoToque: dataDiag });
+    onTarefa(lead, { titulo: `Diagnóstico com ${primeiro} (lead)`, data: dataDiag, hora: horaDiag, detalhe: `${lead.nome}${lead.negocio ? ` · ${lead.negocio}` : ""}. Roteiro em Leads → Conversa de diagnóstico. Na véspera, mande a confirmação.` });
+  };
+
+  const caixa = { marginTop: 12, padding: "12px 14px", background: "var(--fundo-recuo)", borderRadius: 8 };
+  const cabecalho = (
+    <div className="flex items-baseline justify-between gap-2 flex-wrap" style={{ marginBottom: 8 }}>
+      <span className="enz-rotulo">Conversa · {passo.titulo}</span>
+      {passo.situacao === "toque" && <span className="enz-nota" style={{ color: passo.atraso > 0 ? "var(--erro)" : "var(--tinta-musgo)" }}>{passo.semResposta ? `${passo.semResposta} ${passo.semResposta === 1 ? "dia" : "dias"} sem resposta · ` : ""}{passo.dica}</span>}
+    </div>
+  );
+
+  if (passo.situacao === "primeiro") return null; // o bloco de primeiro contato já cuida
+
+  if (passo.situacao === "diagnostico") {
+    return (
+      <div style={caixa}>
+        {cabecalho}
+        <p className="enz-nota" style={{ margin: "0 0 10px" }}>{passo.dica}</p>
+        <ol style={{ margin: 0, paddingLeft: 18, fontSize: 13.5, lineHeight: 1.6 }}>
+          {ROTEIRO_DIAGNOSTICO.map((r) => <li key={r.t}><strong>{r.t}.</strong> {r.p}</li>)}
+        </ol>
+        <div style={{ marginTop: 12 }}>
+          <MensagemPronta numero={numero} texto={mensagemConfirmacao(lead, lead.proximoToque || hoje, "")} rotulo="Confirmar na véspera" nota="um toque de uma linha no dia anterior evita o não comparecimento." />
+        </div>
+        <div className="flex items-center gap-3 flex-wrap" style={{ marginTop: 12 }}>
+          <span className="enz-nota">depois da conversa:</span>
+          <BotaoContorno onClick={onConverter}>Virar cliente</BotaoContorno>
+          <button className="enz-link" onClick={() => onMudar({ status: "perdido" })}>não seguiu</button>
+        </div>
+      </div>
+    );
+  }
+
+  if (passo.situacao === "topou") {
+    return (
+      <div style={caixa}>
+        {cabecalho}
+        <p className="enz-nota" style={{ margin: "0 0 10px" }}>{passo.dica}</p>
+        <MensagemPronta numero={numero} texto={passo.mensagem} rotulo="Oferecer dois horários" />
+        <div className="flex items-end gap-3 flex-wrap" style={{ marginTop: 12 }}>
+          <label className="enz-nota" style={{ display: "grid", gap: 4 }}>dia da conversa<input className="enz-input" type="date" value={dataDiag} onChange={(e) => setDataDiag(e.target.value)} style={{ width: 170 }} /></label>
+          <label className="enz-nota" style={{ display: "grid", gap: 4 }}>hora<input className="enz-input" type="time" value={horaDiag} onChange={(e) => setHoraDiag(e.target.value)} style={{ width: 110 }} /></label>
+          <BotaoContorno onClick={marcarDiagnostico} disabled={!dataDiag}>Marcar diagnóstico</BotaoContorno>
+          <button className="enz-link" onClick={() => responder("nao")}>sumiu de novo</button>
+        </div>
+      </div>
+    );
+  }
+
+  if (passo.situacao === "vago") {
+    return (
+      <div style={caixa}>
+        {cabecalho}
+        <p className="enz-nota" style={{ margin: "0 0 10px" }}>{passo.dica}</p>
+        <MensagemPronta numero={numero} texto={passo.mensagem} rotulo="Devolver a pergunta" />
+        <div className="flex items-center gap-3 flex-wrap" style={{ marginTop: 12 }}>
+          <span className="enz-nota">e aí?</span>
+          <BotaoContorno onClick={() => responder("topou")}>Topou conversar</BotaoContorno>
+          <button className="enz-link" onClick={() => responder("nao")}>sem resposta</button>
+        </div>
+      </div>
+    );
+  }
+
+  if (passo.situacao === "esgotou") {
+    return (
+      <div style={caixa}>
+        {cabecalho}
+        <p className="enz-nota" style={{ margin: "0 0 10px" }}>{passo.dica}</p>
+        <div className="flex items-center gap-3 flex-wrap">
+          <BotaoContorno onClick={() => { onMudar({ status: "perdido" }); onTarefa(lead, null); }}>Marcar "Não seguiu"</BotaoContorno>
+          <button className="enz-link" onClick={() => responder("topou")}>respondeu e topou</button>
+          <button className="enz-link" onClick={() => responder("vago")}>respondeu vago</button>
+        </div>
+      </div>
+    );
+  }
+
+  // toque N programado
+  return (
+    <div style={caixa}>
+      {cabecalho}
+      <MensagemPronta numero={numero} texto={passo.mensagem} rotulo={`Mandar o toque ${passo.n}`} onAbrir={() => registrarToque(passo.n)} nota={`ao abrir, o toque ${passo.n} fica registrado e o próximo entra na Agenda.`} />
+      <div className="flex items-center gap-3 flex-wrap" style={{ marginTop: 12 }}>
+        <span className="enz-nota">a pessoa respondeu?</span>
+        <BotaoContorno onClick={() => responder("topou")}>Topou conversar</BotaoContorno>
+        <BotaoContorno onClick={() => responder("vago")}>Respondeu vago</BotaoContorno>
+      </div>
+    </div>
+  );
+}
+
+function LinhaLead({ lead, onMudar, onConverter, onExcluir, clienteNome, onTarefa }) {
   const [obs, setObs] = useState(lead.obs || "");
   const st = STATUS_LEAD[lead.status] || STATUS_LEAD.novo;
   const quando = lead.criadoEm ? new Date(lead.criadoEm).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "";
@@ -156,7 +293,12 @@ function LinhaLead({ lead, onMudar, onConverter, onExcluir, clienteNome }) {
   const [mensagem, setMensagem] = useState(() => mensagemPrimeiroContato(lead));
   const [verMensagem, setVerMensagem] = useState(false);
   const linkMensagem = numero ? `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}` : null;
-  const abrirPrimeiroContato = () => { if (lead.status === "novo") onMudar({ status: "contatado" }); };
+  const abrirPrimeiroContato = () => {
+    if (lead.status !== "novo") return;
+    const proxima = dataProximoToque(0, hojeISO());
+    onMudar({ status: "contatado", toques: 0, ultimoToque: new Date().toISOString(), proximoToque: proxima, resposta: "nao" });
+    onTarefa(lead, { titulo: `Toque 1 com ${lead.nome.split(/\s+/)[0]} (lead)`, data: proxima, detalhe: `${lead.nome}${lead.negocio ? ` · ${lead.negocio}` : ""}. Um insight do diagnóstico. Abra o lead em Leads para a mensagem pronta.` });
+  };
   return (
     <div className="enz-card" style={{ marginBottom: 12, borderLeft: `3px solid ${st.cor}` }}>
       <div className="flex items-start justify-between gap-3 flex-wrap">
@@ -171,7 +313,7 @@ function LinhaLead({ lead, onMudar, onConverter, onExcluir, clienteNome }) {
           {lead.clienteId ? <span className="enz-nota">cliente: {clienteNome || "cadastrado"}</span> : <BotaoContorno onClick={onConverter}>Virar cliente</BotaoContorno>}
         </div>
       </div>
-      {!lead.clienteId && lead.status !== "perdido" && (
+      {!lead.clienteId && lead.status === "novo" && (
         <div style={{ marginTop: 12, padding: "10px 14px", background: "var(--fundo-recuo)", borderRadius: 8 }}>
           <div className="flex items-center gap-3 flex-wrap">
             {linkMensagem ? (
@@ -183,9 +325,10 @@ function LinhaLead({ lead, onMudar, onConverter, onExcluir, clienteNome }) {
             <Copiar texto={mensagem} rotulo="copiar texto" />
           </div>
           {verMensagem && <textarea className="enz-input" rows={5} style={{ marginTop: 8 }} value={mensagem} onChange={(e) => setMensagem(e.target.value)} />}
-          <div className="enz-nota" style={{ marginTop: 6 }}>montada com o que a pessoa preencheu{lead.diagnostico && lead.diagnostico.areas ? " e o resultado do autodiagnóstico" : ""}. ao abrir, o lead passa para "Contatado".</div>
+          <div className="enz-nota" style={{ marginTop: 6 }}>montada com o que a pessoa preencheu{lead.diagnostico && lead.diagnostico.areas ? " e o resultado do autodiagnóstico" : ""}. ao abrir, o lead passa para "Contatado" e o toque 1 entra na Agenda para daqui a 2 dias.</div>
         </div>
       )}
+      {!lead.clienteId && <Conversa lead={lead} numero={numero} onMudar={onMudar} onTarefa={onTarefa} onConverter={onConverter} />}
       <div className="flex gap-4 flex-wrap" style={{ marginTop: 10, fontSize: 13.5 }}>
         {wa && <a className="enz-link" href={wa} target="_blank" rel="noreferrer">WhatsApp {lead.whatsapp}</a>}
         {lead.email && <a className="enz-link" href={`mailto:${lead.email}`}>{lead.email}</a>}
@@ -204,7 +347,7 @@ function LinhaLead({ lead, onMudar, onConverter, onExcluir, clienteNome }) {
   );
 }
 
-export function TelaLeads({ clientes = [], onConverter, onVoltar, onMudouNovos }) {
+export function TelaLeads({ clientes = [], onConverter, onVoltar, onMudouNovos, onTarefaLead }) {
   const [leads, setLeads] = useState(null);
   const [erro, setErro] = useState(null);
   const [filtro, setFiltro] = useState("ativos");
@@ -268,7 +411,7 @@ fetch("${URL_APP}/api/leads", {
 
       {leads && visiveis.length === 0 && <div className="enz-card enz-card-vazado enz-nota">nenhum lead aqui. quando o site estiver no ar, eles aparecem sozinhos.</div>}
       {visiveis.map((l) => (
-        <LinhaLead key={l.id} lead={l} clienteNome={nomeCliente(l.clienteId)} onMudar={(c) => mudar(l, c)} onConverter={() => onConverter(l)} onExcluir={() => excluir(l)} />
+        <LinhaLead key={l.id} lead={l} clienteNome={nomeCliente(l.clienteId)} onMudar={(c) => mudar(l, c)} onConverter={() => onConverter(l)} onExcluir={() => excluir(l)} onTarefa={(lead, nova) => onTarefaLead && onTarefaLead(lead, nova)} />
       ))}
     </div>
   );
