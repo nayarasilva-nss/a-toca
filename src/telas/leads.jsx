@@ -26,6 +26,35 @@ export function clienteDoLead(lead) {
   return { ...base, tipo: "empresa", negocio: lead.negocio.split(/[,—–-]/)[0].trim() || lead.nome, segmento: lead.negocio || "", servicos };
 }
 
+// Mensagem de primeiro contato: parte do que a própria pessoa preencheu (autodiagnóstico, dor, interesse).
+const NOME_AREA = { "Pessoas": "pessoas", "Processos": "processos", "Governança e papéis": "governança e papéis", "Disciplina e cultura": "disciplina e cultura", "Financeiro": "o financeiro", "Autonomia do dono": "a sua própria autonomia" };
+const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+const listar = (xs) => (xs.length <= 1 ? xs.join("") : `${xs.slice(0, -1).join(", ")} e ${xs[xs.length - 1]}`);
+export function mensagemPrimeiroContato(lead) {
+  const primeiro = (lead.nome || "").trim().split(/\s+/)[0] || "tudo bem";
+  const d = lead.diagnostico && lead.diagnostico.areas ? lead.diagnostico : null;
+  const convite = lead.interesse === "Sistemas personalizados"
+    ? "Topa 30 minutos de conversa para eu entender a sua operação e te dizer se um sistema próprio resolve? Sem custo."
+    : lead.interesse === "Mentoria"
+      ? "Topa 30 minutos de conversa para eu entender o seu momento e te dizer por onde começar? Sem custo."
+      : "Topa 30 minutos de conversa para eu entender o seu negócio e te dizer por onde começar? Sem custo.";
+  const partes = [`Oi, ${primeiro}! Aqui é a Nayara.`];
+  if (d) {
+    const ord = [...d.areas].sort((a, b) => a.pct - b.pct);
+    const fracas = ord.filter((a) => a.pct < 34).slice(0, 3).map((a) => NOME_AREA[a.area] || a.area.toLowerCase());
+    const fortes = ord.filter((a) => a.pct >= 67).slice(-2).map((a) => NOME_AREA[a.area] || a.area.toLowerCase());
+    partes.push("Vi que você fez o autodiagnóstico no meu site.");
+    if (fortes.length && fracas.length) partes.push(cap(`${listar(fortes)} ${fortes.length > 1 ? "já estão" : "já está"} bem ${fortes.length > 1 ? "estruturados" : "estruturado"}, mas ${listar(fracas)} ainda ${fracas.length > 1 ? "dependem" : "depende"} de você. Isso costuma ser o que trava o crescimento.`));
+    else if (fracas.length) partes.push(`O resultado mostrou que ${listar(fracas)} ainda ${fracas.length > 1 ? "dependem" : "depende"} de você. Isso costuma ser o que trava o crescimento.`);
+    else partes.push(`O resultado mostrou um negócio bem estruturado, com ${d.indice}% ainda nas suas mãos. O próximo passo costuma ser fazer isso virar crescimento.`);
+  } else {
+    partes.push("Recebi sua aplicação para o diagnóstico pelo site.");
+    if (lead.dor) partes.push(`Você contou que "${String(lead.dor).trim().replace(/[.!?]+$/, "")}". Isso tem solução, e costuma ser mais simples do que parece.`);
+  }
+  partes.push(convite);
+  return partes.join(" ");
+}
+
 async function api(metodo, corpo, query = "") {
   const opcoes = corpo ? { method: metodo, headers: { "Content-Type": "application/json" }, body: JSON.stringify(corpo) } : { method: metodo };
   const r = await fetch(`/api/leads${query}`, opcoes);
@@ -122,7 +151,12 @@ function LinhaLead({ lead, onMudar, onConverter, onExcluir, clienteNome }) {
   const st = STATUS_LEAD[lead.status] || STATUS_LEAD.novo;
   const quando = lead.criadoEm ? new Date(lead.criadoEm).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "";
   const tel = (lead.whatsapp || "").replace(/\D/g, "");
-  const wa = tel ? `https://wa.me/${tel.length <= 11 ? "55" + tel : tel}?text=${encodeURIComponent(`Oi, ${lead.nome.split(" ")[0]}! Aqui é a Nayara. Recebi sua aplicação para o diagnóstico pelo site.`)}` : null;
+  const numero = tel ? (tel.length <= 11 ? "55" + tel : tel) : "";
+  const wa = numero ? `https://wa.me/${numero}` : null;
+  const [mensagem, setMensagem] = useState(() => mensagemPrimeiroContato(lead));
+  const [verMensagem, setVerMensagem] = useState(false);
+  const linkMensagem = numero ? `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}` : null;
+  const abrirPrimeiroContato = () => { if (lead.status === "novo") onMudar({ status: "contatado" }); };
   return (
     <div className="enz-card" style={{ marginBottom: 12, borderLeft: `3px solid ${st.cor}` }}>
       <div className="flex items-start justify-between gap-3 flex-wrap">
@@ -137,6 +171,21 @@ function LinhaLead({ lead, onMudar, onConverter, onExcluir, clienteNome }) {
           {lead.clienteId ? <span className="enz-nota">cliente: {clienteNome || "cadastrado"}</span> : <BotaoContorno onClick={onConverter}>Virar cliente</BotaoContorno>}
         </div>
       </div>
+      {!lead.clienteId && lead.status !== "perdido" && (
+        <div style={{ marginTop: 12, padding: "10px 14px", background: "var(--fundo-recuo)", borderRadius: 8 }}>
+          <div className="flex items-center gap-3 flex-wrap">
+            {linkMensagem ? (
+              <a className="enz-botao enz-botao-contorno" style={{ textDecoration: "none" }} href={linkMensagem} target="_blank" rel="noreferrer" onClick={abrirPrimeiroContato}>Mensagem de primeiro contato</a>
+            ) : (
+              <span className="enz-nota">sem WhatsApp no lead; copie a mensagem e mande por e-mail</span>
+            )}
+            <button className="enz-link" onClick={() => setVerMensagem((v) => !v)}>{verMensagem ? "esconder texto" : "ver e ajustar o texto"}</button>
+            <Copiar texto={mensagem} rotulo="copiar texto" />
+          </div>
+          {verMensagem && <textarea className="enz-input" rows={5} style={{ marginTop: 8 }} value={mensagem} onChange={(e) => setMensagem(e.target.value)} />}
+          <div className="enz-nota" style={{ marginTop: 6 }}>montada com o que a pessoa preencheu{lead.diagnostico && lead.diagnostico.areas ? " e o resultado do autodiagnóstico" : ""}. ao abrir, o lead passa para "Contatado".</div>
+        </div>
+      )}
       <div className="flex gap-4 flex-wrap" style={{ marginTop: 10, fontSize: 13.5 }}>
         {wa && <a className="enz-link" href={wa} target="_blank" rel="noreferrer">WhatsApp {lead.whatsapp}</a>}
         {lead.email && <a className="enz-link" href={`mailto:${lead.email}`}>{lead.email}</a>}
