@@ -413,6 +413,7 @@ fetch("${URL_APP}/api/leads", {
       {visiveis.map((l) => (
         <LinhaLead key={l.id} lead={l} clienteNome={nomeCliente(l.clienteId)} onMudar={(c) => mudar(l, c)} onConverter={() => onConverter(l)} onExcluir={() => excluir(l)} onTarefa={(lead, nova) => onTarefaLead && onTarefaLead(lead, nova)} />
       ))}
+      <p className="enz-nota" style={{ marginTop: 16 }}>Leads que não viram cliente são apagados sozinhos 24 meses depois do último contato, como diz a política de privacidade do site. Um novo toque, mudança de status ou anotação renova o prazo, e o resumo da manhã avisa 30 dias antes.</p>
     </div>
   );
 }

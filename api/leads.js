@@ -40,6 +40,7 @@ async function db() {
     await sql`ALTER TABLE leads ADD COLUMN IF NOT EXISTS ultimo_toque TIMESTAMPTZ`;
     await sql`ALTER TABLE leads ADD COLUMN IF NOT EXISTS proximo_toque TEXT NOT NULL DEFAULT ''`;
     await sql`ALTER TABLE leads ADD COLUMN IF NOT EXISTS resposta TEXT NOT NULL DEFAULT ''`;
+    await sql`ALTER TABLE leads ADD COLUMN IF NOT EXISTS atualizado_em TIMESTAMPTZ`;
     tabelaPronta = true;
   }
   return sql;
@@ -144,7 +145,7 @@ export default async (req, res) => {
         proximo_toque: proximoToque !== undefined ? (/^\d{4}-\d{2}-\d{2}$/.test(proximoToque) ? proximoToque : '') : atual.proximo_toque || '',
         resposta: resposta !== undefined ? resposta : atual.resposta || '',
       };
-      await sql`UPDATE leads SET status = ${novo.status}, obs = ${novo.obs}, cliente_id = ${novo.cliente_id}, toques = ${novo.toques}, ultimo_toque = ${novo.ultimo_toque}, proximo_toque = ${novo.proximo_toque}, resposta = ${novo.resposta} WHERE id = ${id}`;
+      await sql`UPDATE leads SET status = ${novo.status}, obs = ${novo.obs}, cliente_id = ${novo.cliente_id}, toques = ${novo.toques}, ultimo_toque = ${novo.ultimo_toque}, proximo_toque = ${novo.proximo_toque}, resposta = ${novo.resposta}, atualizado_em = now() WHERE id = ${id}`;
       return res.status(200).json({ lead: publico({ ...atual, ...novo }) });
     }
 
