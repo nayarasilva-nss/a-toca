@@ -12,6 +12,9 @@ export function lerTema() {
 
 export function aplicarTema(tema) {
   document.documentElement.dataset.theme = tema;
+  // barra do sistema (celular e app instalado) na cor do fundo do tema
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute("content", tema === "floresta" ? "#1e3226" : "#f6f2e8");
   try {
     localStorage.setItem(CHAVE, tema);
   } catch {}

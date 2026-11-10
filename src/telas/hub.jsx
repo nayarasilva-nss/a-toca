@@ -4,6 +4,7 @@ import { TEMPERAMENTOS } from "../ia/documentos.jsx";
 import { FOCOS_MENTORIA } from "../nucleo/focos.jsx";
 import { ArvoreEnraizar } from "../componentes/arvore.jsx";
 import { BotaoPrimario, ConfirmarAcao } from "../componentes/ui.jsx";
+import { InstalarApp } from "../componentes/instalar.jsx";
 import { acoesNumeradas, semanaAtualDe } from "../ia/cronograma.jsx";
 import { BlocoHoje } from "./agenda.jsx";
 import { CardMensalidades } from "./mensalidades.jsx";
@@ -55,6 +56,7 @@ export function DashboardInicial({ clientes, fases = {}, nomeUsuario, recorrente
         acoes={<BotaoPrimario onClick={onNovo}>Novo cliente</BotaoPrimario>}
       />
 
+      <InstalarApp />
       {onAgenda && <BlocoHoje tarefas={tarefas} pedidosPendentes={pedidosPendentes} onAgenda={() => onAgenda(pedidosPendentes && !tarefas.length ? "pedidos" : "tarefas")} onConcluir={onConcluirTarefa} />}
       {onMensalidades && <CardMensalidades clientes={clientes} sistemasPorCliente={sistemasPorCliente} financeiroPorCliente={financeiroPorCliente} onAbrir={onMensalidades} />}
 

@@ -14,3 +14,8 @@ createRoot(document.getElementById('root')).render(
     {caminho === '/responder' ? <PaginaResponder /> : caminho === '/aplicar' ? <PaginaAplicar /> : caminho === '/pedir' ? <PaginaPedir /> : <App />}
   </StrictMode>,
 )
+
+// aplicativo instalável: o service worker só entra na versão publicada, para não atrapalhar o desenvolvimento
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(() => {}) })
+}

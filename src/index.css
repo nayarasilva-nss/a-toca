@@ -81,6 +81,10 @@
 .enz-legenda { font-family: var(--font-body); font-size: 12.5px; line-height: 1.4; color: var(--tinta-secundaria); }
 .enz-numero { font-family: var(--font-display); font-size: 40px; line-height: 1; font-weight: 500; color: var(--tinta); }
 .enz-container { max-width: 1040px; margin: 0 auto; padding: var(--esp-6) var(--esp-4) var(--esp-12); }
+/* app instalado: respeita o recorte e a barra de gestos do aparelho */
+@media (display-mode: standalone) {
+  body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); overscroll-behavior-y: none; }
+}
 @media (min-width: 640px) { .enz-container { padding: var(--esp-8) var(--esp-8) var(--esp-16); } }
 .enz-ilustracao { display: inline-block; flex-shrink: 0; background: var(--enz-img) center / contain no-repeat; }
 [data-theme="papel"] textarea, [data-theme="papel"] select, [data-theme="papel"] input:not([type="checkbox"]):not([type="radio"]), [data-theme="papel"] .enz-input { background: var(--fundo-elevado); }
