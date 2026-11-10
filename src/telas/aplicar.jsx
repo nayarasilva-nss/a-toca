@@ -128,7 +128,7 @@ export function PaginaAplicar() {
               {erro && <div className="ap-erro">{erro}</div>}
               <div className="ap-acoes">
                 <button type="submit" className="ap-botao" disabled={fase === "enviando"}>{fase === "enviando" ? "Enviando…" : "Agendar diagnóstico"}</button>
-                <span className="ap-lgpd">Seus dados são usados apenas para o contato, conforme a LGPD.</span>
+                <span className="ap-lgpd">Seus dados são usados apenas para o contato, conforme a LGPD. <a href="https://nayarasilva.com.br/privacidade" target="_blank" rel="noreferrer" style={{ color: "inherit", textDecoration: "underline" }}>Política de privacidade</a>.</span>
               </div>
             </form>
           </>
